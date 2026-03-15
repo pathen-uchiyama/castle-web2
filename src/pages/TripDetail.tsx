@@ -1,4 +1,4 @@
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { useState, useMemo } from "react";
 import { Link, useParams, Navigate } from "react-router-dom";
 import Footer from "@/components/Footer";
@@ -7,8 +7,9 @@ import editorialPacking from "@/assets/editorial-packing.jpg";
 import editorialCalendar from "@/assets/editorial-calendar.jpg";
 import editorialDining from "@/assets/editorial-dining.jpg";
 import SparkleField from "@/components/SparkleField";
-import type { BookedTrip, FutureTrip, PackingItem, PreparationItem, ExperienceCategory, BookingDifficulty, CostTier } from "@/data/types";
+import type { BookedTrip, FutureTrip, PackingItem, PreparationItem, ExperienceCategory, BookingDifficulty, CostTier, DiningReservation, BookedExperience, DiningVenue, ExperienceVenue } from "@/data/types";
 import { mockData } from "@/data/mockData";
+import { toast } from "@/hooks/use-toast";
 
 const ease: [number, number, number, number] = [0.19, 1, 0.22, 1];
 const fade = (delay = 0) => ({
@@ -144,6 +145,143 @@ const tabs = [
   { id: "prep", label: "Prep & Checklists" },
 ];
 
+/* ─── Booking Modal ─────────────────────────────────────────────── */
+
+interface BookingModalProps {
+  type: "dining" | "experience";
+  venueName: string;
+  venueLocation: string;
+  onClose: () => void;
+  onBook: (data: { date: string; time: string; partySize: number; notes: string }) => void;
+}
+
+const BookingModal = ({ type, venueName, venueLocation, onClose, onBook }: BookingModalProps) => {
+  const [date, setDate] = useState("");
+  const [time, setTime] = useState("");
+  const [partySize, setPartySize] = useState(4);
+  const [notes, setNotes] = useState("");
+
+  return (
+    <motion.div
+      initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm px-4"
+      onClick={onClose}
+    >
+      <motion.div
+        initial={{ opacity: 0, y: 20, scale: 0.97 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: 20, scale: 0.97 }}
+        transition={{ duration: 0.3 }}
+        className="w-full max-w-md bg-card border border-border shadow-lg"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="p-6 border-b border-border">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="label-text mb-1">Book {type === "dining" ? "Reservation" : "Experience"}</p>
+              <h3 className="font-display text-xl text-foreground">{venueName}</h3>
+              <p className="font-editorial text-sm text-muted-foreground">{venueLocation}</p>
+            </div>
+            <button onClick={onClose} className="text-muted-foreground hover:text-foreground transition-colors">✕</button>
+          </div>
+        </div>
+        <div className="p-6 space-y-4">
+          <div>
+            <label className="label-text mb-2 block">Date</label>
+            <input type="date" value={date} onChange={(e) => setDate(e.target.value)} className="w-full border border-border bg-background px-3 py-2 font-editorial text-sm text-foreground focus:outline-none focus:border-[hsl(var(--gold))] transition-colors" />
+          </div>
+          <div>
+            <label className="label-text mb-2 block">Time</label>
+            <input type="time" value={time} onChange={(e) => setTime(e.target.value)} className="w-full border border-border bg-background px-3 py-2 font-editorial text-sm text-foreground focus:outline-none focus:border-[hsl(var(--gold))] transition-colors" />
+          </div>
+          <div>
+            <label className="label-text mb-2 block">Party Size</label>
+            <div className="flex gap-2">
+              {[1,2,3,4,5,6].map(n => (
+                <button key={n} onClick={() => setPartySize(n)} className={`w-10 h-10 border text-sm font-display transition-all duration-200 ${partySize === n ? "bg-foreground text-background border-foreground" : "border-border text-muted-foreground hover:border-foreground/30"}`}>{n}</button>
+              ))}
+            </div>
+          </div>
+          <div>
+            <label className="label-text mb-2 block">Notes (optional)</label>
+            <textarea value={notes} onChange={(e) => setNotes(e.target.value)} placeholder="Special requests, dietary needs..." rows={2} className="w-full border border-border bg-background px-3 py-2 font-editorial text-sm text-foreground focus:outline-none focus:border-[hsl(var(--gold))] transition-colors resize-none" />
+          </div>
+        </div>
+        <div className="p-6 border-t border-border flex gap-3">
+          <button onClick={() => { if (date && time) onBook({ date, time, partySize, notes }); }} className="flex-1 px-6 py-3 text-[0.625rem] tracking-[0.15em] uppercase font-medium bg-foreground text-background transition-opacity duration-300 hover:opacity-90 disabled:opacity-40" disabled={!date || !time}>
+            Add as Pending
+          </button>
+          <button onClick={onClose} className="px-6 py-3 text-[0.625rem] tracking-[0.15em] uppercase font-medium text-muted-foreground border border-border hover:border-foreground/30 transition-all duration-300">
+            Cancel
+          </button>
+        </div>
+      </motion.div>
+    </motion.div>
+  );
+};
+
+/* ─── Alert Modal ──────────────────────────────────────────────── */
+
+interface AlertModalProps {
+  venueName: string;
+  opensDate: string;
+  onClose: () => void;
+  onSetAlert: (note: string) => void;
+}
+
+const AlertModal = ({ venueName, opensDate, onClose, onSetAlert }: AlertModalProps) => {
+  const [alertNote, setAlertNote] = useState("");
+
+  return (
+    <motion.div
+      initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm px-4"
+      onClick={onClose}
+    >
+      <motion.div
+        initial={{ opacity: 0, y: 20, scale: 0.97 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: 20, scale: 0.97 }}
+        transition={{ duration: 0.3 }}
+        className="w-full max-w-sm bg-card border border-border shadow-lg"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="p-6 border-b border-border">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="label-text mb-1">🔔 Set Booking Alert</p>
+              <h3 className="font-display text-lg text-foreground">{venueName}</h3>
+            </div>
+            <button onClick={onClose} className="text-muted-foreground hover:text-foreground transition-colors">✕</button>
+          </div>
+        </div>
+        <div className="p-6 space-y-4">
+          <div className="border border-[hsl(var(--gold)/0.3)] bg-[hsl(var(--gold)/0.04)] p-4">
+            <p className="font-editorial text-sm text-foreground mb-1">Booking window opens:</p>
+            <p className="font-display text-xl text-foreground">{opensDate || "TBD"}</p>
+            <p className="font-editorial text-xs text-muted-foreground mt-2">We'll remind you to book at 6 AM ET on this date.</p>
+          </div>
+          <div>
+            <label className="label-text mb-2 block">Reminder Note (optional)</label>
+            <input type="text" value={alertNote} onChange={(e) => setAlertNote(e.target.value)} placeholder="e.g., Request West Wing" className="w-full border border-border bg-background px-3 py-2 font-editorial text-sm text-foreground focus:outline-none focus:border-[hsl(var(--gold))] transition-colors" />
+          </div>
+        </div>
+        <div className="p-6 border-t border-border">
+          <button onClick={() => onSetAlert(alertNote)} className="w-full px-6 py-3 text-[0.625rem] tracking-[0.15em] uppercase font-medium bg-[hsl(var(--gold))] text-background transition-opacity duration-300 hover:opacity-90">
+            Set Alert
+          </button>
+        </div>
+      </motion.div>
+    </motion.div>
+  );
+};
+
+/* ─── Alert type ───────────────────────────────────────────────── */
+
+interface BookingAlert {
+  id: string;
+  venueName: string;
+  type: "dining" | "experience";
+  opensDate: string;
+  note: string;
+}
+
 const BookedTripDetail = ({ trip }: { trip: BookedTrip }) => {
   const [activeTab, setActiveTab] = useState("surveys");
   const [diningSubTab, setDiningSubTab] = useState<"discover" | "reservations">("discover");
@@ -153,6 +291,13 @@ const BookedTripDetail = ({ trip }: { trip: BookedTrip }) => {
     mockData.partyMembers.forEach((m) => { initial[m.memberId] = false; });
     return initial;
   });
+
+  // Booking state
+  const [pendingDining, setPendingDining] = useState<DiningReservation[]>([]);
+  const [pendingExperiences, setPendingExperiences] = useState<BookedExperience[]>([]);
+  const [alerts, setAlerts] = useState<BookingAlert[]>([]);
+  const [bookingModal, setBookingModal] = useState<{ type: "dining" | "experience"; venue: DiningVenue | ExperienceVenue } | null>(null);
+  const [alertModal, setAlertModal] = useState<{ type: "dining" | "experience"; venueName: string; opensDate: string } | null>(null);
   const { destination, tripName, countdownDays, travelLegs, diningReservations, bookedExperiences, diningVenues, experienceVenues } = trip;
   const { partySurvey } = mockData;
 
@@ -186,6 +331,58 @@ const BookedTripDetail = ({ trip }: { trip: BookedTrip }) => {
   const getTotalPacked = () => Object.values(packedItems).flat().filter(Boolean).length;
   const getTotalItems = () => Object.values(packedItems).flat().length;
 
+  // Combined reservations (mock + pending)
+  const allDiningReservations = useMemo(() => [...diningReservations, ...pendingDining], [diningReservations, pendingDining]);
+  const allBookedExperiences = useMemo(() => [...bookedExperiences, ...pendingExperiences], [bookedExperiences, pendingExperiences]);
+
+  const handleBookDining = (venue: DiningVenue, data: { date: string; time: string; partySize: number; notes: string }) => {
+    const newRes: DiningReservation = {
+      reservationId: `din-pending-${Date.now()}`,
+      restaurantName: venue.name,
+      parkOrResort: venue.parkOrResort,
+      date: data.date,
+      time: data.time,
+      partySize: data.partySize,
+      confirmationNumber: "Pending",
+      cuisine: venue.cuisine,
+      mealType: venue.mealTypes[0] || "dinner",
+      notes: data.notes || undefined,
+      dietaryFlags: venue.dietaryAccommodations.length > 0 ? venue.dietaryAccommodations.slice(0, 2) : undefined,
+      status: "pending",
+    };
+    setPendingDining(prev => [...prev, newRes]);
+    setBookingModal(null);
+    setDiningSubTab("reservations");
+    toast({ title: "Reservation added", description: `${venue.name} added as pending. Update with confirmation once booked.` });
+  };
+
+  const handleBookExperience = (venue: ExperienceVenue, data: { date: string; time: string; partySize: number; notes: string }) => {
+    const newExp: BookedExperience = {
+      experienceId: `exp-pending-${Date.now()}`,
+      experienceName: venue.name,
+      category: venue.category,
+      parkOrResort: venue.parkOrResort,
+      date: data.date,
+      time: data.time,
+      duration: venue.duration,
+      partySize: data.partySize,
+      confirmationNumber: "Pending",
+      notes: data.notes || undefined,
+      status: "pending",
+    };
+    setPendingExperiences(prev => [...prev, newExp]);
+    setBookingModal(null);
+    setExperienceSubTab("reservations");
+    toast({ title: "Experience added", description: `${venue.name} added as pending. Update with confirmation once booked.` });
+  };
+
+  const handleSetAlert = (type: "dining" | "experience", venueName: string, opensDate: string, note: string) => {
+    setAlerts(prev => [...prev, { id: `alert-${Date.now()}`, venueName, type, opensDate, note }]);
+    setAlertModal(null);
+    toast({ title: "🔔 Alert set!", description: `We'll remind you when ${venueName} booking opens${opensDate ? ` on ${opensDate}` : ""}.` });
+  };
+
+
   const consensusData = useMemo(() => {
     const completed = partySurvey.responses.filter((r) => r.status === "completed");
     if (completed.length === 0) return [];
@@ -212,12 +409,12 @@ const BookedTripDetail = ({ trip }: { trip: BookedTrip }) => {
 
   const diningByDate = useMemo(() => {
     const grouped: Record<string, typeof diningReservations> = {};
-    for (const res of diningReservations) {
+    for (const res of allDiningReservations) {
       if (!grouped[res.date]) grouped[res.date] = [];
       grouped[res.date].push(res);
     }
     return Object.entries(grouped);
-  }, [diningReservations]);
+  }, [allDiningReservations]);
 
   return (
     <div className="min-h-screen bg-background pt-16">
@@ -389,7 +586,7 @@ const BookedTripDetail = ({ trip }: { trip: BookedTrip }) => {
 
           {/* Sub-tabs */}
           <div className="flex gap-1 mb-12 border-b border-border">
-            {[{ id: "discover" as const, label: "Discover" }, { id: "reservations" as const, label: "My Reservations", count: diningReservations.length }].map((st) => (
+            {[{ id: "discover" as const, label: "Discover" }, { id: "reservations" as const, label: "My Reservations", count: allDiningReservations.length }].map((st) => (
               <button key={st.id} onClick={() => setDiningSubTab(st.id)} className="relative px-5 py-3 transition-all duration-500">
                 <span className={`uppercase tracking-[0.2em] text-[0.6875rem] transition-colors duration-500 ${diningSubTab === st.id ? "text-foreground" : "text-muted-foreground"}`}>{st.label}</span>
                 {"count" in st && st.count !== undefined && (
@@ -440,10 +637,10 @@ const BookedTripDetail = ({ trip }: { trip: BookedTrip }) => {
                         </div>
                         <div className="flex flex-wrap gap-1.5 mb-5">{venue.dietaryAccommodations.map(d => (<span key={d} className="text-[0.5rem] uppercase tracking-[0.1em] px-2 py-0.5 text-muted-foreground/60 border border-border/50">✓ {d}</span>))}</div>
                         <div className="flex gap-3 pt-4 border-t border-border">
-                          <button className="px-6 py-2.5 text-[0.625rem] tracking-[0.15em] uppercase font-medium bg-foreground text-background transition-opacity duration-300 hover:opacity-90">
+                          <button onClick={() => setBookingModal({ type: "dining", venue })} className="px-6 py-2.5 text-[0.625rem] tracking-[0.15em] uppercase font-medium bg-foreground text-background transition-opacity duration-300 hover:opacity-90">
                             Book This
                           </button>
-                          <button className="px-6 py-2.5 text-[0.625rem] tracking-[0.15em] uppercase font-medium text-muted-foreground border border-border hover:border-foreground/30 transition-all duration-300">
+                          <button onClick={() => setAlertModal({ type: "dining", venueName: venue.name, opensDate: venue.bookingWindow.opensDate })} className="px-6 py-2.5 text-[0.625rem] tracking-[0.15em] uppercase font-medium text-muted-foreground border border-border hover:border-foreground/30 transition-all duration-300">
                             Set Alert
                           </button>
                           <span className="ml-auto font-editorial text-xs text-muted-foreground/50 self-center">
@@ -462,10 +659,10 @@ const BookedTripDetail = ({ trip }: { trip: BookedTrip }) => {
             <>
               <motion.div {...fade(0.1)} className="grid grid-cols-2 sm:grid-cols-4 gap-6 mb-16">
                 {[
-                  { label: "Reservations", value: String(diningReservations.length) },
-                  { label: "Confirmed", value: String(diningReservations.filter(d => d.status === "confirmed").length) },
-                  { label: "Pending", value: String(diningReservations.filter(d => d.status === "pending").length) },
-                  { label: "Dietary Flags", value: String(new Set(diningReservations.flatMap(d => d.dietaryFlags ?? [])).size) },
+                  { label: "Reservations", value: String(allDiningReservations.length) },
+                  { label: "Confirmed", value: String(allDiningReservations.filter(d => d.status === "confirmed").length) },
+                  { label: "Pending", value: String(allDiningReservations.filter(d => d.status === "pending").length) },
+                  { label: "Dietary Flags", value: String(new Set(allDiningReservations.flatMap(d => d.dietaryFlags ?? [])).size) },
                 ].map((stat) => (
                   <div key={stat.label} className="border border-border bg-card p-5 shadow-[var(--shadow-soft)]"><p className="label-text mb-2">{stat.label}</p><p className="font-display text-3xl text-foreground">{stat.value}</p></div>
                 ))}
@@ -518,7 +715,7 @@ const BookedTripDetail = ({ trip }: { trip: BookedTrip }) => {
           </motion.div>
 
           <div className="flex gap-1 mb-12 border-b border-border">
-            {[{ id: "discover" as const, label: "Discover" }, { id: "reservations" as const, label: "My Bookings", count: bookedExperiences.length }].map((st) => (
+            {[{ id: "discover" as const, label: "Discover" }, { id: "reservations" as const, label: "My Bookings", count: allBookedExperiences.length }].map((st) => (
               <button key={st.id} onClick={() => setExperienceSubTab(st.id)} className="relative px-5 py-3 transition-all duration-500">
                 <span className={`uppercase tracking-[0.2em] text-[0.6875rem] transition-colors duration-500 ${experienceSubTab === st.id ? "text-foreground" : "text-muted-foreground"}`}>{st.label}</span>
                 {"count" in st && st.count !== undefined && (
@@ -564,10 +761,10 @@ const BookedTripDetail = ({ trip }: { trip: BookedTrip }) => {
                           {venue.maxPartySize && <span className="text-[0.5625rem] uppercase tracking-[0.12em] px-2.5 py-1 text-muted-foreground border border-border">👥 Max {venue.maxPartySize}</span>}
                         </div>
                         <div className="flex gap-3 pt-4 border-t border-border">
-                          <button className="px-6 py-2.5 text-[0.625rem] tracking-[0.15em] uppercase font-medium bg-foreground text-background transition-opacity duration-300 hover:opacity-90">
+                          <button onClick={() => setBookingModal({ type: "experience", venue })} className="px-6 py-2.5 text-[0.625rem] tracking-[0.15em] uppercase font-medium bg-foreground text-background transition-opacity duration-300 hover:opacity-90">
                             Book This
                           </button>
-                          <button className="px-6 py-2.5 text-[0.625rem] tracking-[0.15em] uppercase font-medium text-muted-foreground border border-border hover:border-foreground/30 transition-all duration-300">
+                          <button onClick={() => setAlertModal({ type: "experience", venueName: venue.name, opensDate: venue.bookingWindow.opensDate })} className="px-6 py-2.5 text-[0.625rem] tracking-[0.15em] uppercase font-medium text-muted-foreground border border-border hover:border-foreground/30 transition-all duration-300">
                             Set Alert
                           </button>
                           <span className="ml-auto font-editorial text-xs text-muted-foreground/50 self-center">
@@ -586,16 +783,16 @@ const BookedTripDetail = ({ trip }: { trip: BookedTrip }) => {
             <>
               <motion.div {...fade(0.1)} className="grid grid-cols-2 sm:grid-cols-4 gap-6 mb-16">
                 {[
-                  { label: "Experiences", value: String(bookedExperiences.length) },
-                  { label: "Confirmed", value: String(bookedExperiences.filter(e => e.status === "confirmed").length) },
-                  { label: "Pending", value: String(bookedExperiences.filter(e => e.status === "pending").length) },
-                  { label: "Unique Days", value: String(new Set(bookedExperiences.map(e => e.date)).size) },
+                  { label: "Experiences", value: String(allBookedExperiences.length) },
+                  { label: "Confirmed", value: String(allBookedExperiences.filter(e => e.status === "confirmed").length) },
+                  { label: "Pending", value: String(allBookedExperiences.filter(e => e.status === "pending").length) },
+                  { label: "Unique Days", value: String(new Set(allBookedExperiences.map(e => e.date)).size) },
                 ].map((stat) => (
                   <div key={stat.label} className="border border-border bg-card p-5 shadow-[var(--shadow-soft)]"><p className="label-text mb-2">{stat.label}</p><p className="font-display text-3xl text-foreground">{stat.value}</p></div>
                 ))}
               </motion.div>
               <div className="space-y-12">
-                {Object.entries(bookedExperiences.reduce<Record<string, typeof bookedExperiences>>((acc, exp) => { if (!acc[exp.date]) acc[exp.date] = []; acc[exp.date].push(exp); return acc; }, {})).map(([date, experiences], groupIdx) => (
+                {Object.entries(allBookedExperiences.reduce<Record<string, typeof bookedExperiences>>((acc, exp) => { if (!acc[exp.date]) acc[exp.date] = []; acc[exp.date].push(exp); return acc; }, {})).map(([date, experiences], groupIdx) => (
                   <motion.div key={date} {...fade(0.15 + groupIdx * 0.05)}>
                     <p className="label-text mb-4 tracking-[0.25em]">{date}</p>
                     <div className="space-y-4">
@@ -732,17 +929,75 @@ const BookedTripDetail = ({ trip }: { trip: BookedTrip }) => {
             <motion.div {...fade()}>
               <p className="label-text mb-6">Weather Outlook</p>
               <h2 className="font-display text-3xl text-foreground leading-[1.1] mb-4">Forecast-Driven Packing</h2>
-              <p className="font-editorial text-muted-foreground max-w-xl mb-10">When connected to weather data, your packing list updates automatically — ponchos if rain exceeds 30%, sunscreen reminders for UV alerts.</p>
+              <p className="font-editorial text-muted-foreground max-w-xl mb-10">Your packing list includes weather-specific categories. Check the ☀️ Heat, 🌧 Rain, and ❄️ Cool sections above — they're tailored for Central Florida in late March.</p>
             </motion.div>
-            <motion.div {...fade(0.1)} className="border border-dashed border-border py-16 text-center">
-              <p className="font-display text-2xl text-muted-foreground/40 mb-3">Weather integration coming soon</p>
-              <p className="font-editorial text-sm text-muted-foreground/30">Dynamic packing suggestions based on your trip dates and destination forecast.</p>
+            <motion.div {...fade(0.1)} className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-10">
+              {[
+                { icon: "☀️", title: "Heat & Sun", temp: "78–88°F", tip: "UV index peaks mid-day. Bring SPF 50+, hats, and cooling towels." },
+                { icon: "🌧", title: "Rain & Storms", temp: "40% chance", tip: "Afternoon thunderstorms are common. Pack ponchos — they beat umbrellas in crowds." },
+                { icon: "❄️", title: "Cool Evenings", temp: "62–68°F", tip: "Temps drop after sunset. A lightweight layer keeps fireworks comfortable." },
+              ].map((w) => (
+                <div key={w.title} className="border border-border bg-card p-5 shadow-[var(--shadow-soft)]">
+                  <div className="flex items-center gap-2 mb-3">
+                    <span className="text-2xl">{w.icon}</span>
+                    <h4 className="font-display text-lg text-foreground">{w.title}</h4>
+                  </div>
+                  <p className="font-display text-2xl text-foreground mb-2">{w.temp}</p>
+                  <p className="font-editorial text-sm text-muted-foreground leading-relaxed">{w.tip}</p>
+                </div>
+              ))}
             </motion.div>
           </section>
         </>
       )}
 
+      {/* ═══ ALERTS SIDEBAR (floating) ═══ */}
+      {alerts.length > 0 && (
+        <section className="px-8 lg:px-16 py-8 border-t border-border bg-[hsl(var(--warm))]">
+          <p className="label-text mb-4">🔔 Active Alerts ({alerts.length})</p>
+          <div className="flex flex-wrap gap-3">
+            {alerts.map((alert) => (
+              <div key={alert.id} className="flex items-center gap-3 border border-[hsl(var(--gold)/0.3)] bg-[hsl(var(--gold)/0.04)] px-4 py-2">
+                <span className="text-sm">🔔</span>
+                <div>
+                  <p className="font-display text-sm text-foreground">{alert.venueName}</p>
+                  <p className="font-editorial text-xs text-muted-foreground">{alert.opensDate ? `Opens ${alert.opensDate}` : "TBD"}{alert.note ? ` · ${alert.note}` : ""}</p>
+                </div>
+                <button onClick={() => setAlerts(prev => prev.filter(a => a.id !== alert.id))} className="text-muted-foreground/40 hover:text-foreground transition-colors text-xs ml-2">✕</button>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
+
       <Footer />
+
+      {/* ═══ MODALS ═══ */}
+      <AnimatePresence>
+        {bookingModal && (
+          <BookingModal
+            type={bookingModal.type}
+            venueName={bookingModal.venue.name}
+            venueLocation={bookingModal.venue.parkOrResort}
+            onClose={() => setBookingModal(null)}
+            onBook={(data) => {
+              if (bookingModal.type === "dining") {
+                handleBookDining(bookingModal.venue as DiningVenue, data);
+              } else {
+                handleBookExperience(bookingModal.venue as ExperienceVenue, data);
+              }
+            }}
+          />
+        )}
+        {alertModal && (
+          <AlertModal
+            venueName={alertModal.venueName}
+            opensDate={alertModal.opensDate}
+            onClose={() => setAlertModal(null)}
+            onSetAlert={(note) => handleSetAlert(alertModal.type, alertModal.venueName, alertModal.opensDate, note)}
+          />
+        )}
+      </AnimatePresence>
     </div>
   );
 };

@@ -58,9 +58,12 @@ export const mockData: AppData = {
     ],
 
     packingLists: [
-      { category: "Essentials", items: ["Passports", "Tickets", "Insurance docs", "Chargers"], packedCount: 3, totalCount: 4 },
-      { category: "Clothing", items: ["Comfortable shoes", "Rain jackets", "Swimwear", "Layers"], packedCount: 1, totalCount: 4 },
-      { category: "Park Gear", items: ["Autograph books", "Glow sticks", "Portable fan", "Ponchos"], packedCount: 0, totalCount: 4 },
+      { category: "Essentials", items: ["Passports", "Tickets", "Insurance docs", "Chargers", "Phone chargers & battery packs"], packedCount: 3, totalCount: 5 },
+      { category: "Clothing", items: ["Comfortable walking shoes", "Rain jackets", "Swimwear", "Light layers for evening"], packedCount: 1, totalCount: 4 },
+      { category: "Park Gear", items: ["Autograph books", "Glow sticks", "Portable fan", "Ponchos", "Backpack"], packedCount: 0, totalCount: 5 },
+      { category: "☀️ Heat & Sun", items: ["Sunscreen SPF 50+", "Wide-brim hat or cap", "Cooling towels", "Insulated water bottles", "Electrolyte packets", "UV-protective sunglasses"], packedCount: 0, totalCount: 6 },
+      { category: "🌧 Rain & Storms", items: ["Disposable ponchos (×4)", "Waterproof phone pouch", "Ziplock bags for electronics", "Quick-dry shoes or sandals", "Compact umbrella"], packedCount: 0, totalCount: 5 },
+      { category: "❄️ Cool Evenings", items: ["Lightweight hoodie or jacket", "Long pants for evening", "Hand warmers (just in case)"], packedCount: 0, totalCount: 3 },
     ],
 
     diningReservations: [

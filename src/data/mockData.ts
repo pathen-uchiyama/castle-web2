@@ -153,7 +153,7 @@ export const mockData: AppData = {
         { label: "Shows", description: "Festival of the Lion King, Finding Nemo musical", itemCount: 6 },
         { label: "Wildlife", description: "Kilimanjaro Safaris, Gorilla Falls, Maharajah Jungle Trek", itemCount: 5 },
       ],
-      heroImage: editorialFamilyWalk,
+      heroImage: parkAnimalKingdom,
       todayWeather: "81°F, Scattered Clouds",
       todayCrowdLevel: "Moderate",
       operatingHours: "8:00 AM – 8:00 PM",

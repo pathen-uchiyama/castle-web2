@@ -1,4 +1,5 @@
 import { motion } from "framer-motion";
+import Footer from "@/components/Footer";
 import type { AccountProfile } from "@/data/types";
 
 const ease: [number, number, number, number] = [0.19, 1, 0.22, 1];

@@ -104,16 +104,11 @@
     padding: 2rem 0;
   }
 
-  /* Bordered card — thin, no shadow, no radius */
+  /* Bordered card — no background, no border, pure stationery */
   .card-bordered {
-    background: hsl(var(--card));
-    border: 1px solid hsl(var(--slate-plaid) / 0.12);
-    padding: 2rem;
-    transition: border-color 400ms cubic-bezier(0.19, 1, 0.22, 1);
-  }
-
-  .card-bordered:hover {
-    border-color: hsl(var(--slate-plaid) / 0.25);
+    background: transparent;
+    border: none;
+    padding: 0;
   }
 
   /* Editorial link — thistle with underline */

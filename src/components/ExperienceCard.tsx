@@ -9,7 +9,7 @@ interface ExperienceCardProps {
 
 const ExperienceCard = ({ title, icon, children, className = "" }: ExperienceCardProps) => {
   return (
-    <section className={`card-bordered flex flex-col gap-4 ${className}`}>
+    <section className={`flex flex-col gap-4 ${className}`}>
       <div className="flex items-center gap-3">
         {icon && <div className="text-gold">{icon}</div>}
         <h2 className="font-display text-xl text-foreground">{title}</h2>

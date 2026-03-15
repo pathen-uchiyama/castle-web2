@@ -254,7 +254,7 @@ const Index = ({
                 className="flex-shrink-0 w-[300px] sm:w-[340px] group"
               >
                 <Link to={`/parks/${park.parkId}`}>
-                  <div className="relative h-[420px] overflow-hidden">
+                  <div className="relative h-[420px] overflow-hidden rounded-2xl">
                     <img
                       src={park.heroImage}
                       alt={park.parkName}
@@ -293,9 +293,9 @@ const Index = ({
       </section>
 
       {/* ═══ TWO COLUMN — Plan Next Trip + Inner Circle ═══ */}
-      <section className="grid grid-cols-1 md:grid-cols-2">
+      <section className="grid grid-cols-1 md:grid-cols-2 gap-4 px-4 py-8 bg-[hsl(var(--warm))]">
         {/* Plan Your Next Trip — left */}
-        <div className="relative overflow-hidden">
+        <div className="relative overflow-hidden rounded-2xl">
           {futureTrips.map((trip, i) => (
             <Link key={trip.tripId} to={`/trip/${trip.tripId}`} className={`group block ${i > 0 ? "hidden" : ""}`}>
               <div className="relative h-[500px] overflow-hidden">
@@ -312,7 +312,7 @@ const Index = ({
                     <motion.div {...fade(0.3)} className="mt-8 flex gap-3">
                       {futureTrips.map((ft, fi) => (
                         <Link key={ft.tripId} to={`/trip/${ft.tripId}`} className="group/dot">
-                          <div className={`w-8 h-1 ${fi === 0 ? "bg-white/60" : "bg-white/20"} group-hover/dot:bg-white/40 transition-colors duration-300`} />
+                          <div className={`w-8 h-1 rounded-full ${fi === 0 ? "bg-white/60" : "bg-white/20"} group-hover/dot:bg-white/40 transition-colors duration-300`} />
                         </Link>
                       ))}
                     </motion.div>
@@ -324,13 +324,16 @@ const Index = ({
         </div>
 
         {/* Inner Circle — right */}
-        <div className="bg-[hsl(var(--warm))] flex flex-col justify-between px-8 lg:px-14 py-14 h-[500px]">
-          <motion.div {...slideRight()}>
-            <p className="label-text mb-6 tracking-[0.3em]">The Inner Circle</p>
-            <h3 className="font-display text-3xl sm:text-4xl text-foreground leading-[1.1] mb-8">Your party</h3>
-          </motion.div>
+        <div className="bg-background rounded-2xl shadow-sm flex flex-col justify-between px-8 lg:px-12 py-12 h-[500px]">
+          <div>
+            <motion.div {...slideRight()}>
+              <p className="label-text mb-4 tracking-[0.3em]">The Inner Circle</p>
+              <h3 className="font-display text-3xl sm:text-4xl text-foreground leading-[1.1] mb-2">Your party</h3>
+              <p className="font-editorial text-sm text-muted-foreground mb-8">The crew that makes the magic happen ✨</p>
+            </motion.div>
+          </div>
 
-          <motion.div {...slideRight(0.15)} className="space-y-5 flex-1 overflow-y-auto">
+          <motion.div {...slideRight(0.15)} className="space-y-4 flex-1 overflow-y-auto">
             {partyMembers.map((m, i) => (
               <motion.div
                 key={m.name}
@@ -338,25 +341,28 @@ const Index = ({
                 whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.8, delay: 0.2 + i * 0.1, ease }}
-                className="flex items-center gap-5 group cursor-pointer"
+                className="flex items-center gap-4 group cursor-pointer rounded-xl p-3 -mx-3 hover:bg-[hsl(var(--warm))] transition-colors duration-300"
               >
                 <motion.div
-                  whileHover={{ scale: 1.1, rotate: 5 }}
+                  whileHover={{ scale: 1.1, rotate: 8 }}
                   transition={{ type: "spring", stiffness: 300, damping: 20 }}
-                  className="w-12 h-12 rounded-full bg-foreground flex items-center justify-center shrink-0"
+                  className="w-11 h-11 rounded-full bg-gradient-to-br from-[hsl(var(--gold))] to-[hsl(var(--gold-dark))] flex items-center justify-center shrink-0 shadow-md"
                 >
-                  <span className="font-display text-sm text-background">{m.initial}</span>
+                  <span className="font-display text-sm text-white">{m.initial}</span>
                 </motion.div>
-                <div className="flex-1">
-                  <p className="font-display text-lg text-foreground group-hover:text-[hsl(var(--gold-dark))] transition-colors duration-500">{m.name}</p>
+                <div className="flex-1 min-w-0">
+                  <p className="font-display text-base text-foreground group-hover:text-[hsl(var(--gold-dark))] transition-colors duration-500">{m.name}</p>
                   <p className="label-text mt-0.5 text-[0.6rem]">{m.role}</p>
                 </div>
-                <p className="label-text text-[0.6rem]">{m.adventureCount} trips</p>
+                <div className="text-right shrink-0">
+                  <p className="font-display text-sm text-foreground">{m.adventureCount}</p>
+                  <p className="label-text text-[0.55rem]">trips</p>
+                </div>
               </motion.div>
             ))}
           </motion.div>
 
-          <motion.div {...slideRight(0.3)} className="mt-6 pt-6 border-t border-border">
+          <motion.div {...slideRight(0.3)} className="mt-4 pt-5 border-t border-border">
             <Link to="/circle">
               <span className="link-editorial font-editorial text-sm text-foreground">Manage your travelers →</span>
             </Link>
@@ -365,25 +371,25 @@ const Index = ({
       </section>
 
       {/* ═══ MEMORIES — Masonry gallery ═══ */}
-      <section className="section-dark py-24 lg:py-32">
+      <section className="bg-[hsl(var(--warm))] py-24 lg:py-32">
         <div className="max-w-6xl mx-auto px-8">
           <motion.div {...fade()} className="mb-16">
             <p className="label-text mb-8">Memories</p>
-            <h2 className="font-display text-4xl sm:text-5xl text-white leading-[1.1]">
-              Moments worth keeping.
+            <h2 className="font-display text-4xl sm:text-5xl text-foreground leading-[1.1]">
+              Moments worth keeping. ✦
             </h2>
           </motion.div>
 
-          <div className="grid grid-cols-6 gap-2 auto-rows-[200px] sm:auto-rows-[280px]">
+          <div className="grid grid-cols-6 gap-3 auto-rows-[200px] sm:auto-rows-[280px]">
             {tripMemories.map((memory, i) => (
-              <Link key={memory.tripId} to={`/memories/${memory.tripId}`} className={`${memory.gridSpan} group cursor-pointer relative overflow-hidden block`}>
+              <Link key={memory.tripId} to={`/memories/${memory.tripId}`} className={`${memory.gridSpan} group cursor-pointer relative overflow-hidden rounded-2xl block`}>
                 <motion.div {...scaleIn(i * 0.08)} className="w-full h-full">
                   <motion.img
                     src={memory.coverImage}
                     alt={memory.tripName}
                     className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-end p-5">
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-end p-5">
                     <div>
                       <p className="label-text !text-white/50 mb-1">{memory.date}</p>
                       <p className="font-display text-lg text-white">{memory.tripName}</p>
@@ -397,7 +403,7 @@ const Index = ({
 
           <motion.div {...fade(0.3)} className="mt-12 text-center">
             <Link to="/memories">
-              <span className="link-editorial font-editorial text-sm text-white/60 hover:text-white/80">View all memories →</span>
+              <span className="link-editorial font-editorial text-sm text-muted-foreground hover:text-foreground">View all memories →</span>
             </Link>
           </motion.div>
         </div>

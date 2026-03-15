@@ -637,10 +637,10 @@ const BookedTripDetail = ({ trip }: { trip: BookedTrip }) => {
                         </div>
                         <div className="flex flex-wrap gap-1.5 mb-5">{venue.dietaryAccommodations.map(d => (<span key={d} className="text-[0.5rem] uppercase tracking-[0.1em] px-2 py-0.5 text-muted-foreground/60 border border-border/50">✓ {d}</span>))}</div>
                         <div className="flex gap-3 pt-4 border-t border-border">
-                          <button className="px-6 py-2.5 text-[0.625rem] tracking-[0.15em] uppercase font-medium bg-foreground text-background transition-opacity duration-300 hover:opacity-90">
+                          <button onClick={() => setBookingModal({ type: "dining", venue })} className="px-6 py-2.5 text-[0.625rem] tracking-[0.15em] uppercase font-medium bg-foreground text-background transition-opacity duration-300 hover:opacity-90">
                             Book This
                           </button>
-                          <button className="px-6 py-2.5 text-[0.625rem] tracking-[0.15em] uppercase font-medium text-muted-foreground border border-border hover:border-foreground/30 transition-all duration-300">
+                          <button onClick={() => setAlertModal({ type: "dining", venueName: venue.name, opensDate: venue.bookingWindow.opensDate })} className="px-6 py-2.5 text-[0.625rem] tracking-[0.15em] uppercase font-medium text-muted-foreground border border-border hover:border-foreground/30 transition-all duration-300">
                             Set Alert
                           </button>
                           <span className="ml-auto font-editorial text-xs text-muted-foreground/50 self-center">

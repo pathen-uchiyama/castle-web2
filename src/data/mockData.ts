@@ -272,4 +272,82 @@ export const mockData: AppData = {
       { label: "Home park", value: "Magic Kingdom" },
     ],
   },
+
+  partySurvey: {
+    tripId: "spring-break-2026",
+    attractions: [
+      // Magic Kingdom
+      { attractionId: "mk-tron", name: "Tron Lightcycle / Run", parkId: "mk", category: "ride", heightRequirement: "48\"", sensoryTags: ["dark", "speed", "loud"], description: "Indoor launch coaster through a digital grid." },
+      { attractionId: "mk-space", name: "Space Mountain", parkId: "mk", category: "ride", heightRequirement: "44\"", sensoryTags: ["dark", "speed"], description: "Classic indoor roller coaster through the cosmos." },
+      { attractionId: "mk-pirates", name: "Pirates of the Caribbean", parkId: "mk", category: "ride", description: "Gentle boat ride through pirate scenes." },
+      { attractionId: "mk-haunted", name: "Haunted Mansion", parkId: "mk", category: "ride", sensoryTags: ["dark"], description: "Doom buggy tour of 999 happy haunts." },
+      { attractionId: "mk-jungle", name: "Jungle Cruise", parkId: "mk", category: "ride", description: "Guided boat tour with legendary skipper humor." },
+      { attractionId: "mk-boo", name: "Monsters Inc. Laugh Floor", parkId: "mk", category: "show", description: "Interactive comedy show starring Mike Wazowski." },
+      { attractionId: "mk-mickey", name: "Meet Mickey at Town Square", parkId: "mk", category: "character", description: "Classic meet-and-greet with the big cheese." },
+      // EPCOT
+      { attractionId: "ep-guardians", name: "Guardians of the Galaxy: Cosmic Rewind", parkId: "epcot", category: "ride", heightRequirement: "42\"", sensoryTags: ["dark", "speed", "spinning"], description: "Reverse-launch indoor coaster with a killer soundtrack." },
+      { attractionId: "ep-frozen", name: "Frozen Ever After", parkId: "epcot", category: "ride", description: "Boat ride through Arendelle with Anna and Elsa." },
+      { attractionId: "ep-test-track", name: "Test Track", parkId: "epcot", category: "ride", heightRequirement: "40\"", sensoryTags: ["speed", "outdoor"], description: "Design a virtual car and take it for a 65 mph spin." },
+      { attractionId: "ep-space220", name: "Space 220", parkId: "epcot", category: "dining", description: "Fine dining aboard a simulated space station." },
+      { attractionId: "ep-remy", name: "Remy's Ratatouille Adventure", parkId: "epcot", category: "ride", description: "Trackless ride shrunk to rat-sized in Gusteau's kitchen." },
+      // Hollywood Studios
+      { attractionId: "hs-rise", name: "Rise of the Resistance", parkId: "hs", category: "ride", heightRequirement: "40\"", sensoryTags: ["dark", "loud", "motion"], description: "Epic Star Wars attraction with multiple ride systems." },
+      { attractionId: "hs-tot", name: "Tower of Terror", parkId: "hs", category: "ride", heightRequirement: "40\"", sensoryTags: ["drops", "dark"], description: "Plunging elevator in the Twilight Zone." },
+      { attractionId: "hs-slinky", name: "Slinky Dog Dash", parkId: "hs", category: "ride", heightRequirement: "38\"", description: "Family coaster through Andy's backyard." },
+      { attractionId: "hs-fantasmic", name: "Fantasmic!", parkId: "hs", category: "show", sensoryTags: ["loud", "fire", "water"], description: "Nighttime spectacular of water, fire, and Disney magic." },
+      // Animal Kingdom
+      { attractionId: "ak-flight", name: "Avatar Flight of Passage", parkId: "ak", category: "ride", heightRequirement: "44\"", sensoryTags: ["3D", "motion", "wind"], description: "Soar on a banshee over Pandora." },
+      { attractionId: "ak-safari", name: "Kilimanjaro Safaris", parkId: "ak", category: "ride", description: "Open-air safari through 110 acres of African savanna." },
+      { attractionId: "ak-everest", name: "Expedition Everest", parkId: "ak", category: "ride", heightRequirement: "44\"", sensoryTags: ["speed", "dark", "drops"], description: "High-speed train ride confronting the Yeti." },
+      { attractionId: "ak-lion", name: "Festival of the Lion King", parkId: "ak", category: "show", description: "Broadway-caliber celebration of the Lion King." },
+    ],
+    responses: [
+      {
+        memberId: "P",
+        memberName: "Patchen",
+        rankings: {
+          "mk-tron": "must-do", "mk-space": "must-do", "mk-pirates": "like-to-do", "mk-haunted": "must-do",
+          "mk-jungle": "like-to-do", "mk-boo": "will-avoid", "mk-mickey": "like-to-do",
+          "ep-guardians": "must-do", "ep-frozen": "like-to-do", "ep-test-track": "must-do", "ep-space220": "must-do",
+          "ep-remy": "like-to-do", "hs-rise": "must-do", "hs-tot": "must-do", "hs-slinky": "like-to-do",
+          "hs-fantasmic": "must-do", "ak-flight": "must-do", "ak-safari": "like-to-do",
+          "ak-everest": "must-do", "ak-lion": "like-to-do",
+        },
+        openToAnything: false,
+        topFiveMustDos: ["hs-rise", "mk-tron", "ak-flight", "ep-guardians", "hs-fantasmic"],
+        status: "completed",
+      },
+      {
+        memberId: "S",
+        memberName: "Sarah",
+        rankings: {
+          "mk-tron": "like-to-do", "mk-space": "will-avoid", "mk-pirates": "must-do", "mk-haunted": "must-do",
+          "mk-jungle": "must-do", "mk-boo": "like-to-do", "mk-mickey": "must-do",
+          "ep-guardians": "will-avoid", "ep-frozen": "must-do", "ep-test-track": "like-to-do", "ep-space220": "must-do",
+          "ep-remy": "must-do", "hs-rise": "must-do", "hs-tot": "will-avoid", "hs-slinky": "must-do",
+          "hs-fantasmic": "must-do", "ak-flight": "must-do", "ak-safari": "must-do",
+          "ak-everest": "will-avoid", "ak-lion": "must-do",
+        },
+        openToAnything: true,
+        topFiveMustDos: ["ak-flight", "ep-space220", "hs-fantasmic", "mk-pirates", "ep-frozen"],
+        status: "completed",
+      },
+      {
+        memberId: "E",
+        memberName: "Emma",
+        rankings: {},
+        openToAnything: false,
+        topFiveMustDos: [],
+        status: "pending",
+      },
+      {
+        memberId: "J",
+        memberName: "Jack",
+        rankings: {},
+        openToAnything: false,
+        topFiveMustDos: [],
+        status: "pending",
+      },
+    ],
+  },
 };

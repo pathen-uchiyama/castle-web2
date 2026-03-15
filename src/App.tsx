@@ -42,6 +42,7 @@ const App = () => (
           />
           <Route path="/adventure" element={<Adventure bookedTrip={mockData.bookedTrip} />} />
           <Route path="/trip/:tripId" element={<Adventure bookedTrip={mockData.bookedTrip} />} />
+          <Route path="/survey/:tripId/:memberId" element={<Survey />} />
           <Route path="/memories" element={<Memories tripMemories={mockData.tripMemories} />} />
           <Route path="/memories/:tripId" element={<Memories tripMemories={mockData.tripMemories} />} />
           <Route path="/circle" element={<Circle partyMembers={mockData.partyMembers} />} />

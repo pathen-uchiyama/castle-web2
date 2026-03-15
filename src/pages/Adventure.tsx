@@ -77,10 +77,43 @@ const experienceLabels: Record<ExperienceCategory, string> = {
   "photo-session": "Photo Session",
 };
 
+const difficultyColors: Record<BookingDifficulty, { bg: string; text: string; border: string }> = {
+  easy: { bg: "hsl(var(--gold) / 0.1)", text: "hsl(var(--gold-dark))", border: "hsl(var(--gold) / 0.3)" },
+  moderate: { bg: "hsl(var(--muted))", text: "hsl(var(--muted-foreground))", border: "hsl(var(--border))" },
+  hard: { bg: "hsl(var(--destructive) / 0.08)", text: "hsl(var(--destructive))", border: "hsl(var(--destructive) / 0.2)" },
+  legendary: { bg: "hsl(var(--destructive) / 0.15)", text: "hsl(var(--destructive))", border: "hsl(var(--destructive) / 0.4)" },
+};
+
+const costDots = (tier: CostTier) => {
+  const count = tier.length;
+  return Array.from({ length: 4 }, (_, i) => (
+    <span key={i} className={`inline-block w-1.5 h-1.5 rounded-full ${i < count ? "bg-foreground" : "bg-border"}`} />
+  ));
+};
+
+const StarRating = ({ rating }: { rating: number }) => {
+  const full = Math.floor(rating);
+  const hasHalf = rating - full >= 0.3;
+  return (
+    <div className="flex items-center gap-1">
+      <span className="font-display text-lg text-foreground">{rating.toFixed(1)}</span>
+      <div className="flex gap-0.5 ml-1">
+        {Array.from({ length: 5 }, (_, i) => (
+          <span key={i} className={`text-xs ${i < full ? "text-[hsl(var(--gold))]" : i === full && hasHalf ? "text-[hsl(var(--gold))]" : "text-border"}`}>
+            {i < full ? "★" : i === full && hasHalf ? "★" : "☆"}
+          </span>
+        ))}
+      </div>
+    </div>
+  );
+};
+
 const Adventure = ({ bookedTrip, futureTrips }: AdventureProps) => {
   const [wizardOpen, setWizardOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("overview");
-  const { destination, tripName, countdownDays, travelLegs, diningReservations, bookedExperiences } = bookedTrip;
+  const [diningSubTab, setDiningSubTab] = useState<"discover" | "reservations">("discover");
+  const [experienceSubTab, setExperienceSubTab] = useState<"discover" | "reservations">("discover");
+  const { destination, tripName, countdownDays, travelLegs, diningReservations, bookedExperiences, diningVenues, experienceVenues } = bookedTrip;
   const { partySurvey } = mockData;
 
   // Interactive packing state

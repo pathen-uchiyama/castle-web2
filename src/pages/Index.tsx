@@ -229,7 +229,7 @@ const Index = () => {
           subtitle="Notes, provisions, and trusted allies."
         />
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-16">
           <AnimatedCard delay={0.1}>
             <ExperienceCard title="The Library of Whispers" icon={<Book />}>
               <div className="space-y-4">

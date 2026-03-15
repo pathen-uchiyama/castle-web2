@@ -24,6 +24,7 @@ const App = () => (
       <BrowserRouter>
         <Navigation />
         <Routes>
+          <Route path="/welcome" element={<DayZeroIndex />} />
           <Route
             path="/"
             element={

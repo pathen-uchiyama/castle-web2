@@ -8,6 +8,7 @@ import {
   Window, Carriage, Trunk, People, Gallery, Flame
 } from "@/components/Icons";
 import castleHero from "@/assets/castle-hero.jpg";
+import FloatingAnchor from "@/components/FloatingAnchor";
 
 const StatusDot = ({ active = false }: { active?: boolean }) => (
   <span className={`inline-block w-2 h-2 rounded-full ${active ? "bg-gold sparkle" : "bg-border"}`} />

@@ -409,12 +409,12 @@ const BookedTripDetail = ({ trip }: { trip: BookedTrip }) => {
 
   const diningByDate = useMemo(() => {
     const grouped: Record<string, typeof diningReservations> = {};
-    for (const res of diningReservations) {
+    for (const res of allDiningReservations) {
       if (!grouped[res.date]) grouped[res.date] = [];
       grouped[res.date].push(res);
     }
     return Object.entries(grouped);
-  }, [diningReservations]);
+  }, [allDiningReservations]);
 
   return (
     <div className="min-h-screen bg-background pt-16">

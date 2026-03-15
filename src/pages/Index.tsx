@@ -1,5 +1,6 @@
 import { motion, useScroll, useTransform } from "framer-motion";
 import { useRef } from "react";
+import { Link } from "react-router-dom";
 import FloatingAnchor from "@/components/FloatingAnchor";
 import SparkleField from "@/components/SparkleField";
 import castleHero from "@/assets/castle-hero.jpg";
@@ -126,7 +127,7 @@ const Index = () => {
       </header>
 
       {/* ════════════════════════════════════════════ */}
-      {/* THE ADVENTURE — Magazine spread (text + img) */}
+      {/* THE ADVENTURE — Magazine cover card (hero)    */}
       {/* ════════════════════════════════════════════ */}
       <section className="grid grid-cols-1 lg:grid-cols-2 min-h-screen">
         {/* Left: Editorial text */}
@@ -158,9 +159,11 @@ const Index = () => {
           </motion.div>
 
           <motion.div {...slideLeft(0.3)} className="mt-12">
-            <span className="link-editorial font-editorial text-sm text-foreground cursor-pointer">
-              View full itinerary
-            </span>
+            <Link to="/adventure">
+              <span className="link-editorial font-editorial text-sm text-foreground cursor-pointer">
+                View full itinerary →
+              </span>
+            </Link>
           </motion.div>
         </div>
 
@@ -182,101 +185,86 @@ const Index = () => {
       </section>
 
       {/* ════════════════════════════════════════════ */}
-      {/* TODAY — Dark cinematic, asymmetric grid       */}
+      {/* DUAL CARDS — Today + Time Recovered           */}
+      {/* Two visually distinct side-by-side panels     */}
       {/* ════════════════════════════════════════════ */}
-      <section className="section-dark">
-        <div className="grid grid-cols-1 lg:grid-cols-5 min-h-[80vh]">
-          {/* Left column: large image (3/5) */}
-          <motion.div {...scaleIn()} className="relative lg:col-span-3 min-h-[50vh] lg:min-h-0">
-            <ParallaxImage src={fireworksNight} alt="Fireworks over the castle" className="absolute inset-0 h-full" />
-            <div className="absolute inset-0 bg-gradient-to-r from-transparent to-[hsl(var(--ink))]/40 hidden lg:block" />
+      <section className="grid grid-cols-1 lg:grid-cols-2">
+        {/* Left: Today's Park — dark cinematic */}
+        <Link to="/adventure" className="group">
+          <div className="relative min-h-[70vh] overflow-hidden bg-[hsl(var(--ink))]">
+            <motion.div {...scaleIn()} className="absolute inset-0">
+              <ParallaxImage src={fireworksNight} alt="Fireworks over the castle" className="h-full" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
+            </motion.div>
+            <div className="relative h-full min-h-[70vh] flex flex-col justify-end px-8 lg:px-12 pb-12 lg:pb-16">
+              <motion.div {...fade(0.2)}>
+                <p className="label-text !text-white/40 mb-6">Today's Park</p>
+                <h2 className="font-display text-5xl sm:text-6xl text-white leading-[1.05] mb-4">
+                  Magic Kingdom
+                </h2>
+                <div className="flex gap-8 mt-6">
+                  <div>
+                    <p className="label-text !text-white/30 mb-1">Weather</p>
+                    <p className="font-editorial text-base text-white/70">78°F, clear</p>
+                  </div>
+                  <div>
+                    <p className="label-text !text-white/30 mb-1">Crowds</p>
+                    <p className="font-editorial text-base text-white/70">Moderate</p>
+                  </div>
+                </div>
+                <p className="font-editorial text-sm text-white/30 italic mt-8 group-hover:text-white/50 transition-colors duration-700">
+                  Rope-drop Tron, evening at Tomorrowland →
+                </p>
+              </motion.div>
+            </div>
+          </div>
+        </Link>
+
+        {/* Right: Time Recovered — warm parchment */}
+        <div className="relative min-h-[70vh] bg-[hsl(var(--warm))] flex flex-col justify-center px-8 lg:px-14 py-20 lg:py-28 overflow-hidden">
+          <SparkleField count={6} />
+          <motion.div {...slideRight()}>
+            <p className="label-text mb-8">Time Recovered</p>
+            <motion.h2
+              initial={{ opacity: 0, scale: 0.85 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: true }}
+              transition={{ duration: 1.4, ease }}
+              className="font-display text-7xl sm:text-8xl text-foreground leading-[0.9] mb-4"
+            >
+              4h 35m
+            </motion.h2>
+            <p className="font-editorial text-sm text-muted-foreground italic mb-14 max-w-sm">
+              Automated Lightning Lane acquisitions while you slept.
+            </p>
           </motion.div>
 
-          {/* Right column: editorial content (2/5) */}
-          <div className="lg:col-span-2 flex flex-col justify-center px-8 lg:px-14 py-20 lg:py-32">
-            <motion.div {...slideRight()}>
-              <p className="label-text mb-10">Today's Park</p>
-              <h2 className="font-display text-5xl sm:text-6xl text-white leading-[1.05] mb-12">
-                Magic<br />Kingdom
-              </h2>
-            </motion.div>
-
-            <motion.div {...slideRight(0.15)} className="space-y-10">
-              {[
-                { label: "Weather", text: "78°F, clear skies" },
-                { label: "Crowd Level", text: "Moderate" },
-                { label: "Strategy", text: "Rope-drop Tron, evening at Tomorrowland" },
-              ].map((item) => (
-                <div key={item.label}>
-                  <p className="label-text mb-2">{item.label}</p>
-                  <p className="font-editorial text-lg text-white/75">{item.text}</p>
-                </div>
-              ))}
-            </motion.div>
-
-            <motion.p
-              {...slideRight(0.3)}
-              className="font-editorial text-sm text-white/40 italic mt-12"
-            >
-              Ride early, wander late.
-            </motion.p>
-          </div>
-        </div>
-      </section>
-
-      {/* ════════════════════════════════════════════ */}
-      {/* TIME RECOVERED — Full-width dramatic stat     */}
-      {/* ════════════════════════════════════════════ */}
-      <section className="relative py-32 lg:py-48 overflow-hidden">
-        {/* Subtle sparkle field for whimsy */}
-        <SparkleField count={8} />
-        <div className="max-w-5xl mx-auto px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24 items-center">
-            {/* Left: Giant number */}
-            <motion.div {...fade()}>
-              <p className="label-text mb-8">Time Recovered</p>
-              <motion.h2
-                initial={{ opacity: 0, scale: 0.85 }}
-                whileInView={{ opacity: 1, scale: 1 }}
+          <motion.div {...slideRight(0.2)} className="space-y-8">
+            {[
+              { ride: "Tron Lightcycle / Run", saved: "95 min", emoji: "⚡" },
+              { ride: "Rise of the Resistance", saved: "82 min", emoji: "✦" },
+              { ride: "Flight of Passage", saved: "70 min", emoji: "🌿" },
+            ].map((s, i) => (
+              <motion.div
+                key={s.ride}
+                initial={{ opacity: 0, x: 30 }}
+                whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: true }}
-                transition={{ duration: 1.4, ease }}
-                className="font-display text-7xl sm:text-8xl lg:text-[8rem] text-foreground leading-[0.9]"
+                transition={{ duration: 0.8, delay: 0.3 + i * 0.15, ease }}
+                className="group flex items-start gap-4 cursor-pointer"
               >
-                4h<br />35m
-              </motion.h2>
-              <p className="font-editorial text-base text-muted-foreground mt-8 max-w-sm leading-relaxed italic">
-                From automated Lightning Lane acquisitions while you slept.
-              </p>
-            </motion.div>
-
-            {/* Right: Editorial callouts */}
-            <motion.div {...slideRight(0.2)} className="space-y-10 lg:pt-12">
-              {[
-                { ride: "Tron Lightcycle / Run", saved: "95 min", emoji: "⚡" },
-                { ride: "Rise of the Resistance", saved: "82 min", emoji: "✦" },
-                { ride: "Flight of Passage", saved: "70 min", emoji: "🌿" },
-              ].map((s, i) => (
-                <motion.div
-                  key={s.ride}
-                  initial={{ opacity: 0, x: 30 }}
-                  whileInView={{ opacity: 1, x: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.8, delay: 0.3 + i * 0.15, ease }}
-                  className="group flex items-start gap-5 cursor-pointer"
-                >
-                  <span className="text-xl mt-0.5 opacity-40 group-hover:opacity-100 transition-opacity duration-500">
-                    {s.emoji}
-                  </span>
-                  <div>
-                    <p className="font-display text-xl text-foreground group-hover:text-gold-dark transition-colors duration-500">
-                      {s.saved} saved
-                    </p>
-                    <p className="font-editorial text-sm text-muted-foreground mt-1">{s.ride}</p>
-                  </div>
-                </motion.div>
-              ))}
-            </motion.div>
-          </div>
+                <span className="text-lg mt-0.5 opacity-40 group-hover:opacity-100 transition-opacity duration-500">
+                  {s.emoji}
+                </span>
+                <div>
+                  <p className="font-display text-lg text-foreground group-hover:text-gold-dark transition-colors duration-500">
+                    {s.saved} saved
+                  </p>
+                  <p className="font-editorial text-sm text-muted-foreground mt-1">{s.ride}</p>
+                </div>
+              </motion.div>
+            ))}
+          </motion.div>
         </div>
       </section>
 
@@ -312,122 +300,111 @@ const Index = () => {
       </section>
 
       {/* ════════════════════════════════════════════ */}
-      {/* PREPARATIONS — Side-by-side: prose + image   */}
+      {/* TRIPLE CARDS — Memories, Circle, Account      */}
+      {/* Three magazine-cover navigation cards         */}
       {/* ════════════════════════════════════════════ */}
-      <section className="section-dark">
-        <div className="grid grid-cols-1 lg:grid-cols-2 min-h-[80vh]">
-          {/* Left: Preparations text */}
-          <div className="flex flex-col justify-center px-8 lg:px-16 py-24 lg:py-32">
-            <motion.div {...slideLeft()}>
-              <p className="label-text mb-10">Preparations</p>
-              <h2 className="font-display text-4xl sm:text-5xl text-white leading-[1.1] mb-14">
-                Nearly there.
-              </h2>
+      <section className="grid grid-cols-1 lg:grid-cols-3">
+        {/* Memories — dark with gallery preview */}
+        <Link to="/memories" className="group">
+          <div className="relative min-h-[65vh] overflow-hidden">
+            <motion.div {...scaleIn()} className="absolute inset-0">
+              <ParallaxImage src={castleGolden} alt="Memories" className="h-full" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/40 to-black/10 group-hover:from-black/75 transition-all duration-700" />
+            </motion.div>
+            <div className="relative h-full min-h-[65vh] flex flex-col justify-end px-8 pb-12">
+              <motion.div {...fade(0.1)}>
+                <p className="label-text !text-white/40 mb-4 tracking-[0.3em]">Keepsakes</p>
+                <h3 className="font-display text-3xl sm:text-4xl text-white leading-[1.1] mb-3">
+                  Moments worth keeping
+                </h3>
+                <p className="font-editorial text-sm text-white/40 group-hover:text-white/60 transition-colors duration-700">
+                  12 adventures · 248 photos →
+                </p>
+              </motion.div>
+            </div>
+          </div>
+        </Link>
+
+        {/* The Circle — warm parchment */}
+        <Link to="/circle" className="group">
+          <div className="min-h-[65vh] bg-[hsl(var(--warm))] flex flex-col justify-between px-8 py-12 lg:py-16">
+            <motion.div {...fade(0.2)}>
+              <p className="label-text mb-8 tracking-[0.3em]">The Inner Circle</p>
+              <h3 className="font-display text-3xl sm:text-4xl text-foreground leading-[1.1] mb-6">
+                Your party
+              </h3>
             </motion.div>
 
-            <motion.div {...slideLeft(0.15)} className="space-y-7">
+            <motion.div {...fade(0.3)} className="space-y-6 my-auto">
               {[
-                { text: "Park reservations booked — all four parks with extended evening hours.", done: true },
-                { text: "Dining confirmed — Be Our Guest, Ohana, Space 220, Topolino's.", done: true },
-                { text: "Lightning Lane strategy optimized with backup plans.", done: true },
-                { text: "Packing list under review.", done: false },
-                { text: "PhotoPass and MagicBand+ setup for the entire party.", done: false },
-              ].map((t) => (
-                <p
-                  key={t.text}
-                  className={`font-editorial text-base leading-relaxed ${
-                    t.done ? "text-white/35 line-through decoration-white/15" : "text-white/80"
-                  }`}
-                >
-                  {t.text}
-                </p>
+                { name: "Patchen", role: "Trip Captain", initial: "P" },
+                { name: "Sarah", role: "Co-planner", initial: "S" },
+                { name: "Emma", role: "Little Explorer", initial: "E" },
+                { name: "Jack", role: "Snack Scout", initial: "J" },
+              ].map((member) => (
+                <div key={member.name} className="flex items-center gap-4">
+                  <motion.div
+                    whileHover={{ scale: 1.1, rotate: 5 }}
+                    transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                    className="w-10 h-10 bg-foreground flex items-center justify-center shrink-0"
+                  >
+                    <span className="font-display text-sm text-background">{member.initial}</span>
+                  </motion.div>
+                  <div>
+                    <p className="font-display text-base text-foreground">{member.name}</p>
+                    <p className="label-text mt-0.5 text-[0.6rem]">{member.role}</p>
+                  </div>
+                </div>
               ))}
             </motion.div>
+
+            <motion.div {...fade(0.4)}>
+              <p className="font-editorial text-sm text-muted-foreground group-hover:text-foreground transition-colors duration-700">
+                Manage your travelers →
+              </p>
+            </motion.div>
           </div>
+        </Link>
 
-          {/* Right: Flatlay image */}
-          <motion.div {...scaleIn(0.2)} className="relative min-h-[50vh] lg:min-h-0">
-            <ParallaxImage src={travelFlatlay} alt="Travel essentials flat lay" className="absolute inset-0 h-full" />
-            <div className="absolute inset-0 bg-gradient-to-l from-transparent to-[hsl(var(--ink))]/20 hidden lg:block" />
-          </motion.div>
-        </div>
-      </section>
+        {/* Account — dark ink */}
+        <Link to="/account" className="group">
+          <div className="min-h-[65vh] bg-[hsl(var(--ink))] flex flex-col justify-between px-8 py-12 lg:py-16">
+            <motion.div {...fade(0.3)}>
+              <p className="label-text !text-white/30 mb-8 tracking-[0.3em]">Account</p>
+              <h3 className="font-display text-3xl sm:text-4xl text-white leading-[1.1] mb-6">
+                The details
+              </h3>
+            </motion.div>
 
-      {/* ════════════════════════════════════════════ */}
-      {/* WHISPERS + INNER CIRCLE — Side by side       */}
-      {/* ════════════════════════════════════════════ */}
-      <section className="grid grid-cols-1 lg:grid-cols-2 min-h-[70vh]">
-        {/* Left: Whispers */}
-        <div className="px-8 lg:px-16 py-24 lg:py-32 border-b lg:border-b-0 lg:border-r border-border">
-          <motion.div {...slideLeft()}>
-            <p className="label-text mb-10 tracking-[0.25em]">Whispers</p>
-            <h2 className="font-display text-3xl sm:text-4xl text-foreground leading-[1.15] mb-6">
-              Secrets the park keeps.
-            </h2>
-          </motion.div>
-
-          <div className="mt-14 space-y-12">
-            {[
-              { tip: "The hidden Mickey in the Haunted Mansion queue — look at the wallpaper near the stretching room.", date: "March 14" },
-              { tip: "Best fireworks spot: the rose garden by Casey's Corner. Arrive early with a blanket.", date: "March 12" },
-              { tip: "Ask for the secret orange swirl float at the Dole Whip stand. Not on the menu.", date: "March 10" },
-            ].map((note, i) => (
-              <motion.div
-                key={i}
-                {...fade(i * 0.1)}
-                className="group cursor-pointer"
-              >
-                <p className="font-editorial text-base text-foreground leading-relaxed group-hover:text-muted-foreground transition-colors duration-500">
-                  {note.tip}
-                </p>
-                <p className="label-text mt-3 opacity-50">{note.date}</p>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-
-        {/* Right: Inner Circle */}
-        <div className="px-8 lg:px-16 py-24 lg:py-32 bg-[hsl(var(--warm))]">
-          <motion.div {...slideRight()}>
-            <p className="label-text mb-10 tracking-[0.25em]">The Inner Circle</p>
-          </motion.div>
-
-          <div className="space-y-14 mt-4">
-            {[
-              { name: "Patchen", role: "Trip Captain", initial: "P" },
-              { name: "Sarah", role: "Co-planner", initial: "S" },
-              { name: "Emma", role: "Little Explorer", initial: "E" },
-              { name: "Jack", role: "Snack Scout", initial: "J" },
-            ].map((member, i) => (
-              <motion.div
-                key={member.name}
-                {...slideRight(i * 0.1)}
-                className="flex items-center gap-6 group cursor-pointer"
-              >
-                <motion.div
-                  whileHover={{ scale: 1.1, rotate: 5 }}
-                  transition={{ type: "spring", stiffness: 300, damping: 20 }}
-                  className="w-12 h-12 bg-foreground flex items-center justify-center shrink-0"
-                >
-                  <span className="font-display text-lg text-background">{member.initial}</span>
-                </motion.div>
-                <div>
-                  <p className="font-display text-xl text-foreground">{member.name}</p>
-                  <p className="label-text mt-0.5">{member.role}</p>
+            <motion.div {...fade(0.4)} className="space-y-8 my-auto">
+              {[
+                { label: "Plan", value: "Royal Charter" },
+                { label: "Member since", value: "Jan 2024" },
+                { label: "Adventures", value: "12" },
+              ].map((item) => (
+                <div key={item.label}>
+                  <p className="label-text !text-white/25 mb-1">{item.label}</p>
+                  <p className="font-editorial text-lg text-white/70">{item.value}</p>
                 </div>
-              </motion.div>
-            ))}
+              ))}
+            </motion.div>
+
+            <motion.div {...fade(0.5)}>
+              <p className="font-editorial text-sm text-white/30 group-hover:text-white/60 transition-colors duration-700">
+                Manage your account →
+              </p>
+            </motion.div>
           </div>
-        </div>
+        </Link>
       </section>
 
       {/* ════════════════════════════════════════════ */}
-      {/* GALLERY — Full-bleed magazine grid            */}
+      {/* GALLERY TEASER — Asymmetric masonry           */}
       {/* ════════════════════════════════════════════ */}
       <section className="section-dark py-24 lg:py-32">
         <div className="max-w-6xl mx-auto px-8">
           <motion.div {...fade()} className="mb-16">
-            <p className="label-text mb-8">Keepsakes</p>
+            <p className="label-text mb-8">Recent Keepsakes</p>
             <h2 className="font-display text-4xl sm:text-5xl text-white leading-[1.1]">
               Moments worth keeping.
             </h2>
@@ -461,11 +438,19 @@ const Index = () => {
               </motion.div>
             ))}
           </div>
+
+          <motion.div {...fade(0.3)} className="mt-12 text-center">
+            <Link to="/memories">
+              <span className="link-editorial font-editorial text-sm text-white/60 hover:text-white/80">
+                View all memories →
+              </span>
+            </Link>
+          </motion.div>
         </div>
       </section>
 
       {/* ════════════════════════════════════════════ */}
-      {/* COLOPHON — Minimal                           */}
+      {/* COLOPHON                                     */}
       {/* ════════════════════════════════════════════ */}
       <footer className="max-w-5xl mx-auto px-8 py-20">
         <div className="divider mb-12" />

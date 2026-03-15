@@ -32,7 +32,7 @@ interface PartyMember {
   age: string;
   heightInches: string;
   relationship: string;
-  magicStatus: string;
+  magicStatuses: string[];
   firstTimer: boolean;
 }
 
@@ -54,6 +54,12 @@ interface WizardData {
   charactersPref: string;
   showsPref: string;
   paradesPref: string;
+  // Page 3 — Park Services
+  needsDAS: boolean;
+  willUseSingleRider: boolean;
+  willPurchaseLL: boolean;
+  willPurchaseILL: boolean;
+  willUseChildExchange: boolean;
   // Page 4 — Foodie
   allergies: string[];
   diningStyle: string | null;
@@ -165,6 +171,11 @@ const TripWizard = ({ open, onClose }: TripWizardProps) => {
     charactersPref: "Like-to-Do",
     showsPref: "Like-to-Do",
     paradesPref: "Will Avoid",
+    needsDAS: false,
+    willUseSingleRider: false,
+    willPurchaseLL: false,
+    willPurchaseILL: false,
+    willUseChildExchange: false,
     allergies: [],
     diningStyle: null,
     snackHabits: null,
@@ -201,7 +212,7 @@ const TripWizard = ({ open, onClose }: TripWizardProps) => {
       age: "",
       heightInches: "",
       relationship: "Self",
-      magicStatus: "Regular",
+      magicStatuses: ["Regular"],
       firstTimer: false,
     }]);
   };
@@ -414,10 +425,32 @@ const TripWizard = ({ open, onClose }: TripWizardProps) => {
                                 </select>
                               </div>
                               <div>
-                                <Label>Magic Status</Label>
-                                <select value={member.magicStatus} onChange={(e) => updateMember(member.id, "magicStatus", e.target.value)} style={{ ...inputStyle, appearance: "none" as const, cursor: "pointer" }} {...focusHandlers}>
-                                  {magicStatusOptions.map((s) => <option key={s} value={s}>{s}</option>)}
-                                </select>
+                                <Label>Magic Status (select all that apply)</Label>
+                                <div className="flex flex-wrap gap-2">
+                                  {magicStatusOptions.map((s) => {
+                                    const active = member.magicStatuses.includes(s);
+                                    return (
+                                      <button
+                                        key={s}
+                                        onClick={() => {
+                                          const updated = active
+                                            ? member.magicStatuses.filter((ms) => ms !== s)
+                                            : [...member.magicStatuses, s];
+                                          set("partyMembers", data.partyMembers.map((m) => m.id === member.id ? { ...m, magicStatuses: updated.length ? updated : ["Regular"] } : m));
+                                        }}
+                                        className="px-3 py-1.5 text-xs transition-all duration-300"
+                                        style={{
+                                          fontFamily: brand.font.body,
+                                          background: active ? brand.lapis : "transparent",
+                                          color: active ? brand.cream : brand.slate,
+                                          border: `1px solid ${active ? brand.lapis : brand.border}`,
+                                        }}
+                                      >
+                                        {s}
+                                      </button>
+                                    );
+                                  })}
+                                </div>
                               </div>
                             </div>
                             <div className="flex items-center gap-3 pt-1">
@@ -454,7 +487,15 @@ const TripWizard = ({ open, onClose }: TripWizardProps) => {
                   {currentStep === 2 && (
                     <div className="max-w-lg mx-auto space-y-10">
                       <div>
-                        <Label>Adventure Persona</Label>
+                        <div className="flex items-center gap-2 mb-1">
+                          <Label>Adventure Persona</Label>
+                          <span className="px-2 py-0.5 text-[0.6rem] uppercase tracking-widest" style={{ fontFamily: brand.font.body, color: brand.thistle, border: `1px solid ${brand.thistle}40`, background: `${brand.thistle}10` }}>
+                            KEEP?
+                          </span>
+                        </div>
+                        <p className="text-xs mb-3" style={{ fontFamily: brand.font.body, color: brand.slate, fontStyle: "italic" }}>
+                          This may overlap with Daily Ambition from Page 1. Under review.
+                        </p>
                         <div className="space-y-2">
                           {personaOptions.map((p) => (
                             <SelectCard key={p.id} selected={data.adventurePersona === p.id} onClick={() => set("adventurePersona", p.id)} label={p.label} desc={p.desc} />
@@ -516,6 +557,87 @@ const TripWizard = ({ open, onClose }: TripWizardProps) => {
                               {tag}
                             </span>
                           ))}
+                        </div>
+                      </div>
+
+                      {/* ─── Park Services & Accommodations ─── */}
+                      <div>
+                        <Label>Park Services & Accommodations</Label>
+                        <p className="text-xs mb-4" style={{ fontFamily: brand.font.body, color: brand.slate }}>
+                          Select the services your party may use. Costs noted below are <strong>not included</strong> in Castle Companion.
+                        </p>
+                        <div className="space-y-3">
+                          {([
+                            {
+                              key: "needsDAS" as const,
+                              label: "Disability Access Service (DAS)",
+                              desc: "For guests who cannot wait in a conventional queue due to a developmental disability. DAS lets you register for a return time so you can wait somewhere comfortable. Free of charge — requires registration through Disney.",
+                              cost: null,
+                            },
+                            {
+                              key: "willUseSingleRider" as const,
+                              label: "Single Rider Lines",
+                              desc: "Skip the standby queue by filling empty seats on select rides. You'll ride alone (not with your group). Great way to re-ride favorites. No extra cost.",
+                              cost: null,
+                            },
+                            {
+                              key: "willPurchaseLL" as const,
+                              label: "Lightning Lane Multi Pass",
+                              desc: "Purchase access to shorter lines across multiple attractions. You book return windows throughout the day. Available for most rides.",
+                              cost: "~$15–$35/person/day depending on date and park",
+                            },
+                            {
+                              key: "willPurchaseILL" as const,
+                              label: "Individual Lightning Lane",
+                              desc: "Pay per ride for the most popular attractions (e.g., Tron, Guardians). Each ride is purchased separately with a specific return time.",
+                              cost: "~$10–$25/person/ride depending on demand",
+                            },
+                            {
+                              key: "willUseChildExchange" as const,
+                              label: "Rider Switch (Child Swap)",
+                              desc: "When a child is too small or a guest can't ride, one adult waits with them while the other rides. Then they swap — the second adult gets to skip the line. Free of charge.",
+                              cost: null,
+                            },
+                          ]).map((service) => {
+                            const active = data[service.key];
+                            return (
+                              <button
+                                key={service.key}
+                                onClick={() => set(service.key, !active)}
+                                className="w-full text-left p-5 transition-all duration-500"
+                                style={{
+                                  background: active ? brand.white : "transparent",
+                                  border: `1px solid ${active ? brand.gold : brand.border}`,
+                                  boxShadow: active ? brand.shadow : "none",
+                                }}
+                              >
+                                <div className="flex items-start gap-3">
+                                  <div
+                                    className="w-5 h-5 mt-0.5 shrink-0 flex items-center justify-center transition-all"
+                                    style={{
+                                      border: `1px solid ${active ? brand.gold : brand.border}`,
+                                      background: active ? brand.gold : "transparent",
+                                    }}
+                                  >
+                                    {active && <span style={{ color: brand.white, fontSize: "0.7rem", lineHeight: 1 }}>✓</span>}
+                                  </div>
+                                  <div>
+                                    <p style={{ fontFamily: brand.font.display, fontWeight: 500, color: brand.lapis, fontSize: "0.9375rem", marginBottom: "0.25rem" }}>
+                                      {service.label}
+                                    </p>
+                                    <p style={{ fontFamily: brand.font.body, color: brand.slate, fontSize: "0.75rem", lineHeight: "1.5" }}>
+                                      {service.desc}
+                                    </p>
+                                    {service.cost && (
+                                      <p className="mt-1.5 flex items-center gap-1" style={{ fontFamily: brand.font.body, fontSize: "0.6875rem", color: brand.goldDark, fontWeight: 500 }}>
+                                        💰 {service.cost}
+                                      </p>
+                                    )}
+                                  </div>
+                                </div>
+                              </button>
+                            );
+                          })}
                         </div>
                       </div>
                     </div>

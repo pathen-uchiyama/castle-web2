@@ -341,10 +341,9 @@ const Index = () => {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 1.2 }}
-          className="mt-24 pt-8 border-t border-slate-plaid/10 text-center"
+          className="mt-24 pt-8 border-t border-slate-plaid/15"
         >
-          <div className="flex items-center justify-center gap-3 mb-3">
-            <div className="h-px w-8 bg-gold/20" />
+          <div className="flex items-center gap-3 mb-3">
             <span className="gold-leaf" />
             <div className="h-px w-8 bg-gold/20" />
           </div>

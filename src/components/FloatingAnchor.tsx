@@ -62,6 +62,18 @@ const FloatingAnchor = ({ waiting = false }: FloatingAnchorProps) => {
           />
         </svg>
       </div>
+
+      {/* Waiting label */}
+      {waiting && (
+        <motion.span
+          initial={{ opacity: 0, x: 10 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ delay: 1.5, duration: 0.6 }}
+          className="absolute right-full mr-3 whitespace-nowrap label-text text-[0.6rem] !text-muted-foreground/60"
+        >
+          Waiting for a plan
+        </motion.span>
+      )}
     </motion.button>
   );
 };

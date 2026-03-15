@@ -68,9 +68,9 @@ const Index = ({
   return (
     <div className="min-h-screen bg-background overflow-x-hidden">
 
-      {/* ═══ HERO ═══ */}
-      <header className="relative h-screen flex items-end overflow-hidden">
-        <motion.div initial={{ scale: 1.1 }} animate={{ scale: 1 }} transition={{ duration: 2.5, ease }} className="absolute inset-0">
+      {/* ═══ HERO — Fixed behind, content scrolls over ═══ */}
+      <header className="fixed inset-0 h-screen flex items-end overflow-hidden z-0">
+        <motion.div initial={{ scale: 1.15 }} animate={{ scale: 1 }} transition={{ duration: 3, ease }} className="absolute inset-0">
           <img src={castleHero} alt="Castle at dusk" className="w-full h-full object-cover" />
         </motion.div>
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-black/10" />
@@ -91,6 +91,12 @@ const Index = ({
           <motion.div animate={{ y: [0, 8, 0] }} transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }} className="w-px h-10 bg-white/25" />
         </motion.div>
       </header>
+
+      {/* Spacer to push content below the fixed hero */}
+      <div className="h-screen" />
+
+      {/* ═══ Content that scrolls over the hero ═══ */}
+      <div className="relative z-10">
 
       {/* ═══ YOUR ADVENTURE — Unified trip + timeline ═══ */}
       <section className="relative overflow-hidden">

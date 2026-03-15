@@ -115,6 +115,9 @@ export const mockData: AppData = {
         { label: "Festivals", description: "Flower & Garden, Food & Wine, Arts, Holidays", itemCount: 4 },
       ],
       heroImage: editorialDining,
+      todayWeather: "80°F, Partly Cloudy",
+      todayCrowdLevel: "Low",
+      operatingHours: "9:00 AM – 9:00 PM",
     },
     {
       parkId: "dl",

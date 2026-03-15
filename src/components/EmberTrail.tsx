@@ -32,7 +32,7 @@ const EmberTrail = () => {
       x: number; y: number; size: number;
       phase: number; speed: number; hue: number; maxAlpha: number;
     }
-    const ambientCount = 45;
+    const ambientCount = 25;
     const ambients: AmbientEmber[] = Array.from({ length: ambientCount }, () => ({
       x: Math.random(),
       y: Math.random(),

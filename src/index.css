@@ -41,6 +41,8 @@
     --warm: 35 20% 95%;
     --ink: 0 0% 8%;
     --ink-light: 0 0% 45%;
+    --shadow-soft: 0 8px 32px -4px hsla(263, 24%, 40%, 0.07);
+    --shadow-hover: 0 12px 40px -4px hsla(263, 24%, 40%, 0.12);
 
     --sidebar-background: 0 0% 100%;
     --sidebar-foreground: 0 0% 8%;

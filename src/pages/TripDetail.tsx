@@ -383,6 +383,7 @@ const BookedTripDetail = ({ trip }: { trip: BookedTrip }) => {
   };
 
 
+  const consensusData = useMemo(() => {
     const completed = partySurvey.responses.filter((r) => r.status === "completed");
     if (completed.length === 0) return [];
     return partySurvey.attractions.map((attraction) => {

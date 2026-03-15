@@ -49,7 +49,7 @@ const Circle = ({ partyMembers }: CircleProps) => {
         </div>
       </section>
 
-      <section className="max-w-4xl mx-auto px-8 py-24 lg:py-32">
+      <section className="max-w-4xl mx-auto px-4 sm:px-8 py-16 sm:py-24 lg:py-32">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-16 gap-y-16">
           {partyMembers.map((member, i) => (
             <motion.div

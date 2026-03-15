@@ -105,10 +105,10 @@ const EmberTrail = () => {
         }
       }
 
-      // Trail embers
+      // Trail embers — two pixies playing
       if (trailEmbers.length < maxTrail) {
-        spawnTrail(w, h);
-        if (Math.random() > 0.4) spawnTrail(w, h);
+        spawnAt(fairy1X(time, w), fairy1Y(time, h), 35);
+        if (Math.random() > 0.5) spawnAt(fairy2X(time, w), fairy2Y(time, h), 28);
       }
 
       for (let i = trailEmbers.length - 1; i >= 0; i--) {

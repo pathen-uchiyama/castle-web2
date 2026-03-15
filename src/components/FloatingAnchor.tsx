@@ -1,6 +1,10 @@
 import { motion } from "framer-motion";
 
-const FloatingAnchor = () => {
+interface FloatingAnchorProps {
+  waiting?: boolean;
+}
+
+const FloatingAnchor = ({ waiting = false }: FloatingAnchorProps) => {
   return (
     <motion.button
       initial={{ scale: 0, opacity: 0 }}

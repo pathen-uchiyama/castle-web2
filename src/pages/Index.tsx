@@ -270,27 +270,27 @@ const Index = ({
                       alt={park.parkName}
                       className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent" />
                     <div className="absolute bottom-0 left-0 right-0 p-6">
-                      <p className="label-text !text-white/40 mb-2 tracking-[0.2em]">{park.resortName}</p>
+                      <p className="label-text !text-white/60 mb-2 tracking-[0.2em]">{park.resortName}</p>
                       <h3 className="font-display text-2xl text-white mb-4 group-hover:text-[hsl(var(--gold-light))] transition-colors duration-500">{park.parkName}</h3>
                       <div className="space-y-2 mb-4">
                         <div className="flex justify-between items-center">
-                          <p className="label-text !text-white/30">Weather</p>
-                          <p className="font-editorial text-sm text-white/70">{park.todayWeather}</p>
+                          <p className="label-text !text-white/50">Weather</p>
+                          <p className="font-editorial text-sm text-white/90">{park.todayWeather}</p>
                         </div>
                         <div className="flex justify-between items-center">
-                          <p className="label-text !text-white/30">Crowds</p>
-                          <p className="font-editorial text-sm text-white/70">{park.todayCrowdLevel}</p>
+                          <p className="label-text !text-white/50">Crowds</p>
+                          <p className="font-editorial text-sm text-white/90">{park.todayCrowdLevel}</p>
                         </div>
                         <div className="flex justify-between items-center">
-                          <p className="label-text !text-white/30">Hours</p>
-                          <p className="font-editorial text-sm text-white/70">{park.operatingHours}</p>
+                          <p className="label-text !text-white/50">Hours</p>
+                          <p className="font-editorial text-sm text-white/90">{park.operatingHours}</p>
                         </div>
                       </div>
                       <div className="flex gap-3 flex-wrap">
                         {park.categories.slice(0, 3).map((c) => (
-                          <span key={c.label} className="label-text !text-white/20 text-[0.6rem]">{c.label} · {c.itemCount}</span>
+                          <span key={c.label} className="label-text !text-white/40 text-[0.6rem]">{c.label} · {c.itemCount}</span>
                         ))}
                       </div>
                     </div>

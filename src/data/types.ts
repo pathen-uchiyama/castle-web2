@@ -137,6 +137,7 @@ export interface BookedTrip {
   preparations: PreparationItem[];
   packingLists: PackingItem[];
   diningReservations: DiningReservation[];
+  bookedExperiences: BookedExperience[];
 }
 
 export interface FutureTrip {

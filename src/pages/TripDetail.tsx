@@ -783,10 +783,10 @@ const BookedTripDetail = ({ trip }: { trip: BookedTrip }) => {
             <>
               <motion.div {...fade(0.1)} className="grid grid-cols-2 sm:grid-cols-4 gap-6 mb-16">
                 {[
-                  { label: "Experiences", value: String(bookedExperiences.length) },
-                  { label: "Confirmed", value: String(bookedExperiences.filter(e => e.status === "confirmed").length) },
-                  { label: "Pending", value: String(bookedExperiences.filter(e => e.status === "pending").length) },
-                  { label: "Unique Days", value: String(new Set(bookedExperiences.map(e => e.date)).size) },
+                  { label: "Experiences", value: String(allBookedExperiences.length) },
+                  { label: "Confirmed", value: String(allBookedExperiences.filter(e => e.status === "confirmed").length) },
+                  { label: "Pending", value: String(allBookedExperiences.filter(e => e.status === "pending").length) },
+                  { label: "Unique Days", value: String(new Set(allBookedExperiences.map(e => e.date)).size) },
                 ].map((stat) => (
                   <div key={stat.label} className="border border-border bg-card p-5 shadow-[var(--shadow-soft)]"><p className="label-text mb-2">{stat.label}</p><p className="font-display text-3xl text-foreground">{stat.value}</p></div>
                 ))}

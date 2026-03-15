@@ -308,7 +308,7 @@ const Index = ({
         <div className="relative overflow-hidden rounded-2xl">
           <Link to="/adventure" className="group block">
             <div className="relative h-[500px] overflow-hidden">
-              <ParallaxImage src={futureTrips[0]?.heroImage || editorialJournal} alt="Plan your next trip" className="absolute inset-0 h-full" />
+              <ParallaxImage src={editorialCalendar} alt="Plan your next trip" className="absolute inset-0 h-full" />
               <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-black/10 group-hover:from-black/70 transition-all duration-700" />
               <div className="absolute bottom-0 left-0 right-0 px-6 sm:px-8 lg:px-12 pb-10 sm:pb-12">
                 <motion.div {...fade(0.1)}>

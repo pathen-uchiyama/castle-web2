@@ -26,6 +26,7 @@ interface AdventureProps {
 }
 
 const Adventure = ({ bookedTrip }: AdventureProps) => {
+  const [wizardOpen, setWizardOpen] = useState(false);
   const { destination, tripName, countdownDays, todaysPark, timeReclaimed, ridesSaved, travelLegs, preparations, packingLists } = bookedTrip;
 
   return (

@@ -66,6 +66,25 @@ const Index = ({
   partyMembers, tripMemories, account,
 }: IndexProps) => {
   const timelineRef = useRef<HTMLDivElement>(null);
+  const parkScrollRef = useRef<HTMLDivElement>(null);
+  const [activeParkIdx, setActiveParkIdx] = useState(0);
+
+  const handleParkScroll = useCallback(() => {
+    const el = parkScrollRef.current;
+    if (!el) return;
+    const card = el.querySelector('div') as HTMLElement | null;
+    const cardWidth = card?.offsetWidth || 340;
+    const gap = 24;
+    const idx = Math.round(el.scrollLeft / (cardWidth + gap));
+    setActiveParkIdx(Math.min(idx, parkGuides.length - 1));
+  }, [parkGuides.length]);
+
+  useEffect(() => {
+    const el = parkScrollRef.current;
+    if (!el) return;
+    el.addEventListener('scroll', handleParkScroll, { passive: true });
+    return () => el.removeEventListener('scroll', handleParkScroll);
+  }, [handleParkScroll]);
 
   return (
     <div className="min-h-screen bg-background overflow-x-hidden">

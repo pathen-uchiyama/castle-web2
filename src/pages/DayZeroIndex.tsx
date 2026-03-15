@@ -36,7 +36,7 @@ const DayZeroIndex = () => {
   const [wizardOpen, setWizardOpen] = useState(false);
 
   return (
-    <div className="min-h-screen bg-[hsl(35,20%,95%)] overflow-x-hidden">
+    <div className="min-h-screen overflow-x-hidden" style={{ background: "hsl(30, 33%, 96%)" }}>
 
       {/* ═══ HERO — "The Blank Page" ═══ */}
       <header className="relative z-10 min-h-screen flex flex-col items-center justify-center px-4 sm:px-8">
@@ -51,27 +51,45 @@ const DayZeroIndex = () => {
             animate={{ opacity: 1 }}
             transition={{ duration: 1, delay: 0.2 }}
             className="label-text mb-8 tracking-[0.35em]"
+            style={{ color: "hsl(222, 20%, 45%)" }}
           >
             Castle Companion
           </motion.p>
 
-          <h1 className="font-display text-5xl sm:text-7xl md:text-8xl lg:text-[7rem] text-foreground leading-[0.95] mb-8">
+          <h1
+            className="leading-[0.95] mb-8"
+            style={{
+              fontFamily: "'Playfair Display', Georgia, serif",
+              fontWeight: 400,
+              letterSpacing: "-0.02em",
+              color: "hsl(222, 47%, 21%)",
+              fontSize: "clamp(3rem, 8vw, 7rem)",
+            }}
+          >
             Your Story<br />
-            <em className="italic" style={{ fontWeight: 300 }}>Awaits.</em>
+            <em style={{ fontWeight: 400, fontStyle: "italic" }}>Awaits.</em>
           </h1>
 
           <motion.div
             initial={{ scaleX: 0 }}
             animate={{ scaleX: 1 }}
             transition={{ duration: 1, delay: 1.2, ease }}
-            className="mx-auto w-12 h-px bg-[hsl(var(--gold))] origin-center mb-8"
+            className="mx-auto w-12 h-px origin-center mb-8"
+            style={{ background: "hsl(43, 69%, 52%)" }}
           />
 
-          <p className="font-editorial text-base sm:text-lg text-muted-foreground max-w-lg mx-auto leading-relaxed mb-16">
+          <p
+            className="text-base sm:text-lg max-w-lg mx-auto leading-relaxed mb-16"
+            style={{
+              fontFamily: "Inter, system-ui, sans-serif",
+              fontWeight: 400,
+              color: "hsl(222, 20%, 45%)",
+            }}
+          >
             Logic over luck begins with a single step. Let us architect your perfect park day.
           </p>
 
-          {/* ═══ PRIMARY CTA ═══ */}
+          {/* ═══ PRIMARY CTA — "Sovereign" Button ═══ */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -79,19 +97,24 @@ const DayZeroIndex = () => {
           >
             <button
               onClick={() => setWizardOpen(true)}
-              className="group relative inline-flex items-center justify-center px-10 py-4 text-sm tracking-[0.15em] uppercase transition-all duration-500 focus:outline-none focus:ring-2 focus:ring-[hsl(263,24%,36%)] focus:ring-offset-2 focus:ring-offset-[hsl(35,20%,95%)]"
+              className="group relative inline-flex items-center justify-center px-10 py-4 text-sm tracking-[0.15em] uppercase transition-all duration-500 focus:outline-none focus:ring-2 focus:ring-offset-2"
               style={{
-                background: "hsl(263, 24%, 36%)",
-                color: "hsl(0, 0%, 100%)",
-                boxShadow: "0 8px 32px -4px hsla(263, 24%, 36%, 0.3), 0 2px 8px -2px hsla(263, 24%, 36%, 0.2)",
-              }}
+                background: "hsl(222, 47%, 21%)",
+                color: "hsl(30, 33%, 96%)",
+                border: "1px solid hsl(43, 65%, 42%)",
+                boxShadow: "0 8px 32px -4px hsla(222, 47%, 21%, 0.25), 0 2px 8px -2px hsla(222, 47%, 21%, 0.15)",
+                // Focus ring color via CSS custom property
+                // @ts-ignore
+                "--tw-ring-color": "hsl(280, 30%, 55%)",
+                "--tw-ring-offset-color": "hsl(30, 33%, 96%)",
+              } as React.CSSProperties}
             >
-              <span className="relative z-10 font-medium">Initialize Your First Journey</span>
+              <span className="relative z-10 font-medium" style={{ fontFamily: "Inter, system-ui, sans-serif" }}>
+                Initialize Your First Journey
+              </span>
               <div
                 className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
-                style={{
-                  background: "hsl(263, 24%, 30%)",
-                }}
+                style={{ background: "hsl(222, 47%, 16%)" }}
               />
             </button>
           </motion.div>
@@ -99,11 +122,23 @@ const DayZeroIndex = () => {
       </header>
 
       {/* ═══ WHIMSICAL TEASERS — Locked editorial cards ═══ */}
-      <section className="relative z-10 py-20 sm:py-28 lg:py-36 bg-[hsl(35,20%,95%)]">
+      <section className="relative z-10 py-20 sm:py-28 lg:py-36" style={{ background: "hsl(30, 33%, 96%)" }}>
         <div className="max-w-5xl mx-auto px-4 sm:px-8">
           <motion.div {...fade()} className="text-center mb-16 sm:mb-20">
-            <p className="label-text mb-4 tracking-[0.3em]">What Awaits</p>
-            <p className="font-editorial text-sm text-muted-foreground max-w-md mx-auto">
+            <p
+              className="label-text mb-4 tracking-[0.3em]"
+              style={{ color: "hsl(222, 20%, 45%)" }}
+            >
+              What Awaits
+            </p>
+            <p
+              className="text-sm max-w-md mx-auto"
+              style={{
+                fontFamily: "Inter, system-ui, sans-serif",
+                fontWeight: 400,
+                color: "hsl(222, 20%, 45%)",
+              }}
+            >
               Your itinerary is currently a blank scroll. Begin your journey to unlock these chapters.
             </p>
           </motion.div>
@@ -119,28 +154,52 @@ const DayZeroIndex = () => {
                 className="relative"
               >
                 <div
-                  className="relative p-8 sm:p-10 opacity-60 hover:opacity-75 transition-opacity duration-700 border border-border"
+                  className="relative p-8 sm:p-10 opacity-60 hover:opacity-75 transition-opacity duration-700"
                   style={{
                     background: "hsl(0, 0%, 100%)",
-                    boxShadow: "var(--shadow-soft)",
+                    border: "1px solid hsl(0, 0%, 90%)",
+                    boxShadow: "0 8px 32px -4px hsla(222, 47%, 21%, 0.06)",
                   }}
                 >
                   {/* Lock badge */}
                   <div className="absolute top-5 right-5 flex items-center gap-1.5">
-                    <Lock
-                      size={11}
-                      className="text-muted-foreground/40"
-                    />
-                    <span className="label-text text-[0.55rem] !text-muted-foreground/40">Locked</span>
+                    <Lock size={11} style={{ color: "hsl(222, 20%, 45%, 0.4)" }} />
+                    <span
+                      className="uppercase tracking-[0.2em]"
+                      style={{
+                        fontFamily: "Inter, system-ui, sans-serif",
+                        fontSize: "0.55rem",
+                        color: "hsl(222, 20%, 45%, 0.4)",
+                      }}
+                    >
+                      Locked
+                    </span>
                   </div>
 
                   <span className="text-2xl mb-6 block opacity-40">{card.icon}</span>
 
-                  <p className="label-text mb-3 tracking-[0.2em] !text-foreground/70">{card.label}</p>
+                  <p
+                    className="mb-3 uppercase tracking-[0.2em]"
+                    style={{
+                      fontFamily: "Inter, system-ui, sans-serif",
+                      fontSize: "0.6875rem",
+                      fontWeight: 400,
+                      color: "hsl(222, 47%, 21%, 0.7)",
+                    }}
+                  >
+                    {card.label}
+                  </p>
 
-                  <div className="gold-rule mb-4" />
+                  <div className="w-12 h-px mb-4" style={{ background: "hsl(43, 69%, 52%)" }} />
 
-                  <p className="font-editorial text-sm text-muted-foreground leading-relaxed">
+                  <p
+                    className="text-sm leading-relaxed"
+                    style={{
+                      fontFamily: "Inter, system-ui, sans-serif",
+                      fontWeight: 400,
+                      color: "hsl(222, 20%, 45%)",
+                    }}
+                  >
                     {card.description}
                   </p>
                 </div>

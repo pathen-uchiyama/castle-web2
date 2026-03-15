@@ -76,15 +76,19 @@ const TripWizard = ({ open, onClose }: TripWizardProps) => {
           exit={{ opacity: 0 }}
           transition={{ duration: 0.5 }}
           className="fixed inset-0 z-[100] flex items-center justify-center"
-          style={{ background: "hsl(35, 20%, 95%)" }}
+          style={{ background: "hsl(30, 33%, 96%)" }}
         >
           {/* Close */}
           <button
             onClick={onClose}
-            className="absolute top-6 right-6 z-10 p-2 hover:opacity-60 transition-opacity"
+            className="absolute top-6 right-6 z-10 p-2 hover:opacity-60 transition-opacity focus:outline-none focus:ring-2"
             aria-label="Close wizard"
+            style={{
+              // @ts-ignore
+              "--tw-ring-color": "hsl(280, 30%, 55%)",
+            } as React.CSSProperties}
           >
-            <X size={20} className="text-foreground/50" />
+            <X size={20} style={{ color: "hsl(222, 20%, 45%)" }} />
           </button>
 
           {/* Progress indicator */}
@@ -95,7 +99,7 @@ const TripWizard = ({ open, onClose }: TripWizardProps) => {
                 className="h-1 w-8 transition-all duration-700"
                 style={{
                   background: i <= currentStep
-                    ? "hsl(42, 64%, 35%)"
+                    ? "hsl(43, 69%, 52%)"
                     : "hsl(0, 0%, 90%)",
                 }}
               />
@@ -113,17 +117,41 @@ const TripWizard = ({ open, onClose }: TripWizardProps) => {
                 className="text-center"
               >
                 {/* Step label */}
-                <p className="label-text mb-6 tracking-[0.3em]">
+                <p
+                  className="mb-6 uppercase tracking-[0.3em]"
+                  style={{
+                    fontFamily: "Inter, system-ui, sans-serif",
+                    fontSize: "0.6875rem",
+                    fontWeight: 400,
+                    color: "hsl(222, 20%, 45%)",
+                  }}
+                >
                   Step {currentStep + 1} of {steps.length}
                 </p>
 
-                <h2 className="font-display text-3xl sm:text-4xl lg:text-5xl text-foreground leading-[1.08] mb-4">
+                <h2
+                  className="leading-[1.08] mb-4"
+                  style={{
+                    fontFamily: "'Playfair Display', Georgia, serif",
+                    fontWeight: 400,
+                    letterSpacing: "-0.02em",
+                    color: "hsl(222, 47%, 21%)",
+                    fontSize: "clamp(1.875rem, 5vw, 3rem)",
+                  }}
+                >
                   {step.title}
                 </h2>
 
-                <div className="gold-rule mx-auto mb-4" />
+                <div className="w-12 h-px mx-auto mb-4" style={{ background: "hsl(43, 69%, 52%)" }} />
 
-                <p className="font-editorial text-sm text-muted-foreground mb-12 max-w-md mx-auto">
+                <p
+                  className="text-sm mb-12 max-w-md mx-auto"
+                  style={{
+                    fontFamily: "Inter, system-ui, sans-serif",
+                    fontWeight: 400,
+                    color: "hsl(222, 20%, 45%)",
+                  }}
+                >
                   {step.subtitle}
                 </p>
 
@@ -134,21 +162,42 @@ const TripWizard = ({ open, onClose }: TripWizardProps) => {
                       <button
                         key={d.id}
                         onClick={() => setSelectedDestination(d.id)}
-                        className="text-left p-6 border transition-all duration-500"
+                        className="text-left p-6 transition-all duration-500 focus:outline-none focus:ring-2"
                         style={{
                           background: selectedDestination === d.id
                             ? "hsl(0, 0%, 100%)"
                             : "transparent",
-                          borderColor: selectedDestination === d.id
-                            ? "hsl(42, 64%, 35%)"
-                            : "hsl(0, 0%, 90%)",
+                          border: `1px solid ${
+                            selectedDestination === d.id
+                              ? "hsl(43, 69%, 52%)"
+                              : "hsl(0, 0%, 90%)"
+                          }`,
                           boxShadow: selectedDestination === d.id
-                            ? "0 8px 32px -4px hsla(263, 24%, 40%, 0.07)"
+                            ? "0 8px 32px -4px hsla(222, 47%, 21%, 0.07)"
                             : "none",
-                        }}
+                          // @ts-ignore
+                          "--tw-ring-color": "hsl(280, 30%, 55%)",
+                        } as React.CSSProperties}
                       >
-                        <p className="font-display text-lg text-foreground mb-1">{d.label}</p>
-                        <p className="font-editorial text-xs text-muted-foreground">{d.description}</p>
+                        <p
+                          className="text-lg mb-1"
+                          style={{
+                            fontFamily: "'Playfair Display', Georgia, serif",
+                            fontWeight: 500,
+                            color: "hsl(222, 47%, 21%)",
+                          }}
+                        >
+                          {d.label}
+                        </p>
+                        <p
+                          className="text-xs"
+                          style={{
+                            fontFamily: "Inter, system-ui, sans-serif",
+                            color: "hsl(222, 20%, 45%)",
+                          }}
+                        >
+                          {d.description}
+                        </p>
                       </button>
                     ))}
                   </div>
@@ -161,7 +210,15 @@ const TripWizard = ({ open, onClose }: TripWizardProps) => {
                       value={dateRange}
                       onChange={(e) => setDateRange(e.target.value)}
                       placeholder="e.g. March 20 – March 26, 2026"
-                      className="w-full px-5 py-4 bg-card border border-border text-foreground font-editorial text-sm placeholder:text-muted-foreground/50 focus:outline-none focus:border-[hsl(var(--gold))] transition-colors"
+                      className="w-full px-5 py-4 text-sm focus:outline-none transition-colors"
+                      style={{
+                        fontFamily: "Inter, system-ui, sans-serif",
+                        background: "hsl(0, 0%, 100%)",
+                        border: "1px solid hsl(0, 0%, 90%)",
+                        color: "hsl(222, 47%, 21%)",
+                      }}
+                      onFocus={(e) => e.target.style.borderColor = "hsl(43, 69%, 52%)"}
+                      onBlur={(e) => e.target.style.borderColor = "hsl(0, 0%, 90%)"}
                     />
                   </div>
                 )}
@@ -173,7 +230,15 @@ const TripWizard = ({ open, onClose }: TripWizardProps) => {
                       value={partySize}
                       onChange={(e) => setPartySize(e.target.value)}
                       placeholder="e.g. 2 adults, 2 children (ages 5, 8)"
-                      className="w-full px-5 py-4 bg-card border border-border text-foreground font-editorial text-sm placeholder:text-muted-foreground/50 focus:outline-none focus:border-[hsl(var(--gold))] transition-colors"
+                      className="w-full px-5 py-4 text-sm focus:outline-none transition-colors"
+                      style={{
+                        fontFamily: "Inter, system-ui, sans-serif",
+                        background: "hsl(0, 0%, 100%)",
+                        border: "1px solid hsl(0, 0%, 90%)",
+                        color: "hsl(222, 47%, 21%)",
+                      }}
+                      onFocus={(e) => e.target.style.borderColor = "hsl(43, 69%, 52%)"}
+                      onBlur={(e) => e.target.style.borderColor = "hsl(0, 0%, 90%)"}
                     />
                   </div>
                 )}
@@ -185,7 +250,15 @@ const TripWizard = ({ open, onClose }: TripWizardProps) => {
                       onChange={(e) => setPreferences(e.target.value)}
                       placeholder="Tell us about your ideal day — pace, must-do experiences, special celebrations..."
                       rows={4}
-                      className="w-full px-5 py-4 bg-card border border-border text-foreground font-editorial text-sm placeholder:text-muted-foreground/50 focus:outline-none focus:border-[hsl(var(--gold))] transition-colors resize-none"
+                      className="w-full px-5 py-4 text-sm focus:outline-none transition-colors resize-none"
+                      style={{
+                        fontFamily: "Inter, system-ui, sans-serif",
+                        background: "hsl(0, 0%, 100%)",
+                        border: "1px solid hsl(0, 0%, 90%)",
+                        color: "hsl(222, 47%, 21%)",
+                      }}
+                      onFocus={(e) => e.target.style.borderColor = "hsl(43, 69%, 52%)"}
+                      onBlur={(e) => e.target.style.borderColor = "hsl(0, 0%, 90%)"}
                     />
                   </div>
                 )}
@@ -202,7 +275,12 @@ const TripWizard = ({ open, onClose }: TripWizardProps) => {
               <button
                 onClick={handleBack}
                 disabled={isFirst}
-                className="flex items-center gap-1.5 label-text transition-opacity duration-300 disabled:opacity-0"
+                className="flex items-center gap-1.5 uppercase tracking-[0.2em] transition-opacity duration-300 disabled:opacity-0"
+                style={{
+                  fontFamily: "Inter, system-ui, sans-serif",
+                  fontSize: "0.6875rem",
+                  color: "hsl(222, 20%, 45%)",
+                }}
               >
                 <ChevronLeft size={14} />
                 Back
@@ -211,12 +289,16 @@ const TripWizard = ({ open, onClose }: TripWizardProps) => {
               <button
                 onClick={handleNext}
                 disabled={!canProceed()}
-                className="flex items-center gap-2 px-8 py-3 text-sm tracking-[0.12em] uppercase font-medium transition-all duration-500 disabled:opacity-30"
+                className="flex items-center gap-2 px-8 py-3 text-sm tracking-[0.12em] uppercase font-medium transition-all duration-500 disabled:opacity-30 focus:outline-none focus:ring-2"
                 style={{
-                  background: canProceed() ? "hsl(263, 24%, 36%)" : "hsl(0, 0%, 90%)",
-                  color: canProceed() ? "hsl(0, 0%, 100%)" : "hsl(0, 0%, 60%)",
-                  boxShadow: canProceed() ? "0 4px 16px -4px hsla(263, 24%, 36%, 0.3)" : "none",
-                }}
+                  fontFamily: "Inter, system-ui, sans-serif",
+                  background: canProceed() ? "hsl(222, 47%, 21%)" : "hsl(0, 0%, 90%)",
+                  color: canProceed() ? "hsl(30, 33%, 96%)" : "hsl(0, 0%, 60%)",
+                  border: canProceed() ? "1px solid hsl(43, 65%, 42%)" : "1px solid transparent",
+                  boxShadow: canProceed() ? "0 4px 16px -4px hsla(222, 47%, 21%, 0.25)" : "none",
+                  // @ts-ignore
+                  "--tw-ring-color": "hsl(280, 30%, 55%)",
+                } as React.CSSProperties}
               >
                 {isLast ? "Complete" : "Continue"}
                 {!isLast && <ChevronRight size={14} />}

@@ -1,4 +1,4 @@
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { useState, useMemo } from "react";
 import { Link, useParams, Navigate } from "react-router-dom";
 import Footer from "@/components/Footer";
@@ -7,8 +7,9 @@ import editorialPacking from "@/assets/editorial-packing.jpg";
 import editorialCalendar from "@/assets/editorial-calendar.jpg";
 import editorialDining from "@/assets/editorial-dining.jpg";
 import SparkleField from "@/components/SparkleField";
-import type { BookedTrip, FutureTrip, PackingItem, PreparationItem, ExperienceCategory, BookingDifficulty, CostTier } from "@/data/types";
+import type { BookedTrip, FutureTrip, PackingItem, PreparationItem, ExperienceCategory, BookingDifficulty, CostTier, DiningReservation, BookedExperience, DiningVenue, ExperienceVenue } from "@/data/types";
 import { mockData } from "@/data/mockData";
+import { toast } from "@/hooks/use-toast";
 
 const ease: [number, number, number, number] = [0.19, 1, 0.22, 1];
 const fade = (delay = 0) => ({

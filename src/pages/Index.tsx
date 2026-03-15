@@ -460,38 +460,122 @@ const Index = ({
         </div>
       </section>
 
-      {/* ═══ MEMORIES — Masonry gallery ═══ */}
+      {/* ═══ MEMORIES — Editorial magazine spread ═══ */}
       <section className="bg-[hsl(var(--warm))] py-16 sm:py-24 lg:py-32">
         <div className="max-w-6xl mx-auto px-4 sm:px-8">
-          <motion.div {...fade()} className="mb-10 sm:mb-16">
-            <p className="label-text mb-6 sm:mb-8">Memories</p>
+          <motion.div {...fade()} className="mb-16 sm:mb-24">
+            <p className="label-text mb-6 sm:mb-8">The Digital Gallery</p>
             <h2 className="font-display text-3xl sm:text-4xl lg:text-5xl text-foreground leading-[1.1]">
               Moments worth keeping. ✦
             </h2>
           </motion.div>
+        </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-6 gap-3 auto-rows-[220px] sm:auto-rows-[280px]">
-            {tripMemories.map((memory, i) => (
-              <Link key={memory.tripId} to={`/memories/${memory.tripId}`} className={`${memory.gridSpan} group cursor-pointer relative overflow-hidden rounded-2xl block`}>
-                <motion.div {...scaleIn(i * 0.08)} className="w-full h-full">
-                  <motion.img
-                    src={memory.coverImage}
-                    alt={memory.tripName}
-                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+        {/* Editorial spread — asymmetric, layered, breathing */}
+        <div className="max-w-6xl mx-auto px-4 sm:px-8 space-y-10 sm:space-y-16">
+
+          {/* Hero full-bleed — first memory anchors the chapter */}
+          {tripMemories[0] && (
+            <motion.div {...scaleIn(0)} className="relative">
+              <Link to={`/memories/${tripMemories[0].tripId}`} className="group block relative overflow-hidden">
+                <div className="relative h-[50vh] sm:h-[60vh]">
+                  <img
+                    src={tripMemories[0].coverImage}
+                    alt={tripMemories[0].tripName}
+                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-[1.02]"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-end p-4 sm:p-5">
-                    <div>
-                      <p className="label-text !text-white/50 mb-1">{memory.date}</p>
-                      <p className="font-display text-lg text-white">{memory.tripName}</p>
-                      <p className="font-editorial text-xs text-white/40 mt-1">{memory.photoCount} photos · {memory.destination}</p>
-                    </div>
-                  </div>
-                </motion.div>
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
+                </div>
               </Link>
-            ))}
-          </div>
+              {/* Overlapping scrapbook label */}
+              <div className="relative sm:absolute sm:bottom-0 sm:left-0 sm:translate-y-1/2 bg-[hsl(var(--warm))] sm:ml-8 lg:ml-12 px-6 py-4 sm:shadow-soft z-10">
+                <p className="label-text mb-1" style={{ fontSize: '0.6rem' }}>{tripMemories[0].date}</p>
+                <p className="font-display text-xl sm:text-2xl text-foreground">{tripMemories[0].tripName}</p>
+                <p className="font-editorial text-xs text-muted-foreground mt-1">{tripMemories[0].photoCount} photos · {tripMemories[0].destination}</p>
+              </div>
+            </motion.div>
+          )}
 
-          <motion.div {...fade(0.3)} className="mt-10 sm:mt-12 text-center">
+          {/* Asymmetric pair — large left, small right with breathing gap */}
+          {tripMemories.length > 2 && (
+            <div className="grid grid-cols-1 sm:grid-cols-5 gap-6 sm:gap-10 sm:pt-8">
+              <motion.div {...scaleIn(0.08)} className="sm:col-span-3 relative">
+                <Link to={`/memories/${tripMemories[1].tripId}`} className="group block overflow-hidden">
+                  <div className="relative h-[280px] sm:h-[360px]">
+                    <img
+                      src={tripMemories[1].coverImage}
+                      alt={tripMemories[1].tripName}
+                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-[1.02]"
+                    />
+                  </div>
+                </Link>
+                <div className="mt-4 sm:mt-5">
+                  <p className="label-text" style={{ fontSize: '0.6rem' }}>{tripMemories[1].date}</p>
+                  <p className="font-display text-lg text-foreground mt-1">{tripMemories[1].tripName}</p>
+                </div>
+              </motion.div>
+
+              <motion.div {...scaleIn(0.16)} className="sm:col-span-2 relative sm:mt-16">
+                <Link to={`/memories/${tripMemories[2].tripId}`} className="group block overflow-hidden">
+                  <div className="relative h-[280px] sm:h-[300px]">
+                    <img
+                      src={tripMemories[2].coverImage}
+                      alt={tripMemories[2].tripName}
+                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-[1.02]"
+                    />
+                  </div>
+                </Link>
+                <div className="mt-4 sm:mt-5">
+                  <p className="label-text" style={{ fontSize: '0.6rem' }}>{tripMemories[2].date}</p>
+                  <p className="font-display text-lg text-foreground mt-1">{tripMemories[2].tripName}</p>
+                </div>
+              </motion.div>
+            </div>
+          )}
+
+          {/* Reversed asymmetric pair — small left, large right */}
+          {tripMemories.length > 4 && (
+            <div className="grid grid-cols-1 sm:grid-cols-5 gap-6 sm:gap-10">
+              <motion.div {...scaleIn(0.24)} className="sm:col-span-2 relative sm:mt-10">
+                <Link to={`/memories/${tripMemories[3].tripId}`} className="group block overflow-hidden">
+                  <div className="relative h-[260px] sm:h-[320px]">
+                    <img
+                      src={tripMemories[3].coverImage}
+                      alt={tripMemories[3].tripName}
+                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-[1.02]"
+                    />
+                  </div>
+                </Link>
+                {/* Overlapping date tag */}
+                <div className="relative sm:absolute sm:top-0 sm:right-0 sm:-translate-y-1/2 bg-[hsl(var(--warm))] px-5 py-3 sm:shadow-soft z-10 mt-4 sm:mt-0">
+                  <p className="label-text" style={{ fontSize: '0.6rem' }}>{tripMemories[3].date}</p>
+                  <p className="font-display text-base text-foreground mt-0.5">{tripMemories[3].tripName}</p>
+                </div>
+              </motion.div>
+
+              <motion.div {...scaleIn(0.32)} className="sm:col-span-3 relative">
+                <Link to={`/memories/${tripMemories[4].tripId}`} className="group block overflow-hidden">
+                  <div className="relative h-[280px] sm:h-[400px]">
+                    <img
+                      src={tripMemories[4].coverImage}
+                      alt={tripMemories[4].tripName}
+                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-[1.02]"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
+                  </div>
+                </Link>
+                <div className="mt-4 sm:mt-5">
+                  <p className="label-text" style={{ fontSize: '0.6rem' }}>{tripMemories[4].date}</p>
+                  <p className="font-display text-lg text-foreground mt-1">{tripMemories[4].tripName}</p>
+                  <p className="font-editorial text-xs text-muted-foreground mt-1">{tripMemories[4].photoCount} photos · {tripMemories[4].destination}</p>
+                </div>
+              </motion.div>
+            </div>
+          )}
+        </div>
+
+        <div className="max-w-6xl mx-auto px-4 sm:px-8">
+          <motion.div {...fade(0.3)} className="mt-16 sm:mt-20 text-center">
             <Link to="/memories">
               <span className="link-editorial font-editorial text-sm text-muted-foreground hover:text-foreground">View all memories →</span>
             </Link>

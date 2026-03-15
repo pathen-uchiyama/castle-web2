@@ -124,10 +124,10 @@ const Index = ({
           <motion.p initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1, delay: 0.5 }} className="label-text !text-white/40 mb-10 tracking-[0.3em]">
             Castle Companion
           </motion.p>
-          <motion.h1 initial={{ opacity: 0, y: 50 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1.6, delay: 0.8, ease }} className="font-display text-white text-4xl sm:text-5xl md:text-7xl lg:text-[6rem] leading-[1.02] max-w-4xl">
+          <motion.h1 initial={{ opacity: 0, y: 50 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1.6, delay: 0.8, ease }} className="font-display text-white text-5xl sm:text-7xl md:text-8xl lg:text-[8rem] leading-[0.95] max-w-5xl">
             Welcome, <em className="italic" style={{ fontWeight: 400 }}>{guestName}</em>.
           </motion.h1>
-          <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 1, delay: 1.4 }} className="font-editorial text-white/60 text-lg sm:text-xl mt-8 max-w-lg leading-relaxed">
+          <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 1, delay: 1.4 }} className="font-editorial text-white/50 text-base sm:text-lg mt-10 max-w-md leading-relaxed tracking-[-0.005em]">
             The realm is at rest. Your next chapter awaits.
           </motion.p>
           <motion.div initial={{ scaleX: 0 }} animate={{ scaleX: 1 }} transition={{ duration: 1, delay: 1.8, ease }} className="mt-10 w-16 h-px bg-white/30 origin-left" />
@@ -154,32 +154,35 @@ const Index = ({
           <div className="grid grid-cols-1 md:grid-cols-2 min-h-[70vh]">
             <div className="flex flex-col justify-center px-4 sm:px-8 lg:px-16 py-16 sm:py-20 lg:py-28">
               <motion.div {...slideLeft()}>
-                <p className="label-text !text-white/50 mb-10 tracking-[0.25em]">Your Booked Adventure</p>
+                <p className="label-text !text-white/40 mb-10 tracking-[0.25em]" style={{ letterSpacing: '0.25em' }}>Your Booked Adventure</p>
                 <h2 className="font-display text-4xl sm:text-5xl xl:text-6xl text-white leading-[1.08] mb-6">
                   {bookedTrip.destination}
                 </h2>
-                <p className="font-display text-2xl sm:text-3xl text-white/60 leading-[1.2] mb-8">
+                <p className="font-display text-2xl sm:text-3xl text-white/50 leading-[1.2] mb-8">
                   {bookedTrip.tripName}
                 </p>
-                <p className="font-editorial text-base text-white/50 max-w-md leading-relaxed">
-                  {bookedTrip.description}
+                <p className="font-editorial text-base text-white/45 max-w-md leading-relaxed">
+                  Your {bookedTrip.countdownDays}-day countdown to {bookedTrip.destination} continues — a party of {bookedTrip.partySize}, {bookedTrip.todaysPark?.weather?.toLowerCase() || 'clear skies'} ahead.
                 </p>
               </motion.div>
               <motion.div {...slideLeft(0.2)} className="mt-14 flex gap-10 sm:gap-16 flex-wrap">
                 {[
                   { label: "Countdown", value: `${bookedTrip.countdownDays} days` },
                   { label: "Party", value: String(bookedTrip.partySize) },
-                  { label: "Time Saved", value: bookedTrip.timeReclaimed },
                 ].map((d) => (
                   <div key={d.label}>
-                    <p className="label-text !text-white/40 mb-2">{d.label}</p>
+                    <p className="label-text !text-white/30 mb-2" style={{ fontSize: '0.625rem', letterSpacing: '0.2em' }}>{d.label}</p>
                     <p className="font-display text-3xl sm:text-4xl text-white">{d.value}</p>
                   </div>
                 ))}
+                <div>
+                  <p className="label-text !text-[hsl(var(--gold-light))]/60 mb-2" style={{ fontSize: '0.625rem', letterSpacing: '0.2em' }}>Time Reclaimed</p>
+                  <p className="font-display text-3xl sm:text-4xl text-[hsl(var(--gold-light))]">{bookedTrip.timeReclaimed}</p>
+                </div>
               </motion.div>
               <motion.div {...slideLeft(0.3)} className="mt-10">
                 <Link to={`/trip/${bookedTrip.tripId}`}>
-                  <span className="link-editorial font-editorial text-sm text-white/70 hover:text-white">View full itinerary →</span>
+                  <span className="link-editorial font-editorial text-sm text-white/60 hover:text-white">View full itinerary →</span>
                 </Link>
               </motion.div>
             </div>
@@ -216,12 +219,12 @@ const Index = ({
                     transition={{ duration: 0.8, delay: i * 0.1, ease }}
                     className="flex-shrink-0 w-[260px] sm:w-[300px] group cursor-pointer"
                   >
-                    <div className="rounded-xl bg-white/10 backdrop-blur-md p-5 h-full hover:bg-white/15 transition-colors duration-500">
-                      <p className="label-text !text-white/35 mb-3">{leg.date}</p>
-                      <p className="font-display text-lg text-white mb-1">{leg.legName}</p>
-                      <p className="font-editorial text-sm text-white/40 mb-5">{leg.time}</p>
+                    <div className="bg-white/10 backdrop-blur-md p-5 h-full hover:bg-white/15 transition-colors duration-500 overflow-hidden">
+                      <p className="label-text !text-white/35 mb-3" style={{ fontSize: '0.625rem' }}>{leg.date}</p>
+                      <p className="font-display text-lg text-white mb-1 truncate">{leg.legName}</p>
+                      <p className="font-editorial text-sm text-white/40 mb-5" style={{ fontSize: '0.75rem', letterSpacing: '-0.02em' }}>{leg.time}</p>
                       <div className="gold-rule mb-3" />
-                      <p className="font-editorial text-xs text-white/30 italic group-hover:text-white/50 transition-colors duration-500">{leg.note}</p>
+                      <p className="font-editorial text-xs text-white/30 italic group-hover:text-white/50 transition-colors duration-500 line-clamp-2">{leg.note}</p>
                     </div>
                   </motion.div>
                 ))}
@@ -233,14 +236,14 @@ const Index = ({
                   className="flex-shrink-0 w-[260px] sm:w-[300px] group cursor-pointer"
                 >
                   <Link to={`/trip/${bookedTrip.tripId}`}>
-                    <div className="rounded-xl bg-white/10 backdrop-blur-md p-5 h-full hover:bg-white/15 transition-colors duration-500">
-                      <p className="label-text !text-white/35 mb-3">Preparations</p>
+                    <div className="bg-white/10 backdrop-blur-md p-5 h-full hover:bg-white/15 transition-colors duration-500 overflow-hidden">
+                      <p className="label-text !text-white/35 mb-3" style={{ fontSize: '0.625rem' }}>Preparations</p>
                       <p className="font-display text-lg text-white mb-3">Packing</p>
                       <div className="space-y-2 mb-5">
                         {bookedTrip.packingLists.map((list) => (
                           <div key={list.category} className="flex justify-between items-center">
-                            <p className="font-editorial text-sm text-white/50">{list.category}</p>
-                            <p className="label-text !text-white/25">{list.packedCount}/{list.totalCount}</p>
+                            <p className="font-editorial text-sm text-white/50 truncate mr-3">{list.category}</p>
+                            <p className="label-text !text-white/25 shrink-0" style={{ fontSize: '0.6rem' }}>{list.packedCount}/{list.totalCount}</p>
                           </div>
                         ))}
                       </div>
@@ -256,14 +259,15 @@ const Index = ({
                   transition={{ duration: 0.8, delay: 0.4, ease }}
                   className="flex-shrink-0 w-[260px] sm:w-[300px]"
                 >
-                  <div className="rounded-xl bg-white/10 backdrop-blur-md p-5 h-full">
-                    <p className="label-text !text-white/35 mb-3">Time Recovered</p>
-                    <p className="font-display text-3xl text-white mb-3">{bookedTrip.timeReclaimed}</p>
+                  <div className="bg-[hsl(var(--gold-dark))]/10 backdrop-blur-md p-5 h-full border border-[hsl(var(--gold))]/10 overflow-hidden">
+                    <p className="label-text !text-[hsl(var(--gold-light))]/50 mb-3" style={{ fontSize: '0.625rem' }}>Time Reclaimed</p>
+                    <p className="font-display text-3xl text-[hsl(var(--gold-light))] mb-1">{bookedTrip.timeReclaimed}</p>
+                    <p className="font-editorial text-xs text-white/35 mb-4 italic">Given back to your family.</p>
                     <div className="space-y-2">
                       {bookedTrip.ridesSaved.slice(0, 3).map((s) => (
-                        <div key={s.rideName} className="flex items-center gap-2">
-                          <span className="text-xs opacity-40">{s.emoji}</span>
-                          <p className="font-editorial text-xs text-white/50">{s.minutesSaved} · {s.rideName}</p>
+                        <div key={s.rideName} className="flex items-center gap-2 overflow-hidden">
+                          <span className="text-xs opacity-40 shrink-0">{s.emoji}</span>
+                          <p className="font-editorial text-xs text-white/50 truncate" style={{ letterSpacing: '-0.02em' }}>{s.minutesSaved} · {s.rideName}</p>
                         </div>
                       ))}
                     </div>

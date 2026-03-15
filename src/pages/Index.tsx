@@ -419,14 +419,7 @@ const Index = ({
         </div>
       </section>
 
-      {/* ═══ COLOPHON ═══ */}
-      <footer className="max-w-5xl mx-auto px-8 py-20 bg-background">
-        <div className="divider mb-12" />
-        <motion.div {...fade()} className="flex items-baseline justify-between">
-          <p className="font-editorial text-sm text-muted-foreground">Castle Companion — Be there for the magic.</p>
-          <p className="label-text">MMXXVI</p>
-        </motion.div>
-      </footer>
+      <Footer />
 
       </div>{/* close z-10 scroll-over wrapper */}
 

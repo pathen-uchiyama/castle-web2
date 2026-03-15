@@ -82,7 +82,7 @@ const ParkGuidePage = ({ parkGuides }: ParkGuidePageProps) => {
         </div>
       </section>
 
-      <footer className="max-w-5xl mx-auto px-8 py-16"><div className="divider" /></footer>
+      <Footer />
     </div>
   );
 };

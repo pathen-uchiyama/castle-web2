@@ -382,7 +382,7 @@ const Index = ({
       {/* ═══ TWO COLUMN — Plan Next Trip + Inner Circle ═══ */}
       <section className="grid grid-cols-1 md:grid-cols-2 gap-4 px-4 py-8 bg-[hsl(var(--warm))]">
         {/* Plan Your Next Trip — left */}
-        <div className="relative overflow-hidden rounded-2xl">
+        <div className="relative overflow-hidden shadow-soft hover:shadow-soft-hover transition-shadow duration-500">
           <Link to="/adventure" className="group block">
             <div className="relative h-[500px] overflow-hidden">
               <ParallaxImage src={editorialCalendar} alt="Plan your next trip" className="absolute inset-0 h-full" />

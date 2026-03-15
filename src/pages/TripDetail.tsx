@@ -137,7 +137,7 @@ const TripDetail = ({ bookedTrip, futureTrips }: TripDetailProps) => {
 /* ─── Booked Trip Detail (all tabs) ─────────────────────────────── */
 
 const tabs = [
-  { id: "surveys", label: "Surveys", badge: "2 pending" },
+  { id: "surveys", label: "Party Setup", badge: "2 pending" },
   { id: "dining", label: "Dining" },
   { id: "experiences", label: "Experiences" },
   { id: "designer", label: "The Designer" },
@@ -148,6 +148,11 @@ const BookedTripDetail = ({ trip }: { trip: BookedTrip }) => {
   const [activeTab, setActiveTab] = useState("surveys");
   const [diningSubTab, setDiningSubTab] = useState<"discover" | "reservations">("discover");
   const [experienceSubTab, setExperienceSubTab] = useState<"discover" | "reservations">("discover");
+  const [mdeConnected, setMdeConnected] = useState<Record<string, boolean>>(() => {
+    const initial: Record<string, boolean> = {};
+    mockData.partyMembers.forEach((m) => { initial[m.memberId] = false; });
+    return initial;
+  });
   const { destination, tripName, countdownDays, travelLegs, diningReservations, bookedExperiences, diningVenues, experienceVenues } = trip;
   const { partySurvey } = mockData;
 
@@ -263,11 +268,47 @@ const BookedTripDetail = ({ trip }: { trip: BookedTrip }) => {
             ))}
           </motion.div>
 
-          <motion.div {...fade(0.15)} className="grid grid-cols-2 sm:grid-cols-4 gap-6 mb-16">
+          {/* MDE Friends Connection */}
+          <motion.div {...fade(0.12)} className="mb-12">
+            <p className="label-text mb-4">🏰 My Disney Experience — Friends & Family</p>
+            <p className="font-editorial text-sm text-muted-foreground mb-6 max-w-xl">
+              Everyone in your party should connect as friends in the My Disney Experience app. This lets the Trip Captain manage Lightning Lane, dining, and plans for the whole group.
+            </p>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              {mockData.partyMembers.map((member) => (
+                <button
+                  key={member.memberId}
+                  onClick={() => setMdeConnected((prev) => ({ ...prev, [member.memberId]: !prev[member.memberId] }))}
+                  className={`flex items-center gap-3 border p-4 transition-all duration-300 ${
+                    mdeConnected[member.memberId]
+                      ? "border-[hsl(var(--gold)/0.4)] bg-[hsl(var(--gold)/0.06)]"
+                      : "border-border bg-card hover:border-foreground/20"
+                  }`}
+                >
+                  <div className={`w-5 h-5 flex items-center justify-center border transition-all duration-300 ${
+                    mdeConnected[member.memberId]
+                      ? "bg-[hsl(var(--gold))] border-[hsl(var(--gold))] text-background"
+                      : "border-muted-foreground/30"
+                  }`}>
+                    {mdeConnected[member.memberId] && <span className="text-[0.5rem]">✓</span>}
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <div className="w-7 h-7 flex items-center justify-center bg-foreground text-background text-xs font-medium">{member.initial}</div>
+                    <span className="font-display text-sm text-foreground">{member.name}</span>
+                  </div>
+                  <span className="ml-auto label-text">{mdeConnected[member.memberId] ? "Connected" : "Not Yet"}</span>
+                </button>
+              ))}
+            </div>
+            <p className="font-editorial text-xs text-muted-foreground/50 mt-3 italic">
+              {Object.values(mdeConnected).filter(Boolean).length} of {Object.values(mdeConnected).length} connected
+            </p>
+          </motion.div>
+
+          <motion.div {...fade(0.15)} className="grid grid-cols-3 gap-6 mb-16">
             {[
-              { label: "Completed", value: String(completedCount) },
-              { label: "Pending", value: String(pendingCount) },
-              { label: "Attractions", value: String(partySurvey.attractions.length) },
+              { label: "Surveys Done", value: `${completedCount}/${completedCount + pendingCount}` },
+              { label: "MDE Connected", value: `${Object.values(mdeConnected).filter(Boolean).length}/${Object.values(mdeConnected).length}` },
               { label: "Conflicts", value: String(consensusData.filter((c) => c.hasConflict).length) },
             ].map((stat) => (
               <div key={stat.label} className="border border-border bg-card p-5 shadow-[var(--shadow-soft)]">
@@ -361,23 +402,12 @@ const BookedTripDetail = ({ trip }: { trip: BookedTrip }) => {
 
           {diningSubTab === "discover" && (
             <>
-              {diningVenues.filter(v => v.bookingWindow.daysBeforeArrival > 0).length > 0 && (
-                <motion.div {...fade(0.05)} className="mb-12">
-                  <p className="label-text mb-4 tracking-[0.25em]">⏰ Booking Windows</p>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    {diningVenues.filter(v => v.bookingWindow.daysBeforeArrival > 0).map((v) => (
-                      <div key={v.venueId} className="border border-[hsl(var(--gold)/0.3)] bg-[hsl(var(--gold)/0.04)] p-4">
-                        <div className="flex items-baseline justify-between mb-1">
-                          <span className="font-display text-sm text-foreground">{v.name}</span>
-                          <span className="label-text !text-[hsl(var(--gold-dark))]">{v.bookingWindow.daysBeforeArrival}d before</span>
-                        </div>
-                        <p className="font-editorial text-xs text-muted-foreground">Opens {v.bookingWindow.opensDate}</p>
-                        <p className="font-editorial text-xs text-muted-foreground/60 italic mt-1">{v.bookingWindow.tip}</p>
-                      </div>
-                    ))}
-                  </div>
-                </motion.div>
-              )}
+              <motion.div {...fade(0.05)} className="mb-10 border border-[hsl(var(--gold)/0.3)] bg-[hsl(var(--gold)/0.04)] p-4 flex items-center gap-3">
+                <span className="text-lg">⏰</span>
+                <p className="font-editorial text-sm text-muted-foreground">
+                  <span className="text-foreground font-medium">Booking windows open 60 days before arrival</span> for most table-service restaurants. Set your alarm for 6 AM ET on your window day — popular spots fill within seconds.
+                </p>
+              </motion.div>
 
               <div className="space-y-6">
                 {diningVenues.map((venue, i) => {
@@ -408,7 +438,18 @@ const BookedTripDetail = ({ trip }: { trip: BookedTrip }) => {
                           {venue.tags.map(tag => (<span key={tag} className="text-[0.5625rem] uppercase tracking-[0.12em] px-2.5 py-1 bg-[hsl(var(--warm))] text-muted-foreground border border-border">{tag}</span>))}
                           {!venue.kidFriendly && <span className="text-[0.5625rem] uppercase tracking-[0.12em] px-2.5 py-1 bg-[hsl(var(--destructive)/0.08)] text-destructive border border-[hsl(var(--destructive)/0.2)]">Adults Only</span>}
                         </div>
-                        <div className="flex flex-wrap gap-1.5">{venue.dietaryAccommodations.map(d => (<span key={d} className="text-[0.5rem] uppercase tracking-[0.1em] px-2 py-0.5 text-muted-foreground/60 border border-border/50">✓ {d}</span>))}</div>
+                        <div className="flex flex-wrap gap-1.5 mb-5">{venue.dietaryAccommodations.map(d => (<span key={d} className="text-[0.5rem] uppercase tracking-[0.1em] px-2 py-0.5 text-muted-foreground/60 border border-border/50">✓ {d}</span>))}</div>
+                        <div className="flex gap-3 pt-4 border-t border-border">
+                          <button className="px-6 py-2.5 text-[0.625rem] tracking-[0.15em] uppercase font-medium bg-foreground text-background transition-opacity duration-300 hover:opacity-90">
+                            Book This
+                          </button>
+                          <button className="px-6 py-2.5 text-[0.625rem] tracking-[0.15em] uppercase font-medium text-muted-foreground border border-border hover:border-foreground/30 transition-all duration-300">
+                            Set Alert
+                          </button>
+                          <span className="ml-auto font-editorial text-xs text-muted-foreground/50 self-center">
+                            {venue.bookingWindow.daysBeforeArrival > 0 ? `Opens ${venue.bookingWindow.opensDate}` : "No reservation needed"}
+                          </span>
+                        </div>
                       </div>
                     </motion.div>
                   );
@@ -490,20 +531,12 @@ const BookedTripDetail = ({ trip }: { trip: BookedTrip }) => {
 
           {experienceSubTab === "discover" && (
             <>
-              {experienceVenues.filter(v => v.bookingWindow.daysBeforeArrival > 0).length > 0 && (
-                <motion.div {...fade(0.05)} className="mb-12">
-                  <p className="label-text mb-4 tracking-[0.25em]">⏰ Booking Windows</p>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    {experienceVenues.filter(v => v.bookingWindow.daysBeforeArrival > 0).map((v) => (
-                      <div key={v.venueId} className="border border-[hsl(var(--gold)/0.3)] bg-[hsl(var(--gold)/0.04)] p-4">
-                        <div className="flex items-baseline justify-between mb-1"><span className="font-display text-sm text-foreground">{v.name}</span><span className="label-text !text-[hsl(var(--gold-dark))]">{v.bookingWindow.daysBeforeArrival}d before</span></div>
-                        <p className="font-editorial text-xs text-muted-foreground">Opens {v.bookingWindow.opensDate}</p>
-                        <p className="font-editorial text-xs text-muted-foreground/60 italic mt-1">{v.bookingWindow.tip}</p>
-                      </div>
-                    ))}
-                  </div>
-                </motion.div>
-              )}
+              <motion.div {...fade(0.05)} className="mb-10 border border-[hsl(var(--gold)/0.3)] bg-[hsl(var(--gold)/0.04)] p-4 flex items-center gap-3">
+                <span className="text-lg">⏰</span>
+                <p className="font-editorial text-sm text-muted-foreground">
+                  <span className="text-foreground font-medium">Booking windows vary by experience</span> — most open 60 days before arrival. Premium experiences like Savi's Workshop sell out immediately.
+                </p>
+              </motion.div>
 
               <div className="space-y-6">
                 {experienceVenues.map((venue, i) => {
@@ -524,11 +557,22 @@ const BookedTripDetail = ({ trip }: { trip: BookedTrip }) => {
                         </div>
                         <div className="mb-4"><p className="label-text mb-2">The Vibe</p><p className="font-editorial text-sm text-foreground/80 leading-relaxed">{venue.vibes}</p></div>
                         <div className="mb-4 pl-4 border-l-2 border-[hsl(var(--gold)/0.4)]"><p className="label-text mb-1">✦ Insider Note</p><p className="font-editorial text-sm text-muted-foreground leading-relaxed">{venue.notableInsight}</p></div>
-                        <div className="flex flex-wrap gap-2">
+                        <div className="flex flex-wrap gap-2 mb-5">
                           {venue.tags.map(tag => (<span key={tag} className="text-[0.5625rem] uppercase tracking-[0.12em] px-2.5 py-1 bg-[hsl(var(--warm))] text-muted-foreground border border-border">{tag}</span>))}
                           {venue.ageRequirement && <span className="text-[0.5625rem] uppercase tracking-[0.12em] px-2.5 py-1 text-muted-foreground border border-border">📏 {venue.ageRequirement}</span>}
                           {venue.heightRequirement && <span className="text-[0.5625rem] uppercase tracking-[0.12em] px-2.5 py-1 text-muted-foreground border border-border">📐 {venue.heightRequirement}"</span>}
                           {venue.maxPartySize && <span className="text-[0.5625rem] uppercase tracking-[0.12em] px-2.5 py-1 text-muted-foreground border border-border">👥 Max {venue.maxPartySize}</span>}
+                        </div>
+                        <div className="flex gap-3 pt-4 border-t border-border">
+                          <button className="px-6 py-2.5 text-[0.625rem] tracking-[0.15em] uppercase font-medium bg-foreground text-background transition-opacity duration-300 hover:opacity-90">
+                            Book This
+                          </button>
+                          <button className="px-6 py-2.5 text-[0.625rem] tracking-[0.15em] uppercase font-medium text-muted-foreground border border-border hover:border-foreground/30 transition-all duration-300">
+                            Set Alert
+                          </button>
+                          <span className="ml-auto font-editorial text-xs text-muted-foreground/50 self-center">
+                            {venue.bookingWindow.daysBeforeArrival > 0 ? `Opens ${venue.bookingWindow.opensDate}` : "Walk-up only"}
+                          </span>
                         </div>
                       </div>
                     </motion.div>

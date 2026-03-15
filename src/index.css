@@ -22,7 +22,8 @@
     --secondary-foreground: 220 40% 13%;
 
     --muted: 40 15% 75%;
-    --muted-foreground: 220 15% 50%;
+    /* WCAG AA on cream (#F9F7F2): hsl(220 15% 42%) = ~#5B6370, contrast 4.64:1 ✓ */
+    --muted-foreground: 220 15% 42%;
 
     /* Burnished Gold — the signature accent */
     --accent: 42 78% 50%;

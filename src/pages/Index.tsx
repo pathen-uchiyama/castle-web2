@@ -30,29 +30,28 @@ const Index = () => {
         <div className="absolute inset-0 bg-gradient-to-b from-background/40 to-background" />
         <SparkleField count={15} />
 
-        <div className="relative max-w-4xl mx-auto px-6 pt-10 pb-28 text-center">
+        <div className="relative max-w-4xl mx-auto px-6 pt-10 pb-28">
           {/* Minimal header — just a mark */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.8 }}
-            className="flex items-center justify-center gap-2 mb-20"
+            className="flex items-center gap-2 mb-20"
           >
             <span className="gold-leaf" />
             <span className="label-text tracking-[0.2em] text-gold">Castle Companion</span>
-            <span className="gold-leaf" />
           </motion.div>
 
-          {/* The big editorial title */}
+          {/* The big editorial title — masthead */}
           <motion.div
             initial={{ opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.2, ease: [0.19, 1, 0.22, 1] }}
           >
-            <h1 className="font-display text-5xl sm:text-6xl lg:text-7xl text-foreground leading-[1.05] mb-6">
-              Welcome, <em className="text-gold-dark not-italic" style={{ fontStyle: "italic" }}>Patchen</em>
+            <h1 className="font-display text-6xl sm:text-7xl lg:text-8xl text-foreground leading-[1.0] mb-6">
+              Welcome,<br /><em className="text-gold-dark not-italic" style={{ fontStyle: "italic" }}>Patchen</em>
             </h1>
-            <p className="font-editorial text-lg sm:text-xl text-muted-foreground max-w-xl mx-auto leading-relaxed">
+            <p className="font-editorial text-lg sm:text-xl text-muted-foreground max-w-xl leading-relaxed">
               The realm is at rest. Your next chapter awaits—let us handle the pages you'd rather not turn.
             </p>
           </motion.div>
@@ -62,7 +61,7 @@ const Index = () => {
             initial={{ scaleX: 0 }}
             animate={{ scaleX: 1 }}
             transition={{ duration: 0.6, delay: 0.6 }}
-            className="mx-auto mt-10 gold-rule w-16"
+            className="mt-10 gold-rule w-16 origin-left"
           />
         </div>
       </header>

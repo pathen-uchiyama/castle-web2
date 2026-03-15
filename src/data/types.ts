@@ -78,6 +78,21 @@ export interface ParkConditions {
   strategy: string;
 }
 
+export interface DiningReservation {
+  reservationId: string;
+  restaurantName: string;
+  parkOrResort: string;
+  date: string;
+  time: string;
+  partySize: number;
+  confirmationNumber: string;
+  cuisine: string;
+  mealType: "breakfast" | "lunch" | "dinner" | "snack";
+  notes?: string;
+  dietaryFlags?: string[];
+  status: "confirmed" | "pending" | "cancelled";
+}
+
 export interface PreparationItem {
   description: string;
   isComplete: boolean;

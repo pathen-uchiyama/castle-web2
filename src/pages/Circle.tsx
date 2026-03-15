@@ -1,4 +1,5 @@
 import { motion } from "framer-motion";
+import Footer from "@/components/Footer";
 import familyMainstreet from "@/assets/family-mainstreet.jpg";
 import type { PartyMember } from "@/data/types";
 
@@ -82,9 +83,7 @@ const Circle = ({ partyMembers }: CircleProps) => {
         </div>
       </section>
 
-      <footer className="max-w-5xl mx-auto px-8 py-16">
-        <div className="divider" />
-      </footer>
+      <Footer />
     </div>
   );
 };

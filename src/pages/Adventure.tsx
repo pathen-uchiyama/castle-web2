@@ -1,4 +1,5 @@
 import { motion } from "framer-motion";
+import Footer from "@/components/Footer";
 import fireworksNight from "@/assets/fireworks-night.jpg";
 import editorialPacking from "@/assets/editorial-packing.jpg";
 import SparkleField from "@/components/SparkleField";
@@ -135,7 +136,7 @@ const Adventure = ({ bookedTrip }: AdventureProps) => {
         </div>
       </section>
 
-      <footer className="max-w-5xl mx-auto px-8 py-16"><div className="divider" /></footer>
+      <Footer />
     </div>
   );
 };

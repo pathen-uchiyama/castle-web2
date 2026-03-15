@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
+import Footer from "@/components/Footer";
 import type { TripMemory } from "@/data/types";
 
 const ease: [number, number, number, number] = [0.19, 1, 0.22, 1];
@@ -64,7 +65,7 @@ const Memories = ({ tripMemories }: MemoriesProps) => {
         </div>
       </section>
 
-      <footer className="max-w-5xl mx-auto px-8 py-16"><div className="divider" /></footer>
+      <Footer />
     </div>
   );
 };

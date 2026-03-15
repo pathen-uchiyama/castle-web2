@@ -487,7 +487,15 @@ const TripWizard = ({ open, onClose }: TripWizardProps) => {
                   {currentStep === 2 && (
                     <div className="max-w-lg mx-auto space-y-10">
                       <div>
-                        <Label>Adventure Persona</Label>
+                        <div className="flex items-center gap-2 mb-1">
+                          <Label>Adventure Persona</Label>
+                          <span className="px-2 py-0.5 text-[0.6rem] uppercase tracking-widest" style={{ fontFamily: brand.font.body, color: brand.thistle, border: `1px solid ${brand.thistle}40`, background: `${brand.thistle}10` }}>
+                            KEEP?
+                          </span>
+                        </div>
+                        <p className="text-xs mb-3" style={{ fontFamily: brand.font.body, color: brand.slate, fontStyle: "italic" }}>
+                          This may overlap with Daily Ambition from Page 1. Under review.
+                        </p>
                         <div className="space-y-2">
                           {personaOptions.map((p) => (
                             <SelectCard key={p.id} selected={data.adventurePersona === p.id} onClick={() => set("adventurePersona", p.id)} label={p.label} desc={p.desc} />

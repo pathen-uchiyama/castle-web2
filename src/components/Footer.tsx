@@ -92,7 +92,7 @@ const Footer = () => (
       {/* Bottom bar */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <p className="font-editorial text-xs text-muted-foreground/40">
-          © {new Date().getFullYear()} Castle Companion, LLC · 1880 Century Park East, Suite 1600 · Los Angeles, CA 90067
+          © {new Date().getFullYear()} Castle Companion, LLC · 3400 Cottage Way, Ste G2 #34293 · Sacramento, CA 95825
         </p>
         <p className="label-text text-[0.55rem] tracking-[0.15em]">MMXXVI</p>
       </div>

@@ -166,6 +166,8 @@ const TripWizard = ({ open, onClose }: TripWizardProps) => {
     endDate: undefined,
     leadAdventurer: "",
     nappingStrategy: null,
+    willingRopeDrop: false,
+    accommodationType: null,
     familyStamina: 5,
     dailyAmbition: null,
     partyMembers: [],

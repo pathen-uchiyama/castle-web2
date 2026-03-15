@@ -531,20 +531,12 @@ const BookedTripDetail = ({ trip }: { trip: BookedTrip }) => {
 
           {experienceSubTab === "discover" && (
             <>
-              {experienceVenues.filter(v => v.bookingWindow.daysBeforeArrival > 0).length > 0 && (
-                <motion.div {...fade(0.05)} className="mb-12">
-                  <p className="label-text mb-4 tracking-[0.25em]">⏰ Booking Windows</p>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    {experienceVenues.filter(v => v.bookingWindow.daysBeforeArrival > 0).map((v) => (
-                      <div key={v.venueId} className="border border-[hsl(var(--gold)/0.3)] bg-[hsl(var(--gold)/0.04)] p-4">
-                        <div className="flex items-baseline justify-between mb-1"><span className="font-display text-sm text-foreground">{v.name}</span><span className="label-text !text-[hsl(var(--gold-dark))]">{v.bookingWindow.daysBeforeArrival}d before</span></div>
-                        <p className="font-editorial text-xs text-muted-foreground">Opens {v.bookingWindow.opensDate}</p>
-                        <p className="font-editorial text-xs text-muted-foreground/60 italic mt-1">{v.bookingWindow.tip}</p>
-                      </div>
-                    ))}
-                  </div>
-                </motion.div>
-              )}
+              <motion.div {...fade(0.05)} className="mb-10 border border-[hsl(var(--gold)/0.3)] bg-[hsl(var(--gold)/0.04)] p-4 flex items-center gap-3">
+                <span className="text-lg">⏰</span>
+                <p className="font-editorial text-sm text-muted-foreground">
+                  <span className="text-foreground font-medium">Booking windows vary by experience</span> — most open 60 days before arrival. Premium experiences like Savi's Workshop sell out immediately.
+                </p>
+              </motion.div>
 
               <div className="space-y-6">
                 {experienceVenues.map((venue, i) => {

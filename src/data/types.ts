@@ -10,6 +10,21 @@ export interface ParkGuideCategory {
   itemCount: number;
 }
 
+export interface ParkHours {
+  regular: string;
+  earlyEntry?: string;
+  extendedEvening?: string;
+}
+
+export interface ParkDaySchedule {
+  date: string;
+  hours: ParkHours;
+  weather: string;
+  crowdLevel: string;
+  crowdScore: number;
+  notes?: string;
+}
+
 export interface ParkGuide {
   parkId: string;
   parkName: string;
@@ -21,7 +36,8 @@ export interface ParkGuide {
   heroImage: string;
   todayWeather: string;
   todayCrowdLevel: string;
-  operatingHours: string;
+  operatingHours: ParkHours;
+  schedule: ParkDaySchedule[];
 }
 
 export interface PartyMember {

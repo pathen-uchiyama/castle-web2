@@ -347,7 +347,7 @@ const Index = ({
                         </div>
                         <div className="flex justify-between items-center">
                           <p className="label-text !text-white/50">Hours</p>
-                          <p className="font-editorial text-sm text-white/90">{park.operatingHours}</p>
+                          <p className="font-editorial text-sm text-white/90">{park.operatingHours.regular}</p>
                         </div>
                       </div>
                       <div className="flex gap-3 flex-wrap">

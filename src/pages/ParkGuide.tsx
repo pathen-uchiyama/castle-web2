@@ -1,9 +1,14 @@
 import { motion } from "framer-motion";
 import { useState, useMemo } from "react";
 import { Link, useParams } from "react-router-dom";
+import { format, parseISO } from "date-fns";
+import { CalendarIcon } from "lucide-react";
 import Footer from "@/components/Footer";
 import SectionNav from "@/components/SectionNav";
-import type { ParkGuide } from "@/data/types";
+import { Calendar } from "@/components/ui/calendar";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { cn } from "@/lib/utils";
+import type { ParkGuide, ParkDaySchedule, ParkHours } from "@/data/types";
 import { mockData } from "@/data/mockData";
 
 const ease: [number, number, number, number] = [0.19, 1, 0.22, 1];
@@ -29,15 +34,68 @@ const tabs = [
   { id: "pulse", label: "The Pulse" },
 ];
 
+const crowdColor = (level: string) => {
+  switch (level.toLowerCase()) {
+    case "low": return "hsl(var(--gold))";
+    case "moderate": return "hsl(var(--gold-dark))";
+    case "high": return "hsl(var(--destructive))";
+    default: return "hsl(var(--muted-foreground))";
+  }
+};
+
+const HoursDisplay = ({ hours, label }: { hours: ParkHours; label?: string }) => (
+  <div>
+    {label && <p className="label-text mb-3">{label}</p>}
+    <div className="space-y-3">
+      <div>
+        <p className="label-text mb-1">Park Hours</p>
+        <p className="font-display text-lg text-foreground">{hours.regular}</p>
+      </div>
+      {hours.earlyEntry && (
+        <div>
+          <p className="label-text mb-1">Early Entry</p>
+          <p className="font-display text-base text-foreground">{hours.earlyEntry}</p>
+          <p className="font-editorial text-xs text-muted-foreground/60 italic mt-0.5">Disney Resort guests</p>
+        </div>
+      )}
+      {hours.extendedEvening && (
+        <div>
+          <p className="label-text mb-1">Extended Evening</p>
+          <p className="font-display text-base text-foreground">{hours.extendedEvening}</p>
+          <p className="font-editorial text-xs text-muted-foreground/60 italic mt-0.5">Deluxe Resort guests</p>
+        </div>
+      )}
+    </div>
+  </div>
+);
+
 const ParkGuidePage = ({ parkGuides }: ParkGuidePageProps) => {
   const { parkId } = useParams();
   const [activeTab, setActiveTab] = useState("intel");
   const [searchQuery, setSearchQuery] = useState("");
+  const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
 
   const park = parkGuides.find((p) => p.parkId === parkId) || parkGuides[0];
-
   const sameParkGuides = parkGuides.filter((p) => p?.resort === park?.resort);
   const attractions = mockData.partySurvey.attractions.filter((a) => a.parkId === park?.parkId);
+
+  // Find schedule for selected date
+  const selectedSchedule: ParkDaySchedule | undefined = useMemo(() => {
+    if (!selectedDate || !park) return undefined;
+    const dateStr = format(selectedDate, "yyyy-MM-dd");
+    return park.schedule.find((s) => s.date === dateStr);
+  }, [selectedDate, park]);
+
+  // Determine which hours/weather/crowd to show
+  const displayHours = selectedSchedule?.hours ?? park?.operatingHours;
+  const displayWeather = selectedSchedule?.weather ?? park?.todayWeather;
+  const displayCrowd = selectedSchedule?.crowdLevel ?? park?.todayCrowdLevel;
+
+  // Dates that have schedule data (for calendar highlighting)
+  const scheduleDates = useMemo(() => {
+    if (!park) return [];
+    return park.schedule.map((s) => parseISO(s.date));
+  }, [park]);
 
   const filteredAttractions = useMemo(() => {
     if (!searchQuery.trim()) return attractions;
@@ -86,7 +144,6 @@ const ParkGuidePage = ({ parkGuides }: ParkGuidePageProps) => {
               {p.parkName}
             </Link>
           ))}
-          {/* Switch resort */}
           {parkGuides.filter((p) => p.resort !== park.resort).length > 0 && (
             <>
               <div className="w-px bg-border mx-2 shrink-0" />
@@ -113,22 +170,133 @@ const ParkGuidePage = ({ parkGuides }: ParkGuidePageProps) => {
       {/* ═══ PARK INTEL TAB ═══ */}
       {activeTab === "intel" && (
         <>
-          {/* Quick Stats */}
+          {/* Date Filter + Quick Stats */}
           <section className="px-8 lg:px-16 py-12 bg-[hsl(var(--warm))]">
-            <motion.div {...fade()} className="grid grid-cols-2 sm:grid-cols-4 gap-6">
-              {[
-                { label: "Today's Weather", value: park.todayWeather },
-                { label: "Crowd Level", value: park.todayCrowdLevel },
-                { label: "Operating Hours", value: park.operatingHours },
-                { label: "Total Experiences", value: String(park.categories.reduce((sum, c) => sum + c.itemCount, 0)) },
-              ].map((stat) => (
-                <div key={stat.label} className="border border-border bg-card p-5 shadow-[var(--shadow-soft)]">
-                  <p className="label-text mb-2">{stat.label}</p>
-                  <p className="font-display text-lg text-foreground">{stat.value}</p>
+            {/* Date Picker */}
+            <motion.div {...fade()} className="mb-8">
+              <div className="flex flex-col sm:flex-row sm:items-center gap-4">
+                <div>
+                  <p className="label-text mb-2">View Date</p>
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <button
+                        className={cn(
+                          "inline-flex items-center gap-3 px-5 py-3 text-sm bg-card border border-border transition-colors duration-300 hover:border-[hsl(var(--gold))]",
+                          !selectedDate && "text-muted-foreground"
+                        )}
+                        style={{ fontFamily: "Inter, system-ui, sans-serif" }}
+                      >
+                        <CalendarIcon className="w-4 h-4 opacity-50" />
+                        {selectedDate ? format(selectedDate, "EEEE, MMMM d, yyyy") : "Today's conditions"}
+                      </button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-auto p-0" align="start">
+                      <Calendar
+                        mode="single"
+                        selected={selectedDate}
+                        onSelect={setSelectedDate}
+                        modifiers={{ hasData: scheduleDates }}
+                        modifiersStyles={{
+                          hasData: {
+                            fontWeight: 700,
+                            textDecoration: "underline",
+                            textDecorationColor: "hsl(var(--gold))",
+                            textUnderlineOffset: "4px",
+                          },
+                        }}
+                        className={cn("p-3 pointer-events-auto")}
+                      />
+                    </PopoverContent>
+                  </Popover>
                 </div>
-              ))}
+                {selectedDate && (
+                  <button
+                    onClick={() => setSelectedDate(undefined)}
+                    className="text-xs uppercase tracking-[0.15em] text-muted-foreground hover:text-foreground transition-colors self-end sm:self-center"
+                    style={{ fontFamily: "Inter, system-ui, sans-serif" }}
+                  >
+                    ✕ Clear date
+                  </button>
+                )}
+                {selectedSchedule?.notes && (
+                  <motion.p
+                    initial={{ opacity: 0, x: 10 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    className="font-editorial text-sm text-muted-foreground italic max-w-md self-end sm:self-center"
+                  >
+                    {selectedSchedule.notes}
+                  </motion.p>
+                )}
+              </div>
+            </motion.div>
+
+            {/* Stats Grid */}
+            <motion.div {...fade(0.05)} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+              {/* Weather */}
+              <div className="border border-border bg-card p-5 shadow-[var(--shadow-soft)]">
+                <p className="label-text mb-2">{selectedDate ? format(selectedDate, "MMM d") + " Weather" : "Today's Weather"}</p>
+                <p className="font-display text-lg text-foreground">{displayWeather}</p>
+              </div>
+              {/* Crowd Level */}
+              <div className="border border-border bg-card p-5 shadow-[var(--shadow-soft)]">
+                <p className="label-text mb-2">Crowd Level</p>
+                <div className="flex items-center gap-3">
+                  <p className="font-display text-lg text-foreground">{displayCrowd}</p>
+                  {selectedSchedule && (
+                    <div className="flex gap-0.5">
+                      {Array.from({ length: 10 }).map((_, i) => (
+                        <div
+                          key={i}
+                          className="w-1.5 h-4 transition-colors duration-300"
+                          style={{
+                            background: i < selectedSchedule.crowdScore
+                              ? crowdColor(displayCrowd)
+                              : "hsl(var(--border))",
+                          }}
+                        />
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </div>
+              {/* Hours */}
+              <div className="border border-border bg-card p-5 shadow-[var(--shadow-soft)] sm:col-span-2">
+                <HoursDisplay hours={displayHours} label={selectedDate ? format(selectedDate, "MMM d") + " Hours" : "Operating Hours"} />
+              </div>
             </motion.div>
           </section>
+
+          {/* Week-at-a-Glance (only when no date selected) */}
+          {!selectedDate && park.schedule.length > 0 && (
+            <section className="px-8 lg:px-16 py-12 border-b border-border">
+              <motion.div {...fade()}>
+                <p className="label-text mb-6">Week at a Glance</p>
+                <div className="flex gap-3 overflow-x-auto pb-2" style={{ scrollbarWidth: "none" }}>
+                  {park.schedule.slice(0, 7).map((day) => {
+                    const d = parseISO(day.date);
+                    return (
+                      <button
+                        key={day.date}
+                        onClick={() => setSelectedDate(d)}
+                        className="shrink-0 w-[140px] border border-border bg-card p-4 text-left hover:border-[hsl(var(--gold))] transition-colors duration-300 shadow-[var(--shadow-soft)]"
+                      >
+                        <p className="label-text mb-1">{format(d, "EEE")}</p>
+                        <p className="font-display text-sm text-foreground mb-2">{format(d, "MMM d")}</p>
+                        <p className="font-editorial text-xs text-muted-foreground mb-1">{day.weather}</p>
+                        <p
+                          className="text-[0.625rem] uppercase tracking-[0.1em] font-medium"
+                          style={{ color: crowdColor(day.crowdLevel) }}
+                        >
+                          {day.crowdLevel}
+                        </p>
+                        <p className="font-editorial text-[0.625rem] text-muted-foreground/50 mt-1">{day.hours.regular}</p>
+                      </button>
+                    );
+                  })}
+                </div>
+              </motion.div>
+            </section>
+          )}
 
           {/* Categories + Weather/Crowd detail */}
           <section className="max-w-5xl mx-auto px-8 py-16 lg:py-24">
@@ -153,7 +321,7 @@ const ParkGuidePage = ({ parkGuides }: ParkGuidePageProps) => {
             </div>
           </section>
 
-          {/* Searchable Attractions (Park Wonders) */}
+          {/* Searchable Attractions */}
           <section className="px-8 lg:px-16 py-16 lg:py-24 bg-[hsl(var(--warm))]">
             <motion.div {...fade()}>
               <p className="label-text mb-6">Park Wonders</p>
@@ -163,7 +331,6 @@ const ParkGuidePage = ({ parkGuides }: ParkGuidePageProps) => {
               </p>
             </motion.div>
 
-            {/* Search */}
             <motion.div {...fade(0.1)} className="mb-8 max-w-md">
               <input
                 type="text"
@@ -175,7 +342,6 @@ const ParkGuidePage = ({ parkGuides }: ParkGuidePageProps) => {
               />
             </motion.div>
 
-            {/* Results */}
             <div className="space-y-3">
               {filteredAttractions.length === 0 ? (
                 <div className="py-12 text-center">
@@ -248,9 +414,7 @@ const ParkGuidePage = ({ parkGuides }: ParkGuidePageProps) => {
               <p className="font-editorial text-xs text-muted-foreground">Updated every 30 minutes</p>
             </div>
             <div className="border border-border bg-card p-6 shadow-[var(--shadow-soft)]">
-              <p className="label-text mb-3">Park Hours</p>
-              <p className="font-display text-2xl text-foreground mb-2">{park.operatingHours}</p>
-              <p className="font-editorial text-xs text-muted-foreground">Including extended hours</p>
+              <HoursDisplay hours={park.operatingHours} label="Park Hours" />
             </div>
           </motion.div>
 

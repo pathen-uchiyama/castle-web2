@@ -80,7 +80,7 @@ const experienceLabels: Record<ExperienceCategory, string> = {
 const Adventure = ({ bookedTrip, futureTrips }: AdventureProps) => {
   const [wizardOpen, setWizardOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("overview");
-  const { destination, tripName, countdownDays, travelLegs, diningReservations } = bookedTrip;
+  const { destination, tripName, countdownDays, travelLegs, diningReservations, bookedExperiences } = bookedTrip;
   const { partySurvey } = mockData;
 
   // Interactive packing state

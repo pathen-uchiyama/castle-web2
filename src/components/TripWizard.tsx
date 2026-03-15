@@ -558,6 +558,8 @@ const TripWizard = ({ open, onClose }: TripWizardProps) => {
                             </span>
                           ))}
                         </div>
+                      </div>
+
                       {/* ─── Park Services & Accommodations ─── */}
                       <div>
                         <Label>Park Services & Accommodations</Label>

@@ -234,10 +234,37 @@ export const mockData: AppData = {
   ],
 
   partyMembers: [
-    { name: "Patchen", role: "Trip Captain", initial: "P", adventureCount: 12 },
-    { name: "Sarah", role: "Co-planner", initial: "S", adventureCount: 12 },
-    { name: "Emma", role: "Little Explorer", initial: "E", adventureCount: 8 },
-    { name: "Jack", role: "Snack Scout", initial: "J", adventureCount: 8 },
+    {
+      memberId: "P", name: "Patchen", role: "Trip Captain", initial: "P", adventureCount: 12,
+      age: 38, birthday: "June 15", heightInches: 72, dietaryRestrictions: [],
+      favoriteCharacter: "Goofy", favoriteRide: "Rise of the Resistance",
+      thrillTolerance: "high", magicStatus: ["Annual Passholder", "DVC Member"],
+      notes: "Prefers rope drop strategy. Comfortable with all thrill rides.",
+    },
+    {
+      memberId: "S", name: "Sarah", role: "Co-planner", initial: "S", adventureCount: 12,
+      age: 36, birthday: "November 3", heightInches: 65, dietaryRestrictions: ["Gluten-free"],
+      favoriteCharacter: "Rapunzel", favoriteRide: "Flight of Passage",
+      thrillTolerance: "moderate", magicStatus: ["Annual Passholder", "DVC Member"],
+      sensoryNotes: "Sensitive to loud sudden noises (Tower of Terror drop sirens).",
+      notes: "Loves character dining. Needs shade breaks in summer.",
+    },
+    {
+      memberId: "E", name: "Emma", role: "Little Explorer", initial: "E", adventureCount: 8,
+      age: 9, birthday: "March 28", heightInches: 52, dietaryRestrictions: ["Nut allergy"],
+      favoriteCharacter: "Elsa", favoriteRide: "Frozen Ever After",
+      thrillTolerance: "moderate", magicStatus: [],
+      sensoryNotes: "Can handle dark rides but not big drops.",
+      notes: "Loves princess meet-and-greets. Tall enough for most rides.",
+    },
+    {
+      memberId: "J", name: "Jack", role: "Snack Scout", initial: "J", adventureCount: 8,
+      age: 6, birthday: "September 12", heightInches: 44, dietaryRestrictions: [],
+      favoriteCharacter: "Buzz Lightyear", favoriteRide: "Slinky Dog Dash",
+      thrillTolerance: "low", magicStatus: [],
+      sensoryNotes: "Does not like dark enclosed spaces. Scared by loud effects.",
+      notes: "Height limit may restrict some rides. Loves snack stands.",
+    },
   ],
 
   tripMemories: [

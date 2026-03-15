@@ -7,6 +7,7 @@ import Navigation from "@/components/Navigation";
 import Index from "./pages/Index";
 import DayZeroIndex from "./pages/DayZeroIndex";
 import Adventure from "./pages/Adventure";
+import Survey from "./pages/Survey";
 import Memories from "./pages/Memories";
 import Circle from "./pages/Circle";
 import Account from "./pages/Account";

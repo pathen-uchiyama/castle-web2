@@ -1,4 +1,5 @@
-import { motion, useScroll, useTransform } from "framer-motion";
+import { useState } from "react";
+import { motion, useScroll, useTransform, AnimatePresence } from "framer-motion";
 import { Link, useLocation } from "react-router-dom";
 
 const navItems = [
@@ -14,42 +15,86 @@ const Navigation = () => {
   const bgOpacity = useTransform(scrollY, [0, 200], [0, 1]);
   const location = useLocation();
   const isHome = location.pathname === "/";
+  const [mobileOpen, setMobileOpen] = useState(false);
 
   return (
-    <motion.nav
-      className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-8 lg:px-12 h-16"
-      initial={{ opacity: 0, y: -10 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 1, delay: 0.3 }}
-    >
-      <motion.div
-        className="absolute inset-0 backdrop-blur-md border-b border-white/[0.06]"
-        style={{
-          opacity: bgOpacity,
-          background: isHome ? "hsla(0, 0%, 5%, 0.85)" : "hsla(35, 20%, 95%, 0.92)",
-        }}
-      />
-      <Link to="/" className="relative z-10">
-        <span className={`font-display text-lg tracking-[-0.03em] transition-colors duration-500 ${isHome ? "text-white/90 hover:text-white" : "text-foreground/90 hover:text-foreground"}`}>
-          Castle Companion
-        </span>
-      </Link>
-      <div className="relative z-10 hidden md:flex items-center gap-7 lg:gap-9">
-        {navItems.map((item) => {
-          const isActive = location.pathname.startsWith(item.path);
-          return (
-            <Link key={item.path} to={item.path}>
-              <span className={`label-text transition-all duration-500 cursor-pointer ${isHome ? (isActive ? "!text-white" : "!text-white/40 hover:!text-white/70") : (isActive ? "!text-foreground" : "!text-muted-foreground hover:!text-foreground")}`}>
-                {item.label}
-              </span>
-            </Link>
-          );
-        })}
-      </div>
-      <div className="relative z-10 md:hidden">
-        <span className={`label-text ${isHome ? "!text-white/50" : "!text-muted-foreground"}`}>Menu</span>
-      </div>
-    </motion.nav>
+    <>
+      <motion.nav
+        className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-4 sm:px-8 lg:px-12 h-16"
+        initial={{ opacity: 0, y: -10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 1, delay: 0.3 }}
+      >
+        <motion.div
+          className="absolute inset-0 backdrop-blur-md border-b border-white/[0.06]"
+          style={{
+            opacity: bgOpacity,
+            background: isHome ? "hsla(0, 0%, 5%, 0.85)" : "hsla(35, 20%, 95%, 0.92)",
+          }}
+        />
+        <Link to="/" className="relative z-10">
+          <span className={`font-display text-lg tracking-[-0.03em] transition-colors duration-500 ${isHome ? "text-white/90 hover:text-white" : "text-foreground/90 hover:text-foreground"}`}>
+            Castle Companion
+          </span>
+        </Link>
+        <div className="relative z-10 hidden md:flex items-center gap-7 lg:gap-9">
+          {navItems.map((item) => {
+            const isActive = location.pathname.startsWith(item.path);
+            return (
+              <Link key={item.path} to={item.path}>
+                <span className={`label-text transition-all duration-500 cursor-pointer ${isHome ? (isActive ? "!text-white" : "!text-white/40 hover:!text-white/70") : (isActive ? "!text-foreground" : "!text-muted-foreground hover:!text-foreground")}`}>
+                  {item.label}
+                </span>
+              </Link>
+            );
+          })}
+        </div>
+        <button
+          className="relative z-10 md:hidden"
+          onClick={() => setMobileOpen(!mobileOpen)}
+          aria-label="Toggle menu"
+        >
+          <span className={`label-text ${isHome ? "!text-white/50" : "!text-muted-foreground"}`}>
+            {mobileOpen ? "Close" : "Menu"}
+          </span>
+        </button>
+      </motion.nav>
+
+      <AnimatePresence>
+        {mobileOpen && (
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            transition={{ duration: 0.3 }}
+            className="fixed inset-0 z-40 bg-background/98 backdrop-blur-lg pt-20 px-6 md:hidden"
+          >
+            <nav className="flex flex-col gap-6">
+              {navItems.map((item, i) => {
+                const isActive = location.pathname.startsWith(item.path);
+                return (
+                  <motion.div
+                    key={item.path}
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: i * 0.05 }}
+                  >
+                    <Link
+                      to={item.path}
+                      onClick={() => setMobileOpen(false)}
+                    >
+                      <span className={`font-display text-2xl ${isActive ? "text-foreground" : "text-muted-foreground"}`}>
+                        {item.label}
+                      </span>
+                    </Link>
+                  </motion.div>
+                );
+              })}
+            </nav>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </>
   );
 };
 

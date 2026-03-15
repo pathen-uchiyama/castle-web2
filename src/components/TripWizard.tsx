@@ -110,6 +110,12 @@ const destinations = [
   { id: "dlr", label: "Disneyland Resort", desc: "Two parks, timeless charm." },
 ];
 
+const accommodationOptions = [
+  { id: "on-property", label: "On-Property (Disney Resort)", desc: "Early Entry (30 min before opening for all guests). Extended Evening Hours on select nights (Deluxe resorts only).", benefit: "✨ Best access perks" },
+  { id: "partner-hotel", label: "Partner Hotel with Benefits", desc: "Some partner hotels (e.g. Swan & Dolphin, Disney Springs area) offer Early Entry but not Extended Evening Hours.", benefit: "🏨 Partial early access" },
+  { id: "off-property", label: "Off-Property (No Extra Access)", desc: "Standard park hours only — no early morning or extended evening benefits.", benefit: "🗓 Standard hours" },
+];
+
 /* ─── Reusable UI pieces ─── */
 const Label = ({ children }: { children: React.ReactNode }) => (
   <p style={{ fontFamily: brand.font.body, fontSize: "0.6875rem", fontWeight: 400, color: brand.slate, textTransform: "uppercase", letterSpacing: "0.2em" }} className="mb-2">

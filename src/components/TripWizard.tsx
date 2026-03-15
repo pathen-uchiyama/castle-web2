@@ -32,7 +32,7 @@ interface PartyMember {
   age: string;
   heightInches: string;
   relationship: string;
-  magicStatus: string;
+  magicStatuses: string[];
   firstTimer: boolean;
 }
 

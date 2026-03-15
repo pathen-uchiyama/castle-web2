@@ -102,7 +102,17 @@ export const mockData: AppData = {
       heroImage: editorialCarousel,
       todayWeather: "78°F, Clear",
       todayCrowdLevel: "Moderate",
-      operatingHours: "8:00 AM – 11:00 PM",
+      operatingHours: { regular: "9:00 AM – 10:00 PM", earlyEntry: "8:30 AM", extendedEvening: "10:00 PM – 12:00 AM" },
+      schedule: [
+        { date: "2026-03-21", hours: { regular: "9:00 AM – 10:00 PM", earlyEntry: "8:30 AM", extendedEvening: "10:00 PM – 12:00 AM" }, weather: "78°F, Clear", crowdLevel: "Moderate", crowdScore: 5, notes: "Spring Break begins — expect steady crowds by mid-morning." },
+        { date: "2026-03-22", hours: { regular: "9:00 AM – 11:00 PM", earlyEntry: "8:30 AM", extendedEvening: "11:00 PM – 1:00 AM" }, weather: "80°F, Partly Cloudy", crowdLevel: "High", crowdScore: 7, notes: "Saturday — peak day. Rope drop is essential." },
+        { date: "2026-03-23", hours: { regular: "9:00 AM – 10:00 PM", earlyEntry: "8:30 AM" }, weather: "76°F, Scattered Showers", crowdLevel: "Moderate", crowdScore: 5, notes: "Rain expected 2–4 PM. Great time for indoor rides." },
+        { date: "2026-03-24", hours: { regular: "9:00 AM – 9:00 PM", earlyEntry: "8:30 AM", extendedEvening: "9:00 PM – 11:00 PM" }, weather: "74°F, Clear", crowdLevel: "Low", crowdScore: 3, notes: "Monday dip — shorter waits across the board." },
+        { date: "2026-03-25", hours: { regular: "9:00 AM – 10:00 PM", earlyEntry: "8:30 AM", extendedEvening: "10:00 PM – 12:00 AM" }, weather: "79°F, Sunny", crowdLevel: "Moderate", crowdScore: 5 },
+        { date: "2026-03-26", hours: { regular: "9:00 AM – 10:00 PM", earlyEntry: "8:30 AM" }, weather: "81°F, Humid", crowdLevel: "High", crowdScore: 7, notes: "Mid-week surge. Hydrate and plan for shade breaks." },
+        { date: "2026-03-27", hours: { regular: "9:00 AM – 11:00 PM", earlyEntry: "8:30 AM", extendedEvening: "11:00 PM – 1:00 AM" }, weather: "77°F, Clear", crowdLevel: "Moderate", crowdScore: 6 },
+        { date: "2026-03-28", hours: { regular: "9:00 AM – 10:00 PM", earlyEntry: "8:30 AM", extendedEvening: "10:00 PM – 12:00 AM" }, weather: "75°F, Sunny", crowdLevel: "Low", crowdScore: 3, notes: "Friday wind-down. Great for bucket-list re-rides." },
+      ],
     },
     {
       parkId: "epcot",
@@ -120,7 +130,15 @@ export const mockData: AppData = {
       heroImage: parkEpcot,
       todayWeather: "80°F, Partly Cloudy",
       todayCrowdLevel: "Low",
-      operatingHours: "9:00 AM – 9:00 PM",
+      operatingHours: { regular: "9:00 AM – 9:00 PM", earlyEntry: "8:30 AM", extendedEvening: "9:00 PM – 11:00 PM" },
+      schedule: [
+        { date: "2026-03-21", hours: { regular: "9:00 AM – 9:00 PM", earlyEntry: "8:30 AM", extendedEvening: "9:00 PM – 11:00 PM" }, weather: "78°F, Clear", crowdLevel: "Low", crowdScore: 3 },
+        { date: "2026-03-22", hours: { regular: "9:00 AM – 10:00 PM", earlyEntry: "8:30 AM", extendedEvening: "10:00 PM – 12:00 AM" }, weather: "80°F, Partly Cloudy", crowdLevel: "Moderate", crowdScore: 5 },
+        { date: "2026-03-23", hours: { regular: "9:00 AM – 9:00 PM", earlyEntry: "8:30 AM" }, weather: "76°F, Scattered Showers", crowdLevel: "Low", crowdScore: 2, notes: "Flower & Garden Festival — food booths open at 11 AM." },
+        { date: "2026-03-24", hours: { regular: "9:00 AM – 9:00 PM", earlyEntry: "8:30 AM", extendedEvening: "9:00 PM – 11:00 PM" }, weather: "74°F, Clear", crowdLevel: "Low", crowdScore: 2 },
+        { date: "2026-03-25", hours: { regular: "9:00 AM – 9:00 PM", earlyEntry: "8:30 AM" }, weather: "79°F, Sunny", crowdLevel: "Moderate", crowdScore: 4 },
+        { date: "2026-03-26", hours: { regular: "9:00 AM – 10:00 PM", earlyEntry: "8:30 AM", extendedEvening: "10:00 PM – 12:00 AM" }, weather: "81°F, Humid", crowdLevel: "Moderate", crowdScore: 5, notes: "World Showcase evening dining at peak." },
+      ],
     },
     {
       parkId: "hs",
@@ -138,7 +156,13 @@ export const mockData: AppData = {
       heroImage: parkHollywoodStudios,
       todayWeather: "79°F, Partly Cloudy",
       todayCrowdLevel: "High",
-      operatingHours: "8:30 AM – 9:00 PM",
+      operatingHours: { regular: "8:30 AM – 9:00 PM", earlyEntry: "8:00 AM" },
+      schedule: [
+        { date: "2026-03-21", hours: { regular: "8:30 AM – 9:00 PM", earlyEntry: "8:00 AM" }, weather: "78°F, Clear", crowdLevel: "High", crowdScore: 7, notes: "Rise of the Resistance virtual queue opens at 7 AM." },
+        { date: "2026-03-22", hours: { regular: "8:30 AM – 10:00 PM", earlyEntry: "8:00 AM" }, weather: "80°F, Partly Cloudy", crowdLevel: "High", crowdScore: 8, notes: "Saturday — expect 90+ min waits for headliners." },
+        { date: "2026-03-23", hours: { regular: "8:30 AM – 9:00 PM", earlyEntry: "8:00 AM" }, weather: "76°F, Scattered Showers", crowdLevel: "Moderate", crowdScore: 5 },
+        { date: "2026-03-24", hours: { regular: "8:30 AM – 8:00 PM", earlyEntry: "8:00 AM" }, weather: "74°F, Clear", crowdLevel: "Low", crowdScore: 3 },
+      ],
     },
     {
       parkId: "ak",
@@ -156,7 +180,12 @@ export const mockData: AppData = {
       heroImage: parkAnimalKingdom,
       todayWeather: "81°F, Scattered Clouds",
       todayCrowdLevel: "Moderate",
-      operatingHours: "8:00 AM – 8:00 PM",
+      operatingHours: { regular: "8:00 AM – 7:00 PM", earlyEntry: "7:30 AM", extendedEvening: "7:00 PM – 9:00 PM" },
+      schedule: [
+        { date: "2026-03-21", hours: { regular: "8:00 AM – 7:00 PM", earlyEntry: "7:30 AM", extendedEvening: "7:00 PM – 9:00 PM" }, weather: "81°F, Scattered Clouds", crowdLevel: "Moderate", crowdScore: 5 },
+        { date: "2026-03-22", hours: { regular: "8:00 AM – 8:00 PM", earlyEntry: "7:30 AM", extendedEvening: "8:00 PM – 10:00 PM" }, weather: "82°F, Partly Cloudy", crowdLevel: "High", crowdScore: 7, notes: "Safaris best before 10 AM or after 4 PM." },
+        { date: "2026-03-23", hours: { regular: "8:00 AM – 7:00 PM", earlyEntry: "7:30 AM" }, weather: "76°F, Scattered Showers", crowdLevel: "Low", crowdScore: 2, notes: "Rainy mornings thin crowds at Pandora." },
+      ],
     },
     {
       parkId: "dl",
@@ -174,7 +203,11 @@ export const mockData: AppData = {
       heroImage: parkDisneyland,
       todayWeather: "72°F, Sunny",
       todayCrowdLevel: "Low",
-      operatingHours: "8:00 AM – 12:00 AM",
+      operatingHours: { regular: "8:00 AM – 12:00 AM", earlyEntry: "7:30 AM" },
+      schedule: [
+        { date: "2026-03-21", hours: { regular: "8:00 AM – 12:00 AM", earlyEntry: "7:30 AM" }, weather: "72°F, Sunny", crowdLevel: "Low", crowdScore: 3 },
+        { date: "2026-03-22", hours: { regular: "8:00 AM – 12:00 AM", earlyEntry: "7:30 AM" }, weather: "74°F, Clear", crowdLevel: "Moderate", crowdScore: 5 },
+      ],
     },
     {
       parkId: "dca",
@@ -192,7 +225,11 @@ export const mockData: AppData = {
       heroImage: parkCaliforniaAdventure,
       todayWeather: "70°F, Clear",
       todayCrowdLevel: "Low",
-      operatingHours: "8:00 AM – 10:00 PM",
+      operatingHours: { regular: "8:00 AM – 10:00 PM", earlyEntry: "7:30 AM", extendedEvening: "10:00 PM – 12:00 AM" },
+      schedule: [
+        { date: "2026-03-21", hours: { regular: "8:00 AM – 10:00 PM", earlyEntry: "7:30 AM", extendedEvening: "10:00 PM – 12:00 AM" }, weather: "70°F, Clear", crowdLevel: "Low", crowdScore: 2 },
+        { date: "2026-03-22", hours: { regular: "8:00 AM – 11:00 PM", earlyEntry: "7:30 AM", extendedEvening: "11:00 PM – 1:00 AM" }, weather: "73°F, Clear", crowdLevel: "Moderate", crowdScore: 4 },
+      ],
     },
   ],
 

@@ -1,15 +1,14 @@
 import { motion } from "framer-motion";
-import type { GalleryImage, Whisper } from "@/data/types";
+import { Link } from "react-router-dom";
+import type { TripMemory } from "@/data/types";
 
 const ease: [number, number, number, number] = [0.19, 1, 0.22, 1];
-
 const fade = (delay = 0) => ({
   initial: { opacity: 0, y: 30 } as const,
   whileInView: { opacity: 1, y: 0 } as const,
   viewport: { once: true, margin: "-80px" as const },
   transition: { duration: 1.2, delay, ease },
 });
-
 const scaleIn = (delay = 0) => ({
   initial: { opacity: 0, scale: 0.9 } as const,
   whileInView: { opacity: 1, scale: 1 } as const,
@@ -18,16 +17,15 @@ const scaleIn = (delay = 0) => ({
 });
 
 interface MemoriesProps {
-  galleryImages: GalleryImage[];
-  whispers: Whisper[];
+  tripMemories: TripMemory[];
 }
 
-const Memories = ({ galleryImages, whispers }: MemoriesProps) => {
+const Memories = ({ tripMemories }: MemoriesProps) => {
   return (
     <div className="min-h-screen bg-background pt-16">
       <section className="max-w-6xl mx-auto px-8 py-24 lg:py-32">
         <motion.div {...fade()}>
-          <p className="label-text mb-8 tracking-[0.3em]">Keepsakes</p>
+          <p className="label-text mb-8 tracking-[0.3em]">Memories</p>
           <h1 className="font-display text-5xl sm:text-7xl text-foreground leading-[1.02] mb-6">
             Moments worth keeping.
           </h1>
@@ -39,50 +37,34 @@ const Memories = ({ galleryImages, whispers }: MemoriesProps) => {
 
       <section className="px-4 pb-24 lg:pb-32">
         <div className="grid grid-cols-6 gap-2 auto-rows-[200px] sm:auto-rows-[300px]">
-          {galleryImages.map((img, i) => (
-            <motion.div
-              key={img.title}
-              {...scaleIn(i * 0.08)}
-              className={`${img.gridSpan} group cursor-pointer relative overflow-hidden`}
+          {tripMemories.map((memory, i) => (
+            <Link
+              key={memory.tripId}
+              to={`/memories/${memory.tripId}`}
+              className={`${memory.gridSpan} group cursor-pointer relative overflow-hidden block`}
             >
-              <img
-                src={img.src}
-                alt={img.title}
-                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-end p-5">
-                <div>
-                  <p className="label-text !text-white/50 mb-1">{img.label}</p>
-                  <p className="font-display text-lg text-white">{img.title}</p>
+              <motion.div {...scaleIn(i * 0.08)} className="w-full h-full">
+                <img
+                  src={memory.coverImage}
+                  alt={memory.tripName}
+                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-end p-5">
+                  <div>
+                    <p className="label-text !text-white/50 mb-1">{memory.date}</p>
+                    <p className="font-display text-lg text-white">{memory.tripName}</p>
+                    <p className="font-editorial text-xs text-white/40 mt-1">
+                      {memory.photoCount} photos · {memory.destination}
+                    </p>
+                  </div>
                 </div>
-              </div>
-            </motion.div>
+              </motion.div>
+            </Link>
           ))}
         </div>
       </section>
 
-      <section className="max-w-3xl mx-auto px-8 py-24 lg:py-32 border-t border-border">
-        <motion.div {...fade()}>
-          <p className="label-text mb-8 tracking-[0.25em]">Whispers</p>
-          <h2 className="font-display text-3xl sm:text-4xl text-foreground leading-[1.15] mb-6">
-            Secrets the park keeps.
-          </h2>
-        </motion.div>
-        <div className="mt-14 space-y-12">
-          {whispers.map((note, i) => (
-            <motion.div key={i} {...fade(i * 0.1)} className="group cursor-pointer">
-              <p className="font-editorial text-base text-foreground leading-relaxed group-hover:text-muted-foreground transition-colors duration-500">
-                {note.tip}
-              </p>
-              <p className="label-text mt-3 opacity-50">{note.date}</p>
-            </motion.div>
-          ))}
-        </div>
-      </section>
-
-      <footer className="max-w-5xl mx-auto px-8 py-16">
-        <div className="divider" />
-      </footer>
+      <footer className="max-w-5xl mx-auto px-8 py-16"><div className="divider" /></footer>
     </div>
   );
 };

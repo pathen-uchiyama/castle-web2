@@ -121,6 +121,35 @@ export interface AccountProfile {
   preferences: Preference[];
 }
 
+export type AttractionCategory = "ride" | "show" | "character" | "dining";
+
+export interface SurveyAttraction {
+  attractionId: string;
+  name: string;
+  parkId: string;
+  category: AttractionCategory;
+  heightRequirement?: string;
+  sensoryTags?: string[];
+  description: string;
+}
+
+export type SurveyRanking = "must-do" | "like-to-do" | "will-avoid";
+
+export interface SurveyResponse {
+  memberId: string;
+  memberName: string;
+  rankings: Record<string, SurveyRanking>;
+  openToAnything: boolean;
+  topFiveMustDos: string[];
+  status: "pending" | "completed";
+}
+
+export interface PartySurvey {
+  tripId: string;
+  attractions: SurveyAttraction[];
+  responses: SurveyResponse[];
+}
+
 export interface AppData {
   guestName: string;
   bookedTrip: BookedTrip;
@@ -129,4 +158,5 @@ export interface AppData {
   partyMembers: PartyMember[];
   tripMemories: TripMemory[];
   account: AccountProfile;
+  partySurvey: PartySurvey;
 }

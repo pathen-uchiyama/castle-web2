@@ -59,6 +59,24 @@ const statusColors: Record<string, { bg: string; text: string; border: string }>
   cancelled: { bg: "hsl(var(--destructive) / 0.1)", text: "hsl(var(--destructive))", border: "hsl(var(--destructive) / 0.3)" },
 };
 
+const experienceIcons: Record<ExperienceCategory, string> = {
+  "character-meet": "👑",
+  "tour": "🗺",
+  "special-event": "✨",
+  "recreation": "🚴",
+  "spa": "💆",
+  "photo-session": "📸",
+};
+
+const experienceLabels: Record<ExperienceCategory, string> = {
+  "character-meet": "Character Meet",
+  "tour": "Tour",
+  "special-event": "Special Event",
+  "recreation": "Recreation",
+  "spa": "Spa & Wellness",
+  "photo-session": "Photo Session",
+};
+
 const Adventure = ({ bookedTrip, futureTrips }: AdventureProps) => {
   const [wizardOpen, setWizardOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("overview");

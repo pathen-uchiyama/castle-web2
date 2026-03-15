@@ -137,7 +137,7 @@ const TripDetail = ({ bookedTrip, futureTrips }: TripDetailProps) => {
 /* ─── Booked Trip Detail (all tabs) ─────────────────────────────── */
 
 const tabs = [
-  { id: "surveys", label: "Surveys", badge: "2 pending" },
+  { id: "surveys", label: "Party Setup", badge: "2 pending" },
   { id: "dining", label: "Dining" },
   { id: "experiences", label: "Experiences" },
   { id: "designer", label: "The Designer" },

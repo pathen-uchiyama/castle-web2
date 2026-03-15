@@ -69,7 +69,7 @@ export const mockData: AppData = {
       tripName: "Halloween at DLR",
       tentativeDate: "October 2026",
       status: "planning",
-      heroImage: editorialCarousel,
+      heroImage: editorialNextTrip,
       note: "Oogie Boogie Bash tickets go on sale in June.",
     },
     {

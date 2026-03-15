@@ -9,6 +9,7 @@ import Adventure from "./pages/Adventure";
 import Memories from "./pages/Memories";
 import Circle from "./pages/Circle";
 import Account from "./pages/Account";
+import ParkGuidePage from "./pages/ParkGuide";
 import NotFound from "./pages/NotFound";
 import { mockData } from "./data/mockData";
 
@@ -27,29 +28,22 @@ const App = () => (
             element={
               <Index
                 guestName={mockData.guestName}
-                activeItinerary={mockData.activeItinerary}
+                bookedTrip={mockData.bookedTrip}
+                futureTrips={mockData.futureTrips}
+                parkGuides={mockData.parkGuides}
                 partyMembers={mockData.partyMembers}
-                galleryImages={mockData.galleryImages}
+                tripMemories={mockData.tripMemories}
                 account={mockData.account}
               />
             }
           />
-          <Route
-            path="/adventure"
-            element={<Adventure activeItinerary={mockData.activeItinerary} />}
-          />
-          <Route
-            path="/memories"
-            element={<Memories galleryImages={mockData.galleryImages} whispers={mockData.whispers} />}
-          />
-          <Route
-            path="/circle"
-            element={<Circle partyMembers={mockData.partyMembers} />}
-          />
-          <Route
-            path="/account"
-            element={<Account account={mockData.account} />}
-          />
+          <Route path="/adventure" element={<Adventure bookedTrip={mockData.bookedTrip} />} />
+          <Route path="/trip/:tripId" element={<Adventure bookedTrip={mockData.bookedTrip} />} />
+          <Route path="/memories" element={<Memories tripMemories={mockData.tripMemories} />} />
+          <Route path="/memories/:tripId" element={<Memories tripMemories={mockData.tripMemories} />} />
+          <Route path="/circle" element={<Circle partyMembers={mockData.partyMembers} />} />
+          <Route path="/account" element={<Account account={mockData.account} />} />
+          <Route path="/parks/:parkId" element={<ParkGuidePage parkGuides={mockData.parkGuides} />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>

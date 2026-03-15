@@ -1,7 +1,25 @@
 /* ─── Domain Types ───────────────────────────────────────────────
- * All data structures used across pages. Variable names are
- * semantic so they map 1:1 to a future backend API response.
- * ────────────────────────────────────────────────────────────── */
+ * Semantic variable names ready for backend API mapping.
+ * ─────────────────────────────────────────────────────────────── */
+
+export type Resort = "wdw" | "dlr";
+
+export interface ParkGuideCategory {
+  label: string;
+  description: string;
+  itemCount: number;
+}
+
+export interface ParkGuide {
+  parkId: string;
+  parkName: string;
+  resort: Resort;
+  resortName: string;
+  typicalWeather: string;
+  crowdCalendarSummary: string;
+  categories: ParkGuideCategory[];
+  heroImage: string;
+}
 
 export interface PartyMember {
   name: string;
@@ -35,16 +53,49 @@ export interface PreparationItem {
   isComplete: boolean;
 }
 
-export interface Whisper {
-  tip: string;
-  date: string;
+export interface PackingItem {
+  category: string;
+  items: string[];
+  packedCount: number;
+  totalCount: number;
 }
 
-export interface GalleryImage {
-  title: string;
-  label: string;
-  src: string;
+export interface BookedTrip {
+  tripId: string;
+  destination: string;
+  tripName: string;
+  countdownDays: number;
+  partySize: number;
+  description: string;
+  heroImage: string;
+  resort: Resort;
+  todaysPark: ParkConditions;
+  timeReclaimed: string;
+  ridesSaved: RideTimeSaved[];
+  travelLegs: TravelLeg[];
+  preparations: PreparationItem[];
+  packingLists: PackingItem[];
+}
+
+export interface FutureTrip {
+  tripId: string;
+  destination: string;
+  tripName: string;
+  tentativeDate: string;
+  status: "dreaming" | "planning" | "booking";
+  heroImage: string;
+  note: string;
+}
+
+export interface TripMemory {
+  tripId: string;
+  destination: string;
+  tripName: string;
+  date: string;
+  coverImage: string;
+  photoCount: number;
   gridSpan: string;
+  highlights: string[];
 }
 
 export interface Subscription {
@@ -53,29 +104,9 @@ export interface Subscription {
   status: "active" | "inactive" | "trial";
 }
 
-export interface ProfileField {
-  label: string;
-  value: string;
-}
-
 export interface Preference {
   label: string;
   value: string;
-}
-
-export interface ActiveItinerary {
-  destination: string;
-  tripName: string;
-  countdownDays: number;
-  partySize: number;
-  strategistCount: number;
-  description: string;
-  heroImage: string;
-  todaysPark: ParkConditions;
-  timeReclaimed: string;
-  ridesSaved: RideTimeSaved[];
-  travelLegs: TravelLeg[];
-  preparations: PreparationItem[];
 }
 
 export interface AccountProfile {
@@ -89,9 +120,10 @@ export interface AccountProfile {
 
 export interface AppData {
   guestName: string;
-  activeItinerary: ActiveItinerary;
+  bookedTrip: BookedTrip;
+  futureTrips: FutureTrip[];
+  parkGuides: ParkGuide[];
   partyMembers: PartyMember[];
-  whispers: Whisper[];
-  galleryImages: GalleryImage[];
+  tripMemories: TripMemory[];
   account: AccountProfile;
 }

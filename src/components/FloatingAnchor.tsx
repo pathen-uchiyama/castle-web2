@@ -1,21 +1,63 @@
 import { motion } from "framer-motion";
-import { GoldenAnchor } from "@/components/Icons";
 
 const FloatingAnchor = () => {
   return (
     <motion.button
       initial={{ scale: 0, opacity: 0 }}
       animate={{ scale: 1, opacity: 1 }}
-      transition={{ delay: 0.6, type: "spring", stiffness: 260, damping: 20 }}
-      className="fixed bottom-8 right-6 z-50 w-14 h-14 rounded-full bg-gradient-to-br from-gold to-gold-dark flex items-center justify-center shadow-lg cursor-pointer border-2 border-gold-light/40 focus:outline-none focus:ring-2 focus:ring-gold/50"
-      aria-label="Open Castle Companion menu"
-      whileTap={{ scale: 0.92 }}
-      whileHover={{ scale: 1.08 }}
+      transition={{ delay: 1, type: "spring", stiffness: 200, damping: 20 }}
+      className="fixed bottom-8 right-8 z-50 w-16 h-16 flex items-center justify-center cursor-pointer focus:outline-none group"
+      aria-label="The Golden Anchor"
+      whileTap={{ scale: 0.94 }}
     >
-      {/* Haptic pulse rings */}
-      <span className="absolute inset-0 rounded-full animate-[fab-pulse_2.5s_cubic-bezier(0.4,0,0.6,1)_infinite] bg-gold/30" />
-      <span className="absolute inset-0 rounded-full animate-[fab-pulse_2.5s_cubic-bezier(0.4,0,0.6,1)_0.8s_infinite] bg-gold/20" />
-      <GoldenAnchor className="w-6 h-6 text-white relative z-10" />
+      {/* Breathing glow */}
+      <span
+        className="absolute inset-0 rounded-full"
+        style={{ animation: "seal-breathe 3s ease-in-out infinite" }}
+      />
+
+      {/* Wax seal body */}
+      <div
+        className="relative w-14 h-14 rounded-full flex items-center justify-center transition-transform duration-300 group-hover:scale-105"
+        style={{
+          background: `radial-gradient(circle at 35% 35%, hsl(42 64% 45%), hsl(42 70% 28%) 70%)`,
+          boxShadow: `
+            inset 0 1px 2px 0 hsla(42, 80%, 70%, 0.4),
+            inset 0 -2px 4px 0 hsla(42, 70%, 20%, 0.3),
+            0 2px 8px -2px hsla(42, 60%, 25%, 0.4),
+            0 1px 2px 0 hsla(42, 60%, 25%, 0.2)
+          `,
+        }}
+      >
+        {/* Seal stamp texture — concentric rings */}
+        <div
+          className="absolute inset-[3px] rounded-full border border-dashed"
+          style={{ borderColor: "hsla(42, 80%, 70%, 0.25)" }}
+        />
+        <div
+          className="absolute inset-[7px] rounded-full border"
+          style={{ borderColor: "hsla(42, 80%, 70%, 0.15)" }}
+        />
+
+        {/* Anchor icon — stamped in */}
+        <svg
+          width="22"
+          height="22"
+          viewBox="0 0 24 24"
+          fill="none"
+          className="relative z-10"
+          style={{
+            filter: "drop-shadow(0 1px 0 hsla(42, 70%, 20%, 0.4))",
+          }}
+        >
+          <path
+            d="M12 2v20M12 8a4 4 0 1 0 0-1M5 12h14M7 20c0-4 2.5-8 5-8s5 4 5 8"
+            stroke="hsla(42, 80%, 80%, 0.9)"
+            strokeWidth="1.5"
+            strokeLinecap="round"
+          />
+        </svg>
+      </div>
     </motion.button>
   );
 };

@@ -4,12 +4,17 @@ interface CollectionHeaderProps {
 }
 
 const CollectionHeader = ({ title, subtitle }: CollectionHeaderProps) => (
-  <div className="mb-6 mt-14 first:mt-0">
-    <div className="flex items-center gap-3 mb-1">
-      <div className="w-1.5 h-1.5 rounded-full bg-gold sparkle" />
-      <h3 className="label-text text-gold-dark">{title}</h3>
+  <div className="mb-10 mt-20 first:mt-0 text-center">
+    <div className="flex items-center justify-center gap-4 mb-3">
+      <div className="h-px w-12 bg-gold/30" />
+      <span className="gold-leaf sparkle" />
+      <h3 className="label-text text-gold tracking-[0.15em]">{title}</h3>
+      <span className="gold-leaf sparkle" />
+      <div className="h-px w-12 bg-gold/30" />
     </div>
-    {subtitle && <p className="text-sm text-muted-foreground ml-[18px]">{subtitle}</p>}
+    {subtitle && (
+      <p className="font-editorial text-base text-muted-foreground italic">{subtitle}</p>
+    )}
   </div>
 );
 

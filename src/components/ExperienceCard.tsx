@@ -5,17 +5,16 @@ interface ExperienceCardProps {
   icon?: ReactNode;
   children: ReactNode;
   className?: string;
-  colSpan?: string;
 }
 
-const ExperienceCard = ({ title, icon, children, className = "", colSpan = "" }: ExperienceCardProps) => {
+const ExperienceCard = ({ title, icon, children, className = "" }: ExperienceCardProps) => {
   return (
-    <section className={`card-castle flex flex-col gap-3 ${colSpan} ${className}`}>
-      <div className="flex items-center justify-between">
-        <h2 className="font-display text-lg text-foreground">{title}</h2>
+    <section className={`card-bordered flex flex-col gap-4 ${className}`}>
+      <div className="flex items-center gap-3">
         {icon && <div className="text-gold">{icon}</div>}
+        <h2 className="font-display text-xl text-foreground">{title}</h2>
       </div>
-      <div className="w-8 h-0.5 bg-gold/30 rounded-full" />
+      <div className="gold-rule" />
       <div className="flex-1">{children}</div>
     </section>
   );

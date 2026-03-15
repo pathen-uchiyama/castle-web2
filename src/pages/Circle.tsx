@@ -27,7 +27,7 @@ const Circle = ({ partyMembers }: CircleProps) => {
   return (
     <div className="min-h-screen bg-background pt-16">
       <section className="grid grid-cols-1 lg:grid-cols-2 min-h-[70vh]">
-        <div className="px-8 lg:px-16 py-24 lg:py-32 flex flex-col justify-center">
+        <div className="px-4 sm:px-8 lg:px-16 py-16 sm:py-24 lg:py-32 flex flex-col justify-center">
           <motion.div {...fade()}>
             <p className="label-text mb-8 tracking-[0.3em]">The Inner Circle</p>
             <h1 className="font-display text-5xl sm:text-6xl text-foreground leading-[1.02] mb-8">

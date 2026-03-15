@@ -135,7 +135,7 @@ export const mockData: AppData = {
         { label: "Shows", description: "Fantasmic!, Indiana Jones stunt show, Disney Junior", itemCount: 8 },
         { label: "Seasonal Events", description: "Jollywood Nights and special screenings", itemCount: 3 },
       ],
-      heroImage: editorialSunset,
+      heroImage: parkHollywoodStudios,
       todayWeather: "79°F, Partly Cloudy",
       todayCrowdLevel: "High",
       operatingHours: "8:30 AM – 9:00 PM",

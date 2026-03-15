@@ -558,6 +558,85 @@ const TripWizard = ({ open, onClose }: TripWizardProps) => {
                             </span>
                           ))}
                         </div>
+                      {/* ─── Park Services & Accommodations ─── */}
+                      <div>
+                        <Label>Park Services & Accommodations</Label>
+                        <p className="text-xs mb-4" style={{ fontFamily: brand.font.body, color: brand.slate }}>
+                          Select the services your party may use. Costs noted below are <strong>not included</strong> in Castle Companion.
+                        </p>
+                        <div className="space-y-3">
+                          {([
+                            {
+                              key: "needsDAS" as const,
+                              label: "Disability Access Service (DAS)",
+                              desc: "For guests who cannot wait in a conventional queue due to a developmental disability. DAS lets you register for a return time so you can wait somewhere comfortable. Free of charge — requires registration through Disney.",
+                              cost: null,
+                            },
+                            {
+                              key: "willUseSingleRider" as const,
+                              label: "Single Rider Lines",
+                              desc: "Skip the standby queue by filling empty seats on select rides. You'll ride alone (not with your group). Great way to re-ride favorites. No extra cost.",
+                              cost: null,
+                            },
+                            {
+                              key: "willPurchaseLL" as const,
+                              label: "Lightning Lane Multi Pass",
+                              desc: "Purchase access to shorter lines across multiple attractions. You book return windows throughout the day. Available for most rides.",
+                              cost: "~$15–$35/person/day depending on date and park",
+                            },
+                            {
+                              key: "willPurchaseILL" as const,
+                              label: "Individual Lightning Lane",
+                              desc: "Pay per ride for the most popular attractions (e.g., Tron, Guardians). Each ride is purchased separately with a specific return time.",
+                              cost: "~$10–$25/person/ride depending on demand",
+                            },
+                            {
+                              key: "willUseChildExchange" as const,
+                              label: "Rider Switch (Child Swap)",
+                              desc: "When a child is too small or a guest can't ride, one adult waits with them while the other rides. Then they swap — the second adult gets to skip the line. Free of charge.",
+                              cost: null,
+                            },
+                          ]).map((service) => {
+                            const active = data[service.key];
+                            return (
+                              <button
+                                key={service.key}
+                                onClick={() => set(service.key, !active)}
+                                className="w-full text-left p-5 transition-all duration-500"
+                                style={{
+                                  background: active ? brand.white : "transparent",
+                                  border: `1px solid ${active ? brand.gold : brand.border}`,
+                                  boxShadow: active ? brand.shadow : "none",
+                                }}
+                              >
+                                <div className="flex items-start gap-3">
+                                  <div
+                                    className="w-5 h-5 mt-0.5 shrink-0 flex items-center justify-center transition-all"
+                                    style={{
+                                      border: `1px solid ${active ? brand.gold : brand.border}`,
+                                      background: active ? brand.gold : "transparent",
+                                    }}
+                                  >
+                                    {active && <span style={{ color: brand.white, fontSize: "0.7rem", lineHeight: 1 }}>✓</span>}
+                                  </div>
+                                  <div>
+                                    <p style={{ fontFamily: brand.font.display, fontWeight: 500, color: brand.lapis, fontSize: "0.9375rem", marginBottom: "0.25rem" }}>
+                                      {service.label}
+                                    </p>
+                                    <p style={{ fontFamily: brand.font.body, color: brand.slate, fontSize: "0.75rem", lineHeight: "1.5" }}>
+                                      {service.desc}
+                                    </p>
+                                    {service.cost && (
+                                      <p className="mt-1.5 flex items-center gap-1" style={{ fontFamily: brand.font.body, fontSize: "0.6875rem", color: brand.goldDark, fontWeight: 500 }}>
+                                        💰 {service.cost}
+                                      </p>
+                                    )}
+                                  </div>
+                                </div>
+                              </button>
+                            );
+                          })}
+                        </div>
                       </div>
                     </div>
                   )}

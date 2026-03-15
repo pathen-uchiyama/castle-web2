@@ -331,7 +331,58 @@ const BookedTripDetail = ({ trip }: { trip: BookedTrip }) => {
   const getTotalPacked = () => Object.values(packedItems).flat().filter(Boolean).length;
   const getTotalItems = () => Object.values(packedItems).flat().length;
 
-  const consensusData = useMemo(() => {
+  // Combined reservations (mock + pending)
+  const allDiningReservations = useMemo(() => [...diningReservations, ...pendingDining], [diningReservations, pendingDining]);
+  const allBookedExperiences = useMemo(() => [...bookedExperiences, ...pendingExperiences], [bookedExperiences, pendingExperiences]);
+
+  const handleBookDining = (venue: DiningVenue, data: { date: string; time: string; partySize: number; notes: string }) => {
+    const newRes: DiningReservation = {
+      reservationId: `din-pending-${Date.now()}`,
+      restaurantName: venue.name,
+      parkOrResort: venue.parkOrResort,
+      date: data.date,
+      time: data.time,
+      partySize: data.partySize,
+      confirmationNumber: "Pending",
+      cuisine: venue.cuisine,
+      mealType: venue.mealTypes[0] || "dinner",
+      notes: data.notes || undefined,
+      dietaryFlags: venue.dietaryAccommodations.length > 0 ? venue.dietaryAccommodations.slice(0, 2) : undefined,
+      status: "pending",
+    };
+    setPendingDining(prev => [...prev, newRes]);
+    setBookingModal(null);
+    setDiningSubTab("reservations");
+    toast({ title: "Reservation added", description: `${venue.name} added as pending. Update with confirmation once booked.` });
+  };
+
+  const handleBookExperience = (venue: ExperienceVenue, data: { date: string; time: string; partySize: number; notes: string }) => {
+    const newExp: BookedExperience = {
+      experienceId: `exp-pending-${Date.now()}`,
+      experienceName: venue.name,
+      category: venue.category,
+      parkOrResort: venue.parkOrResort,
+      date: data.date,
+      time: data.time,
+      duration: venue.duration,
+      partySize: data.partySize,
+      confirmationNumber: "Pending",
+      notes: data.notes || undefined,
+      status: "pending",
+    };
+    setPendingExperiences(prev => [...prev, newExp]);
+    setBookingModal(null);
+    setExperienceSubTab("reservations");
+    toast({ title: "Experience added", description: `${venue.name} added as pending. Update with confirmation once booked.` });
+  };
+
+  const handleSetAlert = (type: "dining" | "experience", venueName: string, opensDate: string, note: string) => {
+    setAlerts(prev => [...prev, { id: `alert-${Date.now()}`, venueName, type, opensDate, note }]);
+    setAlertModal(null);
+    toast({ title: "🔔 Alert set!", description: `We'll remind you when ${venueName} booking opens${opensDate ? ` on ${opensDate}` : ""}.` });
+  };
+
+
     const completed = partySurvey.responses.filter((r) => r.status === "completed");
     if (completed.length === 0) return [];
     return partySurvey.attractions.map((attraction) => {

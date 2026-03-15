@@ -212,7 +212,7 @@ const TripWizard = ({ open, onClose }: TripWizardProps) => {
       age: "",
       heightInches: "",
       relationship: "Self",
-      magicStatus: "Regular",
+      magicStatuses: ["Regular"],
       firstTimer: false,
     }]);
   };

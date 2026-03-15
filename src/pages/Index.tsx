@@ -258,7 +258,7 @@ const Index = () => {
             </ExperienceCard>
           </AnimatedCard>
 
-          <div className="space-y-8">
+          <div className="space-y-16">
             <AnimatedCard delay={0.2}>
               <ExperienceCard title="The Traveler's Trunk" icon={<Trunk />}>
                 <div className="space-y-3">

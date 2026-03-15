@@ -154,32 +154,35 @@ const Index = ({
           <div className="grid grid-cols-1 md:grid-cols-2 min-h-[70vh]">
             <div className="flex flex-col justify-center px-4 sm:px-8 lg:px-16 py-16 sm:py-20 lg:py-28">
               <motion.div {...slideLeft()}>
-                <p className="label-text !text-white/50 mb-10 tracking-[0.25em]">Your Booked Adventure</p>
+                <p className="label-text !text-white/40 mb-10 tracking-[0.25em]" style={{ letterSpacing: '0.25em' }}>Your Booked Adventure</p>
                 <h2 className="font-display text-4xl sm:text-5xl xl:text-6xl text-white leading-[1.08] mb-6">
                   {bookedTrip.destination}
                 </h2>
-                <p className="font-display text-2xl sm:text-3xl text-white/60 leading-[1.2] mb-8">
+                <p className="font-display text-2xl sm:text-3xl text-white/50 leading-[1.2] mb-8">
                   {bookedTrip.tripName}
                 </p>
-                <p className="font-editorial text-base text-white/50 max-w-md leading-relaxed">
-                  {bookedTrip.description}
+                <p className="font-editorial text-base text-white/45 max-w-md leading-relaxed">
+                  Your {bookedTrip.countdownDays}-day countdown to {bookedTrip.destination} continues — a party of {bookedTrip.partySize}, {bookedTrip.todaysPark?.weather?.toLowerCase() || 'clear skies'} ahead.
                 </p>
               </motion.div>
               <motion.div {...slideLeft(0.2)} className="mt-14 flex gap-10 sm:gap-16 flex-wrap">
                 {[
                   { label: "Countdown", value: `${bookedTrip.countdownDays} days` },
                   { label: "Party", value: String(bookedTrip.partySize) },
-                  { label: "Time Saved", value: bookedTrip.timeReclaimed },
                 ].map((d) => (
                   <div key={d.label}>
-                    <p className="label-text !text-white/40 mb-2">{d.label}</p>
+                    <p className="label-text !text-white/30 mb-2" style={{ fontSize: '0.625rem', letterSpacing: '0.2em' }}>{d.label}</p>
                     <p className="font-display text-3xl sm:text-4xl text-white">{d.value}</p>
                   </div>
                 ))}
+                <div>
+                  <p className="label-text !text-[hsl(var(--gold-light))]/60 mb-2" style={{ fontSize: '0.625rem', letterSpacing: '0.2em' }}>Time Reclaimed</p>
+                  <p className="font-display text-3xl sm:text-4xl text-[hsl(var(--gold-light))]">{bookedTrip.timeReclaimed}</p>
+                </div>
               </motion.div>
               <motion.div {...slideLeft(0.3)} className="mt-10">
                 <Link to={`/trip/${bookedTrip.tripId}`}>
-                  <span className="link-editorial font-editorial text-sm text-white/70 hover:text-white">View full itinerary →</span>
+                  <span className="link-editorial font-editorial text-sm text-white/60 hover:text-white">View full itinerary →</span>
                 </Link>
               </motion.div>
             </div>

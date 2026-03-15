@@ -4,106 +4,179 @@
 
 @layer base {
   :root {
-    --background: 48 29% 96%;
-    --foreground: 240 3% 10%;
+    /* Castle Companion Brand — Warm, Golden, Magical */
+    --background: 43 40% 97%;
+    --foreground: 220 40% 13%;
 
-    --card: 0 0% 100%;
-    --card-foreground: 240 3% 10%;
+    --card: 40 33% 99%;
+    --card-foreground: 220 40% 13%;
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 240 3% 10%;
+    --popover: 40 33% 99%;
+    --popover-foreground: 220 40% 13%;
 
-    --primary: 263 24% 38%;
-    --primary-foreground: 0 0% 100%;
+    /* Deep Navy — primary brand text/buttons */
+    --primary: 220 40% 20%;
+    --primary-foreground: 43 40% 97%;
 
-    --secondary: 48 29% 96%;
-    --secondary-foreground: 240 3% 10%;
+    --secondary: 40 30% 94%;
+    --secondary-foreground: 220 40% 13%;
 
-    --muted: 210 2% 60%;
-    --muted-foreground: 210 2% 60%;
+    --muted: 40 15% 75%;
+    --muted-foreground: 220 15% 50%;
 
-    --accent: 42 64% 35%;
-    --accent-foreground: 240 3% 10%;
+    /* Burnished Gold — the signature accent */
+    --accent: 42 78% 50%;
+    --accent-foreground: 220 40% 13%;
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 210 2% 39%;
-    --input: 210 2% 39%;
-    --ring: 263 24% 38%;
+    --border: 40 20% 85%;
+    --input: 40 20% 85%;
+    --ring: 42 78% 50%;
 
-    --radius: 0px;
-
-    --sidebar-background: 48 29% 96%;
-    --sidebar-foreground: 240 3% 10%;
-    --sidebar-primary: 263 24% 38%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 42 64% 35%;
-    --sidebar-accent-foreground: 240 3% 10%;
-    --sidebar-border: 210 2% 39%;
-    --sidebar-ring: 263 24% 38%;
+    --radius: 0.75rem;
 
     /* Custom tokens */
-    --surface: 0 0% 100%;
-    --surface-hover: 0 0% 99%;
-    --ink-shadow: 1px 1px 0px 0px hsl(210 2% 39%), 3px 3px 0px 0px rgba(26, 26, 27, 0.05);
+    --gold: 42 78% 50%;
+    --gold-light: 42 80% 65%;
+    --gold-dark: 42 70% 38%;
+    --navy: 220 40% 20%;
+    --navy-light: 220 30% 35%;
+    --cream: 43 40% 97%;
+    --cream-dark: 40 30% 92%;
+    --warm-shadow: 0 4px 20px -4px hsla(42, 60%, 40%, 0.12);
+    --card-shadow: 0 2px 12px -2px hsla(42, 60%, 40%, 0.08);
+    --card-hover-shadow: 0 8px 30px -6px hsla(42, 60%, 40%, 0.18);
+
+    --sidebar-background: 40 33% 99%;
+    --sidebar-foreground: 220 40% 13%;
+    --sidebar-primary: 220 40% 20%;
+    --sidebar-primary-foreground: 43 40% 97%;
+    --sidebar-accent: 42 78% 50%;
+    --sidebar-accent-foreground: 220 40% 13%;
+    --sidebar-border: 40 20% 85%;
+    --sidebar-ring: 42 78% 50%;
   }
 
   * {
     @apply border-border;
-    border-radius: 0 !important;
   }
 
   body {
     @apply bg-background text-foreground;
-    font-family: 'Inter', sans-serif;
-    letter-spacing: -0.02em;
+    font-family: 'Inter', system-ui, sans-serif;
+    letter-spacing: -0.01em;
   }
 }
 
 @layer components {
   .font-display {
-    font-family: 'FrauncesFallback', 'Fraunces', Georgia, serif;
-    font-variation-settings: 'SOFT' 50, 'WONK' 1;
-    letter-spacing: -0.03em;
+    font-family: 'Fraunces', Georgia, serif;
+    letter-spacing: -0.02em;
   }
 
   .label-text {
     font-family: 'Inter', sans-serif;
-    font-size: 0.75rem;
-    font-weight: 450;
+    font-size: 0.7rem;
+    font-weight: 600;
     text-transform: uppercase;
-    letter-spacing: 0.05em;
-    color: hsl(var(--muted));
+    letter-spacing: 0.08em;
+    color: hsl(var(--muted-foreground));
   }
 
-  .card-stationery {
-    background: hsl(var(--surface));
+  .card-castle {
+    background: hsl(var(--card));
     border: 1px solid hsl(var(--border));
+    border-radius: var(--radius);
     padding: 1.5rem;
-    transition: border-color 250ms cubic-bezier(0.19, 1, 0.22, 1);
-    box-shadow: var(--ink-shadow);
+    box-shadow: var(--card-shadow);
+    transition: box-shadow 350ms cubic-bezier(0.19, 1, 0.22, 1),
+                transform 350ms cubic-bezier(0.19, 1, 0.22, 1),
+                border-color 350ms cubic-bezier(0.19, 1, 0.22, 1);
   }
 
-  .card-stationery:hover {
-    border-color: hsl(var(--foreground));
-    background: hsl(var(--surface-hover));
+  .card-castle:hover {
+    box-shadow: var(--card-hover-shadow);
+    transform: translateY(-2px);
+    border-color: hsl(var(--gold-light));
   }
 
-  .btn-stationery {
-    background: hsl(var(--primary));
+  .btn-gold {
+    background: linear-gradient(135deg, hsl(var(--gold)) 0%, hsl(var(--gold-dark)) 100%);
     color: hsl(var(--primary-foreground));
-    border: 1px solid hsl(var(--foreground));
-    padding: 0.5rem 1.5rem;
+    border: none;
+    border-radius: var(--radius);
+    padding: 0.625rem 1.75rem;
     font-family: 'Inter', sans-serif;
-    font-size: 0.75rem;
-    font-weight: 450;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    transition: transform 100ms ease;
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    box-shadow: 0 2px 8px -2px hsla(42, 70%, 40%, 0.35);
+    transition: transform 200ms ease, box-shadow 200ms ease;
+    cursor: pointer;
   }
 
-  .btn-stationery:active {
-    transform: translateY(1px);
+  .btn-gold:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 16px -4px hsla(42, 70%, 40%, 0.45);
+  }
+
+  .btn-gold:active {
+    transform: translateY(0px);
+  }
+
+  .gold-gradient-text {
+    background: linear-gradient(135deg, hsl(var(--gold)) 0%, hsl(var(--gold-dark)) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  /* Sparkle keyframes */
+  @keyframes sparkle-float {
+    0%, 100% { transform: translateY(0) scale(1); opacity: 0; }
+    10% { opacity: 1; }
+    50% { transform: translateY(-20px) scale(1.2); opacity: 0.8; }
+    90% { opacity: 0; }
+  }
+
+  @keyframes twinkle {
+    0%, 100% { opacity: 0.2; transform: scale(0.8); }
+    50% { opacity: 1; transform: scale(1); }
+  }
+
+  @keyframes gentle-pulse {
+    0%, 100% { opacity: 0.6; }
+    50% { opacity: 1; }
+  }
+
+  .sparkle {
+    animation: twinkle 2s ease-in-out infinite;
+  }
+
+  .sparkle-delayed {
+    animation: twinkle 2.5s ease-in-out 0.5s infinite;
+  }
+
+  .sparkle-slow {
+    animation: twinkle 3s ease-in-out 1s infinite;
+  }
+
+  /* Progress bar shimmer */
+  @keyframes shimmer {
+    0% { background-position: -200% 0; }
+    100% { background-position: 200% 0; }
+  }
+
+  .progress-shimmer {
+    background: linear-gradient(
+      90deg,
+      hsl(var(--gold)) 0%,
+      hsl(var(--gold-light)) 50%,
+      hsl(var(--gold)) 100%
+    );
+    background-size: 200% 100%;
+    animation: shimmer 3s ease-in-out infinite;
   }
 }

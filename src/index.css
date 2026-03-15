@@ -4,60 +4,60 @@
 
 @layer base {
   :root {
-    /* Castle Companion Brand — Warm, Golden, Magical */
-    --background: 43 40% 97%;
-    --foreground: 220 40% 13%;
+    /* Aged Parchment — the dominant surface */
+    --background: 43 33% 96%;
+    --foreground: 240 3% 10%;
 
-    --card: 40 33% 99%;
-    --card-foreground: 220 40% 13%;
+    /* Cards are barely distinguishable from parchment */
+    --card: 40 25% 98%;
+    --card-foreground: 240 3% 10%;
 
-    --popover: 40 33% 99%;
-    --popover-foreground: 220 40% 13%;
+    --popover: 40 25% 98%;
+    --popover-foreground: 240 3% 10%;
 
-    /* Deep Navy — primary brand text/buttons */
-    --primary: 220 40% 20%;
-    --primary-foreground: 43 40% 97%;
+    /* Royal Thistle — interactive text */
+    --primary: 263 24% 38%;
+    --primary-foreground: 0 0% 100%;
 
-    --secondary: 40 30% 94%;
-    --secondary-foreground: 220 40% 13%;
+    --secondary: 43 20% 93%;
+    --secondary-foreground: 240 3% 10%;
 
-    --muted: 40 15% 75%;
-    /* WCAG AA on cream (#F9F7F2): hsl(220 15% 42%) = ~#5B6370, contrast 4.64:1 ✓ */
-    --muted-foreground: 220 15% 42%;
+    /* Muted — WCAG AA compliant on parchment (4.5:1+) */
+    --muted: 40 10% 88%;
+    --muted-foreground: 220 10% 40%;
 
-    /* Burnished Gold — the signature accent */
-    --accent: 42 78% 50%;
-    --accent-foreground: 220 40% 13%;
+    /* Burnished Gold — accent only */
+    --accent: 42 64% 35%;
+    --accent-foreground: 240 3% 10%;
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 40 20% 85%;
-    --input: 40 20% 85%;
-    --ring: 42 78% 50%;
+    /* Slate Plaid at 10% opacity feel — very light border */
+    --border: 210 4% 82%;
+    --input: 210 4% 82%;
+    --ring: 263 24% 38%;
 
-    --radius: 0.75rem;
+    --radius: 0px;
 
-    /* Custom tokens */
-    --gold: 42 78% 50%;
-    --gold-light: 42 80% 65%;
-    --gold-dark: 42 70% 38%;
-    --navy: 220 40% 20%;
-    --navy-light: 220 30% 35%;
-    --cream: 43 40% 97%;
-    --cream-dark: 40 30% 92%;
-    --warm-shadow: 0 4px 20px -4px hsla(42, 60%, 40%, 0.12);
-    --card-shadow: 0 2px 12px -2px hsla(42, 60%, 40%, 0.08);
-    --card-hover-shadow: 0 8px 30px -6px hsla(42, 60%, 40%, 0.18);
+    /* Brand tokens */
+    --gold: 42 64% 35%;
+    --gold-light: 42 55% 55%;
+    --gold-dark: 42 70% 28%;
+    --thistle: 263 24% 38%;
+    --thistle-light: 263 20% 52%;
+    --obsidian: 240 3% 10%;
+    --parchment: 43 33% 96%;
+    --slate-plaid: 210 2% 39%;
 
-    --sidebar-background: 40 33% 99%;
-    --sidebar-foreground: 220 40% 13%;
-    --sidebar-primary: 220 40% 20%;
-    --sidebar-primary-foreground: 43 40% 97%;
-    --sidebar-accent: 42 78% 50%;
-    --sidebar-accent-foreground: 220 40% 13%;
-    --sidebar-border: 40 20% 85%;
-    --sidebar-ring: 42 78% 50%;
+    --sidebar-background: 43 33% 96%;
+    --sidebar-foreground: 240 3% 10%;
+    --sidebar-primary: 263 24% 38%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 42 64% 35%;
+    --sidebar-accent-foreground: 240 3% 10%;
+    --sidebar-border: 210 4% 82%;
+    --sidebar-ring: 263 24% 38%;
   }
 
   * {
@@ -72,97 +72,91 @@
 }
 
 @layer components {
+  /* Display serif — all headers, all copy meant to be read */
   .font-display {
-    font-family: 'Fraunces', Georgia, serif;
+    font-family: 'Fraunces', Georgia, 'Times New Roman', serif;
     font-weight: 700;
-    letter-spacing: -0.02em;
+    letter-spacing: -0.03em;
   }
 
+  /* Light display for body copy in serif */
+  .font-editorial {
+    font-family: 'Fraunces', Georgia, 'Times New Roman', serif;
+    font-weight: 400;
+    letter-spacing: -0.01em;
+    line-height: 1.6;
+  }
+
+  /* Small utility data — Inter only */
   .label-text {
     font-family: 'Inter', sans-serif;
-    font-size: 0.7rem;
-    font-weight: 600;
+    font-size: 0.65rem;
+    font-weight: 500;
     text-transform: uppercase;
-    letter-spacing: 0.08em;
+    letter-spacing: 0.1em;
     color: hsl(var(--muted-foreground));
   }
 
-  .card-castle {
+  /* Editorial card — barely there */
+  .card-editorial {
+    background: transparent;
+    border-bottom: 1px solid hsl(var(--slate-plaid) / 0.1);
+    padding: 2rem 0;
+  }
+
+  /* Bordered card — thin, no shadow, no radius */
+  .card-bordered {
     background: hsl(var(--card));
-    border: 1px solid hsl(var(--border));
-    border-radius: var(--radius);
-    padding: 1.5rem;
-    box-shadow: var(--card-shadow);
-    transition: box-shadow 350ms cubic-bezier(0.19, 1, 0.22, 1),
-                transform 350ms cubic-bezier(0.19, 1, 0.22, 1),
-                border-color 350ms cubic-bezier(0.19, 1, 0.22, 1);
+    border: 1px solid hsl(var(--slate-plaid) / 0.12);
+    padding: 2rem;
+    transition: border-color 400ms cubic-bezier(0.19, 1, 0.22, 1);
   }
 
-  .card-castle:hover {
-    box-shadow: var(--card-hover-shadow);
-    transform: translateY(-2px);
-    border-color: hsl(var(--gold-light));
+  .card-bordered:hover {
+    border-color: hsl(var(--slate-plaid) / 0.25);
   }
 
-  .btn-gold {
-    background: linear-gradient(135deg, hsl(var(--gold)) 0%, hsl(var(--gold-dark)) 100%);
-    color: hsl(var(--primary-foreground));
-    border: none;
-    border-radius: var(--radius);
-    padding: 0.625rem 1.75rem;
-    font-family: 'Inter', sans-serif;
-    font-size: 0.8rem;
-    font-weight: 600;
-    letter-spacing: 0.02em;
-    box-shadow: 0 2px 8px -2px hsla(42, 70%, 40%, 0.35);
-    transition: transform 200ms ease, box-shadow 200ms ease;
+  /* Editorial link — thistle with underline */
+  .link-editorial {
+    color: hsl(var(--thistle));
+    text-decoration: none;
+    background-image: linear-gradient(hsl(var(--thistle) / 0.3), hsl(var(--thistle) / 0.3));
+    background-size: 100% 1px;
+    background-position: 0 100%;
+    background-repeat: no-repeat;
+    transition: background-size 300ms ease, color 300ms ease;
     cursor: pointer;
   }
 
-  .btn-gold:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 4px 16px -4px hsla(42, 70%, 40%, 0.45);
+  .link-editorial:hover {
+    background-size: 100% 2px;
+    color: hsl(var(--thistle-light));
   }
 
-  .btn-gold:active {
-    transform: translateY(0px);
+  /* Gold accent line */
+  .gold-rule {
+    width: 2.5rem;
+    height: 2px;
+    background: linear-gradient(90deg, hsl(var(--gold)), hsl(var(--gold-light)));
   }
 
-  .gold-gradient-text {
-    background: linear-gradient(135deg, hsl(var(--gold)) 0%, hsl(var(--gold-dark)) 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+  /* Gold leaf decorative dot */
+  .gold-leaf {
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    background: hsl(var(--gold));
+    border-radius: 50%;
   }
 
   /* Sparkle keyframes */
-  @keyframes sparkle-float {
-    0%, 100% { transform: translateY(0) scale(1); opacity: 0; }
-    10% { opacity: 1; }
-    50% { transform: translateY(-20px) scale(1.2); opacity: 0.8; }
-    90% { opacity: 0; }
-  }
-
   @keyframes twinkle {
     0%, 100% { opacity: 0.2; transform: scale(0.8); }
     50% { opacity: 1; transform: scale(1); }
   }
 
-  @keyframes gentle-pulse {
-    0%, 100% { opacity: 0.6; }
-    50% { opacity: 1; }
-  }
-
   .sparkle {
     animation: twinkle 2s ease-in-out infinite;
-  }
-
-  .sparkle-delayed {
-    animation: twinkle 2.5s ease-in-out 0.5s infinite;
-  }
-
-  .sparkle-slow {
-    animation: twinkle 3s ease-in-out 1s infinite;
   }
 
   /* Progress bar shimmer */
@@ -182,10 +176,16 @@
     animation: shimmer 3s ease-in-out infinite;
   }
 
+  /* Wax seal pulse */
+  @keyframes seal-breathe {
+    0%, 100% { box-shadow: 0 0 0 0 hsl(var(--gold) / 0.3); }
+    50% { box-shadow: 0 0 0 8px hsl(var(--gold) / 0); }
+  }
+
   /* FAB haptic pulse */
   @keyframes fab-pulse {
-    0% { transform: scale(1); opacity: 0.5; }
-    70% { transform: scale(1.8); opacity: 0; }
-    100% { transform: scale(1.8); opacity: 0; }
+    0% { transform: scale(1); opacity: 0.4; }
+    70% { transform: scale(2); opacity: 0; }
+    100% { transform: scale(2); opacity: 0; }
   }
 }

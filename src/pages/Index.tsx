@@ -270,6 +270,25 @@ const Index = ({
                   </div>
                 </motion.div>
               </div>
+              <div className="flex justify-center gap-2 mt-6">
+                {Array.from({ length: timelineCardCount }).map((_, i) => (
+                  <button
+                    key={i}
+                    onClick={() => {
+                      const el = timelineRef.current;
+                      if (!el) return;
+                      const card = el.children[i] as HTMLElement;
+                      if (card) el.scrollTo({ left: card.offsetLeft - 32, behavior: 'smooth' });
+                    }}
+                    className={`w-4 h-1.5 rounded-full transition-all duration-500 ${
+                      i === activeTimelineIdx
+                        ? "bg-white/60"
+                        : "bg-white/15 hover:bg-white/25"
+                    }`}
+                    aria-label={`Go to card ${i + 1}`}
+                  />
+                ))}
+              </div>
             </div>
           </div>
         </div>

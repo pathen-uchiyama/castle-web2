@@ -334,7 +334,7 @@ const Index = ({
         </div>
 
         {/* Inner Circle — right */}
-        <div className="bg-background rounded-2xl shadow-sm flex flex-col justify-between px-8 lg:px-12 py-12 h-[500px]">
+        <div className="bg-background rounded-2xl shadow-sm flex flex-col justify-between px-6 lg:px-10 py-10 h-[500px] overflow-hidden">
           <div>
             <motion.div {...slideRight()}>
               <p className="label-text mb-4 tracking-[0.3em]">The Inner Circle</p>

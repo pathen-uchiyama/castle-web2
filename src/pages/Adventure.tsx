@@ -9,7 +9,7 @@ import editorialCalendar from "@/assets/editorial-calendar.jpg";
 import editorialDining from "@/assets/editorial-dining.jpg";
 import SparkleField from "@/components/SparkleField";
 import TripWizard from "@/components/TripWizard";
-import type { BookedTrip, FutureTrip } from "@/data/types";
+import type { BookedTrip, FutureTrip, PackingItem, PreparationItem } from "@/data/types";
 import { mockData } from "@/data/mockData";
 
 const ease: [number, number, number, number] = [0.19, 1, 0.22, 1];
@@ -34,6 +34,7 @@ interface AdventureProps {
 const tabs = [
   { id: "overview", label: "Overview" },
   { id: "surveys", label: "Surveys", badge: "2 pending" },
+  { id: "dining", label: "Dining" },
   { id: "designer", label: "The Designer" },
   { id: "prep", label: "Prep & Checklists" },
 ];
@@ -44,11 +45,64 @@ const statusLabels: Record<string, string> = {
   booking: "Booking",
 };
 
+const mealIcons: Record<string, string> = {
+  breakfast: "☀️",
+  lunch: "🌤",
+  dinner: "🌙",
+  snack: "🍿",
+};
+
+const statusColors: Record<string, { bg: string; text: string; border: string }> = {
+  confirmed: { bg: "hsl(var(--gold) / 0.1)", text: "hsl(var(--gold-dark))", border: "hsl(var(--gold) / 0.3)" },
+  pending: { bg: "hsl(var(--muted))", text: "hsl(var(--muted-foreground))", border: "hsl(var(--border))" },
+  cancelled: { bg: "hsl(var(--destructive) / 0.1)", text: "hsl(var(--destructive))", border: "hsl(var(--destructive) / 0.3)" },
+};
+
 const Adventure = ({ bookedTrip, futureTrips }: AdventureProps) => {
   const [wizardOpen, setWizardOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("overview");
-  const { destination, tripName, countdownDays, travelLegs, preparations, packingLists } = bookedTrip;
+  const { destination, tripName, countdownDays, travelLegs, diningReservations } = bookedTrip;
   const { partySurvey } = mockData;
+
+  // Interactive packing state
+  const [packingState, setPackingState] = useState<PackingItem[]>(() =>
+    bookedTrip.packingLists.map((list) => ({
+      ...list,
+      items: [...list.items],
+    }))
+  );
+  const [prepState, setPrepState] = useState<PreparationItem[]>(() =>
+    bookedTrip.preparations.map((p) => ({ ...p }))
+  );
+  const [expandedCategories, setExpandedCategories] = useState<Record<string, boolean>>({});
+  // Track which items are packed per category (index-based)
+  const [packedItems, setPackedItems] = useState<Record<string, boolean[]>>(() => {
+    const initial: Record<string, boolean[]> = {};
+    bookedTrip.packingLists.forEach((list) => {
+      initial[list.category] = list.items.map((_, i) => i < list.packedCount);
+    });
+    return initial;
+  });
+
+  const togglePacked = (category: string, itemIndex: number) => {
+    setPackedItems((prev) => {
+      const updated = { ...prev, [category]: [...prev[category]] };
+      updated[category][itemIndex] = !updated[category][itemIndex];
+      return updated;
+    });
+  };
+
+  const togglePrep = (index: number) => {
+    setPrepState((prev) => prev.map((p, i) => i === index ? { ...p, isComplete: !p.isComplete } : p));
+  };
+
+  const toggleCategory = (category: string) => {
+    setExpandedCategories((prev) => ({ ...prev, [category]: !prev[category] }));
+  };
+
+  const getPackedCount = (category: string) => packedItems[category]?.filter(Boolean).length ?? 0;
+  const getTotalPacked = () => Object.values(packedItems).flat().filter(Boolean).length;
+  const getTotalItems = () => Object.values(packedItems).flat().length;
 
   const consensusData = useMemo(() => {
     const completed = partySurvey.responses.filter((r) => r.status === "completed");
@@ -74,6 +128,16 @@ const Adventure = ({ bookedTrip, futureTrips }: AdventureProps) => {
   const pendingCount = partySurvey.responses.filter((r) => r.status === "pending").length;
   const completedCount = partySurvey.responses.filter((r) => r.status === "completed").length;
 
+  // Dining grouping by date
+  const diningByDate = useMemo(() => {
+    const grouped: Record<string, typeof diningReservations> = {};
+    for (const res of diningReservations) {
+      if (!grouped[res.date]) grouped[res.date] = [];
+      grouped[res.date].push(res);
+    }
+    return Object.entries(grouped);
+  }, [diningReservations]);
+
   return (
     <div className="min-h-screen bg-background pt-16">
       {/* Hero */}
@@ -93,10 +157,9 @@ const Adventure = ({ bookedTrip, futureTrips }: AdventureProps) => {
         <SectionNav tabs={tabs} activeTab={activeTab} onTabChange={setActiveTab} />
       </div>
 
-      {/* ═══ OVERVIEW TAB — All Trips Dashboard ═══ */}
+      {/* ═══ OVERVIEW TAB ═══ */}
       {activeTab === "overview" && (
         <>
-          {/* Active Trip */}
           <section className="px-8 lg:px-16 py-16 lg:py-24">
             <motion.div {...fade()}>
               <p className="label-text mb-6">Active Adventure</p>
@@ -111,23 +174,19 @@ const Adventure = ({ bookedTrip, futureTrips }: AdventureProps) => {
                   <img src={bookedTrip.heroImage} alt={bookedTrip.destination} className="w-full h-full object-cover" />
                   <div className="absolute inset-0 bg-gradient-to-r from-transparent to-card/20" />
                   <div className="absolute top-4 left-4">
-                    <span className="px-3 py-1 text-[0.625rem] uppercase tracking-[0.15em] font-medium bg-foreground text-background">
-                      Booked
-                    </span>
+                    <span className="px-3 py-1 text-[0.625rem] uppercase tracking-[0.15em] font-medium bg-foreground text-background">Booked</span>
                   </div>
                 </div>
                 <div className="lg:col-span-3 p-8 lg:p-10 flex flex-col justify-center">
                   <p className="label-text mb-3">{bookedTrip.countdownDays} days away</p>
                   <h3 className="font-display text-3xl text-foreground mb-2">{bookedTrip.destination}</h3>
                   <p className="font-editorial text-muted-foreground mb-6">{bookedTrip.tripName} · Party of {bookedTrip.partySize}</p>
-                  <p className="font-editorial text-sm text-muted-foreground/70 max-w-lg mb-8 leading-relaxed">
-                    {bookedTrip.description}
-                  </p>
+                  <p className="font-editorial text-sm text-muted-foreground/70 max-w-lg mb-8 leading-relaxed">{bookedTrip.description}</p>
                   <div className="flex flex-wrap gap-6 mb-8">
                     {[
                       { label: "Surveys", value: `${completedCount}/${partySurvey.responses.length}`, sub: "completed" },
-                      { label: "Travel Legs", value: String(travelLegs.length), sub: "scheduled" },
-                      { label: "Packing", value: `${packingLists.reduce((a, l) => a + l.packedCount, 0)}/${packingLists.reduce((a, l) => a + l.totalCount, 0)}`, sub: "packed" },
+                      { label: "Dining", value: String(diningReservations.filter(d => d.status === "confirmed").length), sub: "confirmed" },
+                      { label: "Packing", value: `${getTotalPacked()}/${getTotalItems()}`, sub: "packed" },
                     ].map((stat) => (
                       <div key={stat.label}>
                         <p className="label-text mb-1">{stat.label}</p>
@@ -137,18 +196,9 @@ const Adventure = ({ bookedTrip, futureTrips }: AdventureProps) => {
                     ))}
                   </div>
                   <div className="flex flex-wrap gap-3">
-                    <button
-                      onClick={() => setActiveTab("surveys")}
-                      className="px-6 py-2.5 text-xs tracking-[0.15em] uppercase font-medium bg-foreground text-background transition-opacity duration-500 hover:opacity-90"
-                    >
-                      View Surveys
-                    </button>
-                    <button
-                      onClick={() => setActiveTab("prep")}
-                      className="px-6 py-2.5 text-xs tracking-[0.15em] uppercase font-medium text-foreground border border-border transition-opacity duration-500 hover:opacity-70"
-                    >
-                      Prep & Checklists
-                    </button>
+                    <button onClick={() => setActiveTab("surveys")} className="px-6 py-2.5 text-xs tracking-[0.15em] uppercase font-medium bg-foreground text-background transition-opacity duration-500 hover:opacity-90">View Surveys</button>
+                    <button onClick={() => setActiveTab("dining")} className="px-6 py-2.5 text-xs tracking-[0.15em] uppercase font-medium text-foreground border border-border transition-opacity duration-500 hover:opacity-70">Dining</button>
+                    <button onClick={() => setActiveTab("prep")} className="px-6 py-2.5 text-xs tracking-[0.15em] uppercase font-medium text-foreground border border-border transition-opacity duration-500 hover:opacity-70">Prep & Checklists</button>
                   </div>
                 </div>
               </div>
@@ -174,27 +224,16 @@ const Adventure = ({ bookedTrip, futureTrips }: AdventureProps) => {
                 <p className="label-text mb-6">On the Horizon</p>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                   {futureTrips.map((trip, i) => (
-                    <motion.div
-                      key={trip.tripId}
-                      {...fade(0.25 + i * 0.1)}
-                      className="group border border-border bg-card overflow-hidden shadow-[var(--shadow-soft)] hover:shadow-[var(--shadow-hover)] transition-shadow duration-500 cursor-pointer"
-                    >
+                    <motion.div key={trip.tripId} {...fade(0.25 + i * 0.1)} className="group border border-border bg-card overflow-hidden shadow-[var(--shadow-soft)] hover:shadow-[var(--shadow-hover)] transition-shadow duration-500 cursor-pointer">
                       <div className="relative h-48 overflow-hidden">
-                        <img
-                          src={trip.heroImage}
-                          alt={trip.destination}
-                          className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                        />
+                        <img src={trip.heroImage} alt={trip.destination} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
                         <div className="absolute inset-0 bg-gradient-to-t from-card via-transparent to-transparent" />
                         <div className="absolute top-4 left-4">
-                          <span
-                            className="px-3 py-1 text-[0.625rem] uppercase tracking-[0.15em] font-medium border"
-                            style={{
-                              background: trip.status === "planning" ? "hsl(var(--gold) / 0.15)" : "hsl(var(--muted))",
-                              borderColor: trip.status === "planning" ? "hsl(var(--gold) / 0.3)" : "hsl(var(--border))",
-                              color: trip.status === "planning" ? "hsl(var(--gold-dark))" : "hsl(var(--muted-foreground))",
-                            }}
-                          >
+                          <span className="px-3 py-1 text-[0.625rem] uppercase tracking-[0.15em] font-medium border" style={{
+                            background: trip.status === "planning" ? "hsl(var(--gold) / 0.15)" : "hsl(var(--muted))",
+                            borderColor: trip.status === "planning" ? "hsl(var(--gold) / 0.3)" : "hsl(var(--border))",
+                            color: trip.status === "planning" ? "hsl(var(--gold-dark))" : "hsl(var(--muted-foreground))",
+                          }}>
                             {statusLabels[trip.status] || trip.status}
                           </span>
                         </div>
@@ -216,19 +255,10 @@ const Adventure = ({ bookedTrip, futureTrips }: AdventureProps) => {
           <section className="py-16 sm:py-24 text-center bg-[hsl(var(--warm))]">
             <motion.div {...fade()}>
               <p className="label-text mb-6">The Voyage Canvas</p>
-              <h2 className="font-display text-foreground leading-[1.08] mb-4" style={{ fontSize: "clamp(1.875rem, 5vw, 3rem)" }}>
-                Plan a new adventure.
-              </h2>
+              <h2 className="font-display text-foreground leading-[1.08] mb-4" style={{ fontSize: "clamp(1.875rem, 5vw, 3rem)" }}>Plan a new adventure.</h2>
               <div className="gold-rule mx-auto mb-6" />
-              <p className="font-editorial text-sm text-muted-foreground max-w-md mx-auto mb-10">
-                Launch the Strategy Wizard to architect your next perfect park day.
-              </p>
-              <button
-                onClick={() => setWizardOpen(true)}
-                className="inline-flex items-center justify-center px-10 py-4 text-sm tracking-[0.15em] uppercase font-medium bg-foreground text-background border border-[hsl(var(--gold-dark))] transition-all duration-500 hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-ring"
-              >
-                Initialize Your Journey
-              </button>
+              <p className="font-editorial text-sm text-muted-foreground max-w-md mx-auto mb-10">Launch the Strategy Wizard to architect your next perfect park day.</p>
+              <button onClick={() => setWizardOpen(true)} className="inline-flex items-center justify-center px-10 py-4 text-sm tracking-[0.15em] uppercase font-medium bg-foreground text-background border border-[hsl(var(--gold-dark))] transition-all duration-500 hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-ring">Initialize Your Journey</button>
             </motion.div>
           </section>
         </>
@@ -240,18 +270,13 @@ const Adventure = ({ bookedTrip, futureTrips }: AdventureProps) => {
           <motion.div {...fade()}>
             <p className="label-text mb-6">The Consensus</p>
             <h2 className="font-display text-4xl sm:text-5xl text-foreground leading-[1.08] mb-4">Party Preferences</h2>
-            <p className="font-editorial text-muted-foreground text-lg max-w-2xl mb-12">
-              Send surveys to your party. Everyone ranks attractions, then we find the consensus.
-            </p>
+            <p className="font-editorial text-muted-foreground text-lg max-w-2xl mb-12">Send surveys to your party. Everyone ranks attractions, then we find the consensus.</p>
           </motion.div>
 
-          {/* Member status */}
           <motion.div {...fade(0.1)} className="flex flex-wrap gap-3 mb-12">
             {partySurvey.responses.map((resp) => (
               <div key={resp.memberId} className="flex items-center gap-2 border border-border bg-card px-4 py-2 shadow-[var(--shadow-soft)]">
-                <div className="w-7 h-7 flex items-center justify-center bg-foreground text-background text-xs font-medium">
-                  {resp.memberId}
-                </div>
+                <div className="w-7 h-7 flex items-center justify-center bg-foreground text-background text-xs font-medium">{resp.memberId}</div>
                 <span className="font-display text-sm text-foreground">{resp.memberName}</span>
                 {resp.status === "completed" ? (
                   <>
@@ -259,18 +284,12 @@ const Adventure = ({ bookedTrip, futureTrips }: AdventureProps) => {
                     {resp.openToAnything && <span className="text-xs" title="Open to anything">✨</span>}
                   </>
                 ) : (
-                  <Link
-                    to={`/survey/${partySurvey.tripId}/${resp.memberId.toLowerCase()}`}
-                    className="label-text !text-[hsl(var(--gold))] hover:underline"
-                  >
-                    Pending · Send Link
-                  </Link>
+                  <Link to={`/survey/${partySurvey.tripId}/${resp.memberId.toLowerCase()}`} className="label-text !text-[hsl(var(--gold))] hover:underline">Pending · Send Link</Link>
                 )}
               </div>
             ))}
           </motion.div>
 
-          {/* Stats */}
           <motion.div {...fade(0.15)} className="grid grid-cols-2 sm:grid-cols-4 gap-6 mb-16">
             {[
               { label: "Completed", value: String(completedCount) },
@@ -285,7 +304,6 @@ const Adventure = ({ bookedTrip, futureTrips }: AdventureProps) => {
             ))}
           </motion.div>
 
-          {/* Party Priorities */}
           {consensusData.filter((c) => c.isPartyPriority).length > 0 && (
             <motion.div {...fade(0.2)} className="mb-12">
               <p className="label-text mb-6">✦ Party Priorities</p>
@@ -305,7 +323,6 @@ const Adventure = ({ bookedTrip, futureTrips }: AdventureProps) => {
             </motion.div>
           )}
 
-          {/* Conflicts */}
           {consensusData.filter((c) => c.hasConflict).length > 0 && (
             <motion.div {...fade(0.25)} className="mb-12">
               <p className="label-text mb-6">⚡ Conflicts to Resolve</p>
@@ -326,7 +343,6 @@ const Adventure = ({ bookedTrip, futureTrips }: AdventureProps) => {
             </motion.div>
           )}
 
-          {/* All rankings */}
           <motion.div {...fade(0.3)}>
             <p className="label-text mb-6">All Attractions</p>
             <div className="space-y-2">
@@ -348,15 +364,112 @@ const Adventure = ({ bookedTrip, futureTrips }: AdventureProps) => {
         </section>
       )}
 
+      {/* ═══ DINING TAB ═══ */}
+      {activeTab === "dining" && (
+        <section className="px-8 lg:px-16 py-16 lg:py-24">
+          <motion.div {...fade()}>
+            <p className="label-text mb-6">The Table</p>
+            <h2 className="font-display text-4xl sm:text-5xl text-foreground leading-[1.08] mb-4">Dining Reservations</h2>
+            <p className="font-editorial text-muted-foreground text-lg max-w-2xl mb-4">
+              Every meal is part of the magic. Your confirmed tables, dietary notes, and day-by-day dining plan.
+            </p>
+            <div className="gold-rule mb-12" />
+          </motion.div>
+
+          {/* Summary stats */}
+          <motion.div {...fade(0.1)} className="grid grid-cols-2 sm:grid-cols-4 gap-6 mb-16">
+            {[
+              { label: "Reservations", value: String(diningReservations.length) },
+              { label: "Confirmed", value: String(diningReservations.filter(d => d.status === "confirmed").length) },
+              { label: "Pending", value: String(diningReservations.filter(d => d.status === "pending").length) },
+              { label: "Dietary Flags", value: String(new Set(diningReservations.flatMap(d => d.dietaryFlags ?? [])).size) },
+            ].map((stat) => (
+              <div key={stat.label} className="border border-border bg-card p-5 shadow-[var(--shadow-soft)]">
+                <p className="label-text mb-2">{stat.label}</p>
+                <p className="font-display text-3xl text-foreground">{stat.value}</p>
+              </div>
+            ))}
+          </motion.div>
+
+          {/* Grouped by date */}
+          <div className="space-y-12">
+            {diningByDate.map(([date, reservations], groupIdx) => (
+              <motion.div key={date} {...fade(0.15 + groupIdx * 0.05)}>
+                <p className="label-text mb-4 tracking-[0.25em]">{date}</p>
+                <div className="space-y-4">
+                  {reservations.map((res) => {
+                    const colors = statusColors[res.status];
+                    return (
+                      <div key={res.reservationId} className="border border-border bg-card shadow-[var(--shadow-soft)] hover:shadow-[var(--shadow-hover)] transition-shadow duration-500 overflow-hidden">
+                        <div className="p-6">
+                          <div className="flex items-start justify-between mb-4">
+                            <div className="flex items-center gap-3">
+                              <span className="text-2xl">{mealIcons[res.mealType]}</span>
+                              <div>
+                                <h3 className="font-display text-xl text-foreground">{res.restaurantName}</h3>
+                                <p className="font-editorial text-sm text-muted-foreground">{res.parkOrResort} · {res.cuisine}</p>
+                              </div>
+                            </div>
+                            <span
+                              className="px-3 py-1 text-[0.625rem] uppercase tracking-[0.15em] font-medium border"
+                              style={{ background: colors.bg, color: colors.text, borderColor: colors.border }}
+                            >
+                              {res.status}
+                            </span>
+                          </div>
+
+                          <div className="flex flex-wrap gap-6 mb-4">
+                            <div>
+                              <p className="label-text mb-1">Time</p>
+                              <p className="font-display text-lg text-foreground">{res.time}</p>
+                            </div>
+                            <div>
+                              <p className="label-text mb-1">Party</p>
+                              <p className="font-display text-lg text-foreground">{res.partySize}</p>
+                            </div>
+                            <div>
+                              <p className="label-text mb-1">Confirmation</p>
+                              <p className="font-editorial text-sm text-foreground tracking-wide">{res.confirmationNumber}</p>
+                            </div>
+                          </div>
+
+                          {res.notes && (
+                            <p className="font-editorial text-sm text-muted-foreground italic mb-4">{res.notes}</p>
+                          )}
+
+                          {res.dietaryFlags && res.dietaryFlags.length > 0 && (
+                            <div className="flex flex-wrap gap-2">
+                              {res.dietaryFlags.map((flag) => (
+                                <span key={flag} className="text-[0.625rem] uppercase tracking-[0.12em] px-3 py-1 bg-[hsl(var(--warm))] text-muted-foreground border border-border">
+                                  ⚠ {flag}
+                                </span>
+                              ))}
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </motion.div>
+            ))}
+          </div>
+
+          {/* Add reservation placeholder */}
+          <motion.div {...fade(0.3)} className="mt-12 border border-dashed border-border py-12 text-center cursor-pointer hover:border-[hsl(var(--gold)/0.5)] transition-colors duration-500">
+            <p className="font-display text-xl text-muted-foreground/40 mb-2">+ Add Reservation</p>
+            <p className="font-editorial text-sm text-muted-foreground/30">Track a new dining booking for your trip.</p>
+          </motion.div>
+        </section>
+      )}
+
       {/* ═══ DESIGNER TAB ═══ */}
       {activeTab === "designer" && (
         <section className="px-8 lg:px-16 py-16 lg:py-24">
           <motion.div {...fade()}>
             <p className="label-text mb-6">The Architect</p>
             <h2 className="font-display text-4xl sm:text-5xl text-foreground leading-[1.08] mb-4">The Designer</h2>
-            <p className="font-editorial text-muted-foreground text-lg max-w-2xl mb-16">
-              Generate a concierge-quality itinerary from your party's consensus, then refine it to perfection.
-            </p>
+            <p className="font-editorial text-muted-foreground text-lg max-w-2xl mb-16">Generate a concierge-quality itinerary from your party's consensus, then refine it to perfection.</p>
           </motion.div>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-16">
@@ -367,12 +480,8 @@ const Adventure = ({ bookedTrip, futureTrips }: AdventureProps) => {
               </div>
               <p className="label-text mb-4">Step 1</p>
               <h3 className="font-display text-2xl text-foreground mb-3">Generate Concierge Draft</h3>
-              <p className="font-editorial text-sm text-muted-foreground mb-8 leading-relaxed">
-                Our algorithm builds a baseline plan using your survey data, park hours, crowd predictions, and Lightning Lane strategy.
-              </p>
-              <button className="px-8 py-3 text-sm tracking-[0.15em] uppercase font-medium bg-foreground text-background border border-[hsl(var(--gold-dark))] transition-opacity duration-500 hover:opacity-90">
-                Generate Plan
-              </button>
+              <p className="font-editorial text-sm text-muted-foreground mb-8 leading-relaxed">Our algorithm builds a baseline plan using your survey data, park hours, crowd predictions, and Lightning Lane strategy.</p>
+              <button className="px-8 py-3 text-sm tracking-[0.15em] uppercase font-medium bg-foreground text-background border border-[hsl(var(--gold-dark))] transition-opacity duration-500 hover:opacity-90">Generate Plan</button>
             </motion.div>
 
             <motion.div {...fade(0.2)} className="border border-border bg-card p-8 shadow-[var(--shadow-soft)] hover:shadow-[var(--shadow-hover)] transition-shadow duration-500">
@@ -382,20 +491,14 @@ const Adventure = ({ bookedTrip, futureTrips }: AdventureProps) => {
               </div>
               <p className="label-text mb-4">Step 2</p>
               <h3 className="font-display text-2xl text-foreground mb-3">Set Your Itinerary</h3>
-              <p className="font-editorial text-sm text-muted-foreground mb-8 leading-relaxed">
-                Drag and drop to reorder. Delete what doesn't fit. Add hidden gems. When you're ready, commit to lock it in.
-              </p>
-              <button className="px-8 py-3 text-sm tracking-[0.15em] uppercase font-medium text-muted-foreground border border-border transition-opacity duration-500 hover:opacity-70" disabled>
-                Awaiting Draft
-              </button>
+              <p className="font-editorial text-sm text-muted-foreground mb-8 leading-relaxed">Drag and drop to reorder. Delete what doesn't fit. Add hidden gems. When you're ready, commit to lock it in.</p>
+              <button className="px-8 py-3 text-sm tracking-[0.15em] uppercase font-medium text-muted-foreground border border-border transition-opacity duration-500 hover:opacity-70" disabled>Awaiting Draft</button>
             </motion.div>
           </div>
 
           <motion.div {...fade(0.3)} className="border border-dashed border-border py-20 text-center">
             <p className="font-display text-2xl text-muted-foreground/40 mb-3">No itinerary yet</p>
-            <p className="font-editorial text-sm text-muted-foreground/30">
-              Generate a draft above, or complete your party surveys first for the best results.
-            </p>
+            <p className="font-editorial text-sm text-muted-foreground/30">Generate a draft above, or complete your party surveys first for the best results.</p>
           </motion.div>
         </section>
       )}
@@ -411,29 +514,99 @@ const Adventure = ({ bookedTrip, futureTrips }: AdventureProps) => {
             <div className="px-8 lg:px-16 py-16 lg:py-24 bg-[hsl(var(--warm))]">
               <motion.div {...fade()}>
                 <p className="label-text mb-6">The Field Kit</p>
-                <h2 className="font-display text-4xl text-foreground leading-[1.1] mb-10">Packing</h2>
+                <h2 className="font-display text-4xl text-foreground leading-[1.1] mb-3">Packing</h2>
+                <p className="font-editorial text-sm text-muted-foreground mb-10">
+                  {getTotalPacked()} of {getTotalItems()} items packed
+                </p>
               </motion.div>
-              <motion.div {...slideRight(0.1)} className="space-y-6 mb-14">
-                {packingLists.map((list) => (
-                  <div key={list.category}>
-                    <div className="flex justify-between items-baseline mb-2">
-                      <p className="font-display text-lg text-foreground">{list.category}</p>
-                      <p className="label-text">{list.packedCount}/{list.totalCount}</p>
-                    </div>
-                    <div className="w-full h-px bg-border relative">
-                      <div className="absolute left-0 top-0 h-full bg-foreground/30" style={{ width: `${(list.packedCount / list.totalCount) * 100}%` }} />
-                    </div>
-                  </div>
-                ))}
+
+              {/* Overall progress */}
+              <motion.div {...fade(0.05)} className="mb-10">
+                <div className="w-full h-2 bg-border rounded-full overflow-hidden">
+                  <motion.div
+                    className="h-full bg-[hsl(var(--gold))]"
+                    initial={{ width: 0 }}
+                    animate={{ width: `${(getTotalPacked() / getTotalItems()) * 100}%` }}
+                    transition={{ duration: 0.6, ease }}
+                  />
+                </div>
               </motion.div>
+
+              {/* Category accordions */}
+              <motion.div {...slideRight(0.1)} className="space-y-4 mb-14">
+                {bookedTrip.packingLists.map((list) => {
+                  const isExpanded = expandedCategories[list.category] ?? false;
+                  const packed = getPackedCount(list.category);
+                  const total = list.items.length;
+                  const allPacked = packed === total;
+
+                  return (
+                    <div key={list.category} className="border border-border bg-card shadow-[var(--shadow-soft)]">
+                      <button
+                        onClick={() => toggleCategory(list.category)}
+                        className="w-full flex justify-between items-center p-4 hover:bg-[hsl(var(--warm))] transition-colors duration-300"
+                      >
+                        <div className="flex items-center gap-3">
+                          <div className={`w-5 h-5 flex items-center justify-center text-xs border ${allPacked ? "bg-[hsl(var(--gold))] border-[hsl(var(--gold))] text-background" : "border-border text-muted-foreground"}`}>
+                            {allPacked ? "✓" : ""}
+                          </div>
+                          <p className="font-display text-lg text-foreground">{list.category}</p>
+                        </div>
+                        <div className="flex items-center gap-3">
+                          <p className="label-text">{packed}/{total}</p>
+                          <span className="text-muted-foreground text-sm transition-transform duration-300" style={{ transform: isExpanded ? "rotate(180deg)" : "rotate(0deg)" }}>▾</span>
+                        </div>
+                      </button>
+
+                      {isExpanded && (
+                        <motion.div
+                          initial={{ opacity: 0, height: 0 }}
+                          animate={{ opacity: 1, height: "auto" }}
+                          transition={{ duration: 0.3 }}
+                          className="border-t border-border"
+                        >
+                          {list.items.map((item, itemIdx) => {
+                            const isPacked = packedItems[list.category]?.[itemIdx] ?? false;
+                            return (
+                              <button
+                                key={item}
+                                onClick={() => togglePacked(list.category, itemIdx)}
+                                className="w-full flex items-center gap-3 px-4 py-3 border-b border-border last:border-b-0 hover:bg-[hsl(var(--warm))] transition-colors duration-200 text-left"
+                              >
+                                <div className={`w-4 h-4 flex items-center justify-center border transition-all duration-300 ${isPacked ? "bg-[hsl(var(--gold))] border-[hsl(var(--gold))]" : "border-muted-foreground/30"}`}>
+                                  {isPacked && <span className="text-background text-[0.5rem]">✓</span>}
+                                </div>
+                                <span className={`font-editorial text-sm transition-all duration-300 ${isPacked ? "text-muted-foreground/40 line-through decoration-muted-foreground/20" : "text-foreground"}`}>
+                                  {item}
+                                </span>
+                              </button>
+                            );
+                          })}
+                        </motion.div>
+                      )}
+                    </div>
+                  );
+                })}
+              </motion.div>
+
+              {/* Preparations */}
               <motion.div {...fade(0.2)}>
                 <p className="label-text mb-6">Preparations</p>
               </motion.div>
-              <motion.div {...fade(0.25)} className="space-y-4">
-                {preparations.map((t) => (
-                  <p key={t.description} className={`font-editorial text-sm leading-relaxed ${t.isComplete ? "text-muted-foreground/40 line-through decoration-muted-foreground/20" : "text-foreground"}`}>
-                    {t.description}
-                  </p>
+              <motion.div {...fade(0.25)} className="space-y-3">
+                {prepState.map((t, i) => (
+                  <button
+                    key={i}
+                    onClick={() => togglePrep(i)}
+                    className="w-full flex items-center gap-3 text-left group py-2"
+                  >
+                    <div className={`w-4 h-4 flex items-center justify-center border transition-all duration-300 shrink-0 ${t.isComplete ? "bg-[hsl(var(--gold))] border-[hsl(var(--gold))]" : "border-muted-foreground/30 group-hover:border-muted-foreground/60"}`}>
+                      {t.isComplete && <span className="text-background text-[0.5rem]">✓</span>}
+                    </div>
+                    <span className={`font-editorial text-sm leading-relaxed transition-all duration-300 ${t.isComplete ? "text-muted-foreground/40 line-through decoration-muted-foreground/20" : "text-foreground"}`}>
+                      {t.description}
+                    </span>
+                  </button>
                 ))}
               </motion.div>
             </div>
@@ -443,15 +616,11 @@ const Adventure = ({ bookedTrip, futureTrips }: AdventureProps) => {
             <motion.div {...fade()}>
               <p className="label-text mb-6">Weather Outlook</p>
               <h2 className="font-display text-3xl text-foreground leading-[1.1] mb-4">Forecast-Driven Packing</h2>
-              <p className="font-editorial text-muted-foreground max-w-xl mb-10">
-                When connected to weather data, your packing list updates automatically — ponchos if rain exceeds 30%, sunscreen reminders for UV alerts.
-              </p>
+              <p className="font-editorial text-muted-foreground max-w-xl mb-10">When connected to weather data, your packing list updates automatically — ponchos if rain exceeds 30%, sunscreen reminders for UV alerts.</p>
             </motion.div>
             <motion.div {...fade(0.1)} className="border border-dashed border-border py-16 text-center">
               <p className="font-display text-2xl text-muted-foreground/40 mb-3">Weather integration coming soon</p>
-              <p className="font-editorial text-sm text-muted-foreground/30">
-                Dynamic packing suggestions based on your trip dates and destination forecast.
-              </p>
+              <p className="font-editorial text-sm text-muted-foreground/30">Dynamic packing suggestions based on your trip dates and destination forecast.</p>
             </motion.div>
           </section>
         </>

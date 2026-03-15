@@ -58,8 +58,8 @@ const EmberTrail = () => {
 
     const spawnTrail = (w: number, h: number) => {
       trailEmbers.push({
-        x: fairyX(time, w) + (Math.random() - 0.5) * 25,
-        y: fairyY(time, h) + (Math.random() - 0.5) * 25,
+      x: fairyX(time, w) + (Math.random() - 0.5) * 120,
+        y: fairyY(time, h) + (Math.random() - 0.5) * 120,
         vx: (Math.random() - 0.5) * 0.3,
         vy: -Math.random() * 0.5 - 0.15,
         life: 0,

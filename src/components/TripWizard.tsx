@@ -54,6 +54,9 @@ interface WizardData {
   charactersPref: string;
   showsPref: string;
   paradesPref: string;
+  // Page 1 — Logistics
+  willingRopeDrop: boolean;
+  accommodationType: string | null;
   // Page 3 — Park Services
   needsDAS: boolean;
   willUseSingleRider: boolean;
@@ -105,6 +108,12 @@ const allergyOptions = ["Gluten-Free", "Dairy-Free", "Nut Allergy", "Shellfish",
 const destinations = [
   { id: "wdw", label: "Walt Disney World", desc: "Four parks, endless strategy." },
   { id: "dlr", label: "Disneyland Resort", desc: "Two parks, timeless charm." },
+];
+
+const accommodationOptions = [
+  { id: "on-property", label: "On-Property (Disney Resort)", desc: "Early Entry (30 min before opening for all guests). Extended Evening Hours on select nights (Deluxe resorts only).", benefit: "✨ Best access perks" },
+  { id: "partner-hotel", label: "Partner Hotel with Benefits", desc: "Some partner hotels (e.g. Swan & Dolphin, Disney Springs area) offer Early Entry but not Extended Evening Hours.", benefit: "🏨 Partial early access" },
+  { id: "off-property", label: "Off-Property (No Extra Access)", desc: "Standard park hours only — no early morning or extended evening benefits.", benefit: "🗓 Standard hours" },
 ];
 
 /* ─── Reusable UI pieces ─── */
@@ -163,6 +172,8 @@ const TripWizard = ({ open, onClose }: TripWizardProps) => {
     endDate: undefined,
     leadAdventurer: "",
     nappingStrategy: null,
+    willingRopeDrop: false,
+    accommodationType: null,
     familyStamina: 5,
     dailyAmbition: null,
     partyMembers: [],
@@ -372,6 +383,62 @@ const TripWizard = ({ open, onClose }: TripWizardProps) => {
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                           {ambitionOptions.map((opt) => (
                             <SelectCard key={opt.id} selected={data.dailyAmbition === opt.id} onClick={() => set("dailyAmbition", opt.id)} label={opt.label} desc={opt.desc} />
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* Rope Drop */}
+                      <div>
+                        <Label>Rope Drop</Label>
+                        <button
+                          onClick={() => set("willingRopeDrop", !data.willingRopeDrop)}
+                          className="w-full text-left p-5 transition-all duration-500 focus:outline-none focus:ring-2"
+                          style={{
+                            background: data.willingRopeDrop ? brand.white : "transparent",
+                            border: `1px solid ${data.willingRopeDrop ? brand.gold : brand.border}`,
+                            boxShadow: data.willingRopeDrop ? brand.shadow : "none",
+                            "--tw-ring-color": brand.thistle,
+                          } as React.CSSProperties}
+                        >
+                          <div className="flex items-center justify-between mb-1">
+                            <p style={{ fontFamily: brand.font.display, fontWeight: 500, color: brand.lapis, fontSize: "1rem" }}>
+                              {data.willingRopeDrop ? "Yes — We'll be there at Rope Drop" : "Willing to arrive at park opening?"}
+                            </p>
+                            <div className="w-10 h-5 rounded-full transition-colors duration-300 flex items-center px-0.5" style={{ background: data.willingRopeDrop ? brand.gold : brand.border }}>
+                              <div className="w-4 h-4 rounded-full bg-white shadow transition-transform duration-300" style={{ transform: data.willingRopeDrop ? "translateX(20px)" : "translateX(0)" }} />
+                            </div>
+                          </div>
+                          <p style={{ fontFamily: brand.font.body, color: brand.slate, fontSize: "0.75rem" }}>
+                            Rope Drop means arriving 30–45 minutes before the park officially opens. It's the single best strategy for short wait times on popular attractions.
+                          </p>
+                        </button>
+                      </div>
+
+                      {/* Accommodation & Extra Access */}
+                      <div>
+                        <Label>Accommodation & Extra Access</Label>
+                        <p className="text-xs mb-3" style={{ fontFamily: brand.font.body, color: brand.slate }}>
+                          Where you stay determines what extra park hours you can access. These benefits can dramatically change your strategy.
+                        </p>
+                        <div className="space-y-2">
+                          {accommodationOptions.map((opt) => (
+                            <button
+                              key={opt.id}
+                              onClick={() => set("accommodationType", opt.id)}
+                              className="w-full text-left p-5 transition-all duration-500 focus:outline-none focus:ring-2"
+                              style={{
+                                background: data.accommodationType === opt.id ? brand.white : "transparent",
+                                border: `1px solid ${data.accommodationType === opt.id ? brand.gold : brand.border}`,
+                                boxShadow: data.accommodationType === opt.id ? brand.shadow : "none",
+                                "--tw-ring-color": brand.thistle,
+                              } as React.CSSProperties}
+                            >
+                              <div className="flex items-center justify-between mb-1">
+                                <p style={{ fontFamily: brand.font.display, fontWeight: 500, color: brand.lapis, fontSize: "1rem" }}>{opt.label}</p>
+                                <span style={{ fontFamily: brand.font.body, fontSize: "0.6875rem", color: brand.gold }}>{opt.benefit}</span>
+                              </div>
+                              <p style={{ fontFamily: brand.font.body, color: brand.slate, fontSize: "0.75rem" }}>{opt.desc}</p>
+                            </button>
                           ))}
                         </div>
                       </div>

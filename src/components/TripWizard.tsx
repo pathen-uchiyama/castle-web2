@@ -425,10 +425,32 @@ const TripWizard = ({ open, onClose }: TripWizardProps) => {
                                 </select>
                               </div>
                               <div>
-                                <Label>Magic Status</Label>
-                                <select value={member.magicStatus} onChange={(e) => updateMember(member.id, "magicStatus", e.target.value)} style={{ ...inputStyle, appearance: "none" as const, cursor: "pointer" }} {...focusHandlers}>
-                                  {magicStatusOptions.map((s) => <option key={s} value={s}>{s}</option>)}
-                                </select>
+                                <Label>Magic Status (select all that apply)</Label>
+                                <div className="flex flex-wrap gap-2">
+                                  {magicStatusOptions.map((s) => {
+                                    const active = member.magicStatuses.includes(s);
+                                    return (
+                                      <button
+                                        key={s}
+                                        onClick={() => {
+                                          const updated = active
+                                            ? member.magicStatuses.filter((ms) => ms !== s)
+                                            : [...member.magicStatuses, s];
+                                          set("partyMembers", data.partyMembers.map((m) => m.id === member.id ? { ...m, magicStatuses: updated.length ? updated : ["Regular"] } : m));
+                                        }}
+                                        className="px-3 py-1.5 text-xs transition-all duration-300"
+                                        style={{
+                                          fontFamily: brand.font.body,
+                                          background: active ? brand.lapis : "transparent",
+                                          color: active ? brand.cream : brand.slate,
+                                          border: `1px solid ${active ? brand.lapis : brand.border}`,
+                                        }}
+                                      >
+                                        {s}
+                                      </button>
+                                    );
+                                  })}
+                                </div>
                               </div>
                             </div>
                             <div className="flex items-center gap-3 pt-1">

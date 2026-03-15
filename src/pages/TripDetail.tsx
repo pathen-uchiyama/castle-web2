@@ -145,6 +145,143 @@ const tabs = [
   { id: "prep", label: "Prep & Checklists" },
 ];
 
+/* ─── Booking Modal ─────────────────────────────────────────────── */
+
+interface BookingModalProps {
+  type: "dining" | "experience";
+  venueName: string;
+  venueLocation: string;
+  onClose: () => void;
+  onBook: (data: { date: string; time: string; partySize: number; notes: string }) => void;
+}
+
+const BookingModal = ({ type, venueName, venueLocation, onClose, onBook }: BookingModalProps) => {
+  const [date, setDate] = useState("");
+  const [time, setTime] = useState("");
+  const [partySize, setPartySize] = useState(4);
+  const [notes, setNotes] = useState("");
+
+  return (
+    <motion.div
+      initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm px-4"
+      onClick={onClose}
+    >
+      <motion.div
+        initial={{ opacity: 0, y: 20, scale: 0.97 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: 20, scale: 0.97 }}
+        transition={{ duration: 0.3 }}
+        className="w-full max-w-md bg-card border border-border shadow-lg"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="p-6 border-b border-border">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="label-text mb-1">Book {type === "dining" ? "Reservation" : "Experience"}</p>
+              <h3 className="font-display text-xl text-foreground">{venueName}</h3>
+              <p className="font-editorial text-sm text-muted-foreground">{venueLocation}</p>
+            </div>
+            <button onClick={onClose} className="text-muted-foreground hover:text-foreground transition-colors">✕</button>
+          </div>
+        </div>
+        <div className="p-6 space-y-4">
+          <div>
+            <label className="label-text mb-2 block">Date</label>
+            <input type="date" value={date} onChange={(e) => setDate(e.target.value)} className="w-full border border-border bg-background px-3 py-2 font-editorial text-sm text-foreground focus:outline-none focus:border-[hsl(var(--gold))] transition-colors" />
+          </div>
+          <div>
+            <label className="label-text mb-2 block">Time</label>
+            <input type="time" value={time} onChange={(e) => setTime(e.target.value)} className="w-full border border-border bg-background px-3 py-2 font-editorial text-sm text-foreground focus:outline-none focus:border-[hsl(var(--gold))] transition-colors" />
+          </div>
+          <div>
+            <label className="label-text mb-2 block">Party Size</label>
+            <div className="flex gap-2">
+              {[1,2,3,4,5,6].map(n => (
+                <button key={n} onClick={() => setPartySize(n)} className={`w-10 h-10 border text-sm font-display transition-all duration-200 ${partySize === n ? "bg-foreground text-background border-foreground" : "border-border text-muted-foreground hover:border-foreground/30"}`}>{n}</button>
+              ))}
+            </div>
+          </div>
+          <div>
+            <label className="label-text mb-2 block">Notes (optional)</label>
+            <textarea value={notes} onChange={(e) => setNotes(e.target.value)} placeholder="Special requests, dietary needs..." rows={2} className="w-full border border-border bg-background px-3 py-2 font-editorial text-sm text-foreground focus:outline-none focus:border-[hsl(var(--gold))] transition-colors resize-none" />
+          </div>
+        </div>
+        <div className="p-6 border-t border-border flex gap-3">
+          <button onClick={() => { if (date && time) onBook({ date, time, partySize, notes }); }} className="flex-1 px-6 py-3 text-[0.625rem] tracking-[0.15em] uppercase font-medium bg-foreground text-background transition-opacity duration-300 hover:opacity-90 disabled:opacity-40" disabled={!date || !time}>
+            Add as Pending
+          </button>
+          <button onClick={onClose} className="px-6 py-3 text-[0.625rem] tracking-[0.15em] uppercase font-medium text-muted-foreground border border-border hover:border-foreground/30 transition-all duration-300">
+            Cancel
+          </button>
+        </div>
+      </motion.div>
+    </motion.div>
+  );
+};
+
+/* ─── Alert Modal ──────────────────────────────────────────────── */
+
+interface AlertModalProps {
+  venueName: string;
+  opensDate: string;
+  onClose: () => void;
+  onSetAlert: (note: string) => void;
+}
+
+const AlertModal = ({ venueName, opensDate, onClose, onSetAlert }: AlertModalProps) => {
+  const [alertNote, setAlertNote] = useState("");
+
+  return (
+    <motion.div
+      initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm px-4"
+      onClick={onClose}
+    >
+      <motion.div
+        initial={{ opacity: 0, y: 20, scale: 0.97 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: 20, scale: 0.97 }}
+        transition={{ duration: 0.3 }}
+        className="w-full max-w-sm bg-card border border-border shadow-lg"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="p-6 border-b border-border">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="label-text mb-1">🔔 Set Booking Alert</p>
+              <h3 className="font-display text-lg text-foreground">{venueName}</h3>
+            </div>
+            <button onClick={onClose} className="text-muted-foreground hover:text-foreground transition-colors">✕</button>
+          </div>
+        </div>
+        <div className="p-6 space-y-4">
+          <div className="border border-[hsl(var(--gold)/0.3)] bg-[hsl(var(--gold)/0.04)] p-4">
+            <p className="font-editorial text-sm text-foreground mb-1">Booking window opens:</p>
+            <p className="font-display text-xl text-foreground">{opensDate || "TBD"}</p>
+            <p className="font-editorial text-xs text-muted-foreground mt-2">We'll remind you to book at 6 AM ET on this date.</p>
+          </div>
+          <div>
+            <label className="label-text mb-2 block">Reminder Note (optional)</label>
+            <input type="text" value={alertNote} onChange={(e) => setAlertNote(e.target.value)} placeholder="e.g., Request West Wing" className="w-full border border-border bg-background px-3 py-2 font-editorial text-sm text-foreground focus:outline-none focus:border-[hsl(var(--gold))] transition-colors" />
+          </div>
+        </div>
+        <div className="p-6 border-t border-border">
+          <button onClick={() => onSetAlert(alertNote)} className="w-full px-6 py-3 text-[0.625rem] tracking-[0.15em] uppercase font-medium bg-[hsl(var(--gold))] text-background transition-opacity duration-300 hover:opacity-90">
+            Set Alert
+          </button>
+        </div>
+      </motion.div>
+    </motion.div>
+  );
+};
+
+/* ─── Alert type ───────────────────────────────────────────────── */
+
+interface BookingAlert {
+  id: string;
+  venueName: string;
+  type: "dining" | "experience";
+  opensDate: string;
+  note: string;
+}
+
 const BookedTripDetail = ({ trip }: { trip: BookedTrip }) => {
   const [activeTab, setActiveTab] = useState("surveys");
   const [diningSubTab, setDiningSubTab] = useState<"discover" | "reservations">("discover");
@@ -154,6 +291,13 @@ const BookedTripDetail = ({ trip }: { trip: BookedTrip }) => {
     mockData.partyMembers.forEach((m) => { initial[m.memberId] = false; });
     return initial;
   });
+
+  // Booking state
+  const [pendingDining, setPendingDining] = useState<DiningReservation[]>([]);
+  const [pendingExperiences, setPendingExperiences] = useState<BookedExperience[]>([]);
+  const [alerts, setAlerts] = useState<BookingAlert[]>([]);
+  const [bookingModal, setBookingModal] = useState<{ type: "dining" | "experience"; venue: DiningVenue | ExperienceVenue } | null>(null);
+  const [alertModal, setAlertModal] = useState<{ type: "dining" | "experience"; venueName: string; opensDate: string } | null>(null);
   const { destination, tripName, countdownDays, travelLegs, diningReservations, bookedExperiences, diningVenues, experienceVenues } = trip;
   const { partySurvey } = mockData;
 

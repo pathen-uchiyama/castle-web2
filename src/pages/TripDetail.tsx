@@ -929,17 +929,75 @@ const BookedTripDetail = ({ trip }: { trip: BookedTrip }) => {
             <motion.div {...fade()}>
               <p className="label-text mb-6">Weather Outlook</p>
               <h2 className="font-display text-3xl text-foreground leading-[1.1] mb-4">Forecast-Driven Packing</h2>
-              <p className="font-editorial text-muted-foreground max-w-xl mb-10">When connected to weather data, your packing list updates automatically — ponchos if rain exceeds 30%, sunscreen reminders for UV alerts.</p>
+              <p className="font-editorial text-muted-foreground max-w-xl mb-10">Your packing list includes weather-specific categories. Check the ☀️ Heat, 🌧 Rain, and ❄️ Cool sections above — they're tailored for Central Florida in late March.</p>
             </motion.div>
-            <motion.div {...fade(0.1)} className="border border-dashed border-border py-16 text-center">
-              <p className="font-display text-2xl text-muted-foreground/40 mb-3">Weather integration coming soon</p>
-              <p className="font-editorial text-sm text-muted-foreground/30">Dynamic packing suggestions based on your trip dates and destination forecast.</p>
+            <motion.div {...fade(0.1)} className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-10">
+              {[
+                { icon: "☀️", title: "Heat & Sun", temp: "78–88°F", tip: "UV index peaks mid-day. Bring SPF 50+, hats, and cooling towels." },
+                { icon: "🌧", title: "Rain & Storms", temp: "40% chance", tip: "Afternoon thunderstorms are common. Pack ponchos — they beat umbrellas in crowds." },
+                { icon: "❄️", title: "Cool Evenings", temp: "62–68°F", tip: "Temps drop after sunset. A lightweight layer keeps fireworks comfortable." },
+              ].map((w) => (
+                <div key={w.title} className="border border-border bg-card p-5 shadow-[var(--shadow-soft)]">
+                  <div className="flex items-center gap-2 mb-3">
+                    <span className="text-2xl">{w.icon}</span>
+                    <h4 className="font-display text-lg text-foreground">{w.title}</h4>
+                  </div>
+                  <p className="font-display text-2xl text-foreground mb-2">{w.temp}</p>
+                  <p className="font-editorial text-sm text-muted-foreground leading-relaxed">{w.tip}</p>
+                </div>
+              ))}
             </motion.div>
           </section>
         </>
       )}
 
+      {/* ═══ ALERTS SIDEBAR (floating) ═══ */}
+      {alerts.length > 0 && (
+        <section className="px-8 lg:px-16 py-8 border-t border-border bg-[hsl(var(--warm))]">
+          <p className="label-text mb-4">🔔 Active Alerts ({alerts.length})</p>
+          <div className="flex flex-wrap gap-3">
+            {alerts.map((alert) => (
+              <div key={alert.id} className="flex items-center gap-3 border border-[hsl(var(--gold)/0.3)] bg-[hsl(var(--gold)/0.04)] px-4 py-2">
+                <span className="text-sm">🔔</span>
+                <div>
+                  <p className="font-display text-sm text-foreground">{alert.venueName}</p>
+                  <p className="font-editorial text-xs text-muted-foreground">{alert.opensDate ? `Opens ${alert.opensDate}` : "TBD"}{alert.note ? ` · ${alert.note}` : ""}</p>
+                </div>
+                <button onClick={() => setAlerts(prev => prev.filter(a => a.id !== alert.id))} className="text-muted-foreground/40 hover:text-foreground transition-colors text-xs ml-2">✕</button>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
+
       <Footer />
+
+      {/* ═══ MODALS ═══ */}
+      <AnimatePresence>
+        {bookingModal && (
+          <BookingModal
+            type={bookingModal.type}
+            venueName={bookingModal.venue.name}
+            venueLocation={bookingModal.venue.parkOrResort}
+            onClose={() => setBookingModal(null)}
+            onBook={(data) => {
+              if (bookingModal.type === "dining") {
+                handleBookDining(bookingModal.venue as DiningVenue, data);
+              } else {
+                handleBookExperience(bookingModal.venue as ExperienceVenue, data);
+              }
+            }}
+          />
+        )}
+        {alertModal && (
+          <AlertModal
+            venueName={alertModal.venueName}
+            opensDate={alertModal.opensDate}
+            onClose={() => setAlertModal(null)}
+            onSetAlert={(note) => handleSetAlert(alertModal.type, alertModal.venueName, alertModal.opensDate, note)}
+          />
+        )}
+      </AnimatePresence>
     </div>
   );
 };

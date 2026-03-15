@@ -339,6 +339,7 @@ const Index = () => {
           </div>
         </motion.footer>
       </div>
+      <FloatingAnchor />
     </div>
   );
 };

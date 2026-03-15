@@ -389,9 +389,9 @@ const Index = ({
             </h2>
           </motion.div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-3 auto-rows-[220px] sm:auto-rows-[280px]">
+          <div className="grid grid-cols-1 sm:grid-cols-6 gap-3 auto-rows-[220px] sm:auto-rows-[280px]">
             {tripMemories.map((memory, i) => (
-              <Link key={memory.tripId} to={`/memories/${memory.tripId}`} className={`${memory.gridSpan} col-span-1 sm:col-span-1 lg:${memory.gridSpan} group cursor-pointer relative overflow-hidden rounded-2xl block`}>
+              <Link key={memory.tripId} to={`/memories/${memory.tripId}`} className={`${memory.gridSpan} group cursor-pointer relative overflow-hidden rounded-2xl block`}>
                 <motion.div {...scaleIn(i * 0.08)} className="w-full h-full">
                   <motion.img
                     src={memory.coverImage}

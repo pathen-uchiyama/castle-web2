@@ -19,6 +19,9 @@ export interface ParkGuide {
   crowdCalendarSummary: string;
   categories: ParkGuideCategory[];
   heroImage: string;
+  todayWeather: string;
+  todayCrowdLevel: string;
+  operatingHours: string;
 }
 
 export interface PartyMember {

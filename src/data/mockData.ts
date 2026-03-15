@@ -97,6 +97,9 @@ export const mockData: AppData = {
         { label: "Seasonal Events", description: "MNSSHP, MVMCP, and festival celebrations", itemCount: 4 },
       ],
       heroImage: editorialCarousel,
+      todayWeather: "78°F, Clear",
+      todayCrowdLevel: "Moderate",
+      operatingHours: "8:00 AM – 11:00 PM",
     },
     {
       parkId: "epcot",

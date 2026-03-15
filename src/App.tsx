@@ -40,8 +40,8 @@ const App = () => (
               />
             }
           />
-          <Route path="/adventure" element={<Adventure bookedTrip={mockData.bookedTrip} />} />
-          <Route path="/trip/:tripId" element={<Adventure bookedTrip={mockData.bookedTrip} />} />
+          <Route path="/adventure" element={<Adventure bookedTrip={mockData.bookedTrip} futureTrips={mockData.futureTrips} />} />
+          <Route path="/trip/:tripId" element={<Adventure bookedTrip={mockData.bookedTrip} futureTrips={mockData.futureTrips} />} />
           <Route path="/survey/:tripId/:memberId" element={<Survey />} />
           <Route path="/memories" element={<Memories tripMemories={mockData.tripMemories} />} />
           <Route path="/memories/:tripId" element={<Memories tripMemories={mockData.tripMemories} />} />

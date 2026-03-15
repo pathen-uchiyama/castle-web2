@@ -421,97 +421,202 @@ const Adventure = ({ bookedTrip, futureTrips }: AdventureProps) => {
         <section className="px-8 lg:px-16 py-16 lg:py-24">
           <motion.div {...fade()}>
             <p className="label-text mb-6">The Table</p>
-            <h2 className="font-display text-4xl sm:text-5xl text-foreground leading-[1.08] mb-4">Dining Reservations</h2>
-            <p className="font-editorial text-muted-foreground text-lg max-w-2xl mb-4">
-              Every meal is part of the magic. Your confirmed tables, dietary notes, and day-by-day dining plan.
+            <h2 className="font-display text-4xl sm:text-5xl text-foreground leading-[1.08] mb-4">Dining</h2>
+            <p className="font-editorial text-muted-foreground text-lg max-w-2xl mb-8">
+              Research the best tables, then track your bookings.
             </p>
-            <div className="gold-rule mb-12" />
           </motion.div>
 
-          {/* Summary stats */}
-          <motion.div {...fade(0.1)} className="grid grid-cols-2 sm:grid-cols-4 gap-6 mb-16">
-            {[
-              { label: "Reservations", value: String(diningReservations.length) },
-              { label: "Confirmed", value: String(diningReservations.filter(d => d.status === "confirmed").length) },
-              { label: "Pending", value: String(diningReservations.filter(d => d.status === "pending").length) },
-              { label: "Dietary Flags", value: String(new Set(diningReservations.flatMap(d => d.dietaryFlags ?? [])).size) },
-            ].map((stat) => (
-              <div key={stat.label} className="border border-border bg-card p-5 shadow-[var(--shadow-soft)]">
-                <p className="label-text mb-2">{stat.label}</p>
-                <p className="font-display text-3xl text-foreground">{stat.value}</p>
-              </div>
-            ))}
-          </motion.div>
-
-          {/* Grouped by date */}
-          <div className="space-y-12">
-            {diningByDate.map(([date, reservations], groupIdx) => (
-              <motion.div key={date} {...fade(0.15 + groupIdx * 0.05)}>
-                <p className="label-text mb-4 tracking-[0.25em]">{date}</p>
-                <div className="space-y-4">
-                  {reservations.map((res) => {
-                    const colors = statusColors[res.status];
-                    return (
-                      <div key={res.reservationId} className="border border-border bg-card shadow-[var(--shadow-soft)] hover:shadow-[var(--shadow-hover)] transition-shadow duration-500 overflow-hidden">
-                        <div className="p-6">
-                          <div className="flex items-start justify-between mb-4">
-                            <div className="flex items-center gap-3">
-                              <span className="text-2xl">{mealIcons[res.mealType]}</span>
-                              <div>
-                                <h3 className="font-display text-xl text-foreground">{res.restaurantName}</h3>
-                                <p className="font-editorial text-sm text-muted-foreground">{res.parkOrResort} · {res.cuisine}</p>
-                              </div>
-                            </div>
-                            <span
-                              className="px-3 py-1 text-[0.625rem] uppercase tracking-[0.15em] font-medium border"
-                              style={{ background: colors.bg, color: colors.text, borderColor: colors.border }}
-                            >
-                              {res.status}
-                            </span>
-                          </div>
-
-                          <div className="flex flex-wrap gap-6 mb-4">
-                            <div>
-                              <p className="label-text mb-1">Time</p>
-                              <p className="font-display text-lg text-foreground">{res.time}</p>
-                            </div>
-                            <div>
-                              <p className="label-text mb-1">Party</p>
-                              <p className="font-display text-lg text-foreground">{res.partySize}</p>
-                            </div>
-                            <div>
-                              <p className="label-text mb-1">Confirmation</p>
-                              <p className="font-editorial text-sm text-foreground tracking-wide">{res.confirmationNumber}</p>
-                            </div>
-                          </div>
-
-                          {res.notes && (
-                            <p className="font-editorial text-sm text-muted-foreground italic mb-4">{res.notes}</p>
-                          )}
-
-                          {res.dietaryFlags && res.dietaryFlags.length > 0 && (
-                            <div className="flex flex-wrap gap-2">
-                              {res.dietaryFlags.map((flag) => (
-                                <span key={flag} className="text-[0.625rem] uppercase tracking-[0.12em] px-3 py-1 bg-[hsl(var(--warm))] text-muted-foreground border border-border">
-                                  ⚠ {flag}
-                                </span>
-                              ))}
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              </motion.div>
+          {/* Sub-tabs */}
+          <div className="flex gap-1 mb-12 border-b border-border">
+            {[{ id: "discover" as const, label: "Discover" }, { id: "reservations" as const, label: "My Reservations", count: diningReservations.length }].map((st) => (
+              <button
+                key={st.id}
+                onClick={() => setDiningSubTab(st.id)}
+                className="relative px-5 py-3 transition-all duration-500"
+              >
+                <span className={`uppercase tracking-[0.2em] text-[0.6875rem] transition-colors duration-500 ${diningSubTab === st.id ? "text-foreground" : "text-muted-foreground"}`}>
+                  {st.label}
+                </span>
+                {"count" in st && st.count !== undefined && (
+                  <span className="ml-2 px-1.5 py-0.5 text-[0.5625rem] uppercase tracking-[0.1em]" style={{ background: "hsl(var(--gold) / 0.15)", color: "hsl(var(--gold-dark))", border: "1px solid hsl(var(--gold) / 0.3)" }}>
+                    {st.count}
+                  </span>
+                )}
+                {diningSubTab === st.id && (
+                  <motion.div className="absolute bottom-0 left-5 right-5 h-px" layoutId="dining-sub" style={{ background: "hsl(var(--gold))" }} />
+                )}
+              </button>
             ))}
           </div>
 
-          {/* Add reservation placeholder */}
-          <motion.div {...fade(0.3)} className="mt-12 border border-dashed border-border py-12 text-center cursor-pointer hover:border-[hsl(var(--gold)/0.5)] transition-colors duration-500">
-            <p className="font-display text-xl text-muted-foreground/40 mb-2">+ Add Reservation</p>
-            <p className="font-editorial text-sm text-muted-foreground/30">Track a new dining booking for your trip.</p>
-          </motion.div>
+          {/* ── DISCOVER SUB-TAB ── */}
+          {diningSubTab === "discover" && (
+            <>
+              {/* Booking window alerts */}
+              {diningVenues.filter(v => v.bookingWindow.daysBeforeArrival > 0).length > 0 && (
+                <motion.div {...fade(0.05)} className="mb-12">
+                  <p className="label-text mb-4 tracking-[0.25em]">⏰ Booking Windows</p>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    {diningVenues.filter(v => v.bookingWindow.daysBeforeArrival > 0).map((v) => (
+                      <div key={v.venueId} className="border border-[hsl(var(--gold)/0.3)] bg-[hsl(var(--gold)/0.04)] p-4">
+                        <div className="flex items-baseline justify-between mb-1">
+                          <span className="font-display text-sm text-foreground">{v.name}</span>
+                          <span className="label-text !text-[hsl(var(--gold-dark))]">{v.bookingWindow.daysBeforeArrival}d before</span>
+                        </div>
+                        <p className="font-editorial text-xs text-muted-foreground">Opens {v.bookingWindow.opensDate}</p>
+                        <p className="font-editorial text-xs text-muted-foreground/60 italic mt-1">{v.bookingWindow.tip}</p>
+                      </div>
+                    ))}
+                  </div>
+                </motion.div>
+              )}
+
+              {/* Venue research cards */}
+              <div className="space-y-6">
+                {diningVenues.map((venue, i) => {
+                  const diffColors = difficultyColors[venue.bookingDifficulty];
+                  return (
+                    <motion.div key={venue.venueId} {...fade(0.1 + i * 0.03)} className="border border-border bg-card shadow-[var(--shadow-soft)] hover:shadow-[var(--shadow-hover)] transition-shadow duration-500">
+                      <div className="p-6">
+                        {/* Header */}
+                        <div className="flex items-start justify-between mb-4">
+                          <div>
+                            <div className="flex items-center gap-2 mb-1">
+                              <h3 className="font-display text-xl text-foreground">{venue.name}</h3>
+                              {venue.characterDining && <span className="text-xs" title="Character dining">👑</span>}
+                            </div>
+                            <p className="font-editorial text-sm text-muted-foreground">{venue.parkOrResort} · {venue.cuisine}</p>
+                          </div>
+                          <span className="px-3 py-1 text-[0.625rem] uppercase tracking-[0.15em] font-medium border" style={{ background: diffColors.bg, color: diffColors.text, borderColor: diffColors.border }}>
+                            {venue.bookingDifficulty}
+                          </span>
+                        </div>
+
+                        {/* Stats row */}
+                        <div className="flex flex-wrap items-center gap-6 mb-5">
+                          <StarRating rating={venue.rating} />
+                          <span className="font-editorial text-xs text-muted-foreground">{venue.reviewCount.toLocaleString()} reviews</span>
+                          <div className="flex items-center gap-1">
+                            <span className="label-text mr-1">Cost</span>
+                            <div className="flex gap-0.5">{costDots(venue.costTier)}</div>
+                          </div>
+                          <div className="flex flex-wrap gap-1">
+                            {venue.mealTypes.map(m => (
+                              <span key={m} className="text-[0.5625rem] uppercase tracking-[0.1em] px-2 py-0.5 bg-[hsl(var(--warm))] text-muted-foreground border border-border">{m}</span>
+                            ))}
+                          </div>
+                        </div>
+
+                        {/* Vibes */}
+                        <div className="mb-4">
+                          <p className="label-text mb-2">The Vibe</p>
+                          <p className="font-editorial text-sm text-foreground/80 leading-relaxed">{venue.vibes}</p>
+                        </div>
+
+                        {/* Notable insight */}
+                        <div className="mb-4 pl-4 border-l-2 border-[hsl(var(--gold)/0.4)]">
+                          <p className="label-text mb-1">✦ Insider Note</p>
+                          <p className="font-editorial text-sm text-muted-foreground leading-relaxed">{venue.notableInsight}</p>
+                        </div>
+
+                        {/* Must-try */}
+                        {venue.mustTry && (
+                          <div className="mb-4">
+                            <p className="label-text mb-1">Must Try</p>
+                            <p className="font-editorial text-sm text-foreground/80 italic">{venue.mustTry}</p>
+                          </div>
+                        )}
+
+                        {/* Tags & dietary */}
+                        <div className="flex flex-wrap gap-2 mb-4">
+                          {venue.tags.map(tag => (
+                            <span key={tag} className="text-[0.5625rem] uppercase tracking-[0.12em] px-2.5 py-1 bg-[hsl(var(--warm))] text-muted-foreground border border-border">{tag}</span>
+                          ))}
+                          {!venue.kidFriendly && (
+                            <span className="text-[0.5625rem] uppercase tracking-[0.12em] px-2.5 py-1 bg-[hsl(var(--destructive)/0.08)] text-destructive border border-[hsl(var(--destructive)/0.2)]">Adults Only</span>
+                          )}
+                        </div>
+
+                        {/* Dietary accommodations */}
+                        <div className="flex flex-wrap gap-1.5">
+                          {venue.dietaryAccommodations.map(d => (
+                            <span key={d} className="text-[0.5rem] uppercase tracking-[0.1em] px-2 py-0.5 text-muted-foreground/60 border border-border/50">✓ {d}</span>
+                          ))}
+                        </div>
+                      </div>
+                    </motion.div>
+                  );
+                })}
+              </div>
+            </>
+          )}
+
+          {/* ── RESERVATIONS SUB-TAB ── */}
+          {diningSubTab === "reservations" && (
+            <>
+              <motion.div {...fade(0.1)} className="grid grid-cols-2 sm:grid-cols-4 gap-6 mb-16">
+                {[
+                  { label: "Reservations", value: String(diningReservations.length) },
+                  { label: "Confirmed", value: String(diningReservations.filter(d => d.status === "confirmed").length) },
+                  { label: "Pending", value: String(diningReservations.filter(d => d.status === "pending").length) },
+                  { label: "Dietary Flags", value: String(new Set(diningReservations.flatMap(d => d.dietaryFlags ?? [])).size) },
+                ].map((stat) => (
+                  <div key={stat.label} className="border border-border bg-card p-5 shadow-[var(--shadow-soft)]">
+                    <p className="label-text mb-2">{stat.label}</p>
+                    <p className="font-display text-3xl text-foreground">{stat.value}</p>
+                  </div>
+                ))}
+              </motion.div>
+
+              <div className="space-y-12">
+                {diningByDate.map(([date, reservations], groupIdx) => (
+                  <motion.div key={date} {...fade(0.15 + groupIdx * 0.05)}>
+                    <p className="label-text mb-4 tracking-[0.25em]">{date}</p>
+                    <div className="space-y-4">
+                      {reservations.map((res) => {
+                        const colors = statusColors[res.status];
+                        return (
+                          <div key={res.reservationId} className="border border-border bg-card shadow-[var(--shadow-soft)] hover:shadow-[var(--shadow-hover)] transition-shadow duration-500 overflow-hidden">
+                            <div className="p-6">
+                              <div className="flex items-start justify-between mb-4">
+                                <div className="flex items-center gap-3">
+                                  <span className="text-2xl">{mealIcons[res.mealType]}</span>
+                                  <div>
+                                    <h3 className="font-display text-xl text-foreground">{res.restaurantName}</h3>
+                                    <p className="font-editorial text-sm text-muted-foreground">{res.parkOrResort} · {res.cuisine}</p>
+                                  </div>
+                                </div>
+                                <span className="px-3 py-1 text-[0.625rem] uppercase tracking-[0.15em] font-medium border" style={{ background: colors.bg, color: colors.text, borderColor: colors.border }}>{res.status}</span>
+                              </div>
+                              <div className="flex flex-wrap gap-6 mb-4">
+                                <div><p className="label-text mb-1">Time</p><p className="font-display text-lg text-foreground">{res.time}</p></div>
+                                <div><p className="label-text mb-1">Party</p><p className="font-display text-lg text-foreground">{res.partySize}</p></div>
+                                <div><p className="label-text mb-1">Confirmation</p><p className="font-editorial text-sm text-foreground tracking-wide">{res.confirmationNumber}</p></div>
+                              </div>
+                              {res.notes && <p className="font-editorial text-sm text-muted-foreground italic mb-4">{res.notes}</p>}
+                              {res.dietaryFlags && res.dietaryFlags.length > 0 && (
+                                <div className="flex flex-wrap gap-2">
+                                  {res.dietaryFlags.map((flag) => (
+                                    <span key={flag} className="text-[0.625rem] uppercase tracking-[0.12em] px-3 py-1 bg-[hsl(var(--warm))] text-muted-foreground border border-border">⚠ {flag}</span>
+                                  ))}
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </motion.div>
+                ))}
+              </div>
+
+              <motion.div {...fade(0.3)} className="mt-12 border border-dashed border-border py-12 text-center cursor-pointer hover:border-[hsl(var(--gold)/0.5)] transition-colors duration-500">
+                <p className="font-display text-xl text-muted-foreground/40 mb-2">+ Add Reservation</p>
+                <p className="font-editorial text-sm text-muted-foreground/30">Track a new dining booking for your trip.</p>
+              </motion.div>
+            </>
+          )}
         </section>
       )}
 
@@ -520,101 +625,190 @@ const Adventure = ({ bookedTrip, futureTrips }: AdventureProps) => {
         <section className="px-8 lg:px-16 py-16 lg:py-24">
           <motion.div {...fade()}>
             <p className="label-text mb-6">The Enchantments</p>
-            <h2 className="font-display text-4xl sm:text-5xl text-foreground leading-[1.08] mb-4">Booked Experiences</h2>
-            <p className="font-editorial text-muted-foreground text-lg max-w-2xl mb-4">
-              Beyond the rides — workshops, tours, dessert parties, and once-in-a-lifetime moments you've secured.
+            <h2 className="font-display text-4xl sm:text-5xl text-foreground leading-[1.08] mb-4">Experiences</h2>
+            <p className="font-editorial text-muted-foreground text-lg max-w-2xl mb-8">
+              Discover extraordinary moments, then track the ones you've booked.
             </p>
-            <div className="gold-rule mb-12" />
           </motion.div>
 
-          {/* Summary stats */}
-          <motion.div {...fade(0.1)} className="grid grid-cols-2 sm:grid-cols-4 gap-6 mb-16">
-            {[
-              { label: "Experiences", value: String(bookedExperiences.length) },
-              { label: "Confirmed", value: String(bookedExperiences.filter(e => e.status === "confirmed").length) },
-              { label: "Pending", value: String(bookedExperiences.filter(e => e.status === "pending").length) },
-              { label: "Unique Days", value: String(new Set(bookedExperiences.map(e => e.date)).size) },
-            ].map((stat) => (
-              <div key={stat.label} className="border border-border bg-card p-5 shadow-[var(--shadow-soft)]">
-                <p className="label-text mb-2">{stat.label}</p>
-                <p className="font-display text-3xl text-foreground">{stat.value}</p>
-              </div>
-            ))}
-          </motion.div>
-
-          {/* Experience cards grouped by date */}
-          <div className="space-y-12">
-            {Object.entries(
-              bookedExperiences.reduce<Record<string, typeof bookedExperiences>>((acc, exp) => {
-                if (!acc[exp.date]) acc[exp.date] = [];
-                acc[exp.date].push(exp);
-                return acc;
-              }, {})
-            ).map(([date, experiences], groupIdx) => (
-              <motion.div key={date} {...fade(0.15 + groupIdx * 0.05)}>
-                <p className="label-text mb-4 tracking-[0.25em]">{date}</p>
-                <div className="space-y-4">
-                  {experiences.map((exp) => {
-                    const colors = statusColors[exp.status];
-                    return (
-                      <div key={exp.experienceId} className="border border-border bg-card shadow-[var(--shadow-soft)] hover:shadow-[var(--shadow-hover)] transition-shadow duration-500 overflow-hidden">
-                        <div className="p-6">
-                          <div className="flex items-start justify-between mb-4">
-                            <div className="flex items-center gap-3">
-                              <span className="text-2xl">{experienceIcons[exp.category]}</span>
-                              <div>
-                                <h3 className="font-display text-xl text-foreground">{exp.experienceName}</h3>
-                                <p className="font-editorial text-sm text-muted-foreground">
-                                  {exp.parkOrResort} · {experienceLabels[exp.category]}
-                                </p>
-                              </div>
-                            </div>
-                            <span
-                              className="px-3 py-1 text-[0.625rem] uppercase tracking-[0.15em] font-medium border"
-                              style={{ background: colors.bg, color: colors.text, borderColor: colors.border }}
-                            >
-                              {exp.status}
-                            </span>
-                          </div>
-
-                          <div className="flex flex-wrap gap-6 mb-4">
-                            <div>
-                              <p className="label-text mb-1">Time</p>
-                              <p className="font-display text-lg text-foreground">{exp.time}</p>
-                            </div>
-                            {exp.duration && (
-                              <div>
-                                <p className="label-text mb-1">Duration</p>
-                                <p className="font-display text-lg text-foreground">{exp.duration}</p>
-                              </div>
-                            )}
-                            <div>
-                              <p className="label-text mb-1">Party</p>
-                              <p className="font-display text-lg text-foreground">{exp.partySize}</p>
-                            </div>
-                            <div>
-                              <p className="label-text mb-1">Confirmation</p>
-                              <p className="font-editorial text-sm text-foreground tracking-wide">{exp.confirmationNumber}</p>
-                            </div>
-                          </div>
-
-                          {exp.notes && (
-                            <p className="font-editorial text-sm text-muted-foreground italic">{exp.notes}</p>
-                          )}
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              </motion.div>
+          {/* Sub-tabs */}
+          <div className="flex gap-1 mb-12 border-b border-border">
+            {[{ id: "discover" as const, label: "Discover" }, { id: "reservations" as const, label: "My Bookings", count: bookedExperiences.length }].map((st) => (
+              <button
+                key={st.id}
+                onClick={() => setExperienceSubTab(st.id)}
+                className="relative px-5 py-3 transition-all duration-500"
+              >
+                <span className={`uppercase tracking-[0.2em] text-[0.6875rem] transition-colors duration-500 ${experienceSubTab === st.id ? "text-foreground" : "text-muted-foreground"}`}>
+                  {st.label}
+                </span>
+                {"count" in st && st.count !== undefined && (
+                  <span className="ml-2 px-1.5 py-0.5 text-[0.5625rem] uppercase tracking-[0.1em]" style={{ background: "hsl(var(--gold) / 0.15)", color: "hsl(var(--gold-dark))", border: "1px solid hsl(var(--gold) / 0.3)" }}>
+                    {st.count}
+                  </span>
+                )}
+                {experienceSubTab === st.id && (
+                  <motion.div className="absolute bottom-0 left-5 right-5 h-px" layoutId="exp-sub" style={{ background: "hsl(var(--gold))" }} />
+                )}
+              </button>
             ))}
           </div>
 
-          {/* Add experience placeholder */}
-          <motion.div {...fade(0.3)} className="mt-12 border border-dashed border-border py-12 text-center cursor-pointer hover:border-[hsl(var(--gold)/0.5)] transition-colors duration-500">
-            <p className="font-display text-xl text-muted-foreground/40 mb-2">+ Add Experience</p>
-            <p className="font-editorial text-sm text-muted-foreground/30">Track a new booked experience for your trip.</p>
-          </motion.div>
+          {/* ── DISCOVER SUB-TAB ── */}
+          {experienceSubTab === "discover" && (
+            <>
+              {/* Booking window alerts */}
+              {experienceVenues.filter(v => v.bookingWindow.daysBeforeArrival > 0).length > 0 && (
+                <motion.div {...fade(0.05)} className="mb-12">
+                  <p className="label-text mb-4 tracking-[0.25em]">⏰ Booking Windows</p>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    {experienceVenues.filter(v => v.bookingWindow.daysBeforeArrival > 0).map((v) => (
+                      <div key={v.venueId} className="border border-[hsl(var(--gold)/0.3)] bg-[hsl(var(--gold)/0.04)] p-4">
+                        <div className="flex items-baseline justify-between mb-1">
+                          <span className="font-display text-sm text-foreground">{v.name}</span>
+                          <span className="label-text !text-[hsl(var(--gold-dark))]">{v.bookingWindow.daysBeforeArrival}d before</span>
+                        </div>
+                        <p className="font-editorial text-xs text-muted-foreground">Opens {v.bookingWindow.opensDate}</p>
+                        <p className="font-editorial text-xs text-muted-foreground/60 italic mt-1">{v.bookingWindow.tip}</p>
+                      </div>
+                    ))}
+                  </div>
+                </motion.div>
+              )}
+
+              {/* Experience research cards */}
+              <div className="space-y-6">
+                {experienceVenues.map((venue, i) => {
+                  const diffColors = difficultyColors[venue.bookingDifficulty];
+                  return (
+                    <motion.div key={venue.venueId} {...fade(0.1 + i * 0.03)} className="border border-border bg-card shadow-[var(--shadow-soft)] hover:shadow-[var(--shadow-hover)] transition-shadow duration-500">
+                      <div className="p-6">
+                        {/* Header */}
+                        <div className="flex items-start justify-between mb-4">
+                          <div className="flex items-center gap-3">
+                            <span className="text-2xl">{experienceIcons[venue.category]}</span>
+                            <div>
+                              <h3 className="font-display text-xl text-foreground">{venue.name}</h3>
+                              <p className="font-editorial text-sm text-muted-foreground">{venue.parkOrResort} · {experienceLabels[venue.category]}</p>
+                            </div>
+                          </div>
+                          <span className="px-3 py-1 text-[0.625rem] uppercase tracking-[0.15em] font-medium border" style={{ background: diffColors.bg, color: diffColors.text, borderColor: diffColors.border }}>
+                            {venue.bookingDifficulty}
+                          </span>
+                        </div>
+
+                        {/* Stats row */}
+                        <div className="flex flex-wrap items-center gap-6 mb-5">
+                          <StarRating rating={venue.rating} />
+                          <span className="font-editorial text-xs text-muted-foreground">{venue.reviewCount.toLocaleString()} reviews</span>
+                          <div className="flex items-center gap-1">
+                            <span className="label-text mr-1">Cost</span>
+                            <div className="flex gap-0.5">{costDots(venue.costTier)}</div>
+                          </div>
+                          <span className="font-editorial text-xs text-muted-foreground">{venue.priceRange}</span>
+                          <span className="font-editorial text-xs text-muted-foreground">⏱ {venue.duration}</span>
+                        </div>
+
+                        {/* Vibes */}
+                        <div className="mb-4">
+                          <p className="label-text mb-2">The Vibe</p>
+                          <p className="font-editorial text-sm text-foreground/80 leading-relaxed">{venue.vibes}</p>
+                        </div>
+
+                        {/* Notable insight */}
+                        <div className="mb-4 pl-4 border-l-2 border-[hsl(var(--gold)/0.4)]">
+                          <p className="label-text mb-1">✦ Insider Note</p>
+                          <p className="font-editorial text-sm text-muted-foreground leading-relaxed">{venue.notableInsight}</p>
+                        </div>
+
+                        {/* Requirements & tags */}
+                        <div className="flex flex-wrap gap-2">
+                          {venue.tags.map(tag => (
+                            <span key={tag} className="text-[0.5625rem] uppercase tracking-[0.12em] px-2.5 py-1 bg-[hsl(var(--warm))] text-muted-foreground border border-border">{tag}</span>
+                          ))}
+                          {venue.ageRequirement && (
+                            <span className="text-[0.5625rem] uppercase tracking-[0.12em] px-2.5 py-1 text-muted-foreground border border-border">📏 {venue.ageRequirement}</span>
+                          )}
+                          {venue.heightRequirement && (
+                            <span className="text-[0.5625rem] uppercase tracking-[0.12em] px-2.5 py-1 text-muted-foreground border border-border">📐 {venue.heightRequirement}"</span>
+                          )}
+                          {venue.maxPartySize && (
+                            <span className="text-[0.5625rem] uppercase tracking-[0.12em] px-2.5 py-1 text-muted-foreground border border-border">👥 Max {venue.maxPartySize}</span>
+                          )}
+                        </div>
+                      </div>
+                    </motion.div>
+                  );
+                })}
+              </div>
+            </>
+          )}
+
+          {/* ── RESERVATIONS SUB-TAB ── */}
+          {experienceSubTab === "reservations" && (
+            <>
+              <motion.div {...fade(0.1)} className="grid grid-cols-2 sm:grid-cols-4 gap-6 mb-16">
+                {[
+                  { label: "Experiences", value: String(bookedExperiences.length) },
+                  { label: "Confirmed", value: String(bookedExperiences.filter(e => e.status === "confirmed").length) },
+                  { label: "Pending", value: String(bookedExperiences.filter(e => e.status === "pending").length) },
+                  { label: "Unique Days", value: String(new Set(bookedExperiences.map(e => e.date)).size) },
+                ].map((stat) => (
+                  <div key={stat.label} className="border border-border bg-card p-5 shadow-[var(--shadow-soft)]">
+                    <p className="label-text mb-2">{stat.label}</p>
+                    <p className="font-display text-3xl text-foreground">{stat.value}</p>
+                  </div>
+                ))}
+              </motion.div>
+
+              <div className="space-y-12">
+                {Object.entries(
+                  bookedExperiences.reduce<Record<string, typeof bookedExperiences>>((acc, exp) => {
+                    if (!acc[exp.date]) acc[exp.date] = [];
+                    acc[exp.date].push(exp);
+                    return acc;
+                  }, {})
+                ).map(([date, experiences], groupIdx) => (
+                  <motion.div key={date} {...fade(0.15 + groupIdx * 0.05)}>
+                    <p className="label-text mb-4 tracking-[0.25em]">{date}</p>
+                    <div className="space-y-4">
+                      {experiences.map((exp) => {
+                        const colors = statusColors[exp.status];
+                        return (
+                          <div key={exp.experienceId} className="border border-border bg-card shadow-[var(--shadow-soft)] hover:shadow-[var(--shadow-hover)] transition-shadow duration-500 overflow-hidden">
+                            <div className="p-6">
+                              <div className="flex items-start justify-between mb-4">
+                                <div className="flex items-center gap-3">
+                                  <span className="text-2xl">{experienceIcons[exp.category]}</span>
+                                  <div>
+                                    <h3 className="font-display text-xl text-foreground">{exp.experienceName}</h3>
+                                    <p className="font-editorial text-sm text-muted-foreground">{exp.parkOrResort} · {experienceLabels[exp.category]}</p>
+                                  </div>
+                                </div>
+                                <span className="px-3 py-1 text-[0.625rem] uppercase tracking-[0.15em] font-medium border" style={{ background: colors.bg, color: colors.text, borderColor: colors.border }}>{exp.status}</span>
+                              </div>
+                              <div className="flex flex-wrap gap-6 mb-4">
+                                <div><p className="label-text mb-1">Time</p><p className="font-display text-lg text-foreground">{exp.time}</p></div>
+                                {exp.duration && <div><p className="label-text mb-1">Duration</p><p className="font-display text-lg text-foreground">{exp.duration}</p></div>}
+                                <div><p className="label-text mb-1">Party</p><p className="font-display text-lg text-foreground">{exp.partySize}</p></div>
+                                <div><p className="label-text mb-1">Confirmation</p><p className="font-editorial text-sm text-foreground tracking-wide">{exp.confirmationNumber}</p></div>
+                              </div>
+                              {exp.notes && <p className="font-editorial text-sm text-muted-foreground italic">{exp.notes}</p>}
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </motion.div>
+                ))}
+              </div>
+
+              <motion.div {...fade(0.3)} className="mt-12 border border-dashed border-border py-12 text-center cursor-pointer hover:border-[hsl(var(--gold)/0.5)] transition-colors duration-500">
+                <p className="font-display text-xl text-muted-foreground/40 mb-2">+ Add Experience</p>
+                <p className="font-editorial text-sm text-muted-foreground/30">Track a new booked experience for your trip.</p>
+              </motion.div>
+            </>
+          )}
         </section>
       )}
 

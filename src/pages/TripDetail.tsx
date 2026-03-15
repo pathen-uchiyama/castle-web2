@@ -268,11 +268,47 @@ const BookedTripDetail = ({ trip }: { trip: BookedTrip }) => {
             ))}
           </motion.div>
 
-          <motion.div {...fade(0.15)} className="grid grid-cols-2 sm:grid-cols-4 gap-6 mb-16">
+          {/* MDE Friends Connection */}
+          <motion.div {...fade(0.12)} className="mb-12">
+            <p className="label-text mb-4">🏰 My Disney Experience — Friends & Family</p>
+            <p className="font-editorial text-sm text-muted-foreground mb-6 max-w-xl">
+              Everyone in your party should connect as friends in the My Disney Experience app. This lets the Trip Captain manage Lightning Lane, dining, and plans for the whole group.
+            </p>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              {mockData.partyMembers.map((member) => (
+                <button
+                  key={member.memberId}
+                  onClick={() => setMdeConnected((prev) => ({ ...prev, [member.memberId]: !prev[member.memberId] }))}
+                  className={`flex items-center gap-3 border p-4 transition-all duration-300 ${
+                    mdeConnected[member.memberId]
+                      ? "border-[hsl(var(--gold)/0.4)] bg-[hsl(var(--gold)/0.06)]"
+                      : "border-border bg-card hover:border-foreground/20"
+                  }`}
+                >
+                  <div className={`w-5 h-5 flex items-center justify-center border transition-all duration-300 ${
+                    mdeConnected[member.memberId]
+                      ? "bg-[hsl(var(--gold))] border-[hsl(var(--gold))] text-background"
+                      : "border-muted-foreground/30"
+                  }`}>
+                    {mdeConnected[member.memberId] && <span className="text-[0.5rem]">✓</span>}
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <div className="w-7 h-7 flex items-center justify-center bg-foreground text-background text-xs font-medium">{member.initial}</div>
+                    <span className="font-display text-sm text-foreground">{member.name}</span>
+                  </div>
+                  <span className="ml-auto label-text">{mdeConnected[member.memberId] ? "Connected" : "Not Yet"}</span>
+                </button>
+              ))}
+            </div>
+            <p className="font-editorial text-xs text-muted-foreground/50 mt-3 italic">
+              {Object.values(mdeConnected).filter(Boolean).length} of {Object.values(mdeConnected).length} connected
+            </p>
+          </motion.div>
+
+          <motion.div {...fade(0.15)} className="grid grid-cols-3 gap-6 mb-16">
             {[
-              { label: "Completed", value: String(completedCount) },
-              { label: "Pending", value: String(pendingCount) },
-              { label: "Attractions", value: String(partySurvey.attractions.length) },
+              { label: "Surveys Done", value: `${completedCount}/${completedCount + pendingCount}` },
+              { label: "MDE Connected", value: `${Object.values(mdeConnected).filter(Boolean).length}/${Object.values(mdeConnected).length}` },
               { label: "Conflicts", value: String(consensusData.filter((c) => c.hasConflict).length) },
             ].map((stat) => (
               <div key={stat.label} className="border border-border bg-card p-5 shadow-[var(--shadow-soft)]">

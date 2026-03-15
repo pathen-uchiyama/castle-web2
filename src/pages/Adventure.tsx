@@ -2,8 +2,11 @@ import { motion } from "framer-motion";
 import { useState, useMemo } from "react";
 import { Link } from "react-router-dom";
 import Footer from "@/components/Footer";
+import SectionNav from "@/components/SectionNav";
 import fireworksNight from "@/assets/fireworks-night.jpg";
 import editorialPacking from "@/assets/editorial-packing.jpg";
+import editorialCalendar from "@/assets/editorial-calendar.jpg";
+import editorialDining from "@/assets/editorial-dining.jpg";
 import SparkleField from "@/components/SparkleField";
 import TripWizard from "@/components/TripWizard";
 import type { BookedTrip } from "@/data/types";
@@ -27,29 +30,32 @@ interface AdventureProps {
   bookedTrip: BookedTrip;
 }
 
+const tabs = [
+  { id: "overview", label: "Overview" },
+  { id: "surveys", label: "Surveys", badge: "2 pending" },
+  { id: "designer", label: "The Designer" },
+  { id: "prep", label: "Prep & Checklists" },
+];
+
 const Adventure = ({ bookedTrip }: AdventureProps) => {
   const [wizardOpen, setWizardOpen] = useState(false);
+  const [activeTab, setActiveTab] = useState("overview");
   const { destination, tripName, countdownDays, todaysPark, timeReclaimed, ridesSaved, travelLegs, preparations, packingLists } = bookedTrip;
   const { partySurvey } = mockData;
 
-  // Consensus aggregation
   const consensusData = useMemo(() => {
     const completed = partySurvey.responses.filter((r) => r.status === "completed");
     if (completed.length === 0) return [];
-
     return partySurvey.attractions.map((attraction) => {
       const votes = { "must-do": 0, "like-to-do": 0, "will-avoid": 0 };
       let topFiveCount = 0;
-
       for (const resp of completed) {
         const rank = resp.rankings[attraction.attractionId];
         if (rank) votes[rank]++;
         if (resp.topFiveMustDos.includes(attraction.attractionId)) topFiveCount++;
       }
-
       const hasConflict = votes["must-do"] > 0 && votes["will-avoid"] > 0;
       const isPartyPriority = topFiveCount >= 2;
-
       return { attraction, votes, hasConflict, isPartyPriority, topFiveCount };
     }).sort((a, b) => {
       if (a.isPartyPriority !== b.isPartyPriority) return a.isPartyPriority ? -1 : 1;
@@ -58,235 +64,341 @@ const Adventure = ({ bookedTrip }: AdventureProps) => {
     });
   }, [partySurvey]);
 
+  const pendingCount = partySurvey.responses.filter((r) => r.status === "pending").length;
+  const completedCount = partySurvey.responses.filter((r) => r.status === "completed").length;
+
   return (
     <div className="min-h-screen bg-background pt-16">
-      <section className="relative h-[60vh] overflow-hidden">
+      {/* Hero */}
+      <section className="relative h-[50vh] overflow-hidden">
         <img src={bookedTrip.heroImage} alt={destination} className="w-full h-full object-cover" />
         <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-black/10" />
         <SparkleField count={10} />
-        <div className="absolute bottom-0 left-0 right-0 px-8 lg:px-16 pb-16">
-          <motion.p {...fade()} className="label-text !text-white/40 mb-6 tracking-[0.3em]">Your Booked Adventure</motion.p>
-          <motion.h1 {...fade(0.2)} className="font-display text-white text-5xl sm:text-7xl leading-[1.02]">{destination}</motion.h1>
-          <motion.p {...fade(0.4)} className="font-editorial text-white/60 text-lg mt-6">{tripName} · {countdownDays} days away</motion.p>
+        <div className="absolute bottom-0 left-0 right-0 px-8 lg:px-16 pb-12">
+          <motion.p {...fade()} className="label-text !text-white/40 mb-4 tracking-[0.3em]">Plan Your Trip</motion.p>
+          <motion.h1 {...fade(0.2)} className="font-display text-white text-4xl sm:text-6xl leading-[1.02]">{destination}</motion.h1>
+          <motion.p {...fade(0.4)} className="font-editorial text-white/60 text-lg mt-4">{tripName} · {countdownDays} days away</motion.p>
         </div>
       </section>
 
-      {/* ═══ The Consensus ═══ */}
-      <section className="px-8 lg:px-16 py-20 lg:py-28 bg-[hsl(var(--warm))]">
-        <motion.div {...fade()}>
-          <p className="label-text mb-6">The Consensus</p>
-          <h2 className="font-display text-4xl sm:text-5xl text-foreground leading-[1.08] mb-4">Party Preferences</h2>
-          <p className="font-editorial text-muted-foreground text-lg max-w-2xl mb-12">
-            Your party's combined rankings. Conflicts are highlighted for resolution.
-          </p>
-        </motion.div>
+      {/* Sub-navigation */}
+      <div className="border-b border-border bg-[hsl(var(--warm))] px-8 lg:px-16 sticky top-16 z-30">
+        <SectionNav tabs={tabs} activeTab={activeTab} onTabChange={setActiveTab} />
+      </div>
 
-        {/* Member status chips */}
-        <motion.div {...fade(0.1)} className="flex flex-wrap gap-3 mb-12">
-          {partySurvey.responses.map((resp) => (
-            <div key={resp.memberId} className="flex items-center gap-2 border border-border bg-card px-4 py-2">
-              <div className="w-7 h-7 flex items-center justify-center bg-foreground text-background text-xs font-medium">
-                {resp.memberId}
-              </div>
-              <span className="font-display text-sm text-foreground">{resp.memberName}</span>
-              {resp.status === "completed" ? (
-                <>
-                  <span className="label-text !text-[hsl(var(--gold))]">✓ Complete</span>
-                  {resp.openToAnything && <span className="text-xs" title="Open to anything">✨</span>}
-                </>
-              ) : (
-                <Link
-                  to={`/survey/${partySurvey.tripId}/${resp.memberId.toLowerCase()}`}
-                  className="label-text !text-[hsl(var(--gold))] hover:underline"
-                >
-                  Pending · Copy Link
-                </Link>
-              )}
-            </div>
-          ))}
-        </motion.div>
-
-        {/* Party Priorities */}
-        {consensusData.filter((c) => c.isPartyPriority).length > 0 && (
-          <motion.div {...fade(0.15)} className="mb-12">
-            <p className="label-text mb-6">✦ Party Priorities</p>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-              {consensusData.filter((c) => c.isPartyPriority).map((c) => (
-                <div key={c.attraction.attractionId} className="border border-[hsl(var(--gold)/0.4)] bg-[hsl(var(--gold)/0.06)] p-5">
-                  <h4 className="font-display text-lg text-foreground mb-1">{c.attraction.name}</h4>
-                  <p className="label-text mb-3">{c.attraction.parkId.toUpperCase()} · {c.topFiveCount} members' Top 5</p>
-                  <div className="flex gap-4">
-                    <span className="text-xs text-muted-foreground">{c.votes["must-do"]} Must-Do</span>
-                    <span className="text-xs text-muted-foreground">{c.votes["like-to-do"]} Like</span>
-                    {c.votes["will-avoid"] > 0 && <span className="text-xs text-destructive">{c.votes["will-avoid"]} Avoid</span>}
+      {/* ═══ OVERVIEW TAB ═══ */}
+      {activeTab === "overview" && (
+        <>
+          {/* Today's Park + Time Saved */}
+          <section className="grid grid-cols-1 lg:grid-cols-2 min-h-[50vh]">
+            <div className="px-8 lg:px-16 py-16 lg:py-24">
+              <motion.div {...fade()}>
+                <p className="label-text mb-6">Today's Park</p>
+                <h2 className="font-display text-4xl sm:text-5xl text-foreground leading-[1.08] mb-8">{todaysPark.parkName}</h2>
+              </motion.div>
+              <motion.div {...fade(0.15)} className="space-y-6">
+                {[
+                  { label: "Weather", text: todaysPark.weather },
+                  { label: "Crowd Level", text: todaysPark.crowdLevel },
+                  { label: "Strategy", text: todaysPark.strategy },
+                ].map((item) => (
+                  <div key={item.label}>
+                    <p className="label-text mb-1">{item.label}</p>
+                    <p className="font-editorial text-lg text-muted-foreground">{item.text}</p>
                   </div>
-                </div>
-              ))}
+                ))}
+              </motion.div>
             </div>
-          </motion.div>
-        )}
+            <div className="px-8 lg:px-16 py-16 lg:py-24 bg-[hsl(var(--warm))]">
+              <motion.div {...fade()}>
+                <p className="label-text mb-6">Time Recovered</p>
+                <h2 className="font-display text-6xl sm:text-7xl text-foreground leading-[0.9] mb-6">{timeReclaimed}</h2>
+              </motion.div>
+              <motion.div {...fade(0.2)} className="space-y-5">
+                {ridesSaved.map((s) => (
+                  <div key={s.rideName} className="flex items-start gap-4 group cursor-pointer">
+                    <span className="text-lg mt-0.5 opacity-40 group-hover:opacity-100 transition-opacity duration-500">{s.emoji}</span>
+                    <div>
+                      <p className="font-display text-lg text-foreground group-hover:text-[hsl(var(--gold-dark))] transition-colors duration-500">{s.minutesSaved} saved</p>
+                      <p className="font-editorial text-sm text-muted-foreground mt-1">{s.rideName}</p>
+                    </div>
+                  </div>
+                ))}
+              </motion.div>
+            </div>
+          </section>
 
-        {/* Conflicts */}
-        {consensusData.filter((c) => c.hasConflict && !c.isPartyPriority).length > 0 && (
-          <motion.div {...fade(0.2)} className="mb-12">
-            <p className="label-text mb-6">⚡ Conflicts to Resolve</p>
-            <div className="space-y-3">
-              {consensusData.filter((c) => c.hasConflict && !c.isPartyPriority).map((c) => (
-                <div key={c.attraction.attractionId} className="flex items-center justify-between border border-[hsl(var(--gold)/0.3)] p-4 bg-card">
-                  <div>
-                    <h4 className="font-display text-lg text-foreground">{c.attraction.name}</h4>
+          {/* Journey */}
+          <section className="section-dark">
+            <div className="grid grid-cols-1 lg:grid-cols-5 min-h-[60vh]">
+              <div className="lg:col-span-3 relative min-h-[40vh] lg:min-h-0">
+                <img src={fireworksNight} alt="Night sky" className="w-full h-full object-cover" />
+              </div>
+              <div className="lg:col-span-2 px-8 lg:px-14 py-16 lg:py-24 flex flex-col justify-center">
+                <motion.div {...fade()}><p className="label-text mb-6">The Journey</p></motion.div>
+                <div className="space-y-10">
+                  {travelLegs.map((trip, i) => (
+                    <motion.div key={trip.legName} {...fade(i * 0.1)}>
+                      <p className="label-text mb-2">{trip.date} · {trip.time}</p>
+                      <h3 className="font-display text-2xl text-white mb-1">{trip.legName}</h3>
+                      <p className="font-editorial text-sm text-white/50 italic">{trip.note}</p>
+                    </motion.div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </section>
+
+          {/* Plan New Adventure CTA */}
+          <section className="py-16 sm:py-24 text-center bg-[hsl(var(--warm))]">
+            <motion.div {...fade()}>
+              <p className="label-text mb-6">The Voyage Canvas</p>
+              <h2 className="font-display text-foreground leading-[1.08] mb-4" style={{ fontSize: "clamp(1.875rem, 5vw, 3rem)" }}>
+                Plan a new adventure.
+              </h2>
+              <div className="gold-rule mx-auto mb-6" />
+              <p className="font-editorial text-sm text-muted-foreground max-w-md mx-auto mb-10">
+                Launch the Strategy Wizard to architect your next perfect park day.
+              </p>
+              <button
+                onClick={() => setWizardOpen(true)}
+                className="inline-flex items-center justify-center px-10 py-4 text-sm tracking-[0.15em] uppercase font-medium bg-foreground text-background border border-[hsl(var(--gold-dark))] transition-all duration-500 hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-ring"
+              >
+                Initialize Your Journey
+              </button>
+            </motion.div>
+          </section>
+        </>
+      )}
+
+      {/* ═══ SURVEYS TAB ═══ */}
+      {activeTab === "surveys" && (
+        <section className="px-8 lg:px-16 py-16 lg:py-24 bg-[hsl(var(--warm))]">
+          <motion.div {...fade()}>
+            <p className="label-text mb-6">The Consensus</p>
+            <h2 className="font-display text-4xl sm:text-5xl text-foreground leading-[1.08] mb-4">Party Preferences</h2>
+            <p className="font-editorial text-muted-foreground text-lg max-w-2xl mb-12">
+              Send surveys to your party. Everyone ranks attractions, then we find the consensus.
+            </p>
+          </motion.div>
+
+          {/* Member status */}
+          <motion.div {...fade(0.1)} className="flex flex-wrap gap-3 mb-12">
+            {partySurvey.responses.map((resp) => (
+              <div key={resp.memberId} className="flex items-center gap-2 border border-border bg-card px-4 py-2 shadow-[var(--shadow-soft)]">
+                <div className="w-7 h-7 flex items-center justify-center bg-foreground text-background text-xs font-medium">
+                  {resp.memberId}
+                </div>
+                <span className="font-display text-sm text-foreground">{resp.memberName}</span>
+                {resp.status === "completed" ? (
+                  <>
+                    <span className="label-text !text-[hsl(var(--gold))]">✓ Complete</span>
+                    {resp.openToAnything && <span className="text-xs" title="Open to anything">✨</span>}
+                  </>
+                ) : (
+                  <Link
+                    to={`/survey/${partySurvey.tripId}/${resp.memberId.toLowerCase()}`}
+                    className="label-text !text-[hsl(var(--gold))] hover:underline"
+                  >
+                    Pending · Send Link
+                  </Link>
+                )}
+              </div>
+            ))}
+          </motion.div>
+
+          {/* Stats */}
+          <motion.div {...fade(0.15)} className="grid grid-cols-2 sm:grid-cols-4 gap-6 mb-16">
+            {[
+              { label: "Completed", value: String(completedCount) },
+              { label: "Pending", value: String(pendingCount) },
+              { label: "Attractions", value: String(partySurvey.attractions.length) },
+              { label: "Conflicts", value: String(consensusData.filter((c) => c.hasConflict).length) },
+            ].map((stat) => (
+              <div key={stat.label} className="border border-border bg-card p-5 shadow-[var(--shadow-soft)]">
+                <p className="label-text mb-2">{stat.label}</p>
+                <p className="font-display text-3xl text-foreground">{stat.value}</p>
+              </div>
+            ))}
+          </motion.div>
+
+          {/* Party Priorities */}
+          {consensusData.filter((c) => c.isPartyPriority).length > 0 && (
+            <motion.div {...fade(0.2)} className="mb-12">
+              <p className="label-text mb-6">✦ Party Priorities</p>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                {consensusData.filter((c) => c.isPartyPriority).map((c) => (
+                  <div key={c.attraction.attractionId} className="border border-[hsl(var(--gold)/0.4)] bg-[hsl(var(--gold)/0.06)] p-5">
+                    <h4 className="font-display text-lg text-foreground mb-1">{c.attraction.name}</h4>
+                    <p className="label-text mb-3">{c.attraction.parkId.toUpperCase()} · {c.topFiveCount} members' Top 5</p>
+                    <div className="flex gap-4">
+                      <span className="text-xs text-muted-foreground">{c.votes["must-do"]} Must-Do</span>
+                      <span className="text-xs text-muted-foreground">{c.votes["like-to-do"]} Like</span>
+                      {c.votes["will-avoid"] > 0 && <span className="text-xs text-destructive">{c.votes["will-avoid"]} Avoid</span>}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </motion.div>
+          )}
+
+          {/* Conflicts */}
+          {consensusData.filter((c) => c.hasConflict).length > 0 && (
+            <motion.div {...fade(0.25)} className="mb-12">
+              <p className="label-text mb-6">⚡ Conflicts to Resolve</p>
+              <div className="space-y-3">
+                {consensusData.filter((c) => c.hasConflict).map((c) => (
+                  <div key={c.attraction.attractionId} className="flex items-center justify-between border border-[hsl(var(--gold)/0.3)] p-4 bg-card">
+                    <div>
+                      <h4 className="font-display text-lg text-foreground">{c.attraction.name}</h4>
+                      <span className="label-text">{c.attraction.parkId.toUpperCase()}</span>
+                    </div>
+                    <div className="flex gap-4 text-xs">
+                      <span className="text-foreground">{c.votes["must-do"]} Must-Do</span>
+                      <span className="text-destructive">{c.votes["will-avoid"]} Avoid</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </motion.div>
+          )}
+
+          {/* All rankings */}
+          <motion.div {...fade(0.3)}>
+            <p className="label-text mb-6">All Attractions</p>
+            <div className="space-y-2">
+              {consensusData.filter((c) => !c.hasConflict).map((c) => (
+                <div key={c.attraction.attractionId} className="flex items-center justify-between py-3 border-b border-border">
+                  <div className="flex items-center gap-3">
+                    <span className="font-display text-foreground">{c.attraction.name}</span>
                     <span className="label-text">{c.attraction.parkId.toUpperCase()}</span>
                   </div>
-                  <div className="flex gap-4 text-xs">
-                    <span className="text-foreground">{c.votes["must-do"]} Must-Do</span>
-                    <span className="text-destructive">{c.votes["will-avoid"]} Avoid</span>
+                  <div className="flex gap-4 text-xs text-muted-foreground">
+                    {c.votes["must-do"] > 0 && <span>{c.votes["must-do"]} Must-Do</span>}
+                    {c.votes["like-to-do"] > 0 && <span>{c.votes["like-to-do"]} Like</span>}
+                    {c.votes["will-avoid"] > 0 && <span className="text-destructive">{c.votes["will-avoid"]} Avoid</span>}
                   </div>
                 </div>
               ))}
             </div>
           </motion.div>
-        )}
+        </section>
+      )}
 
-        {/* All rankings summary */}
-        <motion.div {...fade(0.25)}>
-          <p className="label-text mb-6">All Attractions</p>
-          <div className="space-y-2">
-            {consensusData.filter((c) => !c.isPartyPriority && !c.hasConflict).slice(0, 10).map((c) => (
-              <div key={c.attraction.attractionId} className="flex items-center justify-between py-3 border-b border-border">
-                <div className="flex items-center gap-3">
-                  <span className="font-display text-foreground">{c.attraction.name}</span>
-                  <span className="label-text">{c.attraction.parkId.toUpperCase()}</span>
-                </div>
-                <div className="flex gap-4 text-xs text-muted-foreground">
-                  {c.votes["must-do"] > 0 && <span>{c.votes["must-do"]} Must-Do</span>}
-                  {c.votes["like-to-do"] > 0 && <span>{c.votes["like-to-do"]} Like</span>}
-                  {c.votes["will-avoid"] > 0 && <span className="text-destructive">{c.votes["will-avoid"]} Avoid</span>}
-                </div>
-              </div>
-            ))}
-          </div>
-        </motion.div>
-      </section>
-
-      {/* Schedule + Time saved */}
-      <section className="grid grid-cols-1 lg:grid-cols-2 min-h-[60vh]">
-        <div className="px-8 lg:px-16 py-20 lg:py-28">
+      {/* ═══ DESIGNER TAB ═══ */}
+      {activeTab === "designer" && (
+        <section className="px-8 lg:px-16 py-16 lg:py-24">
           <motion.div {...fade()}>
-            <p className="label-text mb-8">Today's Park</p>
-            <h2 className="font-display text-4xl sm:text-5xl text-foreground leading-[1.08] mb-10">{todaysPark.parkName}</h2>
+            <p className="label-text mb-6">The Architect</p>
+            <h2 className="font-display text-4xl sm:text-5xl text-foreground leading-[1.08] mb-4">The Designer</h2>
+            <p className="font-editorial text-muted-foreground text-lg max-w-2xl mb-16">
+              Generate a concierge-quality itinerary from your party's consensus, then refine it to perfection.
+            </p>
           </motion.div>
-          <motion.div {...fade(0.15)} className="space-y-8">
-            {[
-              { label: "Weather", text: todaysPark.weather },
-              { label: "Crowd Level", text: todaysPark.crowdLevel },
-              { label: "Strategy", text: todaysPark.strategy },
-            ].map((item) => (
-              <div key={item.label}>
-                <p className="label-text mb-2">{item.label}</p>
-                <p className="font-editorial text-lg text-muted-foreground">{item.text}</p>
-              </div>
-            ))}
-          </motion.div>
-        </div>
-        <div className="px-8 lg:px-16 py-20 lg:py-28 bg-[hsl(var(--warm))]">
-          <motion.div {...fade()}>
-            <p className="label-text mb-8">Time Recovered</p>
-            <h2 className="font-display text-6xl sm:text-7xl text-foreground leading-[0.9] mb-8">{timeReclaimed}</h2>
-          </motion.div>
-          <motion.div {...fade(0.2)} className="space-y-6">
-            {ridesSaved.map((s) => (
-              <div key={s.rideName} className="flex items-start gap-4 group cursor-pointer">
-                <span className="text-lg mt-0.5 opacity-40 group-hover:opacity-100 transition-opacity duration-500">{s.emoji}</span>
-                <div>
-                  <p className="font-display text-lg text-foreground group-hover:text-[hsl(var(--gold-dark))] transition-colors duration-500">{s.minutesSaved} saved</p>
-                  <p className="font-editorial text-sm text-muted-foreground mt-1">{s.rideName}</p>
-                </div>
-              </div>
-            ))}
-          </motion.div>
-        </div>
-      </section>
 
-      {/* Journey */}
-      <section className="section-dark">
-        <div className="grid grid-cols-1 lg:grid-cols-5 min-h-[70vh]">
-          <div className="lg:col-span-3 relative min-h-[40vh] lg:min-h-0">
-            <img src={fireworksNight} alt="Night sky" className="w-full h-full object-cover" />
-          </div>
-          <div className="lg:col-span-2 px-8 lg:px-14 py-20 lg:py-28 flex flex-col justify-center">
-            <motion.div {...fade()}><p className="label-text mb-8">The Journey</p></motion.div>
-            <div className="space-y-12">
-              {travelLegs.map((trip, i) => (
-                <motion.div key={trip.legName} {...fade(i * 0.1)}>
-                  <p className="label-text mb-2">{trip.date} · {trip.time}</p>
-                  <h3 className="font-display text-2xl text-white mb-1">{trip.legName}</h3>
-                  <p className="font-editorial text-sm text-white/50 italic">{trip.note}</p>
-                </motion.div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Packing + Preparations side by side */}
-      <section className="grid grid-cols-1 lg:grid-cols-2 min-h-[60vh]">
-        <div className="relative min-h-[40vh] lg:min-h-0 overflow-hidden">
-          <img src={editorialPacking} alt="Packing" className="w-full h-full object-cover" />
-          <div className="absolute inset-0 bg-gradient-to-r from-transparent to-[hsl(var(--warm))]/30" />
-        </div>
-        <div className="px-8 lg:px-16 py-20 lg:py-28 bg-[hsl(var(--warm))]">
-          <motion.div {...fade()}>
-            <p className="label-text mb-8">The Trunk</p>
-            <h2 className="font-display text-4xl text-foreground leading-[1.1] mb-12">Packing</h2>
-          </motion.div>
-          <motion.div {...slideRight(0.1)} className="space-y-8 mb-16">
-            {packingLists.map((list) => (
-              <div key={list.category}>
-                <div className="flex justify-between items-baseline mb-2">
-                  <p className="font-display text-lg text-foreground">{list.category}</p>
-                  <p className="label-text">{list.packedCount}/{list.totalCount}</p>
-                </div>
-                <div className="w-full h-px bg-border relative">
-                  <div className="absolute left-0 top-0 h-full bg-foreground/30" style={{ width: `${(list.packedCount / list.totalCount) * 100}%` }} />
-                </div>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-16">
+            {/* Generate Draft */}
+            <motion.div {...fade(0.1)} className="border border-border bg-card p-8 shadow-[var(--shadow-soft)] hover:shadow-[var(--shadow-hover)] transition-shadow duration-500">
+              <div className="relative h-48 -mx-8 -mt-8 mb-6 overflow-hidden">
+                <img src={editorialCalendar} alt="Plan" className="w-full h-full object-cover" />
+                <div className="absolute inset-0 bg-gradient-to-t from-card via-transparent to-transparent" />
               </div>
-            ))}
-          </motion.div>
-          <motion.div {...fade(0.2)}>
-            <p className="label-text mb-6">Preparations</p>
-          </motion.div>
-          <motion.div {...fade(0.25)} className="space-y-4">
-            {preparations.map((t) => (
-              <p key={t.description} className={`font-editorial text-sm leading-relaxed ${t.isComplete ? "text-muted-foreground/40 line-through decoration-muted-foreground/20" : "text-foreground"}`}>
-                {t.description}
+              <p className="label-text mb-4">Step 1</p>
+              <h3 className="font-display text-2xl text-foreground mb-3">Generate Concierge Draft</h3>
+              <p className="font-editorial text-sm text-muted-foreground mb-8 leading-relaxed">
+                Our algorithm builds a baseline plan using your survey data, park hours, crowd predictions, and Lightning Lane strategy.
               </p>
-            ))}
-          </motion.div>
-        </div>
-      </section>
+              <button className="px-8 py-3 text-sm tracking-[0.15em] uppercase font-medium bg-foreground text-background border border-[hsl(var(--gold-dark))] transition-opacity duration-500 hover:opacity-90">
+                Generate Plan
+              </button>
+            </motion.div>
 
-      {/* ═══ Plan a New Adventure CTA ═══ */}
-      <section className="py-20 sm:py-28 text-center bg-[hsl(var(--warm))]">
-        <motion.div {...fade()}>
-          <p className="label-text mb-6">The Voyage Canvas</p>
-          <h2 className="font-display text-foreground leading-[1.08] mb-4" style={{ fontSize: "clamp(1.875rem, 5vw, 3rem)" }}>
-            Plan a new adventure.
-          </h2>
-          <div className="gold-rule mx-auto mb-6" />
-          <p className="font-editorial text-sm text-muted-foreground max-w-md mx-auto mb-10">
-            Launch the Strategy Wizard to architect your next perfect park day.
-          </p>
-          <button
-            onClick={() => setWizardOpen(true)}
-            className="inline-flex items-center justify-center px-10 py-4 text-sm tracking-[0.15em] uppercase font-medium bg-foreground text-background border border-[hsl(var(--gold-dark))] transition-all duration-500 hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-ring"
-          >
-            Initialize Your Journey
-          </button>
-        </motion.div>
-      </section>
+            {/* Edit Itinerary */}
+            <motion.div {...fade(0.2)} className="border border-border bg-card p-8 shadow-[var(--shadow-soft)] hover:shadow-[var(--shadow-hover)] transition-shadow duration-500">
+              <div className="relative h-48 -mx-8 -mt-8 mb-6 overflow-hidden">
+                <img src={editorialDining} alt="Dining" className="w-full h-full object-cover" />
+                <div className="absolute inset-0 bg-gradient-to-t from-card via-transparent to-transparent" />
+              </div>
+              <p className="label-text mb-4">Step 2</p>
+              <h3 className="font-display text-2xl text-foreground mb-3">Set Your Itinerary</h3>
+              <p className="font-editorial text-sm text-muted-foreground mb-8 leading-relaxed">
+                Drag and drop to reorder. Delete what doesn't fit. Add hidden gems. When you're ready, commit to lock it in.
+              </p>
+              <button className="px-8 py-3 text-sm tracking-[0.15em] uppercase font-medium text-muted-foreground border border-border transition-opacity duration-500 hover:opacity-70" disabled>
+                Awaiting Draft
+              </button>
+            </motion.div>
+          </div>
+
+          {/* Empty state for itinerary */}
+          <motion.div {...fade(0.3)} className="border border-dashed border-border py-20 text-center">
+            <p className="font-display text-2xl text-muted-foreground/40 mb-3">No itinerary yet</p>
+            <p className="font-editorial text-sm text-muted-foreground/30">
+              Generate a draft above, or complete your party surveys first for the best results.
+            </p>
+          </motion.div>
+        </section>
+      )}
+
+      {/* ═══ PREP & CHECKLISTS TAB ═══ */}
+      {activeTab === "prep" && (
+        <>
+          <section className="grid grid-cols-1 lg:grid-cols-2 min-h-[50vh]">
+            <div className="relative min-h-[40vh] lg:min-h-0 overflow-hidden">
+              <img src={editorialPacking} alt="Packing" className="w-full h-full object-cover" />
+              <div className="absolute inset-0 bg-gradient-to-r from-transparent to-[hsl(var(--warm))]/30" />
+            </div>
+            <div className="px-8 lg:px-16 py-16 lg:py-24 bg-[hsl(var(--warm))]">
+              <motion.div {...fade()}>
+                <p className="label-text mb-6">The Field Kit</p>
+                <h2 className="font-display text-4xl text-foreground leading-[1.1] mb-10">Packing</h2>
+              </motion.div>
+              <motion.div {...slideRight(0.1)} className="space-y-6 mb-14">
+                {packingLists.map((list) => (
+                  <div key={list.category}>
+                    <div className="flex justify-between items-baseline mb-2">
+                      <p className="font-display text-lg text-foreground">{list.category}</p>
+                      <p className="label-text">{list.packedCount}/{list.totalCount}</p>
+                    </div>
+                    <div className="w-full h-px bg-border relative">
+                      <div className="absolute left-0 top-0 h-full bg-foreground/30" style={{ width: `${(list.packedCount / list.totalCount) * 100}%` }} />
+                    </div>
+                  </div>
+                ))}
+              </motion.div>
+              <motion.div {...fade(0.2)}>
+                <p className="label-text mb-6">Preparations</p>
+              </motion.div>
+              <motion.div {...fade(0.25)} className="space-y-4">
+                {preparations.map((t) => (
+                  <p key={t.description} className={`font-editorial text-sm leading-relaxed ${t.isComplete ? "text-muted-foreground/40 line-through decoration-muted-foreground/20" : "text-foreground"}`}>
+                    {t.description}
+                  </p>
+                ))}
+              </motion.div>
+            </div>
+          </section>
+
+          {/* Weather Outlook placeholder */}
+          <section className="px-8 lg:px-16 py-16 lg:py-24">
+            <motion.div {...fade()}>
+              <p className="label-text mb-6">Weather Outlook</p>
+              <h2 className="font-display text-3xl text-foreground leading-[1.1] mb-4">Forecast-Driven Packing</h2>
+              <p className="font-editorial text-muted-foreground max-w-xl mb-10">
+                When connected to weather data, your packing list updates automatically — ponchos if rain exceeds 30%, sunscreen reminders for UV alerts.
+              </p>
+            </motion.div>
+            <motion.div {...fade(0.1)} className="border border-dashed border-border py-16 text-center">
+              <p className="font-display text-2xl text-muted-foreground/40 mb-3">Weather integration coming soon</p>
+              <p className="font-editorial text-sm text-muted-foreground/30">
+                Dynamic packing suggestions based on your trip dates and destination forecast.
+              </p>
+            </motion.div>
+          </section>
+        </>
+      )}
 
       <Footer />
-
       <TripWizard open={wizardOpen} onClose={() => setWizardOpen(false)} />
     </div>
   );

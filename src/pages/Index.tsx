@@ -93,128 +93,135 @@ const Index = ({
       </header>
 
       {/* ═══ YOUR ADVENTURE — Unified trip + timeline ═══ */}
-      <section className="section-dark">
-        {/* Trip overview */}
-        <div className="grid grid-cols-1 md:grid-cols-2 min-h-[70vh]">
-          <div className="flex flex-col justify-center px-8 lg:px-16 py-20 lg:py-28">
-            <motion.div {...slideLeft()}>
-              <p className="label-text !text-white/40 mb-10 tracking-[0.25em]">Your Booked Adventure</p>
-              <h2 className="font-display text-4xl sm:text-5xl xl:text-6xl text-white leading-[1.08] mb-6">
-                {bookedTrip.destination}
-              </h2>
-              <p className="font-display text-2xl sm:text-3xl text-white/50 leading-[1.2] mb-8">
-                {bookedTrip.tripName}
-              </p>
-              <p className="font-editorial text-base text-white/40 max-w-md leading-relaxed">
-                {bookedTrip.description}
-              </p>
-            </motion.div>
-            <motion.div {...slideLeft(0.2)} className="mt-14 flex gap-10 sm:gap-16 flex-wrap">
-              {[
-                { label: "Countdown", value: `${bookedTrip.countdownDays} days` },
-                { label: "Party", value: String(bookedTrip.partySize) },
-                { label: "Time Saved", value: bookedTrip.timeReclaimed },
-              ].map((d) => (
-                <div key={d.label}>
-                  <p className="label-text !text-white/30 mb-2">{d.label}</p>
-                  <p className="font-display text-3xl sm:text-4xl text-white">{d.value}</p>
-                </div>
-              ))}
-            </motion.div>
-            <motion.div {...slideLeft(0.3)} className="mt-10">
-              <Link to={`/trip/${bookedTrip.tripId}`}>
-                <span className="link-editorial font-editorial text-sm text-white/60 hover:text-white/80">View full itinerary →</span>
-              </Link>
-            </motion.div>
-          </div>
-          <motion.div {...slideRight(0.2)} className="relative min-h-[50vh] md:min-h-0">
-            <ParallaxImage src={bookedTrip.heroImage} alt={bookedTrip.destination} className="absolute inset-0 h-full" />
-            <div className="absolute inset-0 bg-gradient-to-l from-transparent to-[hsl(var(--ink))]/30" />
-            <motion.div
-              initial={{ opacity: 0, scale: 0.8, rotate: -5 }}
-              whileInView={{ opacity: 1, scale: 1, rotate: -3 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.8, delay: 0.6, ease }}
-              className="absolute top-8 right-8 bg-background px-5 py-3 shadow-lg"
-            >
-              <p className="label-text tracking-[0.15em] mb-1">Magic starts in</p>
-              <p className="font-display-bold text-2xl text-foreground">{bookedTrip.countdownDays} days</p>
-            </motion.div>
-          </motion.div>
+      <section className="relative overflow-hidden">
+        {/* Full-bleed background image */}
+        <div className="absolute inset-0">
+          <img src={bookedTrip.heroImage} alt="" className="w-full h-full object-cover" />
+          <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/50 to-black/30" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/20" />
         </div>
 
-        {/* Timeline scroll */}
-        <div className="border-t border-white/[0.06] py-12 lg:py-16">
-          <div className="relative">
-            <div className="absolute left-0 top-0 bottom-0 w-8 bg-gradient-to-r from-[hsl(var(--ink))] to-transparent z-10 pointer-events-none" />
-            <div className="absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-[hsl(var(--ink))] to-transparent z-10 pointer-events-none" />
-            <div
-              ref={timelineRef}
-              className="flex gap-5 overflow-x-auto px-8 pb-2"
-              style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
-            >
-              {bookedTrip.travelLegs.map((leg, i) => (
+        <div className="relative">
+          {/* Trip overview */}
+          <div className="grid grid-cols-1 md:grid-cols-2 min-h-[70vh]">
+            <div className="flex flex-col justify-center px-8 lg:px-16 py-20 lg:py-28">
+              <motion.div {...slideLeft()}>
+                <p className="label-text !text-white/50 mb-10 tracking-[0.25em]">Your Booked Adventure</p>
+                <h2 className="font-display text-4xl sm:text-5xl xl:text-6xl text-white leading-[1.08] mb-6">
+                  {bookedTrip.destination}
+                </h2>
+                <p className="font-display text-2xl sm:text-3xl text-white/60 leading-[1.2] mb-8">
+                  {bookedTrip.tripName}
+                </p>
+                <p className="font-editorial text-base text-white/50 max-w-md leading-relaxed">
+                  {bookedTrip.description}
+                </p>
+              </motion.div>
+              <motion.div {...slideLeft(0.2)} className="mt-14 flex gap-10 sm:gap-16 flex-wrap">
+                {[
+                  { label: "Countdown", value: `${bookedTrip.countdownDays} days` },
+                  { label: "Party", value: String(bookedTrip.partySize) },
+                  { label: "Time Saved", value: bookedTrip.timeReclaimed },
+                ].map((d) => (
+                  <div key={d.label}>
+                    <p className="label-text !text-white/40 mb-2">{d.label}</p>
+                    <p className="font-display text-3xl sm:text-4xl text-white">{d.value}</p>
+                  </div>
+                ))}
+              </motion.div>
+              <motion.div {...slideLeft(0.3)} className="mt-10">
+                <Link to={`/trip/${bookedTrip.tripId}`}>
+                  <span className="link-editorial font-editorial text-sm text-white/70 hover:text-white">View full itinerary →</span>
+                </Link>
+              </motion.div>
+            </div>
+            <div className="hidden md:flex items-center justify-center px-8 py-20">
+              <motion.div
+                initial={{ opacity: 0, scale: 0.8, rotate: -5 }}
+                whileInView={{ opacity: 1, scale: 1, rotate: -3 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.8, delay: 0.6, ease }}
+                className="bg-white/95 backdrop-blur-sm px-8 py-6 rounded-2xl shadow-2xl"
+              >
+                <p className="label-text tracking-[0.15em] mb-1 !text-foreground/50">Magic starts in</p>
+                <p className="font-display-bold text-4xl text-foreground">{bookedTrip.countdownDays} days</p>
+              </motion.div>
+            </div>
+          </div>
+
+          {/* Timeline scroll */}
+          <div className="border-t border-white/[0.08] py-10 lg:py-14">
+            <div className="relative">
+              <div className="absolute left-0 top-0 bottom-0 w-12 bg-gradient-to-r from-black/60 to-transparent z-10 pointer-events-none" />
+              <div className="absolute right-0 top-0 bottom-0 w-12 bg-gradient-to-l from-black/60 to-transparent z-10 pointer-events-none" />
+              <div
+                ref={timelineRef}
+                className="flex gap-5 overflow-x-auto px-8 pb-2"
+                style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
+              >
+                {bookedTrip.travelLegs.map((leg, i) => (
+                  <motion.div
+                    key={leg.legName}
+                    initial={{ opacity: 0, x: 40 }}
+                    whileInView={{ opacity: 1, x: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.8, delay: i * 0.1, ease }}
+                    className="flex-shrink-0 w-[260px] sm:w-[300px] group cursor-pointer"
+                  >
+                    <div className="rounded-xl bg-white/10 backdrop-blur-md p-5 h-full hover:bg-white/15 transition-colors duration-500">
+                      <p className="label-text !text-white/35 mb-3">{leg.date}</p>
+                      <p className="font-display text-lg text-white mb-1">{leg.legName}</p>
+                      <p className="font-editorial text-sm text-white/40 mb-5">{leg.time}</p>
+                      <div className="gold-rule mb-3" />
+                      <p className="font-editorial text-xs text-white/30 italic group-hover:text-white/50 transition-colors duration-500">{leg.note}</p>
+                    </div>
+                  </motion.div>
+                ))}
                 <motion.div
-                  key={leg.legName}
                   initial={{ opacity: 0, x: 40 }}
                   whileInView={{ opacity: 1, x: 0 }}
                   viewport={{ once: true }}
-                  transition={{ duration: 0.8, delay: i * 0.1, ease }}
+                  transition={{ duration: 0.8, delay: 0.3, ease }}
                   className="flex-shrink-0 w-[260px] sm:w-[300px] group cursor-pointer"
                 >
-                  <div className="border border-white/[0.08] p-5 h-full hover:border-white/20 transition-colors duration-500">
-                    <p className="label-text !text-white/25 mb-3">{leg.date}</p>
-                    <p className="font-display text-lg text-white mb-1">{leg.legName}</p>
-                    <p className="font-editorial text-sm text-white/35 mb-5">{leg.time}</p>
-                    <div className="gold-rule mb-3" />
-                    <p className="font-editorial text-xs text-white/25 italic group-hover:text-white/45 transition-colors duration-500">{leg.note}</p>
-                  </div>
+                  <Link to={`/trip/${bookedTrip.tripId}`}>
+                    <div className="rounded-xl bg-white/10 backdrop-blur-md p-5 h-full hover:bg-white/15 transition-colors duration-500">
+                      <p className="label-text !text-white/35 mb-3">Preparations</p>
+                      <p className="font-display text-lg text-white mb-3">Packing</p>
+                      <div className="space-y-2 mb-5">
+                        {bookedTrip.packingLists.map((list) => (
+                          <div key={list.category} className="flex justify-between items-center">
+                            <p className="font-editorial text-sm text-white/50">{list.category}</p>
+                            <p className="label-text !text-white/25">{list.packedCount}/{list.totalCount}</p>
+                          </div>
+                        ))}
+                      </div>
+                      <div className="gold-rule mb-3" />
+                      <p className="font-editorial text-xs text-white/30 italic group-hover:text-white/50 transition-colors duration-500">Review list →</p>
+                    </div>
+                  </Link>
                 </motion.div>
-              ))}
-              <motion.div
-                initial={{ opacity: 0, x: 40 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.8, delay: 0.3, ease }}
-                className="flex-shrink-0 w-[260px] sm:w-[300px] group cursor-pointer"
-              >
-                <Link to={`/trip/${bookedTrip.tripId}`}>
-                  <div className="border border-white/[0.08] p-5 h-full hover:border-white/20 transition-colors duration-500">
-                    <p className="label-text !text-white/25 mb-3">Preparations</p>
-                    <p className="font-display text-lg text-white mb-3">Packing</p>
-                    <div className="space-y-2 mb-5">
-                      {bookedTrip.packingLists.map((list) => (
-                        <div key={list.category} className="flex justify-between items-center">
-                          <p className="font-editorial text-sm text-white/45">{list.category}</p>
-                          <p className="label-text !text-white/20">{list.packedCount}/{list.totalCount}</p>
+                <motion.div
+                  initial={{ opacity: 0, x: 40 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.8, delay: 0.4, ease }}
+                  className="flex-shrink-0 w-[260px] sm:w-[300px]"
+                >
+                  <div className="rounded-xl bg-white/10 backdrop-blur-md p-5 h-full">
+                    <p className="label-text !text-white/35 mb-3">Time Recovered</p>
+                    <p className="font-display text-3xl text-white mb-3">{bookedTrip.timeReclaimed}</p>
+                    <div className="space-y-2">
+                      {bookedTrip.ridesSaved.slice(0, 3).map((s) => (
+                        <div key={s.rideName} className="flex items-center gap-2">
+                          <span className="text-xs opacity-40">{s.emoji}</span>
+                          <p className="font-editorial text-xs text-white/50">{s.minutesSaved} · {s.rideName}</p>
                         </div>
                       ))}
                     </div>
-                    <div className="gold-rule mb-3" />
-                    <p className="font-editorial text-xs text-white/25 italic group-hover:text-white/45 transition-colors duration-500">Review list →</p>
                   </div>
-                </Link>
-              </motion.div>
-              <motion.div
-                initial={{ opacity: 0, x: 40 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.8, delay: 0.4, ease }}
-                className="flex-shrink-0 w-[260px] sm:w-[300px]"
-              >
-                <div className="border border-white/[0.08] p-5 h-full">
-                  <p className="label-text !text-white/25 mb-3">Time Recovered</p>
-                  <p className="font-display text-3xl text-white mb-3">{bookedTrip.timeReclaimed}</p>
-                  <div className="space-y-2">
-                    {bookedTrip.ridesSaved.slice(0, 3).map((s) => (
-                      <div key={s.rideName} className="flex items-center gap-2">
-                        <span className="text-xs opacity-35">{s.emoji}</span>
-                        <p className="font-editorial text-xs text-white/45">{s.minutesSaved} · {s.rideName}</p>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </motion.div>
+                </motion.div>
+              </div>
             </div>
           </div>
         </div>

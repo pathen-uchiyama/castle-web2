@@ -1,4 +1,5 @@
 import { motion } from "framer-motion";
+import Footer from "@/components/Footer";
 import familyMainstreet from "@/assets/family-mainstreet.jpg";
 import type { PartyMember } from "@/data/types";
 

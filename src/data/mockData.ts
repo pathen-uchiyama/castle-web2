@@ -97,6 +97,9 @@ export const mockData: AppData = {
         { label: "Seasonal Events", description: "MNSSHP, MVMCP, and festival celebrations", itemCount: 4 },
       ],
       heroImage: editorialCarousel,
+      todayWeather: "78°F, Clear",
+      todayCrowdLevel: "Moderate",
+      operatingHours: "8:00 AM – 11:00 PM",
     },
     {
       parkId: "epcot",
@@ -112,6 +115,9 @@ export const mockData: AppData = {
         { label: "Festivals", description: "Flower & Garden, Food & Wine, Arts, Holidays", itemCount: 4 },
       ],
       heroImage: editorialDining,
+      todayWeather: "80°F, Partly Cloudy",
+      todayCrowdLevel: "Low",
+      operatingHours: "9:00 AM – 9:00 PM",
     },
     {
       parkId: "dl",
@@ -127,6 +133,9 @@ export const mockData: AppData = {
         { label: "Seasonal Events", description: "Oogie Boogie Bash, holiday overlays", itemCount: 3 },
       ],
       heroImage: editorialCalendar,
+      todayWeather: "72°F, Sunny",
+      todayCrowdLevel: "Low",
+      operatingHours: "8:00 AM – 12:00 AM",
     },
   ],
 

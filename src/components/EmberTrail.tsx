@@ -43,16 +43,17 @@ const EmberTrail = () => {
       maxAlpha: 0.3 + Math.random() * 0.5,
     }));
 
-    // ── Trail embers (two fairy paths playing together) ──
-    const fairy1X = (t: number, w: number) =>
-      w * (0.15 + 0.7 * (0.5 + 0.5 * Math.sin(t * 0.3)) * (0.5 + 0.5 * Math.cos(t * 0.17)));
-    const fairy1Y = (t: number, h: number) =>
-      h * (0.2 + 0.5 * (0.5 + 0.5 * Math.sin(t * 0.23 + 1.2)) * (0.5 + 0.5 * Math.cos(t * 0.31 + 0.8)));
-
-    const fairy2X = (t: number, w: number) =>
-      w * (0.25 + 0.6 * (0.5 + 0.5 * Math.sin(t * 0.35 + 2.0)) * (0.5 + 0.5 * Math.cos(t * 0.22 + 1.5)));
-    const fairy2Y = (t: number, h: number) =>
-      h * (0.15 + 0.55 * (0.5 + 0.5 * Math.sin(t * 0.28 + 0.5)) * (0.5 + 0.5 * Math.cos(t * 0.19 + 2.2)));
+    // ── Trail embers (four fairy paths playing together) ──
+    const fairies = [
+      { xF: (t: number, w: number) => w * (0.15 + 0.7 * (0.5 + 0.5 * Math.sin(t * 0.3)) * (0.5 + 0.5 * Math.cos(t * 0.17))),
+        yF: (t: number, h: number) => h * (0.2 + 0.5 * (0.5 + 0.5 * Math.sin(t * 0.23 + 1.2)) * (0.5 + 0.5 * Math.cos(t * 0.31 + 0.8))), hue: 35 },
+      { xF: (t: number, w: number) => w * (0.25 + 0.6 * (0.5 + 0.5 * Math.sin(t * 0.35 + 2.0)) * (0.5 + 0.5 * Math.cos(t * 0.22 + 1.5))),
+        yF: (t: number, h: number) => h * (0.15 + 0.55 * (0.5 + 0.5 * Math.sin(t * 0.28 + 0.5)) * (0.5 + 0.5 * Math.cos(t * 0.19 + 2.2))), hue: 28 },
+      { xF: (t: number, w: number) => w * (0.3 + 0.5 * (0.5 + 0.5 * Math.sin(t * 0.26 + 3.5)) * (0.5 + 0.5 * Math.cos(t * 0.14 + 0.3))),
+        yF: (t: number, h: number) => h * (0.25 + 0.45 * (0.5 + 0.5 * Math.sin(t * 0.32 + 2.8)) * (0.5 + 0.5 * Math.cos(t * 0.25 + 1.0))), hue: 42 },
+      { xF: (t: number, w: number) => w * (0.1 + 0.75 * (0.5 + 0.5 * Math.sin(t * 0.22 + 1.0)) * (0.5 + 0.5 * Math.cos(t * 0.29 + 3.0))),
+        yF: (t: number, h: number) => h * (0.18 + 0.5 * (0.5 + 0.5 * Math.sin(t * 0.18 + 3.8)) * (0.5 + 0.5 * Math.cos(t * 0.27 + 1.7))), hue: 30 },
+    ];
 
     interface TrailEmber {
       x: number; y: number; vx: number; vy: number;

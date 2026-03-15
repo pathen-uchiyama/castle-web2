@@ -372,12 +372,12 @@ const Index = ({
         </div>
 
         {/* Inner Circle — right */}
-        <div className="bg-background rounded-2xl shadow-sm flex flex-col px-4 sm:px-6 lg:px-8 py-7 sm:py-8 h-auto md:h-[500px] overflow-hidden">
+        <div className="bg-[hsl(var(--ink))] rounded-2xl shadow-sm flex flex-col px-4 sm:px-6 lg:px-8 py-7 sm:py-8 h-auto md:h-[500px] overflow-hidden">
           <div className="shrink-0">
             <motion.div {...slideRight()}>
-              <p className="label-text mb-2 tracking-[0.3em]">The Inner Circle</p>
-              <h3 className="font-display text-2xl sm:text-3xl text-foreground leading-[1.1] mb-1">Your party</h3>
-              <p className="font-editorial text-sm text-muted-foreground mb-4">The crew that makes the magic happen ✨</p>
+              <p className="label-text !text-white/40 mb-2 tracking-[0.3em]">The Inner Circle</p>
+              <h3 className="font-display text-2xl sm:text-3xl text-white leading-[1.1] mb-1">Your party</h3>
+              <p className="font-editorial text-sm text-white/50 mb-4">The crew that makes the magic happen ✨</p>
             </motion.div>
           </div>
 
@@ -389,7 +389,7 @@ const Index = ({
                 whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.8, delay: 0.2 + i * 0.1, ease }}
-                className="flex items-center gap-3 group cursor-pointer rounded-xl p-2 -mx-2 hover:bg-[hsl(var(--warm))] transition-colors duration-300"
+                className="flex items-center gap-3 group cursor-pointer rounded-xl p-2 -mx-2 hover:bg-white/[0.06] transition-colors duration-300"
               >
                 <motion.div
                   whileHover={{ scale: 1.1, rotate: 8 }}
@@ -399,20 +399,20 @@ const Index = ({
                   <span className="font-display text-sm text-white">{m.initial}</span>
                 </motion.div>
                 <div className="flex-1 min-w-0 overflow-hidden">
-                  <p className="font-display text-sm sm:text-base text-foreground group-hover:text-[hsl(var(--gold-dark))] transition-colors duration-500 truncate">{m.name}</p>
-                  <p className="label-text mt-0.5 text-[0.55rem] truncate">{m.role}</p>
+                  <p className="font-display text-sm sm:text-base text-white group-hover:text-[hsl(var(--gold-light))] transition-colors duration-500 truncate">{m.name}</p>
+                  <p className="label-text mt-0.5 text-[0.55rem] !text-white/30 truncate">{m.role}</p>
                 </div>
                 <div className="text-right shrink-0">
-                  <p className="font-display text-sm text-foreground">{m.adventureCount}</p>
-                  <p className="label-text text-[0.5rem]">trips</p>
+                  <p className="font-display text-sm text-white/80">{m.adventureCount}</p>
+                  <p className="label-text text-[0.5rem] !text-white/25">trips</p>
                 </div>
               </motion.div>
             ))}
           </motion.div>
 
-          <motion.div {...slideRight(0.3)} className="mt-2 pt-3 border-t border-border shrink-0">
+          <motion.div {...slideRight(0.3)} className="mt-2 pt-3 border-t border-white/[0.08] shrink-0">
             <Link to="/circle">
-              <span className="link-editorial font-editorial text-sm text-foreground">Manage travelers →</span>
+              <span className="link-editorial font-editorial text-sm text-white/70 hover:text-white">Manage travelers →</span>
             </Link>
           </motion.div>
         </div>

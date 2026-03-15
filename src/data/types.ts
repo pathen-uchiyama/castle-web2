@@ -93,6 +93,22 @@ export interface DiningReservation {
   status: "confirmed" | "pending" | "cancelled";
 }
 
+export type ExperienceCategory = "character-meet" | "tour" | "special-event" | "recreation" | "spa" | "photo-session";
+
+export interface BookedExperience {
+  experienceId: string;
+  experienceName: string;
+  category: ExperienceCategory;
+  parkOrResort: string;
+  date: string;
+  time: string;
+  duration?: string;
+  partySize: number;
+  confirmationNumber: string;
+  notes?: string;
+  status: "confirmed" | "pending" | "cancelled";
+}
+
 export interface PreparationItem {
   description: string;
   isComplete: boolean;
@@ -121,6 +137,7 @@ export interface BookedTrip {
   preparations: PreparationItem[];
   packingLists: PackingItem[];
   diningReservations: DiningReservation[];
+  bookedExperiences: BookedExperience[];
 }
 
 export interface FutureTrip {

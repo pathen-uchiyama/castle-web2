@@ -9,7 +9,7 @@ import editorialCalendar from "@/assets/editorial-calendar.jpg";
 import editorialDining from "@/assets/editorial-dining.jpg";
 import SparkleField from "@/components/SparkleField";
 import TripWizard from "@/components/TripWizard";
-import type { BookedTrip, FutureTrip, PackingItem, PreparationItem } from "@/data/types";
+import type { BookedTrip, FutureTrip, PackingItem, PreparationItem, ExperienceCategory } from "@/data/types";
 import { mockData } from "@/data/mockData";
 
 const ease: [number, number, number, number] = [0.19, 1, 0.22, 1];
@@ -35,6 +35,7 @@ const tabs = [
   { id: "overview", label: "Overview" },
   { id: "surveys", label: "Surveys", badge: "2 pending" },
   { id: "dining", label: "Dining" },
+  { id: "experiences", label: "Experiences" },
   { id: "designer", label: "The Designer" },
   { id: "prep", label: "Prep & Checklists" },
 ];
@@ -58,10 +59,28 @@ const statusColors: Record<string, { bg: string; text: string; border: string }>
   cancelled: { bg: "hsl(var(--destructive) / 0.1)", text: "hsl(var(--destructive))", border: "hsl(var(--destructive) / 0.3)" },
 };
 
+const experienceIcons: Record<ExperienceCategory, string> = {
+  "character-meet": "👑",
+  "tour": "🗺",
+  "special-event": "✨",
+  "recreation": "🚴",
+  "spa": "💆",
+  "photo-session": "📸",
+};
+
+const experienceLabels: Record<ExperienceCategory, string> = {
+  "character-meet": "Character Meet",
+  "tour": "Tour",
+  "special-event": "Special Event",
+  "recreation": "Recreation",
+  "spa": "Spa & Wellness",
+  "photo-session": "Photo Session",
+};
+
 const Adventure = ({ bookedTrip, futureTrips }: AdventureProps) => {
   const [wizardOpen, setWizardOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("overview");
-  const { destination, tripName, countdownDays, travelLegs, diningReservations } = bookedTrip;
+  const { destination, tripName, countdownDays, travelLegs, diningReservations, bookedExperiences } = bookedTrip;
   const { partySurvey } = mockData;
 
   // Interactive packing state
@@ -463,7 +482,109 @@ const Adventure = ({ bookedTrip, futureTrips }: AdventureProps) => {
         </section>
       )}
 
-      {/* ═══ DESIGNER TAB ═══ */}
+      {/* ═══ EXPERIENCES TAB ═══ */}
+      {activeTab === "experiences" && (
+        <section className="px-8 lg:px-16 py-16 lg:py-24">
+          <motion.div {...fade()}>
+            <p className="label-text mb-6">The Enchantments</p>
+            <h2 className="font-display text-4xl sm:text-5xl text-foreground leading-[1.08] mb-4">Booked Experiences</h2>
+            <p className="font-editorial text-muted-foreground text-lg max-w-2xl mb-4">
+              Beyond the rides — workshops, tours, dessert parties, and once-in-a-lifetime moments you've secured.
+            </p>
+            <div className="gold-rule mb-12" />
+          </motion.div>
+
+          {/* Summary stats */}
+          <motion.div {...fade(0.1)} className="grid grid-cols-2 sm:grid-cols-4 gap-6 mb-16">
+            {[
+              { label: "Experiences", value: String(bookedExperiences.length) },
+              { label: "Confirmed", value: String(bookedExperiences.filter(e => e.status === "confirmed").length) },
+              { label: "Pending", value: String(bookedExperiences.filter(e => e.status === "pending").length) },
+              { label: "Unique Days", value: String(new Set(bookedExperiences.map(e => e.date)).size) },
+            ].map((stat) => (
+              <div key={stat.label} className="border border-border bg-card p-5 shadow-[var(--shadow-soft)]">
+                <p className="label-text mb-2">{stat.label}</p>
+                <p className="font-display text-3xl text-foreground">{stat.value}</p>
+              </div>
+            ))}
+          </motion.div>
+
+          {/* Experience cards grouped by date */}
+          <div className="space-y-12">
+            {Object.entries(
+              bookedExperiences.reduce<Record<string, typeof bookedExperiences>>((acc, exp) => {
+                if (!acc[exp.date]) acc[exp.date] = [];
+                acc[exp.date].push(exp);
+                return acc;
+              }, {})
+            ).map(([date, experiences], groupIdx) => (
+              <motion.div key={date} {...fade(0.15 + groupIdx * 0.05)}>
+                <p className="label-text mb-4 tracking-[0.25em]">{date}</p>
+                <div className="space-y-4">
+                  {experiences.map((exp) => {
+                    const colors = statusColors[exp.status];
+                    return (
+                      <div key={exp.experienceId} className="border border-border bg-card shadow-[var(--shadow-soft)] hover:shadow-[var(--shadow-hover)] transition-shadow duration-500 overflow-hidden">
+                        <div className="p-6">
+                          <div className="flex items-start justify-between mb-4">
+                            <div className="flex items-center gap-3">
+                              <span className="text-2xl">{experienceIcons[exp.category]}</span>
+                              <div>
+                                <h3 className="font-display text-xl text-foreground">{exp.experienceName}</h3>
+                                <p className="font-editorial text-sm text-muted-foreground">
+                                  {exp.parkOrResort} · {experienceLabels[exp.category]}
+                                </p>
+                              </div>
+                            </div>
+                            <span
+                              className="px-3 py-1 text-[0.625rem] uppercase tracking-[0.15em] font-medium border"
+                              style={{ background: colors.bg, color: colors.text, borderColor: colors.border }}
+                            >
+                              {exp.status}
+                            </span>
+                          </div>
+
+                          <div className="flex flex-wrap gap-6 mb-4">
+                            <div>
+                              <p className="label-text mb-1">Time</p>
+                              <p className="font-display text-lg text-foreground">{exp.time}</p>
+                            </div>
+                            {exp.duration && (
+                              <div>
+                                <p className="label-text mb-1">Duration</p>
+                                <p className="font-display text-lg text-foreground">{exp.duration}</p>
+                              </div>
+                            )}
+                            <div>
+                              <p className="label-text mb-1">Party</p>
+                              <p className="font-display text-lg text-foreground">{exp.partySize}</p>
+                            </div>
+                            <div>
+                              <p className="label-text mb-1">Confirmation</p>
+                              <p className="font-editorial text-sm text-foreground tracking-wide">{exp.confirmationNumber}</p>
+                            </div>
+                          </div>
+
+                          {exp.notes && (
+                            <p className="font-editorial text-sm text-muted-foreground italic">{exp.notes}</p>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </motion.div>
+            ))}
+          </div>
+
+          {/* Add experience placeholder */}
+          <motion.div {...fade(0.3)} className="mt-12 border border-dashed border-border py-12 text-center cursor-pointer hover:border-[hsl(var(--gold)/0.5)] transition-colors duration-500">
+            <p className="font-display text-xl text-muted-foreground/40 mb-2">+ Add Experience</p>
+            <p className="font-editorial text-sm text-muted-foreground/30">Track a new booked experience for your trip.</p>
+          </motion.div>
+        </section>
+      )}
+
       {activeTab === "designer" && (
         <section className="px-8 lg:px-16 py-16 lg:py-24">
           <motion.div {...fade()}>

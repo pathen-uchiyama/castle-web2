@@ -109,6 +109,57 @@ export interface BookedExperience {
   status: "confirmed" | "pending" | "cancelled";
 }
 
+/* ─── Discovery / Research Types ────────────────────────────────── */
+
+export type CostTier = "$" | "$$" | "$$$" | "$$$$";
+export type BookingDifficulty = "easy" | "moderate" | "hard" | "legendary";
+
+export interface BookingWindow {
+  opensDate: string;
+  daysBeforeArrival: number;
+  tip: string;
+}
+
+export interface DiningVenue {
+  venueId: string;
+  name: string;
+  parkOrResort: string;
+  cuisine: string;
+  mealTypes: ("breakfast" | "lunch" | "dinner" | "snack")[];
+  costTier: CostTier;
+  rating: number;
+  reviewCount: number;
+  bookingDifficulty: BookingDifficulty;
+  bookingWindow: BookingWindow;
+  vibes: string;
+  notableInsight: string;
+  mustTry?: string;
+  dietaryAccommodations: string[];
+  kidFriendly: boolean;
+  characterDining: boolean;
+  tags: string[];
+}
+
+export interface ExperienceVenue {
+  venueId: string;
+  name: string;
+  category: ExperienceCategory;
+  parkOrResort: string;
+  costTier: CostTier;
+  priceRange: string;
+  rating: number;
+  reviewCount: number;
+  bookingDifficulty: BookingDifficulty;
+  bookingWindow: BookingWindow;
+  duration: string;
+  vibes: string;
+  notableInsight: string;
+  ageRequirement?: string;
+  heightRequirement?: string;
+  maxPartySize?: number;
+  tags: string[];
+}
+
 export interface PreparationItem {
   description: string;
   isComplete: boolean;
@@ -138,6 +189,8 @@ export interface BookedTrip {
   packingLists: PackingItem[];
   diningReservations: DiningReservation[];
   bookedExperiences: BookedExperience[];
+  diningVenues: DiningVenue[];
+  experienceVenues: ExperienceVenue[];
 }
 
 export interface FutureTrip {

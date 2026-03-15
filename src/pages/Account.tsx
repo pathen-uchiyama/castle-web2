@@ -1,4 +1,5 @@
 import { motion } from "framer-motion";
+import type { AccountProfile } from "@/data/types";
 
 const ease: [number, number, number, number] = [0.19, 1, 0.22, 1];
 
@@ -9,7 +10,20 @@ const fade = (delay = 0) => ({
   transition: { duration: 1.2, delay, ease },
 });
 
-const Account = () => {
+interface AccountProps {
+  account: AccountProfile;
+}
+
+const Account = ({ account }: AccountProps) => {
+  const { subscription, preferences } = account;
+
+  const profileFields = [
+    { label: "Name", value: account.guestName },
+    { label: "Email", value: account.email },
+    { label: "Member since", value: account.memberSince },
+    { label: "Adventures completed", value: String(account.adventuresCompleted) },
+  ];
+
   return (
     <div className="min-h-screen bg-background pt-16">
       <section className="max-w-3xl mx-auto px-8 py-24 lg:py-32">
@@ -26,12 +40,12 @@ const Account = () => {
             <p className="label-text mb-6 tracking-[0.25em]">Subscription</p>
             <div className="flex items-baseline justify-between border-b border-border pb-8">
               <div>
-                <p className="font-display text-2xl text-foreground">Royal Charter</p>
+                <p className="font-display text-2xl text-foreground">{subscription.planName}</p>
                 <p className="font-editorial text-sm text-muted-foreground mt-2">
-                  Unlimited adventures · Priority Lightning Lane · Family sync
+                  {subscription.planDescription}
                 </p>
               </div>
-              <span className="label-text !text-gold">Active</span>
+              <span className="label-text !text-gold capitalize">{subscription.status}</span>
             </div>
             <div className="mt-6 flex gap-8">
               <span className="link-editorial font-editorial text-sm text-foreground cursor-pointer">
@@ -47,12 +61,7 @@ const Account = () => {
           <motion.div {...fade(0.2)}>
             <p className="label-text mb-6 tracking-[0.25em]">Profile</p>
             <div className="space-y-6">
-              {[
-                { label: "Name", value: "Patchen Noelke" },
-                { label: "Email", value: "patchen@example.com" },
-                { label: "Member since", value: "January 2024" },
-                { label: "Adventures completed", value: "12" },
-              ].map((item) => (
+              {profileFields.map((item) => (
                 <div key={item.label} className="flex items-baseline justify-between border-b border-border pb-4">
                   <p className="label-text">{item.label}</p>
                   <p className="font-editorial text-base text-foreground">{item.value}</p>
@@ -70,11 +79,7 @@ const Account = () => {
           <motion.div {...fade(0.3)}>
             <p className="label-text mb-6 tracking-[0.25em]">Preferences</p>
             <div className="space-y-6">
-              {[
-                { label: "Notifications", value: "Lightning Lane alerts, dining reminders" },
-                { label: "Default party", value: "The Noelke Four" },
-                { label: "Home park", value: "Magic Kingdom" },
-              ].map((item) => (
+              {preferences.map((item) => (
                 <div key={item.label} className="flex items-baseline justify-between border-b border-border pb-4">
                   <p className="label-text">{item.label}</p>
                   <p className="font-editorial text-sm text-muted-foreground">{item.value}</p>

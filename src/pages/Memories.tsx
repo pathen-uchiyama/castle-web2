@@ -1,9 +1,5 @@
 import { motion } from "framer-motion";
-import castleHero from "@/assets/castle-hero.jpg";
-import castleGolden from "@/assets/castle-golden.jpg";
-import fireworksNight from "@/assets/fireworks-night.jpg";
-import familyMainstreet from "@/assets/family-mainstreet.jpg";
-import travelFlatlay from "@/assets/travel-flatlay.jpg";
+import type { GalleryImage, Whisper } from "@/data/types";
 
 const ease: [number, number, number, number] = [0.19, 1, 0.22, 1];
 
@@ -21,7 +17,12 @@ const scaleIn = (delay = 0) => ({
   transition: { duration: 1.6, delay, ease },
 });
 
-const Memories = () => {
+interface MemoriesProps {
+  galleryImages: GalleryImage[];
+  whispers: Whisper[];
+}
+
+const Memories = ({ galleryImages, whispers }: MemoriesProps) => {
   return (
     <div className="min-h-screen bg-background pt-16">
       <section className="max-w-6xl mx-auto px-8 py-24 lg:py-32">
@@ -36,20 +37,13 @@ const Memories = () => {
         </motion.div>
       </section>
 
-      {/* Gallery grid */}
       <section className="px-4 pb-24 lg:pb-32">
         <div className="grid grid-cols-6 gap-2 auto-rows-[200px] sm:auto-rows-[300px]">
-          {[
-            { title: "Castle at Golden Hour", label: "Magic Kingdom", src: castleGolden, span: "col-span-4 row-span-2" },
-            { title: "Family on Main Street", label: "Day One", src: familyMainstreet, span: "col-span-2 row-span-1" },
-            { title: "Fireworks Finale", label: "Happily Ever After", src: fireworksNight, span: "col-span-2 row-span-1" },
-            { title: "Travel Essentials", label: "The Trunk", src: travelFlatlay, span: "col-span-3 row-span-1" },
-            { title: "The Grand Entrance", label: "Day One", src: castleHero, span: "col-span-3 row-span-1" },
-          ].map((img, i) => (
+          {galleryImages.map((img, i) => (
             <motion.div
               key={img.title}
               {...scaleIn(i * 0.08)}
-              className={`${img.span} group cursor-pointer relative overflow-hidden`}
+              className={`${img.gridSpan} group cursor-pointer relative overflow-hidden`}
             >
               <img
                 src={img.src}
@@ -67,7 +61,6 @@ const Memories = () => {
         </div>
       </section>
 
-      {/* Whispers */}
       <section className="max-w-3xl mx-auto px-8 py-24 lg:py-32 border-t border-border">
         <motion.div {...fade()}>
           <p className="label-text mb-8 tracking-[0.25em]">Whispers</p>
@@ -76,11 +69,7 @@ const Memories = () => {
           </h2>
         </motion.div>
         <div className="mt-14 space-y-12">
-          {[
-            { tip: "The hidden Mickey in the Haunted Mansion queue — look at the wallpaper near the stretching room.", date: "March 14" },
-            { tip: "Best fireworks spot: the rose garden by Casey's Corner. Arrive early with a blanket.", date: "March 12" },
-            { tip: "Ask for the secret orange swirl float at the Dole Whip stand. Not on the menu.", date: "March 10" },
-          ].map((note, i) => (
+          {whispers.map((note, i) => (
             <motion.div key={i} {...fade(i * 0.1)} className="group cursor-pointer">
               <p className="font-editorial text-base text-foreground leading-relaxed group-hover:text-muted-foreground transition-colors duration-500">
                 {note.tip}

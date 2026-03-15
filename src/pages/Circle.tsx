@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import familyMainstreet from "@/assets/family-mainstreet.jpg";
+import type { PartyMember } from "@/data/types";
 
 const ease: [number, number, number, number] = [0.19, 1, 0.22, 1];
 
@@ -17,17 +18,13 @@ const slideRight = (delay = 0) => ({
   transition: { duration: 1.4, delay, ease },
 });
 
-const members = [
-  { name: "Patchen", role: "Trip Captain", initial: "P", adventures: 12 },
-  { name: "Sarah", role: "Co-planner", initial: "S", adventures: 12 },
-  { name: "Emma", role: "Little Explorer", initial: "E", adventures: 8 },
-  { name: "Jack", role: "Snack Scout", initial: "J", adventures: 8 },
-];
+interface CircleProps {
+  partyMembers: PartyMember[];
+}
 
-const Circle = () => {
+const Circle = ({ partyMembers }: CircleProps) => {
   return (
     <div className="min-h-screen bg-background pt-16">
-      {/* Hero */}
       <section className="grid grid-cols-1 lg:grid-cols-2 min-h-[70vh]">
         <div className="px-8 lg:px-16 py-24 lg:py-32 flex flex-col justify-center">
           <motion.div {...fade()}>
@@ -51,10 +48,9 @@ const Circle = () => {
         </div>
       </section>
 
-      {/* Members */}
       <section className="max-w-4xl mx-auto px-8 py-24 lg:py-32">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-16 gap-y-16">
-          {members.map((member, i) => (
+          {partyMembers.map((member, i) => (
             <motion.div
               key={member.name}
               {...slideRight(i * 0.1)}
@@ -75,7 +71,7 @@ const Circle = () => {
               </div>
               <div className="pl-[88px]">
                 <p className="font-editorial text-sm text-muted-foreground">
-                  {member.adventures} adventures together
+                  {member.adventureCount} adventures together
                 </p>
                 <span className="link-editorial font-editorial text-xs text-foreground mt-3 inline-block opacity-0 group-hover:opacity-100 transition-opacity duration-500">
                   View profile

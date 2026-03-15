@@ -715,7 +715,7 @@ const BookedTripDetail = ({ trip }: { trip: BookedTrip }) => {
           </motion.div>
 
           <div className="flex gap-1 mb-12 border-b border-border">
-            {[{ id: "discover" as const, label: "Discover" }, { id: "reservations" as const, label: "My Bookings", count: bookedExperiences.length }].map((st) => (
+            {[{ id: "discover" as const, label: "Discover" }, { id: "reservations" as const, label: "My Bookings", count: allBookedExperiences.length }].map((st) => (
               <button key={st.id} onClick={() => setExperienceSubTab(st.id)} className="relative px-5 py-3 transition-all duration-500">
                 <span className={`uppercase tracking-[0.2em] text-[0.6875rem] transition-colors duration-500 ${experienceSubTab === st.id ? "text-foreground" : "text-muted-foreground"}`}>{st.label}</span>
                 {"count" in st && st.count !== undefined && (

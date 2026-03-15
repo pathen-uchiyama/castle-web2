@@ -156,13 +156,13 @@ const Index = () => {
                 </div>
                 <div className="space-y-2 mt-4">
                   {[
-                    { task: "Park reservations", done: true },
-                    { task: "Dining reservations", done: true },
-                    { task: "Lightning Lane strategy", done: true },
+                    { task: "Park reservations booked for all four parks including Magic Kingdom, EPCOT, Hollywood Studios, and Animal Kingdom with extended evening hours", done: true },
+                    { task: "Dining reservations confirmed — Be Our Guest, Ohana Breakfast, Space 220, Sci-Fi Dine-In Theater, Topolino's Terrace Character Breakfast with additional backup options", done: true },
+                    { task: "Lightning Lane Multi Pass strategy optimized for every single day of the trip with backup ride selections and alternative rope-drop plans", done: true },
                     { task: "Packing list", done: false },
-                    { task: "PhotoPass setup", done: false },
+                    { task: "PhotoPass and Memory Maker setup with all MagicBand+ configurations and linked accounts for the entire party", done: false },
                   ].map((t) => (
-                    <div key={t.task} className="flex items-center gap-2.5 text-sm">
+                    <div key={t.task} className="flex items-center gap-2.5 text-sm overflow-hidden">
                       <span className={`w-4 h-4 rounded border flex items-center justify-center text-xs shrink-0 ${t.done ? "bg-gold/15 border-gold text-gold-dark" : "border-border"}`}>
                         {t.done && "✓"}
                       </span>

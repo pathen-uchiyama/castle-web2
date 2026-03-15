@@ -148,6 +148,11 @@ const BookedTripDetail = ({ trip }: { trip: BookedTrip }) => {
   const [activeTab, setActiveTab] = useState("surveys");
   const [diningSubTab, setDiningSubTab] = useState<"discover" | "reservations">("discover");
   const [experienceSubTab, setExperienceSubTab] = useState<"discover" | "reservations">("discover");
+  const [mdeConnected, setMdeConnected] = useState<Record<string, boolean>>(() => {
+    const initial: Record<string, boolean> = {};
+    mockData.partyMembers.forEach((m) => { initial[m.memberId] = false; });
+    return initial;
+  });
   const { destination, tripName, countdownDays, travelLegs, diningReservations, bookedExperiences, diningVenues, experienceVenues } = trip;
   const { partySurvey } = mockData;
 

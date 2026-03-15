@@ -296,7 +296,7 @@ const Index = ({
       </section>
 
       {/* ═══ TWO COLUMN — Plan Next Trip + Inner Circle ═══ */}
-      <section className="grid grid-cols-1 lg:grid-cols-2 min-h-[70vh]">
+      <section className="grid grid-cols-1 md:grid-cols-2 min-h-[70vh]">
         {/* Plan Your Next Trip — left */}
         <div className="relative min-h-[50vh] lg:min-h-[70vh] overflow-hidden">
           {futureTrips.map((trip, i) => (

@@ -189,7 +189,7 @@ const Index = ({
                 whileInView={{ opacity: 1, scale: 1, rotate: -3 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.8, delay: 0.6, ease }}
-                className="bg-white/95 backdrop-blur-sm px-8 py-6 rounded-2xl shadow-2xl"
+                className="bg-white/95 backdrop-blur-sm px-8 py-6 shadow-soft"
               >
                 <p className="label-text tracking-[0.15em] mb-1 !text-foreground/50">Magic starts in</p>
                 <p className="font-display-bold text-4xl text-foreground">{bookedTrip.countdownDays} days</p>
@@ -382,7 +382,7 @@ const Index = ({
       {/* ═══ TWO COLUMN — Plan Next Trip + Inner Circle ═══ */}
       <section className="grid grid-cols-1 md:grid-cols-2 gap-4 px-4 py-8 bg-[hsl(var(--warm))]">
         {/* Plan Your Next Trip — left */}
-        <div className="relative overflow-hidden rounded-2xl">
+        <div className="relative overflow-hidden shadow-soft hover:shadow-soft-hover transition-shadow duration-500">
           <Link to="/adventure" className="group block">
             <div className="relative h-[500px] overflow-hidden">
               <ParallaxImage src={editorialCalendar} alt="Plan your next trip" className="absolute inset-0 h-full" />
@@ -410,7 +410,7 @@ const Index = ({
         </div>
 
         {/* Inner Circle — right */}
-        <div className="bg-[hsl(var(--ink))] rounded-2xl shadow-sm flex flex-col px-4 sm:px-6 lg:px-8 py-7 sm:py-8 h-auto md:h-[500px] overflow-hidden">
+        <div className="bg-[hsl(var(--ink))] shadow-soft hover:shadow-soft-hover transition-shadow duration-500 flex flex-col px-4 sm:px-6 lg:px-8 py-7 sm:py-8 h-auto md:h-[500px] overflow-hidden">
           <div className="shrink-0">
             <motion.div {...slideRight()}>
               <p className="label-text !text-white/40 mb-2 tracking-[0.3em]">The Inner Circle</p>

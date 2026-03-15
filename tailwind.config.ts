@@ -75,6 +75,10 @@ export default {
           ring: "hsl(var(--sidebar-ring))",
         },
       },
+      boxShadow: {
+        soft: "var(--shadow-soft)",
+        "soft-hover": "var(--shadow-hover)",
+      },
       borderRadius: {
         lg: "0px",
         md: "0px",

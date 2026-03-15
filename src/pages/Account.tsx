@@ -27,7 +27,7 @@ const Account = ({ account }: AccountProps) => {
 
   return (
     <div className="min-h-screen bg-background pt-16">
-      <section className="max-w-3xl mx-auto px-8 py-24 lg:py-32">
+      <section className="max-w-3xl mx-auto px-4 sm:px-8 py-16 sm:py-24 lg:py-32">
         <motion.div {...fade()}>
           <p className="label-text mb-8 tracking-[0.3em]">Your Account</p>
           <h1 className="font-display text-5xl sm:text-6xl text-foreground leading-[1.02] mb-8">

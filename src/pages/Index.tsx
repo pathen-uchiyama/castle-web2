@@ -82,11 +82,11 @@ const Index = ({
 
       {/* Hero text — scrolls with the page */}
       <header className="relative z-10 h-screen flex items-end overflow-hidden">
-        <div className="relative w-full max-w-6xl mx-auto px-8 pb-20 lg:pb-28">
+        <div className="relative w-full max-w-6xl mx-auto px-4 sm:px-8 pb-16 sm:pb-20 lg:pb-28">
           <motion.p initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1, delay: 0.5 }} className="label-text !text-white/40 mb-10 tracking-[0.3em]">
             Castle Companion
           </motion.p>
-          <motion.h1 initial={{ opacity: 0, y: 50 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1.6, delay: 0.8, ease }} className="font-display text-white text-5xl sm:text-7xl lg:text-[6rem] leading-[1.02] max-w-4xl">
+          <motion.h1 initial={{ opacity: 0, y: 50 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1.6, delay: 0.8, ease }} className="font-display text-white text-4xl sm:text-5xl md:text-7xl lg:text-[6rem] leading-[1.02] max-w-4xl">
             Welcome, <em className="italic" style={{ fontWeight: 400 }}>{guestName}</em>.
           </motion.h1>
           <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 1, delay: 1.4 }} className="font-editorial text-white/60 text-lg sm:text-xl mt-8 max-w-lg leading-relaxed">
@@ -114,7 +114,7 @@ const Index = ({
         <div className="relative">
           {/* Trip overview */}
           <div className="grid grid-cols-1 md:grid-cols-2 min-h-[70vh]">
-            <div className="flex flex-col justify-center px-8 lg:px-16 py-20 lg:py-28">
+            <div className="flex flex-col justify-center px-4 sm:px-8 lg:px-16 py-16 sm:py-20 lg:py-28">
               <motion.div {...slideLeft()}>
                 <p className="label-text !text-white/50 mb-10 tracking-[0.25em]">Your Booked Adventure</p>
                 <h2 className="font-display text-4xl sm:text-5xl xl:text-6xl text-white leading-[1.08] mb-6">
@@ -239,7 +239,7 @@ const Index = ({
 
       {/* ═══ PARK TILES — Horizontal scrollable visual cards ═══ */}
       <section className="py-20 lg:py-28 bg-[hsl(var(--warm))]">
-        <div className="max-w-6xl mx-auto px-8 mb-12">
+        <div className="max-w-6xl mx-auto px-4 sm:px-8 mb-12">
           <motion.div {...fade()}>
             <p className="label-text mb-6 tracking-[0.25em]">Park Guide</p>
             <h2 className="font-display text-4xl sm:text-5xl text-foreground leading-[1.08]">
@@ -251,7 +251,7 @@ const Index = ({
           <div className="absolute left-0 top-0 bottom-0 w-8 bg-gradient-to-r from-[hsl(var(--warm))] to-transparent z-10 pointer-events-none" />
           <div className="absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-[hsl(var(--warm))] to-transparent z-10 pointer-events-none" />
           <div
-            className="flex gap-6 overflow-x-auto px-8 pb-4"
+            className="flex gap-4 sm:gap-6 overflow-x-auto px-4 sm:px-8 pb-4"
             style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
           >
             {parkGuides.map((park, i) => (
@@ -306,44 +306,43 @@ const Index = ({
       <section className="grid grid-cols-1 md:grid-cols-2 gap-4 px-4 py-8 bg-[hsl(var(--warm))]">
         {/* Plan Your Next Trip — left */}
         <div className="relative overflow-hidden rounded-2xl">
-          {futureTrips.map((trip, i) => (
-            <Link key={trip.tripId} to={`/trip/${trip.tripId}`} className={`group block ${i > 0 ? "hidden" : ""}`}>
-              <div className="relative h-[500px] overflow-hidden">
-                <ParallaxImage src={trip.heroImage} alt={trip.tripName} className="absolute inset-0 h-full" />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-black/10 group-hover:from-black/70 transition-all duration-700" />
-                <div className="absolute bottom-0 left-0 right-0 px-8 lg:px-12 pb-12">
-                  <motion.div {...fade(0.1)}>
-                    <p className="label-text !text-white/40 mb-4 tracking-[0.3em]">Plan Your Next Trip</p>
-                    <h3 className="font-display text-3xl sm:text-4xl text-white leading-[1.1] mb-3">{trip.tripName}</h3>
-                    <p className="font-editorial text-sm text-white/50 mb-3">{trip.tentativeDate} · {trip.destination}</p>
-                    <span className="label-text !text-white/25 capitalize">{trip.status}</span>
-                  </motion.div>
-                  {futureTrips.length > 1 && (
-                    <motion.div {...fade(0.3)} className="mt-8 flex gap-3">
-                      {futureTrips.map((ft, fi) => (
-                        <Link key={ft.tripId} to={`/trip/${ft.tripId}`} className="group/dot">
-                          <div className={`w-8 h-1 rounded-full ${fi === 0 ? "bg-white/60" : "bg-white/20"} group-hover/dot:bg-white/40 transition-colors duration-300`} />
-                        </Link>
-                      ))}
-                    </motion.div>
-                  )}
-                </div>
+          <Link to="/adventure" className="group block">
+            <div className="relative h-[500px] overflow-hidden">
+              <ParallaxImage src={futureTrips[0]?.heroImage || editorialJournal} alt="Plan your next trip" className="absolute inset-0 h-full" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-black/10 group-hover:from-black/70 transition-all duration-700" />
+              <div className="absolute bottom-0 left-0 right-0 px-6 sm:px-8 lg:px-12 pb-10 sm:pb-12">
+                <motion.div {...fade(0.1)}>
+                  <p className="label-text !text-white/40 mb-4 tracking-[0.3em]">
+                    {futureTrips.length > 0 ? "Plan Your Next Trip" : "Plan Your First Trip"}
+                  </p>
+                  <h3 className="font-display text-2xl sm:text-3xl lg:text-4xl text-white leading-[1.1] mb-3">
+                    {futureTrips.length > 0 ? "Where will the magic take you?" : "Your adventure starts here."}
+                  </h3>
+                  <p className="font-editorial text-sm text-white/50 mb-6 max-w-sm">
+                    {futureTrips.length > 0
+                      ? `${futureTrips.length} trip${futureTrips.length > 1 ? "s" : ""} in the works — tap to explore dates, parks, and strategies.`
+                      : "Choose a destination and let us handle the rest."}
+                  </p>
+                  <span className="inline-flex items-center gap-2 font-editorial text-sm text-white/80 border-b border-white/30 pb-1 group-hover:text-white group-hover:border-white/60 transition-all duration-500">
+                    Start planning →
+                  </span>
+                </motion.div>
               </div>
-            </Link>
-          ))}
+            </div>
+          </Link>
         </div>
 
         {/* Inner Circle — right */}
-        <div className="bg-background rounded-2xl shadow-sm flex flex-col justify-between px-6 lg:px-10 py-10 h-[500px] overflow-hidden">
-          <div>
+        <div className="bg-background rounded-2xl shadow-sm flex flex-col justify-between px-4 sm:px-6 lg:px-8 py-8 sm:py-10 h-[500px] overflow-hidden">
+          <div className="shrink-0">
             <motion.div {...slideRight()}>
-              <p className="label-text mb-4 tracking-[0.3em]">The Inner Circle</p>
-              <h3 className="font-display text-3xl sm:text-4xl text-foreground leading-[1.1] mb-2">Your party</h3>
-              <p className="font-editorial text-sm text-muted-foreground mb-8">The crew that makes the magic happen ✨</p>
+              <p className="label-text mb-3 tracking-[0.3em]">The Inner Circle</p>
+              <h3 className="font-display text-2xl sm:text-3xl text-foreground leading-[1.1] mb-1">Your party</h3>
+              <p className="font-editorial text-sm text-muted-foreground mb-6">The crew that makes the magic happen ✨</p>
             </motion.div>
           </div>
 
-          <motion.div {...slideRight(0.15)} className="space-y-4 flex-1 overflow-y-auto">
+          <motion.div {...slideRight(0.15)} className="space-y-2 flex-1 overflow-y-auto min-h-0">
             {partyMembers.map((m, i) => (
               <motion.div
                 key={m.name}
@@ -351,46 +350,46 @@ const Index = ({
                 whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.8, delay: 0.2 + i * 0.1, ease }}
-                className="flex items-center gap-4 group cursor-pointer rounded-xl p-3 -mx-3 hover:bg-[hsl(var(--warm))] transition-colors duration-300"
+                className="flex items-center gap-3 group cursor-pointer rounded-xl p-2.5 -mx-2.5 hover:bg-[hsl(var(--warm))] transition-colors duration-300"
               >
                 <motion.div
                   whileHover={{ scale: 1.1, rotate: 8 }}
                   transition={{ type: "spring", stiffness: 300, damping: 20 }}
-                  className="w-11 h-11 rounded-full bg-gradient-to-br from-[hsl(var(--gold))] to-[hsl(var(--gold-dark))] flex items-center justify-center shrink-0 shadow-md"
+                  className="w-10 h-10 rounded-full bg-gradient-to-br from-[hsl(var(--gold))] to-[hsl(var(--gold-dark))] flex items-center justify-center shrink-0 shadow-md"
                 >
                   <span className="font-display text-sm text-white">{m.initial}</span>
                 </motion.div>
-                <div className="flex-1 min-w-0">
-                  <p className="font-display text-base text-foreground group-hover:text-[hsl(var(--gold-dark))] transition-colors duration-500">{m.name}</p>
-                  <p className="label-text mt-0.5 text-[0.6rem]">{m.role}</p>
+                <div className="flex-1 min-w-0 overflow-hidden">
+                  <p className="font-display text-sm sm:text-base text-foreground group-hover:text-[hsl(var(--gold-dark))] transition-colors duration-500 truncate">{m.name}</p>
+                  <p className="label-text mt-0.5 text-[0.55rem] truncate">{m.role}</p>
                 </div>
                 <div className="text-right shrink-0">
                   <p className="font-display text-sm text-foreground">{m.adventureCount}</p>
-                  <p className="label-text text-[0.55rem]">trips</p>
+                  <p className="label-text text-[0.5rem]">trips</p>
                 </div>
               </motion.div>
             ))}
           </motion.div>
 
-          <motion.div {...slideRight(0.3)} className="mt-4 pt-5 border-t border-border">
+          <motion.div {...slideRight(0.3)} className="mt-3 pt-4 border-t border-border shrink-0">
             <Link to="/circle">
-              <span className="link-editorial font-editorial text-sm text-foreground">Manage your travelers →</span>
+              <span className="link-editorial font-editorial text-sm text-foreground">Manage travelers →</span>
             </Link>
           </motion.div>
         </div>
       </section>
 
       {/* ═══ MEMORIES — Masonry gallery ═══ */}
-      <section className="bg-[hsl(var(--warm))] py-24 lg:py-32">
-        <div className="max-w-6xl mx-auto px-8">
-          <motion.div {...fade()} className="mb-16">
-            <p className="label-text mb-8">Memories</p>
-            <h2 className="font-display text-4xl sm:text-5xl text-foreground leading-[1.1]">
+      <section className="bg-[hsl(var(--warm))] py-16 sm:py-24 lg:py-32">
+        <div className="max-w-6xl mx-auto px-4 sm:px-8">
+          <motion.div {...fade()} className="mb-10 sm:mb-16">
+            <p className="label-text mb-6 sm:mb-8">Memories</p>
+            <h2 className="font-display text-3xl sm:text-4xl lg:text-5xl text-foreground leading-[1.1]">
               Moments worth keeping. ✦
             </h2>
           </motion.div>
 
-          <div className="grid grid-cols-6 gap-3 auto-rows-[200px] sm:auto-rows-[280px]">
+          <div className="grid grid-cols-1 sm:grid-cols-6 gap-3 auto-rows-[220px] sm:auto-rows-[280px]">
             {tripMemories.map((memory, i) => (
               <Link key={memory.tripId} to={`/memories/${memory.tripId}`} className={`${memory.gridSpan} group cursor-pointer relative overflow-hidden rounded-2xl block`}>
                 <motion.div {...scaleIn(i * 0.08)} className="w-full h-full">
@@ -399,7 +398,7 @@ const Index = ({
                     alt={memory.tripName}
                     className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-end p-5">
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-end p-4 sm:p-5">
                     <div>
                       <p className="label-text !text-white/50 mb-1">{memory.date}</p>
                       <p className="font-display text-lg text-white">{memory.tripName}</p>
@@ -411,7 +410,7 @@ const Index = ({
             ))}
           </div>
 
-          <motion.div {...fade(0.3)} className="mt-12 text-center">
+          <motion.div {...fade(0.3)} className="mt-10 sm:mt-12 text-center">
             <Link to="/memories">
               <span className="link-editorial font-editorial text-sm text-muted-foreground hover:text-foreground">View all memories →</span>
             </Link>

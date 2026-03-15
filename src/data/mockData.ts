@@ -2,15 +2,17 @@ import castleHero from "@/assets/castle-hero.jpg";
 import castleGolden from "@/assets/castle-golden.jpg";
 import fireworksNight from "@/assets/fireworks-night.jpg";
 import familyMainstreet from "@/assets/family-mainstreet.jpg";
-import editorialDining from "@/assets/editorial-dining.jpg";
-import editorialCarousel from "@/assets/editorial-carousel.jpg";
 import editorialNextTrip from "@/assets/editorial-next-trip.jpg";
 import editorialResort from "@/assets/editorial-resort-twilight.jpg";
-import editorialPacking from "@/assets/editorial-packing.jpg";
-import editorialCalendar from "@/assets/editorial-calendar.jpg";
 import editorialSunset from "@/assets/editorial-sunset.jpg";
 import editorialFamilyWalk from "@/assets/editorial-family-walk.jpg";
 import editorialJournal from "@/assets/editorial-travel-journal.jpg";
+import parkHollywoodStudios from "@/assets/park-hollywood-studios.jpg";
+import parkEpcot from "@/assets/park-epcot.jpg";
+import parkAnimalKingdom from "@/assets/park-animal-kingdom.jpg";
+import parkDisneyland from "@/assets/park-disneyland.jpg";
+import parkCaliforniaAdventure from "@/assets/park-california-adventure.jpg";
+import editorialCarousel from "@/assets/editorial-carousel.jpg";
 import type { AppData } from "./types";
 
 export const mockData: AppData = {
@@ -115,7 +117,7 @@ export const mockData: AppData = {
         { label: "Shows", description: "Harmonious, cultural performances, and more", itemCount: 8 },
         { label: "Festivals", description: "Flower & Garden, Food & Wine, Arts, Holidays", itemCount: 4 },
       ],
-      heroImage: editorialDining,
+      heroImage: parkEpcot,
       todayWeather: "80°F, Partly Cloudy",
       todayCrowdLevel: "Low",
       operatingHours: "9:00 AM – 9:00 PM",
@@ -133,7 +135,7 @@ export const mockData: AppData = {
         { label: "Shows", description: "Fantasmic!, Indiana Jones stunt show, Disney Junior", itemCount: 8 },
         { label: "Seasonal Events", description: "Jollywood Nights and special screenings", itemCount: 3 },
       ],
-      heroImage: editorialSunset,
+      heroImage: parkHollywoodStudios,
       todayWeather: "79°F, Partly Cloudy",
       todayCrowdLevel: "High",
       operatingHours: "8:30 AM – 9:00 PM",
@@ -151,7 +153,7 @@ export const mockData: AppData = {
         { label: "Shows", description: "Festival of the Lion King, Finding Nemo musical", itemCount: 6 },
         { label: "Wildlife", description: "Kilimanjaro Safaris, Gorilla Falls, Maharajah Jungle Trek", itemCount: 5 },
       ],
-      heroImage: editorialFamilyWalk,
+      heroImage: parkAnimalKingdom,
       todayWeather: "81°F, Scattered Clouds",
       todayCrowdLevel: "Moderate",
       operatingHours: "8:00 AM – 8:00 PM",
@@ -169,7 +171,7 @@ export const mockData: AppData = {
         { label: "Shows", description: "Fantasmic!, fireworks, and parades", itemCount: 10 },
         { label: "Seasonal Events", description: "Oogie Boogie Bash, holiday overlays", itemCount: 3 },
       ],
-      heroImage: editorialCalendar,
+      heroImage: parkDisneyland,
       todayWeather: "72°F, Sunny",
       todayCrowdLevel: "Low",
       operatingHours: "8:00 AM – 12:00 AM",
@@ -187,7 +189,7 @@ export const mockData: AppData = {
         { label: "Shows", description: "World of Color, Avengers encounters", itemCount: 7 },
         { label: "Festivals", description: "Food & Wine, Festival of Holidays, Lunar New Year", itemCount: 3 },
       ],
-      heroImage: editorialResort,
+      heroImage: parkCaliforniaAdventure,
       todayWeather: "70°F, Clear",
       todayCrowdLevel: "Low",
       operatingHours: "8:00 AM – 10:00 PM",

@@ -333,16 +333,16 @@ const Index = ({
         </div>
 
         {/* Inner Circle — right */}
-        <div className="bg-background rounded-2xl shadow-sm flex flex-col justify-between px-6 lg:px-10 py-10 h-[500px] overflow-hidden">
-          <div>
+        <div className="bg-background rounded-2xl shadow-sm flex flex-col justify-between px-4 sm:px-6 lg:px-8 py-8 sm:py-10 h-[500px] overflow-hidden">
+          <div className="shrink-0">
             <motion.div {...slideRight()}>
-              <p className="label-text mb-4 tracking-[0.3em]">The Inner Circle</p>
-              <h3 className="font-display text-3xl sm:text-4xl text-foreground leading-[1.1] mb-2">Your party</h3>
-              <p className="font-editorial text-sm text-muted-foreground mb-8">The crew that makes the magic happen ✨</p>
+              <p className="label-text mb-3 tracking-[0.3em]">The Inner Circle</p>
+              <h3 className="font-display text-2xl sm:text-3xl text-foreground leading-[1.1] mb-1">Your party</h3>
+              <p className="font-editorial text-sm text-muted-foreground mb-6">The crew that makes the magic happen ✨</p>
             </motion.div>
           </div>
 
-          <motion.div {...slideRight(0.15)} className="space-y-4 flex-1 overflow-y-auto">
+          <motion.div {...slideRight(0.15)} className="space-y-2 flex-1 overflow-y-auto min-h-0">
             {partyMembers.map((m, i) => (
               <motion.div
                 key={m.name}
@@ -350,30 +350,30 @@ const Index = ({
                 whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.8, delay: 0.2 + i * 0.1, ease }}
-                className="flex items-center gap-4 group cursor-pointer rounded-xl p-3 -mx-3 hover:bg-[hsl(var(--warm))] transition-colors duration-300"
+                className="flex items-center gap-3 group cursor-pointer rounded-xl p-2.5 -mx-2.5 hover:bg-[hsl(var(--warm))] transition-colors duration-300"
               >
                 <motion.div
                   whileHover={{ scale: 1.1, rotate: 8 }}
                   transition={{ type: "spring", stiffness: 300, damping: 20 }}
-                  className="w-11 h-11 rounded-full bg-gradient-to-br from-[hsl(var(--gold))] to-[hsl(var(--gold-dark))] flex items-center justify-center shrink-0 shadow-md"
+                  className="w-10 h-10 rounded-full bg-gradient-to-br from-[hsl(var(--gold))] to-[hsl(var(--gold-dark))] flex items-center justify-center shrink-0 shadow-md"
                 >
                   <span className="font-display text-sm text-white">{m.initial}</span>
                 </motion.div>
-                <div className="flex-1 min-w-0">
-                  <p className="font-display text-base text-foreground group-hover:text-[hsl(var(--gold-dark))] transition-colors duration-500">{m.name}</p>
-                  <p className="label-text mt-0.5 text-[0.6rem]">{m.role}</p>
+                <div className="flex-1 min-w-0 overflow-hidden">
+                  <p className="font-display text-sm sm:text-base text-foreground group-hover:text-[hsl(var(--gold-dark))] transition-colors duration-500 truncate">{m.name}</p>
+                  <p className="label-text mt-0.5 text-[0.55rem] truncate">{m.role}</p>
                 </div>
                 <div className="text-right shrink-0">
                   <p className="font-display text-sm text-foreground">{m.adventureCount}</p>
-                  <p className="label-text text-[0.55rem]">trips</p>
+                  <p className="label-text text-[0.5rem]">trips</p>
                 </div>
               </motion.div>
             ))}
           </motion.div>
 
-          <motion.div {...slideRight(0.3)} className="mt-4 pt-5 border-t border-border">
+          <motion.div {...slideRight(0.3)} className="mt-3 pt-4 border-t border-border shrink-0">
             <Link to="/circle">
-              <span className="link-editorial font-editorial text-sm text-foreground">Manage your travelers →</span>
+              <span className="link-editorial font-editorial text-sm text-foreground">Manage travelers →</span>
             </Link>
           </motion.div>
         </div>

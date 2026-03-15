@@ -139,7 +139,40 @@ const Adventure = ({ bookedTrip }: AdventureProps) => {
         </div>
       </section>
 
+      {/* ═══ Plan a New Adventure CTA ═══ */}
+      <section className="py-20 sm:py-28 text-center" style={{ background: "hsl(30, 33%, 96%)" }}>
+        <motion.div {...fade()}>
+          <p className="uppercase tracking-[0.3em] mb-6" style={{ fontFamily: "Inter, system-ui, sans-serif", fontSize: "0.6875rem", fontWeight: 400, color: "hsl(222, 20%, 45%)" }}>
+            The Voyage Canvas
+          </p>
+          <h2 className="leading-[1.08] mb-4" style={{ fontFamily: "'Playfair Display', Georgia, serif", fontWeight: 400, letterSpacing: "-0.02em", color: "hsl(222, 47%, 21%)", fontSize: "clamp(1.875rem, 5vw, 3rem)" }}>
+            Plan a new adventure.
+          </h2>
+          <div className="w-12 h-px mx-auto mb-6" style={{ background: "hsl(43, 69%, 52%)" }} />
+          <p className="text-sm max-w-md mx-auto mb-10" style={{ fontFamily: "Inter, system-ui, sans-serif", fontWeight: 400, color: "hsl(222, 20%, 45%)" }}>
+            Launch the Strategy Wizard to architect your next perfect park day.
+          </p>
+          <button
+            onClick={() => setWizardOpen(true)}
+            className="inline-flex items-center justify-center px-10 py-4 text-sm tracking-[0.15em] uppercase font-medium transition-all duration-500 hover:opacity-90 focus:outline-none focus:ring-2"
+            style={{
+              fontFamily: "Inter, system-ui, sans-serif",
+              background: "hsl(222, 47%, 21%)",
+              color: "hsl(30, 33%, 96%)",
+              border: "1px solid hsl(43, 65%, 42%)",
+              boxShadow: "0 8px 32px -4px hsla(222, 47%, 21%, 0.25)",
+              // @ts-ignore
+              "--tw-ring-color": "hsl(280, 30%, 55%)",
+            } as React.CSSProperties}
+          >
+            Initialize Your Journey
+          </button>
+        </motion.div>
+      </section>
+
       <Footer />
+
+      <TripWizard open={wizardOpen} onClose={() => setWizardOpen(false)} />
     </div>
   );
 };

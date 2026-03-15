@@ -138,7 +138,7 @@ const Index = () => {
           subtitle="Architecture of ambition, projected and measured."
         />
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-16">
           <AnimatedCard delay={0.1}>
             <ExperienceCard title="The Intelligent Blueprint" icon={<Blueprint />}>
               <div className="space-y-4">

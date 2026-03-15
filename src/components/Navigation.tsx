@@ -2,7 +2,7 @@ import { motion, useScroll, useTransform } from "framer-motion";
 import { Link, useLocation } from "react-router-dom";
 
 const navItems = [
-  { label: "Your Trip", path: "/adventure" },
+  { label: "Plan Your Trip", path: "/adventure" },
   { label: "Park Guides", path: "/parks/mk" },
   { label: "Memories", path: "/memories" },
   { label: "The Circle", path: "/circle" },

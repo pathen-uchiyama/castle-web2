@@ -1,11 +1,13 @@
 import { motion } from "framer-motion";
-import { useState } from "react";
+import { useState, useMemo } from "react";
+import { Link } from "react-router-dom";
 import Footer from "@/components/Footer";
 import fireworksNight from "@/assets/fireworks-night.jpg";
 import editorialPacking from "@/assets/editorial-packing.jpg";
 import SparkleField from "@/components/SparkleField";
 import TripWizard from "@/components/TripWizard";
 import type { BookedTrip } from "@/data/types";
+import { mockData } from "@/data/mockData";
 
 const ease: [number, number, number, number] = [0.19, 1, 0.22, 1];
 const fade = (delay = 0) => ({
@@ -28,6 +30,33 @@ interface AdventureProps {
 const Adventure = ({ bookedTrip }: AdventureProps) => {
   const [wizardOpen, setWizardOpen] = useState(false);
   const { destination, tripName, countdownDays, todaysPark, timeReclaimed, ridesSaved, travelLegs, preparations, packingLists } = bookedTrip;
+  const { partySurvey } = mockData;
+
+  // Consensus aggregation
+  const consensusData = useMemo(() => {
+    const completed = partySurvey.responses.filter((r) => r.status === "completed");
+    if (completed.length === 0) return [];
+
+    return partySurvey.attractions.map((attraction) => {
+      const votes = { "must-do": 0, "like-to-do": 0, "will-avoid": 0 };
+      let topFiveCount = 0;
+
+      for (const resp of completed) {
+        const rank = resp.rankings[attraction.attractionId];
+        if (rank) votes[rank]++;
+        if (resp.topFiveMustDos.includes(attraction.attractionId)) topFiveCount++;
+      }
+
+      const hasConflict = votes["must-do"] > 0 && votes["will-avoid"] > 0;
+      const isPartyPriority = topFiveCount >= 2;
+
+      return { attraction, votes, hasConflict, isPartyPriority, topFiveCount };
+    }).sort((a, b) => {
+      if (a.isPartyPriority !== b.isPartyPriority) return a.isPartyPriority ? -1 : 1;
+      if (a.hasConflict !== b.hasConflict) return a.hasConflict ? -1 : 1;
+      return b.votes["must-do"] - a.votes["must-do"];
+    });
+  }, [partySurvey]);
 
   return (
     <div className="min-h-screen bg-background pt-16">
@@ -40,6 +69,103 @@ const Adventure = ({ bookedTrip }: AdventureProps) => {
           <motion.h1 {...fade(0.2)} className="font-display text-white text-5xl sm:text-7xl leading-[1.02]">{destination}</motion.h1>
           <motion.p {...fade(0.4)} className="font-editorial text-white/60 text-lg mt-6">{tripName} · {countdownDays} days away</motion.p>
         </div>
+      </section>
+
+      {/* ═══ The Consensus ═══ */}
+      <section className="px-8 lg:px-16 py-20 lg:py-28 bg-[hsl(var(--warm))]">
+        <motion.div {...fade()}>
+          <p className="label-text mb-6">The Consensus</p>
+          <h2 className="font-display text-4xl sm:text-5xl text-foreground leading-[1.08] mb-4">Party Preferences</h2>
+          <p className="font-editorial text-muted-foreground text-lg max-w-2xl mb-12">
+            Your party's combined rankings. Conflicts are highlighted for resolution.
+          </p>
+        </motion.div>
+
+        {/* Member status chips */}
+        <motion.div {...fade(0.1)} className="flex flex-wrap gap-3 mb-12">
+          {partySurvey.responses.map((resp) => (
+            <div key={resp.memberId} className="flex items-center gap-2 border border-border bg-card px-4 py-2">
+              <div className="w-7 h-7 flex items-center justify-center bg-foreground text-background text-xs font-medium">
+                {resp.memberId}
+              </div>
+              <span className="font-display text-sm text-foreground">{resp.memberName}</span>
+              {resp.status === "completed" ? (
+                <>
+                  <span className="label-text !text-[hsl(var(--gold))]">✓ Complete</span>
+                  {resp.openToAnything && <span className="text-xs" title="Open to anything">✨</span>}
+                </>
+              ) : (
+                <Link
+                  to={`/survey/${partySurvey.tripId}/${resp.memberId.toLowerCase()}`}
+                  className="label-text !text-[hsl(var(--gold))] hover:underline"
+                >
+                  Pending · Copy Link
+                </Link>
+              )}
+            </div>
+          ))}
+        </motion.div>
+
+        {/* Party Priorities */}
+        {consensusData.filter((c) => c.isPartyPriority).length > 0 && (
+          <motion.div {...fade(0.15)} className="mb-12">
+            <p className="label-text mb-6">✦ Party Priorities</p>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              {consensusData.filter((c) => c.isPartyPriority).map((c) => (
+                <div key={c.attraction.attractionId} className="border border-[hsl(var(--gold)/0.4)] bg-[hsl(var(--gold)/0.06)] p-5">
+                  <h4 className="font-display text-lg text-foreground mb-1">{c.attraction.name}</h4>
+                  <p className="label-text mb-3">{c.attraction.parkId.toUpperCase()} · {c.topFiveCount} members' Top 5</p>
+                  <div className="flex gap-4">
+                    <span className="text-xs text-muted-foreground">{c.votes["must-do"]} Must-Do</span>
+                    <span className="text-xs text-muted-foreground">{c.votes["like-to-do"]} Like</span>
+                    {c.votes["will-avoid"] > 0 && <span className="text-xs text-destructive">{c.votes["will-avoid"]} Avoid</span>}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </motion.div>
+        )}
+
+        {/* Conflicts */}
+        {consensusData.filter((c) => c.hasConflict && !c.isPartyPriority).length > 0 && (
+          <motion.div {...fade(0.2)} className="mb-12">
+            <p className="label-text mb-6">⚡ Conflicts to Resolve</p>
+            <div className="space-y-3">
+              {consensusData.filter((c) => c.hasConflict && !c.isPartyPriority).map((c) => (
+                <div key={c.attraction.attractionId} className="flex items-center justify-between border border-[hsl(var(--gold)/0.3)] p-4 bg-card">
+                  <div>
+                    <h4 className="font-display text-lg text-foreground">{c.attraction.name}</h4>
+                    <span className="label-text">{c.attraction.parkId.toUpperCase()}</span>
+                  </div>
+                  <div className="flex gap-4 text-xs">
+                    <span className="text-foreground">{c.votes["must-do"]} Must-Do</span>
+                    <span className="text-destructive">{c.votes["will-avoid"]} Avoid</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </motion.div>
+        )}
+
+        {/* All rankings summary */}
+        <motion.div {...fade(0.25)}>
+          <p className="label-text mb-6">All Attractions</p>
+          <div className="space-y-2">
+            {consensusData.filter((c) => !c.isPartyPriority && !c.hasConflict).slice(0, 10).map((c) => (
+              <div key={c.attraction.attractionId} className="flex items-center justify-between py-3 border-b border-border">
+                <div className="flex items-center gap-3">
+                  <span className="font-display text-foreground">{c.attraction.name}</span>
+                  <span className="label-text">{c.attraction.parkId.toUpperCase()}</span>
+                </div>
+                <div className="flex gap-4 text-xs text-muted-foreground">
+                  {c.votes["must-do"] > 0 && <span>{c.votes["must-do"]} Must-Do</span>}
+                  {c.votes["like-to-do"] > 0 && <span>{c.votes["like-to-do"]} Like</span>}
+                  {c.votes["will-avoid"] > 0 && <span className="text-destructive">{c.votes["will-avoid"]} Avoid</span>}
+                </div>
+              </div>
+            ))}
+          </div>
+        </motion.div>
       </section>
 
       {/* Schedule + Time saved */}
@@ -72,7 +198,7 @@ const Adventure = ({ bookedTrip }: AdventureProps) => {
               <div key={s.rideName} className="flex items-start gap-4 group cursor-pointer">
                 <span className="text-lg mt-0.5 opacity-40 group-hover:opacity-100 transition-opacity duration-500">{s.emoji}</span>
                 <div>
-                  <p className="font-display text-lg text-foreground group-hover:text-gold-dark transition-colors duration-500">{s.minutesSaved} saved</p>
+                  <p className="font-display text-lg text-foreground group-hover:text-[hsl(var(--gold-dark))] transition-colors duration-500">{s.minutesSaved} saved</p>
                   <p className="font-editorial text-sm text-muted-foreground mt-1">{s.rideName}</p>
                 </div>
               </div>
@@ -140,30 +266,19 @@ const Adventure = ({ bookedTrip }: AdventureProps) => {
       </section>
 
       {/* ═══ Plan a New Adventure CTA ═══ */}
-      <section className="py-20 sm:py-28 text-center" style={{ background: "hsl(30, 33%, 96%)" }}>
+      <section className="py-20 sm:py-28 text-center bg-[hsl(var(--warm))]">
         <motion.div {...fade()}>
-          <p className="uppercase tracking-[0.3em] mb-6" style={{ fontFamily: "Inter, system-ui, sans-serif", fontSize: "0.6875rem", fontWeight: 400, color: "hsl(222, 20%, 45%)" }}>
-            The Voyage Canvas
-          </p>
-          <h2 className="leading-[1.08] mb-4" style={{ fontFamily: "'Playfair Display', Georgia, serif", fontWeight: 400, letterSpacing: "-0.02em", color: "hsl(222, 47%, 21%)", fontSize: "clamp(1.875rem, 5vw, 3rem)" }}>
+          <p className="label-text mb-6">The Voyage Canvas</p>
+          <h2 className="font-display text-foreground leading-[1.08] mb-4" style={{ fontSize: "clamp(1.875rem, 5vw, 3rem)" }}>
             Plan a new adventure.
           </h2>
-          <div className="w-12 h-px mx-auto mb-6" style={{ background: "hsl(43, 69%, 52%)" }} />
-          <p className="text-sm max-w-md mx-auto mb-10" style={{ fontFamily: "Inter, system-ui, sans-serif", fontWeight: 400, color: "hsl(222, 20%, 45%)" }}>
+          <div className="gold-rule mx-auto mb-6" />
+          <p className="font-editorial text-sm text-muted-foreground max-w-md mx-auto mb-10">
             Launch the Strategy Wizard to architect your next perfect park day.
           </p>
           <button
             onClick={() => setWizardOpen(true)}
-            className="inline-flex items-center justify-center px-10 py-4 text-sm tracking-[0.15em] uppercase font-medium transition-all duration-500 hover:opacity-90 focus:outline-none focus:ring-2"
-            style={{
-              fontFamily: "Inter, system-ui, sans-serif",
-              background: "hsl(222, 47%, 21%)",
-              color: "hsl(30, 33%, 96%)",
-              border: "1px solid hsl(43, 65%, 42%)",
-              boxShadow: "0 8px 32px -4px hsla(222, 47%, 21%, 0.25)",
-              // @ts-ignore
-              "--tw-ring-color": "hsl(280, 30%, 55%)",
-            } as React.CSSProperties}
+            className="inline-flex items-center justify-center px-10 py-4 text-sm tracking-[0.15em] uppercase font-medium bg-foreground text-background border border-[hsl(var(--gold-dark))] transition-all duration-500 hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-ring"
           >
             Initialize Your Journey
           </button>

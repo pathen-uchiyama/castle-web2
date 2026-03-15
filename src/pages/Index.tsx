@@ -4,7 +4,6 @@ import { Link } from "react-router-dom";
 import FloatingAnchor from "@/components/FloatingAnchor";
 import SparkleField from "@/components/SparkleField";
 import EmberTrail from "@/components/EmberTrail";
-import HeroFlags from "@/components/HeroFlags";
 import castleHero from "@/assets/castle-hero.jpg";
 import editorialJournal from "@/assets/editorial-travel-journal.jpg";
 import editorialFamilyWalk from "@/assets/editorial-family-walk.jpg";
@@ -76,7 +75,6 @@ const Index = ({
           <img src={castleHero} alt="Castle at dusk" className="w-full h-full object-cover" />
         </motion.div>
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-black/10" />
-        <HeroFlags />
         <EmberTrail />
         <SparkleField count={15} />
       </div>

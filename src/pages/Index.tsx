@@ -254,7 +254,7 @@ const Index = ({
                 className="flex-shrink-0 w-[300px] sm:w-[340px] group"
               >
                 <Link to={`/parks/${park.parkId}`}>
-                  <div className="relative h-[420px] overflow-hidden">
+                  <div className="relative h-[420px] overflow-hidden rounded-2xl">
                     <img
                       src={park.heroImage}
                       alt={park.parkName}

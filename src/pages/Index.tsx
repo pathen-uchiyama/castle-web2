@@ -320,8 +320,8 @@ const Index = ({
             ))}
           </div>
         </div>
-        <div className="flex justify-center gap-2.5 mt-8">
-          {parkGuides.map((_, i) => (
+        <div className="flex items-center justify-center gap-2.5 mt-8 w-full">
+          {parkGuides.slice(0, 6).map((_, i) => (
             <button
               key={i}
               onClick={() => {

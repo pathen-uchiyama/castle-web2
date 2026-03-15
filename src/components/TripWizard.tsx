@@ -54,6 +54,9 @@ interface WizardData {
   charactersPref: string;
   showsPref: string;
   paradesPref: string;
+  // Page 1 — Logistics
+  willingRopeDrop: boolean;
+  accommodationType: string | null;
   // Page 3 — Park Services
   needsDAS: boolean;
   willUseSingleRider: boolean;

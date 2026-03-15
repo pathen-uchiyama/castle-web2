@@ -410,7 +410,7 @@ const Index = ({
         </div>
 
         {/* Inner Circle — right */}
-        <div className="bg-[hsl(var(--ink))] rounded-2xl shadow-sm flex flex-col px-4 sm:px-6 lg:px-8 py-7 sm:py-8 h-auto md:h-[500px] overflow-hidden">
+        <div className="bg-[hsl(var(--ink))] shadow-soft hover:shadow-soft-hover transition-shadow duration-500 flex flex-col px-4 sm:px-6 lg:px-8 py-7 sm:py-8 h-auto md:h-[500px] overflow-hidden">
           <div className="shrink-0">
             <motion.div {...slideRight()}>
               <p className="label-text !text-white/40 mb-2 tracking-[0.3em]">The Inner Circle</p>

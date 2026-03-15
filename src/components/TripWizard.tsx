@@ -1,7 +1,7 @@
 import { motion, AnimatePresence } from "framer-motion";
-import { useState, useCallback } from "react";
+import { useState, useCallback, useMemo } from "react";
 import { X, ChevronRight, ChevronLeft, Plus, Trash2, CalendarIcon } from "lucide-react";
-import { format } from "date-fns";
+import { format, eachDayOfInterval, addDays } from "date-fns";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
@@ -36,6 +36,11 @@ interface PartyMember {
   firstTimer: boolean;
 }
 
+interface ParkDayAssignment {
+  date: string; // ISO date string
+  parkId: string | null;
+}
+
 interface WizardData {
   // Page 1 — Foundation
   adventureTitle: string;
@@ -43,30 +48,27 @@ interface WizardData {
   startDate: Date | undefined;
   endDate: Date | undefined;
   leadAdventurer: string;
-  nappingStrategy: string | null;
-  familyStamina: number;
-  dailyAmbition: string | null;
+  accommodationType: string | null;
   // Page 2 — Troupe
   partyMembers: PartyMember[];
-  // Page 3 — Strategic Intent
-  adventurePersona: string | null;
-  ridesPref: string;
-  charactersPref: string;
-  showsPref: string;
-  paradesPref: string;
-  // Page 1 — Logistics
-  willingRopeDrop: boolean;
-  accommodationType: string | null;
-  // Page 3 — Park Services
+  // Page 3 — Pace & Style
+  tripPacing: string | null;
+  arrivalIntent: string | null;
+  midDayBreak: string | null;
+  primaryFocus: string[];
+  // Page 4 — Park Schedule
+  parkSchedule: ParkDayAssignment[];
+  // Page 5 — Services & Budget
   needsDAS: boolean;
   willUseSingleRider: boolean;
-  willPurchaseLL: boolean;
-  willPurchaseILL: boolean;
-  willUseChildExchange: boolean;
-  // Page 4 — Foodie
+  willPurchaseLLMulti: boolean;
+  willPurchaseLLSingle: boolean;
+  diningReservationScouting: boolean;
+  splurgeAppetite: string | null;
+  premiumInterests: string[];
+  // Page 6 — Foodie
   allergies: string[];
   diningStyle: string | null;
-  snackHabits: string | null;
 }
 
 interface TripWizardProps {
@@ -76,34 +78,13 @@ interface TripWizardProps {
 
 /* ─── Step Definitions ─── */
 const steps = [
-  { title: "The Foundation", subtitle: "Set the stage for your adventure — destination, dates, and pace." },
+  { title: "The Foundation", subtitle: "Destination, dates, and where you're staying." },
   { title: "The Traveling Troupe", subtitle: "Introduce every member of your expedition." },
-  { title: "Strategic Intent", subtitle: "Personalize the experience for your party." },
+  { title: "Pace & Style", subtitle: "How you move through the parks — tempo, arrival, and focus." },
+  { title: "The Park Schedule", subtitle: "Assign a park to each day of your trip." },
+  { title: "Services & Budget", subtitle: "Park services, spending style, and premium add-ons." },
   { title: "The Foodie Profile", subtitle: "Dining preferences and dietary needs." },
 ];
-
-const nappingOptions = [
-  { id: "power-through", label: "Power Through", desc: "Optimize for continuous presence." },
-  { id: "hotel-nap", label: "Hotel Nap", desc: "Block ~2.5 hrs for travel and rest mid-day." },
-  { id: "quiet-corner", label: "Quiet Corner", desc: "Locate in-park decompression zones." },
-];
-
-const ambitionOptions = [
-  { id: "maximum-rides", label: "Maximum Rides", desc: "Efficiency-focused. Every minute counts." },
-  { id: "relaxed-vibe", label: "Relaxed Vibe", desc: "Atmosphere-focused. Soak it all in." },
-];
-
-const personaOptions = [
-  { id: "completionist", label: "The Completionist", desc: "Fast-paced, every ride and show." },
-  { id: "romantic-wanderer", label: "The Romantic Wanderer", desc: "Casual pacing, atmosphere and dining." },
-  { id: "refined-strategist", label: "The Refined Strategist", desc: "High-value Lightning Lanes and efficiency." },
-];
-
-const prefLevels = ["Must-Do", "Like-to-Do", "Will Avoid"];
-
-const relationshipOptions = ["Self", "Spouse", "Child", "Parent", "Friend", "Relative"];
-const magicStatusOptions = ["Regular", "AP (Annual Pass)", "DVC (Disney Vacation Club)"];
-const allergyOptions = ["Gluten-Free", "Dairy-Free", "Nut Allergy", "Shellfish", "Vegan", "Vegetarian", "None"];
 
 const destinations = [
   { id: "wdw", label: "Walt Disney World", desc: "Four parks, endless strategy." },
@@ -111,12 +92,70 @@ const destinations = [
 ];
 
 const accommodationOptions = [
-  { id: "on-property", label: "On-Property (Disney Resort)", desc: "Early Entry (30 min before opening for all guests). Extended Evening Hours on select nights (Deluxe resorts only).", benefit: "✨ Best access perks" },
-  { id: "partner-hotel", label: "Partner Hotel with Benefits", desc: "Some partner hotels (e.g. Swan & Dolphin, Disney Springs area) offer Early Entry but not Extended Evening Hours.", benefit: "🏨 Partial early access" },
-  { id: "off-property", label: "Off-Property (No Extra Access)", desc: "Standard park hours only — no early morning or extended evening benefits.", benefit: "🗓 Standard hours" },
+  { id: "on-property", label: "On-Property (Disney Resort)", desc: "Early Entry + Extended Evening Hours (Deluxe).", benefit: "✨ Best access" },
+  { id: "partner-hotel", label: "Partner Hotel", desc: "Some Early Entry benefits, no Extended Evening.", benefit: "🏨 Partial access" },
+  { id: "off-property", label: "Off-Property", desc: "Standard park hours only.", benefit: "🗓 Standard hours" },
 ];
 
-/* ─── Reusable UI pieces ─── */
+const pacingOptions = [
+  { id: "intense", label: "Intense", desc: "Maximize every minute. Go-go-go pace from open to close." },
+  { id: "moderate", label: "Moderate", desc: "Steady pace with breathing room and lunch breaks." },
+  { id: "relaxed", label: "Relaxed", desc: "Take it easy. Soak in the atmosphere and move gently." },
+];
+
+const arrivalOptions = [
+  { id: "rope-drop", label: "Rope Drop", desc: "Arrive 45 mins before open. First to ride!" },
+  { id: "leisurely", label: "Leisurely", desc: "Sleep in, grab coffee, arrive 10:00 AM+." },
+  { id: "evening", label: "Evening", desc: "Arrive around 4:00 PM for dinner & fireworks." },
+];
+
+const midDayOptions = [
+  { id: "power-through", label: "Power Through", desc: "No scheduled breaks." },
+  { id: "hotel-break", label: "Hotel Break", desc: "Nap or recharge at resort." },
+  { id: "pool-cooldown", label: "Pool / Cool-Down", desc: "Afternoon swim & relax." },
+];
+
+const focusOptions = [
+  { id: "thrill-seekers", label: "Thrill Seekers", desc: "Coasters & Big Drops" },
+  { id: "toddler-friendly", label: "Toddler Friendly", desc: "Gentle & Height-Free" },
+  { id: "classic-magic", label: "Classic Magic", desc: "Nostalgic Dark Rides" },
+  { id: "shows-chars", label: "Shows & Characters", desc: "Parades & Greets" },
+];
+
+const diningStyleOptions = [
+  { id: "snacks-only", label: "Snacks Only", desc: "Graze on the go." },
+  { id: "quick-service", label: "Quick Service", desc: "Counter service, eat & move." },
+  { id: "table-service", label: "Table Service", desc: "Sit-down, part of the experience." },
+  { id: "signature", label: "Signature", desc: "Premium dining destinations." },
+];
+
+const splurgeOptions = [
+  { id: "value", label: "Value First", desc: "Budget-friendly goals." },
+  { id: "moderate", label: "Moderate", desc: "Mix of value & treat." },
+  { id: "luxury", label: "Luxury / VIP", desc: "Premium experiences." },
+];
+
+const premiumOptions = [
+  "Droid Building", "Lightsabers", "Royal Makeovers", "Dessert Parties", "VIP Tours", "Dining Events",
+];
+
+const wdwParks = [
+  { id: "mk", label: "Magic Kingdom" },
+  { id: "epcot", label: "EPCOT" },
+  { id: "hs", label: "Hollywood Studios" },
+  { id: "ak", label: "Animal Kingdom" },
+];
+
+const dlrParks = [
+  { id: "dl", label: "Disneyland Park" },
+  { id: "dca", label: "California Adventure" },
+];
+
+const relationshipOptions = ["Self", "Spouse", "Child", "Parent", "Friend", "Relative"];
+const magicStatusOptions = ["Regular", "AP (Annual Pass)", "DVC (Disney Vacation Club)"];
+const allergyOptions = ["Gluten-Free", "Dairy-Free", "Nut Allergy", "Shellfish", "Vegan", "Vegetarian", "None"];
+
+/* ─── Reusable UI ─── */
 const Label = ({ children }: { children: React.ReactNode }) => (
   <p style={{ fontFamily: brand.font.body, fontSize: "0.6875rem", fontWeight: 400, color: brand.slate, textTransform: "uppercase", letterSpacing: "0.2em" }} className="mb-2">
     {children}
@@ -126,24 +165,14 @@ const Label = ({ children }: { children: React.ReactNode }) => (
 const GoldRule = () => <div className="w-12 h-px mx-auto mb-4" style={{ background: brand.gold }} />;
 
 const inputStyle: React.CSSProperties = {
-  fontFamily: brand.font.body,
-  fontSize: "0.875rem",
-  background: brand.white,
-  border: `1px solid ${brand.border}`,
-  color: brand.lapis,
-  width: "100%",
-  padding: "0.75rem 1.25rem",
-  outline: "none",
-  transition: "border-color 0.3s",
+  fontFamily: brand.font.body, fontSize: "0.875rem", background: brand.white,
+  border: `1px solid ${brand.border}`, color: brand.lapis, width: "100%",
+  padding: "0.75rem 1.25rem", outline: "none", transition: "border-color 0.3s",
 };
 
 const focusHandlers = {
-  onFocus: (e: React.FocusEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
-    e.target.style.borderColor = brand.gold;
-  },
-  onBlur: (e: React.FocusEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
-    e.target.style.borderColor = brand.border;
-  },
+  onFocus: (e: React.FocusEvent<HTMLInputElement | HTMLSelectElement>) => { e.target.style.borderColor = brand.gold; },
+  onBlur: (e: React.FocusEvent<HTMLInputElement | HTMLSelectElement>) => { e.target.style.borderColor = brand.border; },
 };
 
 const SelectCard = ({ selected, onClick, label, desc }: { selected: boolean; onClick: () => void; label: string; desc: string }) => (
@@ -162,6 +191,28 @@ const SelectCard = ({ selected, onClick, label, desc }: { selected: boolean; onC
   </button>
 );
 
+const ToggleCard = ({ active, onClick, label, desc, cost }: { active: boolean; onClick: () => void; label: string; desc: string; cost?: string }) => (
+  <button onClick={onClick} className="w-full text-left p-5 transition-all duration-500" style={{
+    background: active ? brand.white : "transparent",
+    border: `1px solid ${active ? brand.gold : brand.border}`,
+    boxShadow: active ? brand.shadow : "none",
+  }}>
+    <div className="flex items-start gap-3">
+      <div className="w-5 h-5 mt-0.5 shrink-0 flex items-center justify-center transition-all" style={{
+        border: `1px solid ${active ? brand.gold : brand.border}`,
+        background: active ? brand.gold : "transparent",
+      }}>
+        {active && <span style={{ color: brand.white, fontSize: "0.7rem", lineHeight: 1 }}>✓</span>}
+      </div>
+      <div>
+        <p style={{ fontFamily: brand.font.display, fontWeight: 500, color: brand.lapis, fontSize: "0.9375rem", marginBottom: "0.25rem" }}>{label}</p>
+        <p style={{ fontFamily: brand.font.body, color: brand.slate, fontSize: "0.75rem", lineHeight: "1.5" }}>{desc}</p>
+        {cost && <p className="mt-1.5" style={{ fontFamily: brand.font.body, fontSize: "0.6875rem", color: brand.goldDark, fontWeight: 500 }}>💰 {cost}</p>}
+      </div>
+    </div>
+  </button>
+);
+
 /* ─── Main Component ─── */
 const TripWizard = ({ open, onClose }: TripWizardProps) => {
   const [currentStep, setCurrentStep] = useState(0);
@@ -171,25 +222,22 @@ const TripWizard = ({ open, onClose }: TripWizardProps) => {
     startDate: undefined,
     endDate: undefined,
     leadAdventurer: "",
-    nappingStrategy: null,
-    willingRopeDrop: false,
     accommodationType: null,
-    familyStamina: 5,
-    dailyAmbition: null,
     partyMembers: [],
-    adventurePersona: null,
-    ridesPref: "Must-Do",
-    charactersPref: "Like-to-Do",
-    showsPref: "Like-to-Do",
-    paradesPref: "Will Avoid",
+    tripPacing: null,
+    arrivalIntent: null,
+    midDayBreak: null,
+    primaryFocus: [],
+    parkSchedule: [],
     needsDAS: false,
     willUseSingleRider: false,
-    willPurchaseLL: false,
-    willPurchaseILL: false,
-    willUseChildExchange: false,
+    willPurchaseLLMulti: false,
+    willPurchaseLLSingle: false,
+    diningReservationScouting: false,
+    splurgeAppetite: null,
+    premiumInterests: [],
     allergies: [],
     diningStyle: null,
-    snackHabits: null,
   });
 
   const set = useCallback(<K extends keyof WizardData>(key: K, value: WizardData[K]) => {
@@ -200,40 +248,41 @@ const TripWizard = ({ open, onClose }: TripWizardProps) => {
   const isLast = currentStep === steps.length - 1;
   const isFirst = currentStep === 0;
 
-  const canProceed = () => {
-    switch (currentStep) {
-      case 0: return !!data.resort && !!data.adventureTitle.trim() && !!data.startDate && !!data.leadAdventurer.trim();
-      case 1: return data.partyMembers.length > 0 && data.partyMembers.every((m) => m.name.trim());
-      case 2: return !!data.adventurePersona;
-      case 3: return true;
-      default: return true;
-    }
+  const parks = data.resort === "dlr" ? dlrParks : wdwParks;
+
+  // Generate trip days when dates change
+  const tripDays = useMemo(() => {
+    if (!data.startDate || !data.endDate) return [];
+    try {
+      return eachDayOfInterval({ start: data.startDate, end: data.endDate });
+    } catch { return []; }
+  }, [data.startDate, data.endDate]);
+
+  // Sync park schedule when dates change
+  const syncSchedule = useCallback(() => {
+    if (tripDays.length === 0) return;
+    const existing = new Map(data.parkSchedule.map((ps) => [ps.date, ps.parkId]));
+    const newSchedule = tripDays.map((d) => {
+      const iso = format(d, "yyyy-MM-dd");
+      return { date: iso, parkId: existing.get(iso) ?? null };
+    });
+    set("parkSchedule", newSchedule);
+  }, [tripDays, data.parkSchedule, set]);
+
+  const setParkForDay = (date: string, parkId: string | null) => {
+    set("parkSchedule", data.parkSchedule.map((ps) => ps.date === date ? { ...ps, parkId } : ps));
   };
 
-  const handleNext = () => {
-    if (isLast) { onClose(); return; }
-    setCurrentStep((s) => s + 1);
-  };
-  const handleBack = () => { if (!isFirst) setCurrentStep((s) => s - 1); };
-
-  const addMember = () => {
-    set("partyMembers", [...data.partyMembers, {
-      id: crypto.randomUUID(),
-      name: "",
-      age: "",
-      heightInches: "",
-      relationship: "Self",
-      magicStatuses: ["Regular"],
-      firstTimer: false,
-    }]);
+  const toggleFocus = (id: string) => {
+    set("primaryFocus", data.primaryFocus.includes(id)
+      ? data.primaryFocus.filter((f) => f !== id)
+      : [...data.primaryFocus, id]);
   };
 
-  const updateMember = (id: string, field: keyof PartyMember, value: string | boolean) => {
-    set("partyMembers", data.partyMembers.map((m) => m.id === id ? { ...m, [field]: value } : m));
-  };
-
-  const removeMember = (id: string) => {
-    set("partyMembers", data.partyMembers.filter((m) => m.id !== id));
+  const togglePremium = (item: string) => {
+    set("premiumInterests", data.premiumInterests.includes(item)
+      ? data.premiumInterests.filter((p) => p !== item)
+      : [...data.premiumInterests, item]);
   };
 
   const toggleAllergy = (a: string) => {
@@ -243,6 +292,41 @@ const TripWizard = ({ open, onClose }: TripWizardProps) => {
       const without = data.allergies.filter((x) => x !== "None");
       set("allergies", without.includes(a) ? without.filter((x) => x !== a) : [...without, a]);
     }
+  };
+
+  const canProceed = () => {
+    switch (currentStep) {
+      case 0: return !!data.resort && !!data.adventureTitle.trim() && !!data.startDate && !!data.leadAdventurer.trim();
+      case 1: return data.partyMembers.length > 0 && data.partyMembers.every((m) => m.name.trim());
+      case 2: return !!data.tripPacing && !!data.arrivalIntent;
+      case 3: return data.parkSchedule.length > 0;
+      case 4: return true;
+      case 5: return true;
+      default: return true;
+    }
+  };
+
+  const handleNext = () => {
+    // When moving to park schedule page, sync the schedule
+    if (currentStep === 2) syncSchedule();
+    if (isLast) { onClose(); return; }
+    setCurrentStep((s) => s + 1);
+  };
+  const handleBack = () => { if (!isFirst) setCurrentStep((s) => s - 1); };
+
+  const addMember = () => {
+    set("partyMembers", [...data.partyMembers, {
+      id: crypto.randomUUID(), name: "", age: "", heightInches: "",
+      relationship: "Self", magicStatuses: ["Regular"], firstTimer: false,
+    }]);
+  };
+
+  const updateMember = (id: string, field: keyof PartyMember, value: string | boolean) => {
+    set("partyMembers", data.partyMembers.map((m) => m.id === id ? { ...m, [field]: value } : m));
+  };
+
+  const removeMember = (id: string) => {
+    set("partyMembers", data.partyMembers.filter((m) => m.id !== id));
   };
 
   return (
@@ -258,12 +342,12 @@ const TripWizard = ({ open, onClose }: TripWizardProps) => {
         >
           {/* Header */}
           <div className="flex items-center justify-between px-6 sm:px-10 pt-6 pb-4 shrink-0">
-            <div className="flex gap-3">
+            <div className="flex gap-2">
               {steps.map((_, i) => (
-                <div key={i} className="h-1 w-8 transition-all duration-700" style={{ background: i <= currentStep ? brand.gold : brand.border }} />
+                <div key={i} className="h-1 w-6 sm:w-8 transition-all duration-700" style={{ background: i <= currentStep ? brand.gold : brand.border }} />
               ))}
             </div>
-            <button onClick={onClose} className="p-2 hover:opacity-60 transition-opacity focus:outline-none focus:ring-2" aria-label="Close wizard" style={{ "--tw-ring-color": brand.thistle } as React.CSSProperties}>
+            <button onClick={onClose} className="p-2 hover:opacity-60 transition-opacity focus:outline-none" aria-label="Close wizard">
               <X size={20} style={{ color: brand.slate }} />
             </button>
           </div>
@@ -298,7 +382,7 @@ const TripWizard = ({ open, onClose }: TripWizardProps) => {
                     <div className="space-y-8 max-w-lg mx-auto">
                       <div>
                         <Label>Adventure Title</Label>
-                        <input type="text" value={data.adventureTitle} onChange={(e) => set("adventureTitle", e.target.value)} placeholder='e.g. "The Smith Enhancement"' style={inputStyle} {...focusHandlers} maxLength={100} />
+                        <input type="text" value={data.adventureTitle} onChange={(e) => set("adventureTitle", e.target.value)} placeholder='e.g. "Spring Break 2026"' style={inputStyle} {...focusHandlers} maxLength={100} />
                       </div>
 
                       <div>
@@ -315,7 +399,7 @@ const TripWizard = ({ open, onClose }: TripWizardProps) => {
                           <Label>Start Date</Label>
                           <Popover>
                             <PopoverTrigger asChild>
-                              <button className="w-full flex items-center gap-2 px-5 py-3 text-sm text-left transition-colors" style={{ ...inputStyle, padding: "0.75rem 1.25rem", display: "flex", cursor: "pointer" }}>
+                              <button className="w-full flex items-center gap-2 text-sm text-left transition-colors" style={{ ...inputStyle, display: "flex", cursor: "pointer" }}>
                                 <CalendarIcon size={14} style={{ color: brand.slate, opacity: 0.5 }} />
                                 <span style={{ color: data.startDate ? brand.lapis : `${brand.slate}80` }}>
                                   {data.startDate ? format(data.startDate, "PPP") : "Pick a date"}
@@ -331,7 +415,7 @@ const TripWizard = ({ open, onClose }: TripWizardProps) => {
                           <Label>End Date</Label>
                           <Popover>
                             <PopoverTrigger asChild>
-                              <button className="w-full flex items-center gap-2 px-5 py-3 text-sm text-left transition-colors" style={{ ...inputStyle, padding: "0.75rem 1.25rem", display: "flex", cursor: "pointer" }}>
+                              <button className="w-full flex items-center gap-2 text-sm text-left transition-colors" style={{ ...inputStyle, display: "flex", cursor: "pointer" }}>
                                 <CalendarIcon size={14} style={{ color: brand.slate, opacity: 0.5 }} />
                                 <span style={{ color: data.endDate ? brand.lapis : `${brand.slate}80` }}>
                                   {data.endDate ? format(data.endDate, "PPP") : "Pick a date"}
@@ -351,87 +435,18 @@ const TripWizard = ({ open, onClose }: TripWizardProps) => {
                       </div>
 
                       <div>
-                        <Label>Napping Strategy</Label>
-                        <div className="space-y-2">
-                          {nappingOptions.map((opt) => (
-                            <SelectCard key={opt.id} selected={data.nappingStrategy === opt.id} onClick={() => set("nappingStrategy", opt.id)} label={opt.label} desc={opt.desc} />
-                          ))}
-                        </div>
-                      </div>
-
-                      <div>
-                        <Label>Family Stamina ({data.familyStamina}/10)</Label>
-                        <p className="text-xs mb-3" style={{ fontFamily: brand.font.body, color: brand.slate }}>
-                          {data.familyStamina <= 3 ? "Prioritizes land-based clusters to minimize walking." : "Standard spatial optimization enabled."}
-                        </p>
-                        <input
-                          type="range"
-                          min={1}
-                          max={10}
-                          value={data.familyStamina}
-                          onChange={(e) => set("familyStamina", Number(e.target.value))}
-                          className="w-full accent-[hsl(43,69%,52%)]"
-                        />
-                        <div className="flex justify-between mt-1">
-                          <span style={{ fontFamily: brand.font.body, fontSize: "0.6rem", color: brand.slate }}>Gentle</span>
-                          <span style={{ fontFamily: brand.font.body, fontSize: "0.6rem", color: brand.slate }}>Marathon</span>
-                        </div>
-                      </div>
-
-                      <div>
-                        <Label>Daily Ambition</Label>
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                          {ambitionOptions.map((opt) => (
-                            <SelectCard key={opt.id} selected={data.dailyAmbition === opt.id} onClick={() => set("dailyAmbition", opt.id)} label={opt.label} desc={opt.desc} />
-                          ))}
-                        </div>
-                      </div>
-
-                      {/* Rope Drop */}
-                      <div>
-                        <Label>Rope Drop</Label>
-                        <button
-                          onClick={() => set("willingRopeDrop", !data.willingRopeDrop)}
-                          className="w-full text-left p-5 transition-all duration-500 focus:outline-none focus:ring-2"
-                          style={{
-                            background: data.willingRopeDrop ? brand.white : "transparent",
-                            border: `1px solid ${data.willingRopeDrop ? brand.gold : brand.border}`,
-                            boxShadow: data.willingRopeDrop ? brand.shadow : "none",
-                            "--tw-ring-color": brand.thistle,
-                          } as React.CSSProperties}
-                        >
-                          <div className="flex items-center justify-between mb-1">
-                            <p style={{ fontFamily: brand.font.display, fontWeight: 500, color: brand.lapis, fontSize: "1rem" }}>
-                              {data.willingRopeDrop ? "Yes — We'll be there at Rope Drop" : "Willing to arrive at park opening?"}
-                            </p>
-                            <div className="w-10 h-5 rounded-full transition-colors duration-300 flex items-center px-0.5" style={{ background: data.willingRopeDrop ? brand.gold : brand.border }}>
-                              <div className="w-4 h-4 rounded-full bg-white shadow transition-transform duration-300" style={{ transform: data.willingRopeDrop ? "translateX(20px)" : "translateX(0)" }} />
-                            </div>
-                          </div>
-                          <p style={{ fontFamily: brand.font.body, color: brand.slate, fontSize: "0.75rem" }}>
-                            Rope Drop means arriving 30–45 minutes before the park officially opens. It's the single best strategy for short wait times on popular attractions.
-                          </p>
-                        </button>
-                      </div>
-
-                      {/* Accommodation & Extra Access */}
-                      <div>
                         <Label>Accommodation & Extra Access</Label>
-                        <p className="text-xs mb-3" style={{ fontFamily: brand.font.body, color: brand.slate }}>
-                          Where you stay determines what extra park hours you can access. These benefits can dramatically change your strategy.
-                        </p>
                         <div className="space-y-2">
                           {accommodationOptions.map((opt) => (
                             <button
                               key={opt.id}
                               onClick={() => set("accommodationType", opt.id)}
-                              className="w-full text-left p-5 transition-all duration-500 focus:outline-none focus:ring-2"
+                              className="w-full text-left p-5 transition-all duration-500"
                               style={{
                                 background: data.accommodationType === opt.id ? brand.white : "transparent",
                                 border: `1px solid ${data.accommodationType === opt.id ? brand.gold : brand.border}`,
                                 boxShadow: data.accommodationType === opt.id ? brand.shadow : "none",
-                                "--tw-ring-color": brand.thistle,
-                              } as React.CSSProperties}
+                              }}
                             >
                               <div className="flex items-center justify-between mb-1">
                                 <p style={{ fontFamily: brand.font.display, fontWeight: 500, color: brand.lapis, fontSize: "1rem" }}>{opt.label}</p>
@@ -457,18 +472,12 @@ const TripWizard = ({ open, onClose }: TripWizardProps) => {
                           className="p-6 relative"
                           style={{ background: brand.white, border: `1px solid ${brand.border}`, boxShadow: brand.shadow }}
                         >
-                          <button
-                            onClick={() => removeMember(member.id)}
-                            className="absolute top-4 right-4 p-1 hover:opacity-60 transition-opacity"
-                            aria-label="Remove member"
-                          >
+                          <button onClick={() => removeMember(member.id)} className="absolute top-4 right-4 p-1 hover:opacity-60 transition-opacity" aria-label="Remove member">
                             <Trash2 size={14} style={{ color: brand.slate }} />
                           </button>
-
                           <p style={{ fontFamily: brand.font.display, fontWeight: 500, color: brand.lapis, fontSize: "1rem", marginBottom: "1rem" }}>
                             Traveler {idx + 1}
                           </p>
-
                           <div className="space-y-4">
                             <div>
                               <Label>Full Name</Label>
@@ -486,13 +495,13 @@ const TripWizard = ({ open, onClose }: TripWizardProps) => {
                             </div>
                             <div className="grid grid-cols-2 gap-4">
                               <div>
-                                <Label>Relationship to Lead</Label>
+                                <Label>Relationship</Label>
                                 <select value={member.relationship} onChange={(e) => updateMember(member.id, "relationship", e.target.value)} style={{ ...inputStyle, appearance: "none" as const, cursor: "pointer" }} {...focusHandlers}>
                                   {relationshipOptions.map((r) => <option key={r} value={r}>{r}</option>)}
                                 </select>
                               </div>
                               <div>
-                                <Label>Magic Status (select all that apply)</Label>
+                                <Label>Magic Status</Label>
                                 <div className="flex flex-wrap gap-2">
                                   {magicStatusOptions.map((s) => {
                                     const active = member.magicStatuses.includes(s);
@@ -500,9 +509,7 @@ const TripWizard = ({ open, onClose }: TripWizardProps) => {
                                       <button
                                         key={s}
                                         onClick={() => {
-                                          const updated = active
-                                            ? member.magicStatuses.filter((ms) => ms !== s)
-                                            : [...member.magicStatuses, s];
+                                          const updated = active ? member.magicStatuses.filter((ms) => ms !== s) : [...member.magicStatuses, s];
                                           set("partyMembers", data.partyMembers.map((m) => m.id === member.id ? { ...m, magicStatuses: updated.length ? updated : ["Regular"] } : m));
                                         }}
                                         className="px-3 py-1.5 text-xs transition-all duration-300"
@@ -524,184 +531,212 @@ const TripWizard = ({ open, onClose }: TripWizardProps) => {
                               <button
                                 onClick={() => updateMember(member.id, "firstTimer", !member.firstTimer)}
                                 className="w-5 h-5 flex items-center justify-center transition-all"
-                                style={{
-                                  border: `1px solid ${member.firstTimer ? brand.gold : brand.border}`,
-                                  background: member.firstTimer ? brand.gold : "transparent",
-                                }}
+                                style={{ border: `1px solid ${member.firstTimer ? brand.gold : brand.border}`, background: member.firstTimer ? brand.gold : "transparent" }}
                               >
                                 {member.firstTimer && <span style={{ color: brand.white, fontSize: "0.7rem", lineHeight: 1 }}>✓</span>}
                               </button>
                               <span style={{ fontFamily: brand.font.body, fontSize: "0.8125rem", color: brand.slate }}>
-                                First-Timer — enables Discovery Mode (slower pacing, more tips)
+                                First-Timer — enables Discovery Mode
                               </span>
                             </div>
                           </div>
                         </motion.div>
                       ))}
-
                       <button
                         onClick={addMember}
                         className="w-full py-4 flex items-center justify-center gap-2 transition-all duration-500 hover:opacity-80"
                         style={{ border: `1px dashed ${brand.border}`, background: "transparent", fontFamily: brand.font.body, fontSize: "0.8125rem", color: brand.slate }}
                       >
-                        <Plus size={14} />
-                        Add a Traveler
+                        <Plus size={14} /> Add a Traveler
                       </button>
                     </div>
                   )}
 
-                  {/* ═══ PAGE 3: STRATEGIC INTENT ═══ */}
+                  {/* ═══ PAGE 3: PACE & STYLE ═══ */}
                   {currentStep === 2 && (
                     <div className="max-w-lg mx-auto space-y-10">
                       <div>
-                        <div className="flex items-center gap-2 mb-1">
-                          <Label>Adventure Persona</Label>
-                          <span className="px-2 py-0.5 text-[0.6rem] uppercase tracking-widest" style={{ fontFamily: brand.font.body, color: brand.thistle, border: `1px solid ${brand.thistle}40`, background: `${brand.thistle}10` }}>
-                            KEEP?
-                          </span>
-                        </div>
-                        <p className="text-xs mb-3" style={{ fontFamily: brand.font.body, color: brand.slate, fontStyle: "italic" }}>
-                          This may overlap with Daily Ambition from Page 1. Under review.
-                        </p>
+                        <Label>Trip Pacing (The Speed)</Label>
                         <div className="space-y-2">
-                          {personaOptions.map((p) => (
-                            <SelectCard key={p.id} selected={data.adventurePersona === p.id} onClick={() => set("adventurePersona", p.id)} label={p.label} desc={p.desc} />
+                          {pacingOptions.map((opt) => (
+                            <SelectCard key={opt.id} selected={data.tripPacing === opt.id} onClick={() => set("tripPacing", opt.id)} label={opt.label} desc={opt.desc} />
                           ))}
                         </div>
                       </div>
 
                       <div>
-                        <Label>Preference Matrix</Label>
-                        <p className="text-xs mb-4" style={{ fontFamily: brand.font.body, color: brand.slate }}>
-                          Rank each category for your party.
-                        </p>
-                        <div className="space-y-4">
-                          {([
-                            { key: "ridesPref" as const, label: "Rides" },
-                            { key: "charactersPref" as const, label: "Characters" },
-                            { key: "showsPref" as const, label: "Shows" },
-                            { key: "paradesPref" as const, label: "Parades" },
-                          ]).map((item) => (
-                            <div key={item.key} className="flex items-center justify-between gap-4 py-3 px-4" style={{ background: brand.white, border: `1px solid ${brand.border}` }}>
-                              <span style={{ fontFamily: brand.font.body, fontSize: "0.875rem", color: brand.lapis, fontWeight: 500 }}>{item.label}</span>
-                              <div className="flex gap-1.5">
-                                {prefLevels.map((level) => (
-                                  <button
-                                    key={level}
-                                    onClick={() => set(item.key, level)}
-                                    className="px-3 py-1.5 text-xs transition-all duration-300"
-                                    style={{
-                                      fontFamily: brand.font.body,
-                                      background: data[item.key] === level ? brand.lapis : "transparent",
-                                      color: data[item.key] === level ? brand.cream : brand.slate,
-                                      border: `1px solid ${data[item.key] === level ? brand.lapis : brand.border}`,
-                                    }}
-                                  >
-                                    {level}
-                                  </button>
-                                ))}
-                              </div>
-                            </div>
+                        <Label>Arrival Intent</Label>
+                        <div className="space-y-2">
+                          {arrivalOptions.map((opt) => (
+                            <SelectCard key={opt.id} selected={data.arrivalIntent === opt.id} onClick={() => set("arrivalIntent", opt.id)} label={opt.label} desc={opt.desc} />
                           ))}
                         </div>
                       </div>
 
                       <div>
-                        <Label>Boutique Intel — Sensory Awareness</Label>
-                        <p className="text-xs mb-3" style={{ fontFamily: brand.font.body, color: brand.slate }}>
-                          These tags will appear during ride selection to inform your choices.
-                        </p>
-                        <div className="flex flex-wrap gap-2">
-                          {["Loud", "Dark", "Strobe", "Drops"].map((tag) => (
-                            <span key={tag} className="px-3 py-1.5 text-xs" style={{ fontFamily: brand.font.body, border: `1px solid ${brand.border}`, color: brand.slate, background: brand.white }}>
-                              {tag}
-                            </span>
-                          ))}
-                        </div>
-                        <div className="flex flex-wrap gap-2 mt-2">
-                          {["Low Intensity", "Moderate", "High Intensity"].map((tag) => (
-                            <span key={tag} className="px-3 py-1.5 text-xs" style={{ fontFamily: brand.font.body, border: `1px solid ${brand.border}`, color: brand.slate, background: brand.white }}>
-                              {tag}
-                            </span>
+                        <Label>Mid-Day Break Strategy</Label>
+                        <div className="space-y-2">
+                          {midDayOptions.map((opt) => (
+                            <SelectCard key={opt.id} selected={data.midDayBreak === opt.id} onClick={() => set("midDayBreak", opt.id)} label={opt.label} desc={opt.desc} />
                           ))}
                         </div>
                       </div>
 
-                      {/* ─── Park Services & Accommodations ─── */}
                       <div>
-                        <Label>Park Services & Accommodations</Label>
-                        <p className="text-xs mb-4" style={{ fontFamily: brand.font.body, color: brand.slate }}>
-                          Select the services your party may use. Costs noted below are <strong>not included</strong> in Castle Companion.
-                        </p>
-                        <div className="space-y-3">
-                          {([
-                            {
-                              key: "needsDAS" as const,
-                              label: "Disability Access Service (DAS)",
-                              desc: "For guests who cannot wait in a conventional queue due to a developmental disability. DAS lets you register for a return time so you can wait somewhere comfortable. Free of charge — requires registration through Disney.",
-                              cost: null,
-                            },
-                            {
-                              key: "willUseSingleRider" as const,
-                              label: "Single Rider Lines",
-                              desc: "Skip the standby queue by filling empty seats on select rides. You'll ride alone (not with your group). Great way to re-ride favorites. No extra cost.",
-                              cost: null,
-                            },
-                            {
-                              key: "willPurchaseLL" as const,
-                              label: "Lightning Lane Multi Pass",
-                              desc: "Purchase access to shorter lines across multiple attractions. You book return windows throughout the day. Available for most rides.",
-                              cost: "~$15–$35/person/day depending on date and park",
-                            },
-                            {
-                              key: "willPurchaseILL" as const,
-                              label: "Individual Lightning Lane",
-                              desc: "Pay per ride for the most popular attractions (e.g., Tron, Guardians). Each ride is purchased separately with a specific return time.",
-                              cost: "~$10–$25/person/ride depending on demand",
-                            },
-                            {
-                              key: "willUseChildExchange" as const,
-                              label: "Rider Switch (Child Swap)",
-                              desc: "When a child is too small or a guest can't ride, one adult waits with them while the other rides. Then they swap — the second adult gets to skip the line. Free of charge.",
-                              cost: null,
-                            },
-                          ]).map((service) => {
-                            const active = data[service.key];
-                            return (
-                              <button
-                                key={service.key}
-                                onClick={() => set(service.key, !active)}
-                                className="w-full text-left p-5 transition-all duration-500"
-                                style={{
-                                  background: active ? brand.white : "transparent",
-                                  border: `1px solid ${active ? brand.gold : brand.border}`,
-                                  boxShadow: active ? brand.shadow : "none",
-                                }}
-                              >
-                                <div className="flex items-start gap-3">
-                                  <div
-                                    className="w-5 h-5 mt-0.5 shrink-0 flex items-center justify-center transition-all"
-                                    style={{
-                                      border: `1px solid ${active ? brand.gold : brand.border}`,
-                                      background: active ? brand.gold : "transparent",
-                                    }}
-                                  >
-                                    {active && <span style={{ color: brand.white, fontSize: "0.7rem", lineHeight: 1 }}>✓</span>}
-                                  </div>
-                                  <div>
-                                    <p style={{ fontFamily: brand.font.display, fontWeight: 500, color: brand.lapis, fontSize: "0.9375rem", marginBottom: "0.25rem" }}>
-                                      {service.label}
-                                    </p>
-                                    <p style={{ fontFamily: brand.font.body, color: brand.slate, fontSize: "0.75rem", lineHeight: "1.5" }}>
-                                      {service.desc}
-                                    </p>
-                                    {service.cost && (
-                                      <p className="mt-1.5 flex items-center gap-1" style={{ fontFamily: brand.font.body, fontSize: "0.6875rem", color: brand.goldDark, fontWeight: 500 }}>
-                                        💰 {service.cost}
+                        <Label>Primary Focus (select all that apply)</Label>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                          {focusOptions.map((opt) => (
+                            <SelectCard key={opt.id} selected={data.primaryFocus.includes(opt.id)} onClick={() => toggleFocus(opt.id)} label={opt.label} desc={opt.desc} />
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* ═══ PAGE 4: PARK SCHEDULE ═══ */}
+                  {currentStep === 3 && (
+                    <div className="max-w-lg mx-auto space-y-6">
+                      {(!data.startDate || !data.endDate) ? (
+                        <div className="text-center py-12">
+                          <p style={{ fontFamily: brand.font.body, color: brand.slate, fontSize: "0.875rem" }}>
+                            Please go back and set your start and end dates first.
+                          </p>
+                        </div>
+                      ) : (
+                        <>
+                          <p style={{ fontFamily: brand.font.body, color: brand.slate, fontSize: "0.8125rem" }}>
+                            Assign a park to each day. You can visit the same park multiple times or leave a day as a rest day.
+                          </p>
+                          <div className="space-y-3">
+                            {data.parkSchedule.map((ps) => {
+                              const dateObj = new Date(ps.date + "T12:00:00");
+                              return (
+                                <div
+                                  key={ps.date}
+                                  className="p-5 transition-all duration-300"
+                                  style={{
+                                    background: ps.parkId ? brand.white : "transparent",
+                                    border: `1px solid ${ps.parkId ? brand.gold : brand.border}`,
+                                    boxShadow: ps.parkId ? brand.shadow : "none",
+                                  }}
+                                >
+                                  <div className="flex items-center justify-between mb-3">
+                                    <div>
+                                      <p style={{ fontFamily: brand.font.display, fontWeight: 500, color: brand.lapis, fontSize: "1rem" }}>
+                                        {format(dateObj, "EEEE")}
                                       </p>
+                                      <p style={{ fontFamily: brand.font.body, fontSize: "0.75rem", color: brand.slate }}>
+                                        {format(dateObj, "MMMM d, yyyy")}
+                                      </p>
+                                    </div>
+                                    {ps.parkId && (
+                                      <button
+                                        onClick={() => setParkForDay(ps.date, null)}
+                                        className="text-xs uppercase tracking-widest hover:opacity-60 transition-opacity"
+                                        style={{ fontFamily: brand.font.body, color: brand.slate }}
+                                      >
+                                        Rest Day
+                                      </button>
                                     )}
                                   </div>
+                                  <div className={`grid gap-2 ${parks.length > 2 ? "grid-cols-2" : "grid-cols-2"}`}>
+                                    {parks.map((park) => (
+                                      <button
+                                        key={park.id}
+                                        onClick={() => setParkForDay(ps.date, park.id)}
+                                        className="px-3 py-2.5 text-xs transition-all duration-300 text-left"
+                                        style={{
+                                          fontFamily: brand.font.body,
+                                          fontWeight: 500,
+                                          background: ps.parkId === park.id ? brand.lapis : "transparent",
+                                          color: ps.parkId === park.id ? brand.cream : brand.slate,
+                                          border: `1px solid ${ps.parkId === park.id ? brand.lapis : brand.border}`,
+                                        }}
+                                      >
+                                        {park.label}
+                                      </button>
+                                    ))}
+                                  </div>
                                 </div>
+                              );
+                            })}
+                          </div>
+                        </>
+                      )}
+                    </div>
+                  )}
+
+                  {/* ═══ PAGE 5: SERVICES & BUDGET ═══ */}
+                  {currentStep === 4 && (
+                    <div className="max-w-lg mx-auto space-y-10">
+                      <div>
+                        <Label>Park Services</Label>
+                        <div className="space-y-3">
+                          <ToggleCard
+                            active={data.needsDAS}
+                            onClick={() => set("needsDAS", !data.needsDAS)}
+                            label="Disability Access Service (DAS)"
+                            desc="Lets eligible guests receive a return time instead of waiting in standby. We'll route your day to maximize DAS efficiency."
+                          />
+                          <ToggleCard
+                            active={data.willUseSingleRider}
+                            onClick={() => set("willUseSingleRider", !data.willUseSingleRider)}
+                            label="Single Rider Lines"
+                            desc="Each person joins the single rider queue independently — great for thrill-seekers who don't mind splitting up temporarily."
+                          />
+                          <ToggleCard
+                            active={data.willPurchaseLLMulti}
+                            onClick={() => set("willPurchaseLLMulti", !data.willPurchaseLLMulti)}
+                            label="Lightning Lane Multi Pass"
+                            desc="Book return times for select attractions one at a time throughout the day. We'll prioritize LL-eligible rides and factor in booking strategy."
+                            cost="~$15–$35/person/day depending on date and park"
+                          />
+                          <ToggleCard
+                            active={data.willPurchaseLLSingle}
+                            onClick={() => set("willPurchaseLLSingle", !data.willPurchaseLLSingle)}
+                            label="Lightning Lane Single Pass"
+                            desc="Per-ride purchase for highest-demand attractions (TRON, Guardians, Seven Dwarfs, etc.) not included in Multi Pass."
+                            cost="~$10–$25/person/ride depending on demand"
+                          />
+                          <ToggleCard
+                            active={data.diningReservationScouting}
+                            onClick={() => set("diningReservationScouting", !data.diningReservationScouting)}
+                            label="Active Reservation Scouting"
+                            desc="Recommended for Table Service or Signature dining. We'll actively monitor reservation drops to secure your requested time blocks."
+                          />
+                        </div>
+                      </div>
+
+                      <div>
+                        <Label>Splurge Appetite</Label>
+                        <div className="space-y-2">
+                          {splurgeOptions.map((opt) => (
+                            <SelectCard key={opt.id} selected={data.splurgeAppetite === opt.id} onClick={() => set("splurgeAppetite", opt.id)} label={opt.label} desc={opt.desc} />
+                          ))}
+                        </div>
+                      </div>
+
+                      <div>
+                        <Label>Premium Interests</Label>
+                        <p className="text-xs mb-3" style={{ fontFamily: brand.font.body, color: brand.slate }}>
+                          Select any premium experiences your party is interested in.
+                        </p>
+                        <div className="flex flex-wrap gap-2">
+                          {premiumOptions.map((item) => {
+                            const active = data.premiumInterests.includes(item);
+                            return (
+                              <button
+                                key={item}
+                                onClick={() => togglePremium(item)}
+                                className="px-4 py-2 text-sm transition-all duration-300"
+                                style={{
+                                  fontFamily: brand.font.body,
+                                  background: active ? brand.lapis : "transparent",
+                                  color: active ? brand.cream : brand.slate,
+                                  border: `1px solid ${active ? brand.lapis : brand.border}`,
+                                }}
+                              >
+                                {item}
                               </button>
                             );
                           })}
@@ -710,8 +745,8 @@ const TripWizard = ({ open, onClose }: TripWizardProps) => {
                     </div>
                   )}
 
-                  {/* ═══ PAGE 4: THE FOODIE PROFILE ═══ */}
-                  {currentStep === 3 && (
+                  {/* ═══ PAGE 6: THE FOODIE PROFILE ═══ */}
+                  {currentStep === 5 && (
                     <div className="max-w-lg mx-auto space-y-8">
                       <div>
                         <Label>Allergies & Dietary Needs</Label>
@@ -740,16 +775,9 @@ const TripWizard = ({ open, onClose }: TripWizardProps) => {
                       <div>
                         <Label>Dining Style</Label>
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                          <SelectCard selected={data.diningStyle === "quick-service"} onClick={() => set("diningStyle", "quick-service")} label="Quick Service" desc="Grab-and-go. Maximize park time." />
-                          <SelectCard selected={data.diningStyle === "table-service"} onClick={() => set("diningStyle", "table-service")} label="Table Service" desc="Sit-down dining. Part of the experience." />
-                        </div>
-                      </div>
-
-                      <div>
-                        <Label>Snack Habits</Label>
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                          <SelectCard selected={data.snackHabits === "high-frequency"} onClick={() => set("snackHabits", "high-frequency")} label="High Frequency" desc="Graze throughout the day." />
-                          <SelectCard selected={data.snackHabits === "scheduled"} onClick={() => set("snackHabits", "scheduled")} label="Scheduled Meals" desc="Stick to defined meal times." />
+                          {diningStyleOptions.map((opt) => (
+                            <SelectCard key={opt.id} selected={data.diningStyle === opt.id} onClick={() => set("diningStyle", opt.id)} label={opt.label} desc={opt.desc} />
+                          ))}
                         </div>
                       </div>
                     </div>
@@ -759,7 +787,7 @@ const TripWizard = ({ open, onClose }: TripWizardProps) => {
             </div>
           </div>
 
-          {/* Footer nav — fixed at bottom */}
+          {/* Footer nav */}
           <div className="shrink-0 border-t px-6 sm:px-10 py-4" style={{ borderColor: brand.border, background: brand.cream }}>
             <div className="flex items-center justify-between max-w-2xl mx-auto">
               <button
@@ -768,10 +796,8 @@ const TripWizard = ({ open, onClose }: TripWizardProps) => {
                 className="flex items-center gap-1.5 uppercase tracking-[0.2em] transition-opacity duration-300 disabled:opacity-0"
                 style={{ fontFamily: brand.font.body, fontSize: "0.6875rem", color: brand.slate }}
               >
-                <ChevronLeft size={14} />
-                Back
+                <ChevronLeft size={14} /> Back
               </button>
-
               <button
                 onClick={handleNext}
                 disabled={!canProceed()}

@@ -1,8 +1,9 @@
 import { useEffect, useRef } from "react";
 
 /**
- * Glowing embers that follow an invisible fairy path through the scene.
- * Each ember fades in, glows warm gold, then fades out along the trail.
+ * Canvas-based particle system:
+ * 1) Ambient embers — randomly placed, twinkling across the scene
+ * 2) Trail embers — following an invisible fairy path
  */
 const EmberTrail = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -15,48 +16,74 @@ const EmberTrail = () => {
 
     let animId: number;
     let time = 0;
+    let dpr = window.devicePixelRatio || 1;
 
     const resize = () => {
-      canvas.width = canvas.offsetWidth * (window.devicePixelRatio || 1);
-      canvas.height = canvas.offsetHeight * (window.devicePixelRatio || 1);
-      ctx.scale(window.devicePixelRatio || 1, window.devicePixelRatio || 1);
+      dpr = window.devicePixelRatio || 1;
+      canvas.width = canvas.offsetWidth * dpr;
+      canvas.height = canvas.offsetHeight * dpr;
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     };
     resize();
     window.addEventListener("resize", resize);
 
-    // Fairy path — a smooth looping curve across the screen
+    // ── Ambient embers (random scattered sparkles) ──
+    interface AmbientEmber {
+      x: number; y: number; size: number;
+      phase: number; speed: number; hue: number; maxAlpha: number;
+    }
+    const ambientCount = 45;
+    const ambients: AmbientEmber[] = Array.from({ length: ambientCount }, () => ({
+      x: Math.random(),
+      y: Math.random(),
+      size: Math.random() * 2 + 0.8,
+      phase: Math.random() * Math.PI * 2,
+      speed: 0.5 + Math.random() * 1.5,
+      hue: 32 + Math.random() * 18,
+      maxAlpha: 0.3 + Math.random() * 0.5,
+    }));
+
+    // ── Trail embers (fairy path) ──
     const fairyX = (t: number, w: number) =>
       w * (0.15 + 0.7 * (0.5 + 0.5 * Math.sin(t * 0.3)) * (0.5 + 0.5 * Math.cos(t * 0.17)));
     const fairyY = (t: number, h: number) =>
       h * (0.2 + 0.5 * (0.5 + 0.5 * Math.sin(t * 0.23 + 1.2)) * (0.5 + 0.5 * Math.cos(t * 0.31 + 0.8)));
 
-    interface Ember {
-      x: number;
-      y: number;
-      vx: number;
-      vy: number;
-      life: number;
-      maxLife: number;
-      size: number;
-      hue: number;
+    interface TrailEmber {
+      x: number; y: number; vx: number; vy: number;
+      life: number; maxLife: number; size: number; hue: number;
     }
+    const trailEmbers: TrailEmber[] = [];
+    const maxTrail = 50;
 
-    const embers: Ember[] = [];
-    const maxEmbers = 60;
-
-    const spawnEmber = (w: number, h: number) => {
-      const fx = fairyX(time, w);
-      const fy = fairyY(time, h);
-      embers.push({
-        x: fx + (Math.random() - 0.5) * 30,
-        y: fy + (Math.random() - 0.5) * 30,
-        vx: (Math.random() - 0.5) * 0.4,
-        vy: -Math.random() * 0.6 - 0.2,
+    const spawnTrail = (w: number, h: number) => {
+      trailEmbers.push({
+        x: fairyX(time, w) + (Math.random() - 0.5) * 25,
+        y: fairyY(time, h) + (Math.random() - 0.5) * 25,
+        vx: (Math.random() - 0.5) * 0.3,
+        vy: -Math.random() * 0.5 - 0.15,
         life: 0,
-        maxLife: 80 + Math.random() * 80,
-        size: Math.random() * 2.5 + 1,
+        maxLife: 70 + Math.random() * 70,
+        size: Math.random() * 2.2 + 0.8,
         hue: 35 + Math.random() * 15,
       });
+    };
+
+    const drawEmber = (x: number, y: number, size: number, hue: number, alpha: number) => {
+      // Outer glow
+      const grad = ctx.createRadialGradient(x, y, 0, x, y, size * 4);
+      grad.addColorStop(0, `hsla(${hue}, 80%, 60%, ${alpha * 0.35})`);
+      grad.addColorStop(1, `hsla(${hue}, 80%, 50%, 0)`);
+      ctx.fillStyle = grad;
+      ctx.beginPath();
+      ctx.arc(x, y, size * 4, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Core
+      ctx.fillStyle = `hsla(${hue}, 90%, 72%, ${alpha * 0.9})`;
+      ctx.beginPath();
+      ctx.arc(x, y, size, 0, Math.PI * 2);
+      ctx.fill();
     };
 
     const draw = () => {
@@ -65,49 +92,36 @@ const EmberTrail = () => {
       ctx.clearRect(0, 0, w, h);
       time += 0.016;
 
-      // Spawn 1-2 embers per frame
-      if (embers.length < maxEmbers) {
-        spawnEmber(w, h);
-        if (Math.random() > 0.5) spawnEmber(w, h);
+      // Ambient embers
+      for (const a of ambients) {
+        const alpha = a.maxAlpha * (0.5 + 0.5 * Math.sin(time * a.speed + a.phase));
+        if (alpha > 0.05) {
+          drawEmber(a.x * w, a.y * h, a.size, a.hue, alpha);
+        }
       }
 
-      for (let i = embers.length - 1; i >= 0; i--) {
-        const e = embers[i];
+      // Trail embers
+      if (trailEmbers.length < maxTrail) {
+        spawnTrail(w, h);
+        if (Math.random() > 0.4) spawnTrail(w, h);
+      }
+
+      for (let i = trailEmbers.length - 1; i >= 0; i--) {
+        const e = trailEmbers[i];
         e.life++;
         e.x += e.vx;
         e.y += e.vy;
-        e.vy -= 0.002; // gentle float up
+        e.vy -= 0.002;
 
-        const progress = e.life / e.maxLife;
-        // Fade in fast, glow, fade out slowly
-        const alpha =
-          progress < 0.15
-            ? progress / 0.15
-            : progress < 0.5
-              ? 1
-              : 1 - (progress - 0.5) / 0.5;
+        const p = e.life / e.maxLife;
+        const alpha = p < 0.15 ? p / 0.15 : p < 0.5 ? 1 : 1 - (p - 0.5) / 0.5;
 
         if (e.life >= e.maxLife) {
-          embers.splice(i, 1);
+          trailEmbers.splice(i, 1);
           continue;
         }
 
-        const glow = e.size * (1 + (1 - progress) * 2);
-
-        // Outer glow
-        const grad = ctx.createRadialGradient(e.x, e.y, 0, e.x, e.y, glow * 3);
-        grad.addColorStop(0, `hsla(${e.hue}, 80%, 60%, ${alpha * 0.3})`);
-        grad.addColorStop(1, `hsla(${e.hue}, 80%, 50%, 0)`);
-        ctx.fillStyle = grad;
-        ctx.beginPath();
-        ctx.arc(e.x, e.y, glow * 3, 0, Math.PI * 2);
-        ctx.fill();
-
-        // Core ember
-        ctx.fillStyle = `hsla(${e.hue}, 90%, 70%, ${alpha * 0.9})`;
-        ctx.beginPath();
-        ctx.arc(e.x, e.y, e.size * (1 - progress * 0.3), 0, Math.PI * 2);
-        ctx.fill();
+        drawEmber(e.x, e.y, e.size * (1 - p * 0.3), e.hue, alpha * 0.8);
       }
 
       animId = requestAnimationFrame(draw);
@@ -125,7 +139,7 @@ const EmberTrail = () => {
       ref={canvasRef}
       className="absolute inset-0 w-full h-full pointer-events-none"
       aria-hidden="true"
-      style={{ opacity: 0.7 }}
+      style={{ opacity: 0.8 }}
     />
   );
 };

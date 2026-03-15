@@ -120,6 +120,7 @@ export interface BookedTrip {
   travelLegs: TravelLeg[];
   preparations: PreparationItem[];
   packingLists: PackingItem[];
+  diningReservations: DiningReservation[];
 }
 
 export interface FutureTrip {

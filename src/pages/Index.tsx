@@ -293,12 +293,12 @@ const Index = ({
       </section>
 
       {/* ═══ TWO COLUMN — Plan Next Trip + Inner Circle ═══ */}
-      <section className="grid grid-cols-1 md:grid-cols-2 min-h-[70vh]">
+      <section className="grid grid-cols-1 md:grid-cols-2">
         {/* Plan Your Next Trip — left */}
-        <div className="relative min-h-[50vh] lg:min-h-[70vh] overflow-hidden">
+        <div className="relative overflow-hidden">
           {futureTrips.map((trip, i) => (
             <Link key={trip.tripId} to={`/trip/${trip.tripId}`} className={`group block ${i > 0 ? "hidden" : ""}`}>
-              <div className="relative h-full min-h-[50vh] lg:min-h-[70vh] overflow-hidden">
+              <div className="relative h-[500px] overflow-hidden">
                 <ParallaxImage src={trip.heroImage} alt={trip.tripName} className="absolute inset-0 h-full" />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-black/10 group-hover:from-black/70 transition-all duration-700" />
                 <div className="absolute bottom-0 left-0 right-0 px-8 lg:px-12 pb-12">
@@ -324,13 +324,13 @@ const Index = ({
         </div>
 
         {/* Inner Circle — right */}
-        <div className="bg-[hsl(var(--warm))] flex flex-col justify-between px-8 lg:px-14 py-16 lg:py-20">
+        <div className="bg-[hsl(var(--warm))] flex flex-col justify-between px-8 lg:px-14 py-14 h-[500px]">
           <motion.div {...slideRight()}>
-            <p className="label-text mb-8 tracking-[0.3em]">The Inner Circle</p>
-            <h3 className="font-display text-3xl sm:text-4xl text-foreground leading-[1.1] mb-10">Your party</h3>
+            <p className="label-text mb-6 tracking-[0.3em]">The Inner Circle</p>
+            <h3 className="font-display text-3xl sm:text-4xl text-foreground leading-[1.1] mb-8">Your party</h3>
           </motion.div>
 
-          <motion.div {...slideRight(0.15)} className="space-y-6 flex-1">
+          <motion.div {...slideRight(0.15)} className="space-y-5 flex-1 overflow-y-auto">
             {partyMembers.map((m, i) => (
               <motion.div
                 key={m.name}
@@ -343,7 +343,7 @@ const Index = ({
                 <motion.div
                   whileHover={{ scale: 1.1, rotate: 5 }}
                   transition={{ type: "spring", stiffness: 300, damping: 20 }}
-                  className="w-12 h-12 bg-foreground flex items-center justify-center shrink-0"
+                  className="w-12 h-12 rounded-full bg-foreground flex items-center justify-center shrink-0"
                 >
                   <span className="font-display text-sm text-background">{m.initial}</span>
                 </motion.div>
@@ -356,7 +356,7 @@ const Index = ({
             ))}
           </motion.div>
 
-          <motion.div {...slideRight(0.3)} className="mt-10 pt-8 border-t border-border">
+          <motion.div {...slideRight(0.3)} className="mt-6 pt-6 border-t border-border">
             <Link to="/circle">
               <span className="link-editorial font-editorial text-sm text-foreground">Manage your travelers →</span>
             </Link>

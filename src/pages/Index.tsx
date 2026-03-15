@@ -3,6 +3,8 @@ import { useRef } from "react";
 import { Link } from "react-router-dom";
 import FloatingAnchor from "@/components/FloatingAnchor";
 import SparkleField from "@/components/SparkleField";
+import EmberTrail from "@/components/EmberTrail";
+import HeroFlags from "@/components/HeroFlags";
 import castleHero from "@/assets/castle-hero.jpg";
 import editorialJournal from "@/assets/editorial-travel-journal.jpg";
 import editorialFamilyWalk from "@/assets/editorial-family-walk.jpg";

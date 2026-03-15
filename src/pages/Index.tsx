@@ -1,6 +1,6 @@
 import { motion, useScroll, useTransform } from "framer-motion";
 import Footer from "@/components/Footer";
-import { useRef } from "react";
+import { useRef, useState, useEffect, useCallback } from "react";
 import { Link } from "react-router-dom";
 import FloatingAnchor from "@/components/FloatingAnchor";
 import SparkleField from "@/components/SparkleField";
@@ -66,6 +66,25 @@ const Index = ({
   partyMembers, tripMemories, account,
 }: IndexProps) => {
   const timelineRef = useRef<HTMLDivElement>(null);
+  const parkScrollRef = useRef<HTMLDivElement>(null);
+  const [activeParkIdx, setActiveParkIdx] = useState(0);
+
+  const handleParkScroll = useCallback(() => {
+    const el = parkScrollRef.current;
+    if (!el) return;
+    const card = el.querySelector('div') as HTMLElement | null;
+    const cardWidth = card?.offsetWidth || 340;
+    const gap = 24;
+    const idx = Math.round(el.scrollLeft / (cardWidth + gap));
+    setActiveParkIdx(Math.min(idx, parkGuides.length - 1));
+  }, [parkGuides.length]);
+
+  useEffect(() => {
+    const el = parkScrollRef.current;
+    if (!el) return;
+    el.addEventListener('scroll', handleParkScroll, { passive: true });
+    return () => el.removeEventListener('scroll', handleParkScroll);
+  }, [handleParkScroll]);
 
   return (
     <div className="min-h-screen bg-background overflow-x-hidden">
@@ -239,28 +258,19 @@ const Index = ({
 
       {/* ═══ PARK TILES — Horizontal scrollable visual cards ═══ */}
       <section className="py-20 lg:py-28 bg-[hsl(var(--warm))]">
-        <div className="max-w-6xl mx-auto px-4 sm:px-8 mb-12 flex items-end justify-between">
+        <div className="max-w-6xl mx-auto px-4 sm:px-8 mb-12">
           <motion.div {...fade()}>
             <p className="label-text mb-6 tracking-[0.25em]">Park Guide</p>
             <h2 className="font-display text-4xl sm:text-5xl text-foreground leading-[1.08]">
               Know before you go.
             </h2>
           </motion.div>
-          <motion.div {...fade(0.3)} className="flex items-center gap-2 mb-1">
-            <span className="label-text">Scroll</span>
-            <motion.span
-              animate={{ x: [0, 6, 0] }}
-              transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
-              className="text-muted-foreground text-sm"
-            >
-              →
-            </motion.span>
-          </motion.div>
         </div>
         <div className="relative">
           <div className="absolute left-0 top-0 bottom-0 w-8 bg-gradient-to-r from-[hsl(var(--warm))] to-transparent z-10 pointer-events-none" />
           <div className="absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-[hsl(var(--warm))] to-transparent z-10 pointer-events-none" />
           <div
+            ref={parkScrollRef}
             className="flex gap-4 sm:gap-6 overflow-x-auto px-4 sm:px-8 pb-4"
             style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
           >
@@ -309,6 +319,25 @@ const Index = ({
               </motion.div>
             ))}
           </div>
+        </div>
+        <div className="flex justify-center gap-2.5 mt-8">
+          {parkGuides.map((_, i) => (
+            <button
+              key={i}
+              onClick={() => {
+                const el = parkScrollRef.current;
+                if (!el) return;
+                const card = el.children[i] as HTMLElement;
+                if (card) el.scrollTo({ left: card.offsetLeft - 16, behavior: 'smooth' });
+              }}
+              className={`w-5 h-2.5 rounded-full border transition-all duration-500 ${
+                i === activeParkIdx
+                  ? "bg-[hsl(var(--gold))] border-[hsl(var(--gold))]"
+                  : "bg-transparent border-muted-foreground/30 hover:border-[hsl(var(--gold-light))]"
+              }`}
+              aria-label={`Go to park ${i + 1}`}
+            />
+          ))}
         </div>
       </section>
 

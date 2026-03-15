@@ -35,10 +35,9 @@ const ParkGuidePage = ({ parkGuides }: ParkGuidePageProps) => {
   const [searchQuery, setSearchQuery] = useState("");
 
   const park = parkGuides.find((p) => p.parkId === parkId) || parkGuides[0];
-  if (!park) return null;
 
-  const sameParkGuides = parkGuides.filter((p) => p.resort === park.resort);
-  const attractions = mockData.partySurvey.attractions.filter((a) => a.parkId === park.parkId);
+  const sameParkGuides = parkGuides.filter((p) => p?.resort === park?.resort);
+  const attractions = mockData.partySurvey.attractions.filter((a) => a.parkId === park?.parkId);
 
   const filteredAttractions = useMemo(() => {
     if (!searchQuery.trim()) return attractions;
@@ -51,6 +50,8 @@ const ParkGuidePage = ({ parkGuides }: ParkGuidePageProps) => {
   }, [attractions, searchQuery]);
 
   const categoryIcons: Record<string, string> = { ride: "🎢", show: "🎭", character: "✨", dining: "🍽️" };
+
+  if (!park) return null;
 
   return (
     <div className="min-h-screen bg-background pt-16">

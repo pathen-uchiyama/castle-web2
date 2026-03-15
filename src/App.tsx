@@ -5,6 +5,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import Navigation from "@/components/Navigation";
 import Index from "./pages/Index";
+import DayZeroIndex from "./pages/DayZeroIndex";
 import Adventure from "./pages/Adventure";
 import Memories from "./pages/Memories";
 import Circle from "./pages/Circle";
@@ -23,6 +24,7 @@ const App = () => (
       <BrowserRouter>
         <Navigation />
         <Routes>
+          <Route path="/welcome" element={<DayZeroIndex />} />
           <Route
             path="/"
             element={

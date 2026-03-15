@@ -171,7 +171,7 @@ export const mockData: AppData = {
         { label: "Shows", description: "Fantasmic!, fireworks, and parades", itemCount: 10 },
         { label: "Seasonal Events", description: "Oogie Boogie Bash, holiday overlays", itemCount: 3 },
       ],
-      heroImage: editorialCalendar,
+      heroImage: parkDisneyland,
       todayWeather: "72°F, Sunny",
       todayCrowdLevel: "Low",
       operatingHours: "8:00 AM – 12:00 AM",

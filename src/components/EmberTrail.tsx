@@ -60,7 +60,7 @@ const EmberTrail = () => {
       life: number; maxLife: number; size: number; hue: number;
     }
     const trailEmbers: TrailEmber[] = [];
-    const maxTrail = 50;
+    const maxTrail = 70;
 
     const spawnAt = (fx: number, fy: number, hueBase: number) => {
       trailEmbers.push({

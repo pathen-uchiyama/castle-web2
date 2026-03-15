@@ -54,6 +54,12 @@ interface WizardData {
   charactersPref: string;
   showsPref: string;
   paradesPref: string;
+  // Page 3 — Park Services
+  needsDAS: boolean;
+  willUseSingleRider: boolean;
+  willPurchaseLL: boolean;
+  willPurchaseILL: boolean;
+  willUseChildExchange: boolean;
   // Page 4 — Foodie
   allergies: string[];
   diningStyle: string | null;

@@ -43,29 +43,34 @@ const EmberTrail = () => {
       maxAlpha: 0.3 + Math.random() * 0.5,
     }));
 
-    // ── Trail embers (fairy path) ──
-    const fairyX = (t: number, w: number) =>
+    // ── Trail embers (two fairy paths playing together) ──
+    const fairy1X = (t: number, w: number) =>
       w * (0.15 + 0.7 * (0.5 + 0.5 * Math.sin(t * 0.3)) * (0.5 + 0.5 * Math.cos(t * 0.17)));
-    const fairyY = (t: number, h: number) =>
+    const fairy1Y = (t: number, h: number) =>
       h * (0.2 + 0.5 * (0.5 + 0.5 * Math.sin(t * 0.23 + 1.2)) * (0.5 + 0.5 * Math.cos(t * 0.31 + 0.8)));
+
+    const fairy2X = (t: number, w: number) =>
+      w * (0.25 + 0.6 * (0.5 + 0.5 * Math.sin(t * 0.35 + 2.0)) * (0.5 + 0.5 * Math.cos(t * 0.22 + 1.5)));
+    const fairy2Y = (t: number, h: number) =>
+      h * (0.15 + 0.55 * (0.5 + 0.5 * Math.sin(t * 0.28 + 0.5)) * (0.5 + 0.5 * Math.cos(t * 0.19 + 2.2)));
 
     interface TrailEmber {
       x: number; y: number; vx: number; vy: number;
       life: number; maxLife: number; size: number; hue: number;
     }
     const trailEmbers: TrailEmber[] = [];
-    const maxTrail = 30;
+    const maxTrail = 50;
 
-    const spawnTrail = (w: number, h: number) => {
+    const spawnAt = (fx: number, fy: number, hueBase: number) => {
       trailEmbers.push({
-      x: fairyX(time, w) + (Math.random() - 0.5) * 120,
-        y: fairyY(time, h) + (Math.random() - 0.5) * 120,
+        x: fx + (Math.random() - 0.5) * 120,
+        y: fy + (Math.random() - 0.5) * 120,
         vx: (Math.random() - 0.5) * 0.3,
         vy: -Math.random() * 0.5 - 0.15,
         life: 0,
         maxLife: 70 + Math.random() * 70,
         size: Math.random() * 2.2 + 0.8,
-        hue: 35 + Math.random() * 15,
+        hue: hueBase + Math.random() * 15,
       });
     };
 

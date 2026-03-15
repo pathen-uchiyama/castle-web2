@@ -251,7 +251,7 @@ const Index = ({
           <div className="absolute left-0 top-0 bottom-0 w-8 bg-gradient-to-r from-[hsl(var(--warm))] to-transparent z-10 pointer-events-none" />
           <div className="absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-[hsl(var(--warm))] to-transparent z-10 pointer-events-none" />
           <div
-            className="flex gap-6 overflow-x-auto px-8 pb-4"
+            className="flex gap-4 sm:gap-6 overflow-x-auto px-4 sm:px-8 pb-4"
             style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
           >
             {parkGuides.map((park, i) => (

@@ -2,11 +2,13 @@ import { motion } from "framer-motion";
 import FloatingAnchor from "@/components/FloatingAnchor";
 import castleHero from "@/assets/castle-hero.jpg";
 
+const ease: [number, number, number, number] = [0.19, 1, 0.22, 1];
+
 const fade = (delay = 0) => ({
-  initial: { opacity: 0, y: 30 },
-  whileInView: { opacity: 1, y: 0 },
-  viewport: { once: true, margin: "-100px" },
-  transition: { duration: 1.2, delay, ease: [0.19, 1, 0.22, 1] },
+  initial: { opacity: 0, y: 30 } as const,
+  whileInView: { opacity: 1, y: 0 } as const,
+  viewport: { once: true, margin: "-100px" as const },
+  transition: { duration: 1.2, delay, ease },
 });
 
 const Index = () => {

@@ -133,6 +133,9 @@ export const mockData: AppData = {
         { label: "Seasonal Events", description: "Oogie Boogie Bash, holiday overlays", itemCount: 3 },
       ],
       heroImage: editorialCalendar,
+      todayWeather: "72°F, Sunny",
+      todayCrowdLevel: "Low",
+      operatingHours: "8:00 AM – 12:00 AM",
     },
   ],
 

@@ -9,7 +9,7 @@ import editorialCalendar from "@/assets/editorial-calendar.jpg";
 import editorialDining from "@/assets/editorial-dining.jpg";
 import SparkleField from "@/components/SparkleField";
 import TripWizard from "@/components/TripWizard";
-import type { BookedTrip, FutureTrip, PackingItem, PreparationItem } from "@/data/types";
+import type { BookedTrip, FutureTrip, PackingItem, PreparationItem, ExperienceCategory } from "@/data/types";
 import { mockData } from "@/data/mockData";
 
 const ease: [number, number, number, number] = [0.19, 1, 0.22, 1];

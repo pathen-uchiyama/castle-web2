@@ -6,7 +6,8 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import Navigation from "@/components/Navigation";
 import Index from "./pages/Index";
 import DayZeroIndex from "./pages/DayZeroIndex";
-import Adventure from "./pages/Adventure";
+import TripsHub from "./pages/TripsHub";
+import TripDetail from "./pages/TripDetail";
 import Survey from "./pages/Survey";
 import Memories from "./pages/Memories";
 import Circle from "./pages/Circle";
@@ -40,8 +41,8 @@ const App = () => (
               />
             }
           />
-          <Route path="/adventure" element={<Adventure bookedTrip={mockData.bookedTrip} futureTrips={mockData.futureTrips} />} />
-          <Route path="/trip/:tripId" element={<Adventure bookedTrip={mockData.bookedTrip} futureTrips={mockData.futureTrips} />} />
+          <Route path="/adventure" element={<TripsHub bookedTrip={mockData.bookedTrip} futureTrips={mockData.futureTrips} />} />
+          <Route path="/trip/:tripId" element={<TripDetail bookedTrip={mockData.bookedTrip} futureTrips={mockData.futureTrips} />} />
           <Route path="/survey/:tripId/:memberId" element={<Survey />} />
           <Route path="/memories" element={<Memories tripMemories={mockData.tripMemories} />} />
           <Route path="/memories/:tripId" element={<Memories tripMemories={mockData.tripMemories} />} />

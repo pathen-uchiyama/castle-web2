@@ -438,7 +438,18 @@ const BookedTripDetail = ({ trip }: { trip: BookedTrip }) => {
                           {venue.tags.map(tag => (<span key={tag} className="text-[0.5625rem] uppercase tracking-[0.12em] px-2.5 py-1 bg-[hsl(var(--warm))] text-muted-foreground border border-border">{tag}</span>))}
                           {!venue.kidFriendly && <span className="text-[0.5625rem] uppercase tracking-[0.12em] px-2.5 py-1 bg-[hsl(var(--destructive)/0.08)] text-destructive border border-[hsl(var(--destructive)/0.2)]">Adults Only</span>}
                         </div>
-                        <div className="flex flex-wrap gap-1.5">{venue.dietaryAccommodations.map(d => (<span key={d} className="text-[0.5rem] uppercase tracking-[0.1em] px-2 py-0.5 text-muted-foreground/60 border border-border/50">✓ {d}</span>))}</div>
+                        <div className="flex flex-wrap gap-1.5 mb-5">{venue.dietaryAccommodations.map(d => (<span key={d} className="text-[0.5rem] uppercase tracking-[0.1em] px-2 py-0.5 text-muted-foreground/60 border border-border/50">✓ {d}</span>))}</div>
+                        <div className="flex gap-3 pt-4 border-t border-border">
+                          <button className="px-6 py-2.5 text-[0.625rem] tracking-[0.15em] uppercase font-medium bg-foreground text-background transition-opacity duration-300 hover:opacity-90">
+                            Book This
+                          </button>
+                          <button className="px-6 py-2.5 text-[0.625rem] tracking-[0.15em] uppercase font-medium text-muted-foreground border border-border hover:border-foreground/30 transition-all duration-300">
+                            Set Alert
+                          </button>
+                          <span className="ml-auto font-editorial text-xs text-muted-foreground/50 self-center">
+                            {venue.bookingWindow.daysBeforeArrival > 0 ? `Opens ${venue.bookingWindow.opensDate}` : "No reservation needed"}
+                          </span>
+                        </div>
                       </div>
                     </motion.div>
                   );

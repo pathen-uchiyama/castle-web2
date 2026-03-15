@@ -67,7 +67,7 @@
   body {
     @apply bg-background text-foreground;
     font-family: 'Inter', system-ui, sans-serif;
-    letter-spacing: -0.01em;
+    letter-spacing: -0.02em;
   }
 }
 

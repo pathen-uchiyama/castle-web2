@@ -7,6 +7,7 @@ import Navigation from "@/components/Navigation";
 import Index from "./pages/Index";
 import DayZeroIndex from "./pages/DayZeroIndex";
 import Adventure from "./pages/Adventure";
+import Survey from "./pages/Survey";
 import Memories from "./pages/Memories";
 import Circle from "./pages/Circle";
 import Account from "./pages/Account";
@@ -41,6 +42,7 @@ const App = () => (
           />
           <Route path="/adventure" element={<Adventure bookedTrip={mockData.bookedTrip} />} />
           <Route path="/trip/:tripId" element={<Adventure bookedTrip={mockData.bookedTrip} />} />
+          <Route path="/survey/:tripId/:memberId" element={<Survey />} />
           <Route path="/memories" element={<Memories tripMemories={mockData.tripMemories} />} />
           <Route path="/memories/:tripId" element={<Memories tripMemories={mockData.tripMemories} />} />
           <Route path="/circle" element={<Circle partyMembers={mockData.partyMembers} />} />

@@ -236,14 +236,14 @@ const Index = ({
                   className="flex-shrink-0 w-[260px] sm:w-[300px] group cursor-pointer"
                 >
                   <Link to={`/trip/${bookedTrip.tripId}`}>
-                    <div className="rounded-xl bg-white/10 backdrop-blur-md p-5 h-full hover:bg-white/15 transition-colors duration-500">
-                      <p className="label-text !text-white/35 mb-3">Preparations</p>
+                    <div className="bg-white/10 backdrop-blur-md p-5 h-full hover:bg-white/15 transition-colors duration-500 overflow-hidden">
+                      <p className="label-text !text-white/35 mb-3" style={{ fontSize: '0.625rem' }}>Preparations</p>
                       <p className="font-display text-lg text-white mb-3">Packing</p>
                       <div className="space-y-2 mb-5">
                         {bookedTrip.packingLists.map((list) => (
                           <div key={list.category} className="flex justify-between items-center">
-                            <p className="font-editorial text-sm text-white/50">{list.category}</p>
-                            <p className="label-text !text-white/25">{list.packedCount}/{list.totalCount}</p>
+                            <p className="font-editorial text-sm text-white/50 truncate mr-3">{list.category}</p>
+                            <p className="label-text !text-white/25 shrink-0" style={{ fontSize: '0.6rem' }}>{list.packedCount}/{list.totalCount}</p>
                           </div>
                         ))}
                       </div>

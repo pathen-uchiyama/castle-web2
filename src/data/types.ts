@@ -41,10 +41,21 @@ export interface ParkGuide {
 }
 
 export interface PartyMember {
+  memberId: string;
   name: string;
   role: string;
   initial: string;
   adventureCount: number;
+  age?: number;
+  birthday?: string;
+  heightInches?: number;
+  dietaryRestrictions?: string[];
+  sensoryNotes?: string;
+  favoriteCharacter?: string;
+  favoriteRide?: string;
+  thrillTolerance?: "low" | "moderate" | "high";
+  magicStatus?: string[];
+  notes?: string;
 }
 
 export interface RideTimeSaved {

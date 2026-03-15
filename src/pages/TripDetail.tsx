@@ -792,7 +792,7 @@ const BookedTripDetail = ({ trip }: { trip: BookedTrip }) => {
                 ))}
               </motion.div>
               <div className="space-y-12">
-                {Object.entries(bookedExperiences.reduce<Record<string, typeof bookedExperiences>>((acc, exp) => { if (!acc[exp.date]) acc[exp.date] = []; acc[exp.date].push(exp); return acc; }, {})).map(([date, experiences], groupIdx) => (
+                {Object.entries(allBookedExperiences.reduce<Record<string, typeof bookedExperiences>>((acc, exp) => { if (!acc[exp.date]) acc[exp.date] = []; acc[exp.date].push(exp); return acc; }, {})).map(([date, experiences], groupIdx) => (
                   <motion.div key={date} {...fade(0.15 + groupIdx * 0.05)}>
                     <p className="label-text mb-4 tracking-[0.25em]">{date}</p>
                     <div className="space-y-4">

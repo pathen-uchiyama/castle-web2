@@ -2,15 +2,17 @@ import castleHero from "@/assets/castle-hero.jpg";
 import castleGolden from "@/assets/castle-golden.jpg";
 import fireworksNight from "@/assets/fireworks-night.jpg";
 import familyMainstreet from "@/assets/family-mainstreet.jpg";
-import editorialDining from "@/assets/editorial-dining.jpg";
-import editorialCarousel from "@/assets/editorial-carousel.jpg";
 import editorialNextTrip from "@/assets/editorial-next-trip.jpg";
 import editorialResort from "@/assets/editorial-resort-twilight.jpg";
-import editorialPacking from "@/assets/editorial-packing.jpg";
-import editorialCalendar from "@/assets/editorial-calendar.jpg";
 import editorialSunset from "@/assets/editorial-sunset.jpg";
 import editorialFamilyWalk from "@/assets/editorial-family-walk.jpg";
 import editorialJournal from "@/assets/editorial-travel-journal.jpg";
+import parkHollywoodStudios from "@/assets/park-hollywood-studios.jpg";
+import parkEpcot from "@/assets/park-epcot.jpg";
+import parkAnimalKingdom from "@/assets/park-animal-kingdom.jpg";
+import parkDisneyland from "@/assets/park-disneyland.jpg";
+import parkCaliforniaAdventure from "@/assets/park-california-adventure.jpg";
+import editorialCarousel from "@/assets/editorial-carousel.jpg";
 import type { AppData } from "./types";
 
 export const mockData: AppData = {

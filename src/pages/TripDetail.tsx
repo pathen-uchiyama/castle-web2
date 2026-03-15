@@ -557,11 +557,22 @@ const BookedTripDetail = ({ trip }: { trip: BookedTrip }) => {
                         </div>
                         <div className="mb-4"><p className="label-text mb-2">The Vibe</p><p className="font-editorial text-sm text-foreground/80 leading-relaxed">{venue.vibes}</p></div>
                         <div className="mb-4 pl-4 border-l-2 border-[hsl(var(--gold)/0.4)]"><p className="label-text mb-1">✦ Insider Note</p><p className="font-editorial text-sm text-muted-foreground leading-relaxed">{venue.notableInsight}</p></div>
-                        <div className="flex flex-wrap gap-2">
+                        <div className="flex flex-wrap gap-2 mb-5">
                           {venue.tags.map(tag => (<span key={tag} className="text-[0.5625rem] uppercase tracking-[0.12em] px-2.5 py-1 bg-[hsl(var(--warm))] text-muted-foreground border border-border">{tag}</span>))}
                           {venue.ageRequirement && <span className="text-[0.5625rem] uppercase tracking-[0.12em] px-2.5 py-1 text-muted-foreground border border-border">📏 {venue.ageRequirement}</span>}
                           {venue.heightRequirement && <span className="text-[0.5625rem] uppercase tracking-[0.12em] px-2.5 py-1 text-muted-foreground border border-border">📐 {venue.heightRequirement}"</span>}
                           {venue.maxPartySize && <span className="text-[0.5625rem] uppercase tracking-[0.12em] px-2.5 py-1 text-muted-foreground border border-border">👥 Max {venue.maxPartySize}</span>}
+                        </div>
+                        <div className="flex gap-3 pt-4 border-t border-border">
+                          <button className="px-6 py-2.5 text-[0.625rem] tracking-[0.15em] uppercase font-medium bg-foreground text-background transition-opacity duration-300 hover:opacity-90">
+                            Book This
+                          </button>
+                          <button className="px-6 py-2.5 text-[0.625rem] tracking-[0.15em] uppercase font-medium text-muted-foreground border border-border hover:border-foreground/30 transition-all duration-300">
+                            Set Alert
+                          </button>
+                          <span className="ml-auto font-editorial text-xs text-muted-foreground/50 self-center">
+                            {venue.bookingWindow.daysBeforeArrival > 0 ? `Opens ${venue.bookingWindow.opensDate}` : "Walk-up only"}
+                          </span>
                         </div>
                       </div>
                     </motion.div>

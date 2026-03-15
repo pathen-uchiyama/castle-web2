@@ -4,6 +4,7 @@ import fireworksNight from "@/assets/fireworks-night.jpg";
 import familyMainstreet from "@/assets/family-mainstreet.jpg";
 import editorialDining from "@/assets/editorial-dining.jpg";
 import editorialCarousel from "@/assets/editorial-carousel.jpg";
+import editorialNextTrip from "@/assets/editorial-next-trip.jpg";
 import editorialResort from "@/assets/editorial-resort-twilight.jpg";
 import editorialPacking from "@/assets/editorial-packing.jpg";
 import editorialCalendar from "@/assets/editorial-calendar.jpg";

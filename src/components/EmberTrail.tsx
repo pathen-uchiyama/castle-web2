@@ -32,7 +32,7 @@ const EmberTrail = () => {
       x: number; y: number; size: number;
       phase: number; speed: number; hue: number; maxAlpha: number;
     }
-    const ambientCount = 45;
+    const ambientCount = 25;
     const ambients: AmbientEmber[] = Array.from({ length: ambientCount }, () => ({
       x: Math.random(),
       y: Math.random(),
@@ -54,12 +54,12 @@ const EmberTrail = () => {
       life: number; maxLife: number; size: number; hue: number;
     }
     const trailEmbers: TrailEmber[] = [];
-    const maxTrail = 50;
+    const maxTrail = 30;
 
     const spawnTrail = (w: number, h: number) => {
       trailEmbers.push({
-        x: fairyX(time, w) + (Math.random() - 0.5) * 25,
-        y: fairyY(time, h) + (Math.random() - 0.5) * 25,
+      x: fairyX(time, w) + (Math.random() - 0.5) * 120,
+        y: fairyY(time, h) + (Math.random() - 0.5) * 120,
         vx: (Math.random() - 0.5) * 0.3,
         vy: -Math.random() * 0.5 - 0.15,
         life: 0,

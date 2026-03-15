@@ -1,8 +1,10 @@
 import { motion } from "framer-motion";
+import { useState } from "react";
 import Footer from "@/components/Footer";
 import fireworksNight from "@/assets/fireworks-night.jpg";
 import editorialPacking from "@/assets/editorial-packing.jpg";
 import SparkleField from "@/components/SparkleField";
+import TripWizard from "@/components/TripWizard";
 import type { BookedTrip } from "@/data/types";
 
 const ease: [number, number, number, number] = [0.19, 1, 0.22, 1];

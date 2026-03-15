@@ -67,7 +67,25 @@ const Index = ({
 }: IndexProps) => {
   const timelineRef = useRef<HTMLDivElement>(null);
   const parkScrollRef = useRef<HTMLDivElement>(null);
-  const [activeParkIdx, setActiveParkIdx] = useState(0);
+  const [activeTimelineIdx, setActiveTimelineIdx] = useState(0);
+  const timelineCardCount = bookedTrip.travelLegs.length + 2; // legs + packing + time recovered
+
+  const handleTimelineScroll = useCallback(() => {
+    const el = timelineRef.current;
+    if (!el) return;
+    const card = el.children[0] as HTMLElement | null;
+    const cardWidth = card?.offsetWidth || 300;
+    const gap = 20;
+    const idx = Math.round(el.scrollLeft / (cardWidth + gap));
+    setActiveTimelineIdx(Math.min(idx, timelineCardCount - 1));
+  }, [timelineCardCount]);
+
+  useEffect(() => {
+    const el = timelineRef.current;
+    if (!el) return;
+    el.addEventListener('scroll', handleTimelineScroll, { passive: true });
+    return () => el.removeEventListener('scroll', handleTimelineScroll);
+  }, [handleTimelineScroll]);
 
   const handleParkScroll = useCallback(() => {
     const el = parkScrollRef.current;

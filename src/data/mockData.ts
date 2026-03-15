@@ -189,7 +189,7 @@ export const mockData: AppData = {
         { label: "Shows", description: "World of Color, Avengers encounters", itemCount: 7 },
         { label: "Festivals", description: "Food & Wine, Festival of Holidays, Lunar New Year", itemCount: 3 },
       ],
-      heroImage: editorialResort,
+      heroImage: parkCaliforniaAdventure,
       todayWeather: "70°F, Clear",
       todayCrowdLevel: "Low",
       operatingHours: "8:00 AM – 10:00 PM",

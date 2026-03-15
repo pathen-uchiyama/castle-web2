@@ -239,7 +239,7 @@ const Index = ({
 
       {/* ═══ PARK TILES — Horizontal scrollable visual cards ═══ */}
       <section className="py-20 lg:py-28 bg-[hsl(var(--warm))]">
-        <div className="max-w-6xl mx-auto px-8 mb-12">
+        <div className="max-w-6xl mx-auto px-4 sm:px-8 mb-12">
           <motion.div {...fade()}>
             <p className="label-text mb-6 tracking-[0.25em]">Park Guide</p>
             <h2 className="font-display text-4xl sm:text-5xl text-foreground leading-[1.08]">

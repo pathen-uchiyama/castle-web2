@@ -54,7 +54,7 @@ const EmberTrail = () => {
       life: number; maxLife: number; size: number; hue: number;
     }
     const trailEmbers: TrailEmber[] = [];
-    const maxTrail = 50;
+    const maxTrail = 30;
 
     const spawnTrail = (w: number, h: number) => {
       trailEmbers.push({

@@ -219,12 +219,12 @@ const Index = ({
                     transition={{ duration: 0.8, delay: i * 0.1, ease }}
                     className="flex-shrink-0 w-[260px] sm:w-[300px] group cursor-pointer"
                   >
-                    <div className="rounded-xl bg-white/10 backdrop-blur-md p-5 h-full hover:bg-white/15 transition-colors duration-500">
-                      <p className="label-text !text-white/35 mb-3">{leg.date}</p>
-                      <p className="font-display text-lg text-white mb-1">{leg.legName}</p>
-                      <p className="font-editorial text-sm text-white/40 mb-5">{leg.time}</p>
+                    <div className="bg-white/10 backdrop-blur-md p-5 h-full hover:bg-white/15 transition-colors duration-500 overflow-hidden">
+                      <p className="label-text !text-white/35 mb-3" style={{ fontSize: '0.625rem' }}>{leg.date}</p>
+                      <p className="font-display text-lg text-white mb-1 truncate">{leg.legName}</p>
+                      <p className="font-editorial text-sm text-white/40 mb-5" style={{ fontSize: '0.75rem', letterSpacing: '-0.02em' }}>{leg.time}</p>
                       <div className="gold-rule mb-3" />
-                      <p className="font-editorial text-xs text-white/30 italic group-hover:text-white/50 transition-colors duration-500">{leg.note}</p>
+                      <p className="font-editorial text-xs text-white/30 italic group-hover:text-white/50 transition-colors duration-500 line-clamp-2">{leg.note}</p>
                     </div>
                   </motion.div>
                 ))}

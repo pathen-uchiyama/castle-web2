@@ -35,6 +35,7 @@ const tabs = [
   { id: "overview", label: "Overview" },
   { id: "surveys", label: "Surveys", badge: "2 pending" },
   { id: "dining", label: "Dining" },
+  { id: "experiences", label: "Experiences" },
   { id: "designer", label: "The Designer" },
   { id: "prep", label: "Prep & Checklists" },
 ];

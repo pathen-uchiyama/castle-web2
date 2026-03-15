@@ -266,104 +266,79 @@ const Index = ({
             </h2>
           </motion.div>
         </div>
-        {(() => {
-          const parkScrollRef = useRef<HTMLDivElement>(null);
-          const [activeIdx, setActiveIdx] = useState(0);
-
-          const handleParkScroll = useCallback(() => {
-            const el = parkScrollRef.current;
-            if (!el) return;
-            const cardWidth = el.querySelector('div')?.offsetWidth || 340;
-            const gap = 24;
-            const idx = Math.round(el.scrollLeft / (cardWidth + gap));
-            setActiveIdx(Math.min(idx, parkGuides.length - 1));
-          }, [parkGuides.length]);
-
-          useEffect(() => {
-            const el = parkScrollRef.current;
-            if (!el) return;
-            el.addEventListener('scroll', handleParkScroll, { passive: true });
-            return () => el.removeEventListener('scroll', handleParkScroll);
-          }, [handleParkScroll]);
-
-          return (
-            <>
-              <div className="relative">
-                <div className="absolute left-0 top-0 bottom-0 w-8 bg-gradient-to-r from-[hsl(var(--warm))] to-transparent z-10 pointer-events-none" />
-                <div className="absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-[hsl(var(--warm))] to-transparent z-10 pointer-events-none" />
-                <div
-                  ref={parkScrollRef}
-                  className="flex gap-4 sm:gap-6 overflow-x-auto px-4 sm:px-8 pb-4"
-                  style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
-                >
-                  {parkGuides.map((park, i) => (
-                    <motion.div
-                      key={park.parkId}
-                      initial={{ opacity: 0, y: 30 }}
-                      whileInView={{ opacity: 1, y: 0 }}
-                      viewport={{ once: true }}
-                      transition={{ duration: 1, delay: i * 0.12, ease }}
-                      className="flex-shrink-0 w-[300px] sm:w-[340px] group"
-                    >
-                      <Link to={`/parks/${park.parkId}`}>
-                        <div className="relative h-[420px] overflow-hidden rounded-2xl">
-                          <img
-                            src={park.heroImage}
-                            alt={park.parkName}
-                            className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                          />
-                          <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent" />
-                          <div className="absolute bottom-0 left-0 right-0 p-6">
-                            <p className="label-text !text-white/60 mb-2 tracking-[0.2em]">{park.resortName}</p>
-                            <h3 className="font-display text-2xl text-white mb-4 group-hover:text-[hsl(var(--gold-light))] transition-colors duration-500">{park.parkName}</h3>
-                            <div className="space-y-2 mb-4">
-                              <div className="flex justify-between items-center">
-                                <p className="label-text !text-white/50">Weather</p>
-                                <p className="font-editorial text-sm text-white/90">{park.todayWeather}</p>
-                              </div>
-                              <div className="flex justify-between items-center">
-                                <p className="label-text !text-white/50">Crowds</p>
-                                <p className="font-editorial text-sm text-white/90">{park.todayCrowdLevel}</p>
-                              </div>
-                              <div className="flex justify-between items-center">
-                                <p className="label-text !text-white/50">Hours</p>
-                                <p className="font-editorial text-sm text-white/90">{park.operatingHours}</p>
-                              </div>
-                            </div>
-                            <div className="flex gap-3 flex-wrap">
-                              {park.categories.slice(0, 3).map((c) => (
-                                <span key={c.label} className="label-text !text-white/40 text-[0.6rem]">{c.label} · {c.itemCount}</span>
-                              ))}
-                            </div>
-                          </div>
+        <div className="relative">
+          <div className="absolute left-0 top-0 bottom-0 w-8 bg-gradient-to-r from-[hsl(var(--warm))] to-transparent z-10 pointer-events-none" />
+          <div className="absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-[hsl(var(--warm))] to-transparent z-10 pointer-events-none" />
+          <div
+            ref={parkScrollRef}
+            className="flex gap-4 sm:gap-6 overflow-x-auto px-4 sm:px-8 pb-4"
+            style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
+          >
+            {parkGuides.map((park, i) => (
+              <motion.div
+                key={park.parkId}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 1, delay: i * 0.12, ease }}
+                className="flex-shrink-0 w-[300px] sm:w-[340px] group"
+              >
+                <Link to={`/parks/${park.parkId}`}>
+                  <div className="relative h-[420px] overflow-hidden rounded-2xl">
+                    <img
+                      src={park.heroImage}
+                      alt={park.parkName}
+                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent" />
+                    <div className="absolute bottom-0 left-0 right-0 p-6">
+                      <p className="label-text !text-white/60 mb-2 tracking-[0.2em]">{park.resortName}</p>
+                      <h3 className="font-display text-2xl text-white mb-4 group-hover:text-[hsl(var(--gold-light))] transition-colors duration-500">{park.parkName}</h3>
+                      <div className="space-y-2 mb-4">
+                        <div className="flex justify-between items-center">
+                          <p className="label-text !text-white/50">Weather</p>
+                          <p className="font-editorial text-sm text-white/90">{park.todayWeather}</p>
                         </div>
-                      </Link>
-                    </motion.div>
-                  ))}
-                </div>
-              </div>
-              <div className="flex justify-center gap-2 mt-6">
-                {parkGuides.map((_, i) => (
-                  <button
-                    key={i}
-                    onClick={() => {
-                      const el = parkScrollRef.current;
-                      if (!el) return;
-                      const card = el.children[i] as HTMLElement;
-                      if (card) el.scrollTo({ left: card.offsetLeft - 16, behavior: 'smooth' });
-                    }}
-                    className={`w-5 h-2.5 rounded-full border transition-all duration-500 ${
-                      i === activeIdx
-                        ? "bg-[hsl(var(--gold))] border-[hsl(var(--gold))]"
-                        : "bg-transparent border-[hsl(var(--ink-light))/0.3] hover:border-[hsl(var(--gold-light))]"
-                    }`}
-                    aria-label={`Go to park ${i + 1}`}
-                  />
-                ))}
-              </div>
-            </>
-          );
-        })()}
+                        <div className="flex justify-between items-center">
+                          <p className="label-text !text-white/50">Crowds</p>
+                          <p className="font-editorial text-sm text-white/90">{park.todayCrowdLevel}</p>
+                        </div>
+                        <div className="flex justify-between items-center">
+                          <p className="label-text !text-white/50">Hours</p>
+                          <p className="font-editorial text-sm text-white/90">{park.operatingHours}</p>
+                        </div>
+                      </div>
+                      <div className="flex gap-3 flex-wrap">
+                        {park.categories.slice(0, 3).map((c) => (
+                          <span key={c.label} className="label-text !text-white/40 text-[0.6rem]">{c.label} · {c.itemCount}</span>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                </Link>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+        <div className="flex justify-center gap-2.5 mt-8">
+          {parkGuides.map((_, i) => (
+            <button
+              key={i}
+              onClick={() => {
+                const el = parkScrollRef.current;
+                if (!el) return;
+                const card = el.children[i] as HTMLElement;
+                if (card) el.scrollTo({ left: card.offsetLeft - 16, behavior: 'smooth' });
+              }}
+              className={`w-5 h-2.5 rounded-full border transition-all duration-500 ${
+                i === activeParkIdx
+                  ? "bg-[hsl(var(--gold))] border-[hsl(var(--gold))]"
+                  : "bg-transparent border-muted-foreground/30 hover:border-[hsl(var(--gold-light))]"
+              }`}
+              aria-label={`Go to park ${i + 1}`}
+            />
+          ))}
+        </div>
       </section>
 
       {/* ═══ TWO COLUMN — Plan Next Trip + Inner Circle ═══ */}

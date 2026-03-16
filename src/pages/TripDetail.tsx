@@ -502,7 +502,7 @@ const BookedTripDetail = ({ trip }: { trip: BookedTrip }) => {
           <motion.div {...fade(0.1)} className="flex flex-wrap gap-3 mb-12">
             {partySurvey.responses.map((resp) => (
               <div key={resp.memberId} className="flex items-center gap-2 border border-border bg-card rounded-lg px-4 py-2 shadow-[var(--shadow-soft)]">
-                <div className="w-7 h-7 flex items-center justify-center bg-foreground text-background text-xs font-medium">{resp.memberId}</div>
+                <div className="w-7 h-7 rounded-md flex items-center justify-center bg-foreground text-background text-xs font-medium">{resp.memberId}</div>
                 <span className="font-display text-sm text-foreground">{resp.memberName}</span>
                 {resp.status === "completed" ? (
                   <>

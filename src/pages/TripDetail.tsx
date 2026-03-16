@@ -1079,7 +1079,7 @@ const BookedTripDetail = ({ trip }: { trip: BookedTrip }) => {
                   </p>
                   <div className="space-y-3 opacity-50">
                     {allBookedExperiences.filter(e => e.status === "cancelled").map((exp) => (
-                      <div key={exp.experienceId} className="border border-border bg-card p-4 line-through">
+                      <div key={exp.experienceId} className="border border-border bg-card rounded-lg p-4 line-through">
                         <div className="flex items-center gap-2">
                           <span className="text-lg">{experienceIcons[exp.category]}</span>
                           <span className="font-display text-foreground">{exp.experienceName}</span>

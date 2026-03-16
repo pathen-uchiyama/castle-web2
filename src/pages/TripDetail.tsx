@@ -533,11 +533,11 @@ const BookedTripDetail = ({ trip }: { trip: BookedTrip }) => {
                        : "border-border bg-card hover:border-foreground/20"
                    }`}
                 >
-                  <div className={`w-5 h-5 flex items-center justify-center border transition-all duration-300 ${
-                    mdeConnected[member.memberId]
-                      ? "bg-[hsl(var(--gold))] border-[hsl(var(--gold))] text-background"
-                      : "border-muted-foreground/30"
-                  }`}>
+                   <div className={`w-5 h-5 rounded-sm flex items-center justify-center border transition-all duration-300 ${
+                     mdeConnected[member.memberId]
+                       ? "bg-[hsl(var(--gold))] border-[hsl(var(--gold))] text-background"
+                       : "border-muted-foreground/30"
+                   }`}>
                     {mdeConnected[member.memberId] && <span className="text-[0.5rem]">✓</span>}
                   </div>
                   <div className="flex items-center gap-2">

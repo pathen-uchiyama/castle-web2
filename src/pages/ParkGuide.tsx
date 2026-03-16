@@ -352,7 +352,7 @@ const ParkGuidePage = ({ parkGuides }: ParkGuidePageProps) => {
                   <motion.div
                     key={a.attractionId}
                     {...fade(i * 0.03)}
-                    className="border border-border bg-card p-5 shadow-[var(--shadow-soft)] hover:shadow-[var(--shadow-hover)] transition-shadow duration-500 cursor-pointer group"
+                    className="border border-border bg-card rounded-lg p-5 shadow-[var(--shadow-soft)] hover:shadow-[var(--shadow-hover)] transition-shadow duration-500 cursor-pointer group"
                   >
                     <div className="flex items-start gap-4">
                       <span className="text-lg mt-0.5">{categoryIcons[a.category]}</span>

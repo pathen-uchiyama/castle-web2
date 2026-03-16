@@ -471,7 +471,7 @@ const ResortHub = () => {
                         <p className="font-editorial text-sm text-muted-foreground">{hotel.theme}</p>
                       </div>
                       <div className="text-right shrink-0 ml-4">
-                        <span className="px-2.5 py-1 text-[0.5625rem] uppercase tracking-[0.1em] border bg-[hsl(var(--gold)/0.08)] text-[hsl(var(--gold-dark))] border-[hsl(var(--gold)/0.2)]">
+                        <span className="px-2.5 py-1 rounded-md text-[0.5625rem] uppercase tracking-[0.1em] border bg-[hsl(var(--gold)/0.08)] text-[hsl(var(--gold-dark))] border-[hsl(var(--gold)/0.2)]">
                           {categoryLabels[hotel.category]}
                         </span>
                         <p className="font-display text-lg text-foreground mt-1">${hotel.priceRange.low}<span className="text-xs text-muted-foreground font-editorial">–${hotel.priceRange.high}/night</span></p>

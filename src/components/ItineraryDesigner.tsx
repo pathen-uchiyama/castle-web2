@@ -1304,11 +1304,10 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
 
           {/* Attraction cards */}
           <div className="space-y-2.5">
-            {filteredAttractions.map(attraction => {
+            {filteredAttractions.filter(a => !itinerary.some(i => i.attractionId === a.id)).map(attraction => {
               const isTopFive = topFiveIds.has(attraction.id);
               const voters = topFiveVoters[attraction.id];
               const satisfies = attractionSatisfies[attraction.id];
-              const alreadyAdded = itinerary.some(i => i.attractionId === attraction.id);
               const isExpanded = expandedCardId === attraction.id;
               const isDraggingThis = draggingAttractionId === attraction.id;
               const estWait = attraction.waitCategory ? (defaultWaitByCategory[attraction.waitCategory] || 15) : 15;

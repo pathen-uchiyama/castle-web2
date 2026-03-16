@@ -17,6 +17,18 @@ const categoryIcons: Record<string, string> = {
   show: "🎭",
   character: "✨",
   dining: "🍽️",
+  parade: "🎆",
+  experience: "🎪",
+};
+
+const categoryLabels: Record<string, string> = {
+  all: "All",
+  ride: "Rides",
+  show: "Shows",
+  character: "Character Meets",
+  dining: "Dining",
+  parade: "Parades & Nighttime",
+  experience: "Experiences",
 };
 
 const rankingConfig: { value: SurveyRanking; label: string; color: string; activeColor: string }[] = [
@@ -32,10 +44,21 @@ const Survey = () => {
   const member = mockData.partyMembers.find((m) => m.initial.toLowerCase() === memberId?.toLowerCase());
 
   const [step, setStep] = useState<1 | 2 | 3>(1);
+  const [categoryFilter, setCategoryFilter] = useState<string>("all");
   const [rankings, setRankings] = useState<Record<string, SurveyRanking>>({});
   const [openToAnything, setOpenToAnything] = useState(false);
   const [topFive, setTopFive] = useState<string[]>([]);
   const [submitted, setSubmitted] = useState(false);
+
+  const filteredAttractions = useMemo(
+    () => categoryFilter === "all" ? attractions : attractions.filter((a) => a.category === categoryFilter),
+    [attractions, categoryFilter]
+  );
+
+  const availableCategories = useMemo(() => {
+    const cats = new Set(attractions.map((a) => a.category));
+    return ["all", ...Array.from(cats)];
+  }, [attractions]);
 
   const mustDos = useMemo(
     () => attractions.filter((a) => rankings[a.attractionId] === "must-do"),
@@ -47,13 +70,14 @@ const Survey = () => {
 
   const parkGroups = useMemo(() => {
     const groups: Record<string, SurveyAttraction[]> = {};
-    for (const a of attractions) {
-      const park = mockData.parkGuides.find((p) => p.parkId === a.parkId)?.parkName ?? a.parkId;
+    for (const a of filteredAttractions) {
+      const park = a.parkId === "resort" ? "Resort Dining"
+        : mockData.parkGuides.find((p) => p.parkId === a.parkId)?.parkName ?? a.parkId;
       if (!groups[park]) groups[park] = [];
       groups[park].push(a);
     }
     return groups;
-  }, [attractions]);
+  }, [filteredAttractions]);
 
   const handleRank = (attractionId: string, ranking: SurveyRanking) => {
     setRankings((prev) => {
@@ -147,6 +171,30 @@ const Survey = () => {
             transition={{ duration: 0.5, ease }}
             className="px-8 lg:px-16 pb-16"
           >
+            {/* Category filter tabs */}
+            <div className="flex flex-wrap gap-2 mb-10 pb-6 border-b border-border">
+              {availableCategories.map((cat) => {
+                const count = cat === "all" ? attractions.length : attractions.filter((a) => a.category === cat).length;
+                const isActive = categoryFilter === cat;
+                return (
+                  <button
+                    key={cat}
+                    onClick={() => setCategoryFilter(cat)}
+                    className="px-4 py-2 rounded-lg text-xs tracking-[0.1em] uppercase font-medium transition-all duration-300 flex items-center gap-2"
+                    style={{
+                      background: isActive ? "hsl(var(--foreground))" : "transparent",
+                      color: isActive ? "hsl(var(--background))" : "hsl(var(--muted-foreground))",
+                      border: `1px solid ${isActive ? "hsl(var(--foreground))" : "hsl(var(--border))"}`,
+                    }}
+                  >
+                    {cat !== "all" && <span>{categoryIcons[cat]}</span>}
+                    {categoryLabels[cat] ?? cat}
+                    <span className="opacity-60">({count})</span>
+                  </button>
+                );
+              })}
+            </div>
+
             {Object.entries(parkGroups).map(([parkName, parkAttractions]) => (
               <div key={parkName} className="mb-16">
                 <h2 className="font-display text-2xl text-foreground mb-8">{parkName}</h2>

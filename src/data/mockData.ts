@@ -711,30 +711,89 @@ export const mockData: AppData = {
   partySurvey: {
     tripId: "spring-break-2026",
     attractions: [
+      // ═══ RIDES ═══
       // Magic Kingdom
       { attractionId: "mk-tron", name: "Tron Lightcycle / Run", parkId: "mk", category: "ride", heightRequirement: "48\"", sensoryTags: ["dark", "speed", "loud"], description: "Indoor launch coaster through a digital grid." },
       { attractionId: "mk-space", name: "Space Mountain", parkId: "mk", category: "ride", heightRequirement: "44\"", sensoryTags: ["dark", "speed"], description: "Classic indoor roller coaster through the cosmos." },
       { attractionId: "mk-pirates", name: "Pirates of the Caribbean", parkId: "mk", category: "ride", description: "Gentle boat ride through pirate scenes." },
       { attractionId: "mk-haunted", name: "Haunted Mansion", parkId: "mk", category: "ride", sensoryTags: ["dark"], description: "Doom buggy tour of 999 happy haunts." },
       { attractionId: "mk-jungle", name: "Jungle Cruise", parkId: "mk", category: "ride", description: "Guided boat tour with legendary skipper humor." },
-      { attractionId: "mk-boo", name: "Monsters Inc. Laugh Floor", parkId: "mk", category: "show", description: "Interactive comedy show starring Mike Wazowski." },
-      { attractionId: "mk-mickey", name: "Meet Mickey at Town Square", parkId: "mk", category: "character", description: "Classic meet-and-greet with the big cheese." },
+      { attractionId: "mk-7dmt", name: "Seven Dwarfs Mine Train", parkId: "mk", category: "ride", heightRequirement: "38\"", description: "Family coaster through the diamond mine with swaying cars." },
+      { attractionId: "mk-big-thunder", name: "Big Thunder Mountain Railroad", parkId: "mk", category: "ride", heightRequirement: "40\"", sensoryTags: ["speed"], description: "Runaway mine train — the wildest ride in the wilderness." },
+      { attractionId: "mk-buzz", name: "Buzz Lightyear's Space Ranger Spin", parkId: "mk", category: "ride", description: "Interactive shooting dark ride — battle Emperor Zurg." },
+      { attractionId: "mk-peter-pan", name: "Peter Pan's Flight", parkId: "mk", category: "ride", description: "Soar over London and Never Land in a pirate ship." },
       // EPCOT
       { attractionId: "ep-guardians", name: "Guardians of the Galaxy: Cosmic Rewind", parkId: "epcot", category: "ride", heightRequirement: "42\"", sensoryTags: ["dark", "speed", "spinning"], description: "Reverse-launch indoor coaster with a killer soundtrack." },
       { attractionId: "ep-frozen", name: "Frozen Ever After", parkId: "epcot", category: "ride", description: "Boat ride through Arendelle with Anna and Elsa." },
       { attractionId: "ep-test-track", name: "Test Track", parkId: "epcot", category: "ride", heightRequirement: "40\"", sensoryTags: ["speed", "outdoor"], description: "Design a virtual car and take it for a 65 mph spin." },
-      { attractionId: "ep-space220", name: "Space 220", parkId: "epcot", category: "dining", description: "Fine dining aboard a simulated space station." },
       { attractionId: "ep-remy", name: "Remy's Ratatouille Adventure", parkId: "epcot", category: "ride", description: "Trackless ride shrunk to rat-sized in Gusteau's kitchen." },
+      { attractionId: "ep-soarin", name: "Soarin' Around the World", parkId: "epcot", category: "ride", heightRequirement: "40\"", description: "Hang-gliding simulator over world landmarks." },
       // Hollywood Studios
       { attractionId: "hs-rise", name: "Rise of the Resistance", parkId: "hs", category: "ride", heightRequirement: "40\"", sensoryTags: ["dark", "loud", "motion"], description: "Epic Star Wars attraction with multiple ride systems." },
       { attractionId: "hs-tot", name: "Tower of Terror", parkId: "hs", category: "ride", heightRequirement: "40\"", sensoryTags: ["drops", "dark"], description: "Plunging elevator in the Twilight Zone." },
       { attractionId: "hs-slinky", name: "Slinky Dog Dash", parkId: "hs", category: "ride", heightRequirement: "38\"", description: "Family coaster through Andy's backyard." },
-      { attractionId: "hs-fantasmic", name: "Fantasmic!", parkId: "hs", category: "show", sensoryTags: ["loud", "fire", "water"], description: "Nighttime spectacular of water, fire, and Disney magic." },
+      { attractionId: "hs-rocknroller", name: "Rock 'n' Roller Coaster", parkId: "hs", category: "ride", heightRequirement: "48\"", sensoryTags: ["dark", "speed", "loud"], description: "0-57 mph launch coaster with inversions and Aerosmith soundtrack." },
       // Animal Kingdom
       { attractionId: "ak-flight", name: "Avatar Flight of Passage", parkId: "ak", category: "ride", heightRequirement: "44\"", sensoryTags: ["3D", "motion", "wind"], description: "Soar on a banshee over Pandora." },
       { attractionId: "ak-safari", name: "Kilimanjaro Safaris", parkId: "ak", category: "ride", description: "Open-air safari through 110 acres of African savanna." },
       { attractionId: "ak-everest", name: "Expedition Everest", parkId: "ak", category: "ride", heightRequirement: "44\"", sensoryTags: ["speed", "dark", "drops"], description: "High-speed train ride confronting the Yeti." },
+      { attractionId: "ak-navi", name: "Na'vi River Journey", parkId: "ak", category: "ride", description: "Gentle boat ride through bioluminescent Pandora." },
+
+      // ═══ SHOWS ═══
+      { attractionId: "mk-boo", name: "Monsters Inc. Laugh Floor", parkId: "mk", category: "show", description: "Interactive comedy show starring Mike Wazowski." },
+      { attractionId: "mk-philharmagic", name: "Mickey's PhilharMagic", parkId: "mk", category: "show", sensoryTags: ["3D", "water"], description: "4D concert featuring classic Disney musical moments." },
+      { attractionId: "mk-country-bears", name: "Country Bear Jamboree", parkId: "mk", category: "show", description: "Classic animatronic bear musical revue." },
+      { attractionId: "hs-fantasmic", name: "Fantasmic!", parkId: "hs", category: "show", sensoryTags: ["loud", "fire", "water"], description: "Nighttime spectacular of water, fire, and Disney magic." },
+      { attractionId: "hs-muppets", name: "MuppetVision 3D", parkId: "hs", category: "show", sensoryTags: ["3D"], description: "Classic 3D film featuring the Muppets with in-theater effects." },
+      { attractionId: "hs-frozen-sing", name: "For the First Time in Forever: Frozen Sing-Along", parkId: "hs", category: "show", description: "Comedic retelling of Frozen with audience sing-along." },
       { attractionId: "ak-lion", name: "Festival of the Lion King", parkId: "ak", category: "show", description: "Broadway-caliber celebration of the Lion King." },
+      { attractionId: "ak-nemo-show", name: "Finding Nemo: The Big Blue… and Beyond!", parkId: "ak", category: "show", description: "Musical stage adaptation with puppetry and special effects." },
+
+      // ═══ CHARACTER MEET & GREETS ═══
+      { attractionId: "mk-mickey", name: "Meet Mickey at Town Square Theater", parkId: "mk", category: "character", description: "Classic meet-and-greet with Mickey in his magician outfit." },
+      { attractionId: "mk-princesses", name: "Princess Fairytale Hall (Cinderella & Rapunzel)", parkId: "mk", category: "character", description: "Meet two princesses in a beautiful Fantasyland setting." },
+      { attractionId: "mk-tiana", name: "Meet Tiana", parkId: "mk", category: "character", description: "Meet Princess Tiana near her new Bayou attraction." },
+      { attractionId: "mk-pooh-tigger", name: "Meet Pooh & Tigger", parkId: "mk", category: "character", description: "Hundred Acre Wood friends at their cozy corner." },
+      { attractionId: "mk-ariel", name: "Meet Ariel at Her Grotto", parkId: "mk", category: "character", description: "Visit the Little Mermaid in her seaside grotto." },
+      { attractionId: "ep-anna-elsa", name: "Meet Anna & Elsa (Royal Sommerhus)", parkId: "epcot", category: "character", description: "Meet the Frozen sisters in the Norway pavilion." },
+      { attractionId: "ep-mulan", name: "Meet Mulan (China Pavilion)", parkId: "epcot", category: "character", description: "Meet the legendary warrior in the China pavilion." },
+      { attractionId: "ep-belle", name: "Meet Belle (France Pavilion)", parkId: "epcot", category: "character", description: "Meet Belle near the France pavilion gardens." },
+      { attractionId: "hs-chewbacca", name: "Meet Chewbacca (Galaxy's Edge)", parkId: "hs", category: "character", description: "Encounter Chewie in Black Spire Outpost." },
+      { attractionId: "hs-olaf", name: "Meet Olaf (Celebrity Spotlight)", parkId: "hs", category: "character", description: "Warm hugs from everyone's favorite snowman." },
+      { attractionId: "ak-donald-daisy", name: "Meet Donald & Daisy (DinoLand)", parkId: "ak", category: "character", description: "Donald and Daisy in fun dino-themed outfits." },
+      { attractionId: "ak-kevin", name: "Meet Kevin (Discovery Island)", parkId: "ak", category: "character", description: "The colorful bird from UP roams Discovery Island." },
+
+      // ═══ PARADES & NIGHTTIME ═══
+      { attractionId: "mk-fotm", name: "Festival of Fantasy Parade", parkId: "mk", category: "parade", description: "Stunning daytime parade with towering floats featuring Disney characters." },
+      { attractionId: "mk-happily", name: "Happily Ever After (Fireworks)", parkId: "mk", category: "parade", sensoryTags: ["loud", "fire"], description: "Spectacular fireworks and projections on Cinderella Castle." },
+      { attractionId: "mk-boo-parade", name: "Boo-To-You Halloween Parade (Seasonal)", parkId: "mk", category: "parade", sensoryTags: ["seasonal"], description: "Headless Horseman leads the most beloved seasonal parade." },
+      { attractionId: "ep-harmonious", name: "EPCOT Fireworks Spectacular", parkId: "epcot", category: "parade", sensoryTags: ["loud", "fire"], description: "Nighttime fireworks over World Showcase Lagoon." },
+      { attractionId: "ak-kite-tails", name: "KiteTails (Discovery Island)", parkId: "ak", category: "parade", description: "Performers with enormous kites on Discovery Island." },
+
+      // ═══ DINING PREFERENCES ═══
+      { attractionId: "dn-bog", name: "Be Our Guest Restaurant", parkId: "mk", category: "dining", description: "Fine dining inside Beast's enchanted castle. French-inspired cuisine." },
+      { attractionId: "dn-skipper", name: "Jungle Navigation Co. Ltd Skipper Canteen", parkId: "mk", category: "dining", description: "Adventurous world cuisine with Jungle Cruise-style humor." },
+      { attractionId: "dn-ohana", name: "'Ohana (Polynesian Village Resort)", parkId: "resort", category: "dining", description: "Family-style Polynesian feast with character breakfast option." },
+      { attractionId: "dn-space220", name: "Space 220", parkId: "epcot", category: "dining", description: "Fine dining aboard a simulated space station with orbital views." },
+      { attractionId: "dn-via-napoli", name: "Via Napoli Ristorante e Pizzeria", parkId: "epcot", category: "dining", description: "Authentic Neapolitan pizza from wood-fired ovens in Italy." },
+      { attractionId: "dn-le-cellier", name: "Le Cellier Steakhouse", parkId: "epcot", category: "dining", description: "Canadian steakhouse with filet mignon and pretzel bread." },
+      { attractionId: "dn-teppan-edo", name: "Teppan Edo", parkId: "epcot", category: "dining", description: "Hibachi-style teppanyaki dining in the Japan pavilion." },
+      { attractionId: "dn-sanaa", name: "Sanaa (Animal Kingdom Lodge)", parkId: "resort", category: "dining", description: "African-Indian fusion with savanna views and famous bread service." },
+      { attractionId: "dn-hollywood-brown", name: "The Hollywood Brown Derby", parkId: "hs", category: "dining", description: "Upscale American dining. Famous for the Cobb salad." },
+      { attractionId: "dn-50s-prime", name: "50's Prime Time Café", parkId: "hs", category: "dining", description: "Retro diner where servers play your bossy family. Eat your vegetables!" },
+      { attractionId: "dn-yak-yeti", name: "Yak & Yeti Restaurant", parkId: "ak", category: "dining", description: "Pan-Asian cuisine in a richly themed Himalayan merchant's home." },
+      { attractionId: "dn-tusker-house", name: "Tusker House (Character Dining)", parkId: "ak", category: "dining", description: "Buffet with Donald and friends in safari outfits." },
+      { attractionId: "dn-chef-mickey", name: "Chef Mickey's (Contemporary Resort)", parkId: "resort", category: "dining", description: "Buffet character dining with Mickey and friends. Monorail views." },
+      { attractionId: "dn-cali-grill", name: "California Grill (Contemporary Resort)", parkId: "resort", category: "dining", description: "Rooftop fine dining with fireworks views. Sushi and seasonal cuisine." },
+
+      // ═══ EXPERIENCES ═══
+      { attractionId: "ex-bibbidi", name: "Bibbidi Bobbidi Boutique", parkId: "mk", category: "experience", description: "Princess or knight makeover for kids ages 3-12." },
+      { attractionId: "ex-droid-depot", name: "Droid Depot (Build a Droid)", parkId: "hs", category: "experience", description: "Build your own R2 or BB-series droid in Galaxy's Edge." },
+      { attractionId: "ex-savis", name: "Savi's Workshop (Build a Lightsaber)", parkId: "hs", category: "experience", description: "Immersive lightsaber-building ceremony. Reservations required." },
+      { attractionId: "ex-harmony-barber", name: "Harmony Barber Shop (First Haircut)", parkId: "mk", category: "experience", description: "Magical first haircut experience with pixie dust and a certificate." },
+      { attractionId: "ex-pirates-league", name: "The Pirates League", parkId: "mk", category: "experience", description: "Pirate makeover complete with costume and accessories." },
+      { attractionId: "ex-wild-africa-trek", name: "Wild Africa Trek", parkId: "ak", category: "experience", description: "Premium guided safari with rope bridges and exclusive animal encounters." },
+      { attractionId: "ex-behind-seeds", name: "Behind the Seeds Tour", parkId: "epcot", category: "experience", description: "Walking tour of EPCOT's greenhouses and fish farm." },
     ],
     responses: [
       {

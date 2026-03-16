@@ -37,10 +37,10 @@ const GuidesLanding = () => (
     {/* Hero */}
     <section className="relative bg-foreground text-background px-8 lg:px-16 pt-32 pb-20">
       <motion.div {...fade()}>
-        <p className="text-[0.625rem] uppercase tracking-[0.3em] text-background/50 mb-4">Resort Encyclopedia</p>
+        <p className="text-[0.625rem] uppercase tracking-[0.3em] text-background/50 mb-4">Resort Encyclopedia 🗺️</p>
         <h1 className="font-display text-5xl sm:text-6xl lg:text-7xl leading-[1.05] mb-4">Park Guides</h1>
         <p className="font-editorial text-lg text-background/60 max-w-2xl">
-          Everything you need to know about Disney's resorts — parks, hotels, dining, transportation, and insider tips to plan the perfect vacation.
+          Everything your family needs — parks, hotels, dining, and insider tips for the most magical vacation ever.
         </p>
       </motion.div>
     </section>

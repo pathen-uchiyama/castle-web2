@@ -40,6 +40,7 @@ export interface ParkAttraction {
   warnings: string[];
   isClosed?: boolean;
   tags?: string[];
+  zone?: ParkZone;
   /** Lifecycle status — affects demand and crowd levels */
   attractionStatus?: AttractionStatusMeta;
 }

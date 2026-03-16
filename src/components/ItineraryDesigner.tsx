@@ -275,7 +275,7 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
 
         return b.rating - a.rating;
       });
-  }, [selectedParks, researchCategory, searchQuery, topFiveIds, focus]);
+  }, [selectedParks, researchCategory, searchQuery, topFiveIds, focus, attractionSatisfies]);
 
   const parkSchedules = useMemo(() => {
     const s: { parkId: string; name: string; hours: string; earlyEntry?: string }[] = [];

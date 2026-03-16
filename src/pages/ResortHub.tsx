@@ -141,7 +141,7 @@ const ResortHub = () => {
           <Link to="/guides" className="inline-flex items-center gap-1.5 text-background/40 hover:text-background/70 transition-colors mb-6 text-[0.625rem] uppercase tracking-[0.2em]">
             <ArrowLeft className="w-3 h-3" /> All Resorts
           </Link>
-          <p className="text-[0.625rem] uppercase tracking-[0.3em] text-background/50 mb-4">Resort Guide</p>
+          <p className="text-[0.625rem] uppercase tracking-[0.3em] text-background/50 mb-4">Resort Guide 🗺️</p>
           <h1 className="font-display text-5xl sm:text-6xl lg:text-7xl leading-[1.05] mb-4">{resort.name}</h1>
           <p className="font-editorial text-lg text-background/60 max-w-2xl mb-6">{resort.tagline} · {resort.location}</p>
           <div className="flex flex-wrap gap-3">

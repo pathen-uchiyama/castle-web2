@@ -219,7 +219,7 @@ const Index = ({
                     transition={{ duration: 0.8, delay: i * 0.1, ease }}
                     className="flex-shrink-0 w-[260px] sm:w-[300px] group cursor-pointer"
                   >
-                    <div className="bg-white/10 backdrop-blur-md p-5 h-full hover:bg-white/15 transition-colors duration-500 overflow-hidden">
+                     <div className="bg-white/10 backdrop-blur-md rounded-lg p-5 h-full hover:bg-white/15 transition-colors duration-500 overflow-hidden">
                       <p className="label-text !text-white/35 mb-3" style={{ fontSize: '0.625rem' }}>{leg.date}</p>
                       <p className="font-display text-lg text-white mb-1 truncate">{leg.legName}</p>
                       <p className="font-editorial text-sm text-white/40 mb-5" style={{ fontSize: '0.75rem', letterSpacing: '-0.02em' }}>{leg.time}</p>

@@ -56,7 +56,7 @@ const GuidesLanding = () => (
           <motion.div key={resort.id} {...fade(0.05 + i * 0.08)}>
             <Link
               to={`/resort/${resort.id}`}
-              className="block border border-border bg-card p-8 lg:p-10 shadow-[var(--shadow-soft)] hover:shadow-[var(--shadow-hover)] transition-all duration-500 group"
+              className="block rounded-lg border border-border bg-card p-8 lg:p-10 shadow-[var(--shadow-soft)] hover:shadow-[var(--shadow-hover)] transition-all duration-500 group"
             >
               <div className="flex items-center gap-4 mb-4">
                 <span className="text-4xl">{resort.icon}</span>
@@ -72,7 +72,7 @@ const GuidesLanding = () => (
 
               <div className="flex flex-wrap gap-2 mb-6">
                 {resort.stats.map(stat => (
-                  <span key={stat} className="px-3 py-1.5 text-[0.5625rem] uppercase tracking-[0.1em] bg-[hsl(var(--gold)/0.08)] text-[hsl(var(--gold-dark))] border border-[hsl(var(--gold)/0.2)]">
+                  <span key={stat} className="px-3 py-1.5 rounded-md text-[0.5625rem] uppercase tracking-[0.1em] bg-[hsl(var(--gold)/0.08)] text-[hsl(var(--gold-dark))] border border-[hsl(var(--gold)/0.2)]">
                     {stat}
                   </span>
                 ))}

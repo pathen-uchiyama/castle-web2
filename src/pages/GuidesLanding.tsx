@@ -35,7 +35,7 @@ const resorts = [
 ];
 
 const GuidesLanding = () => (
-  <main className="min-h-screen bg-background">
+  <main className="min-h-screen bg-background pt-16">
     {/* Hero */}
     <section className="relative h-[25vh] min-h-[160px] overflow-hidden">
       <img src={headerGuides} alt="Park Guides" className="w-full h-full object-cover" />

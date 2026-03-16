@@ -37,17 +37,15 @@ const Account = ({ account }: AccountProps) => {
 
   return (
     <div className="min-h-screen bg-background pt-16">
-      {/* Header */}
-      <section className="max-w-3xl mx-auto px-4 sm:px-8 py-16 sm:py-20">
-        <motion.div {...fade()}>
-          <p className="label-text mb-6 tracking-[0.3em]">Your Account</p>
-          <h1 className="font-display text-5xl sm:text-6xl text-foreground leading-[1.02] mb-4">
-            The details.
-          </h1>
-          <p className="font-editorial text-muted-foreground max-w-md">
-            Your guest profile, preferences, and subscription — all in one place.
-          </p>
-        </motion.div>
+      {/* Hero */}
+      <section className="relative h-[25vh] min-h-[160px] overflow-hidden">
+        <img src={headerAccount} alt="Account" className="w-full h-full object-cover" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-black/10" />
+        <SparkleField count={6} />
+        <div className="absolute bottom-0 left-0 right-0 px-8 lg:px-16 pb-8">
+          <motion.p {...fade()} className="label-text !text-white/60 mb-2 tracking-[0.3em]">Your Account</motion.p>
+          <motion.h1 {...fade(0.2)} className="font-display text-white text-3xl sm:text-5xl leading-[1.02]">The details.</motion.h1>
+        </div>
       </section>
 
       {/* Sub-navigation */}

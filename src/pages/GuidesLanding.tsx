@@ -37,14 +37,14 @@ const resorts = [
 const GuidesLanding = () => (
   <main className="min-h-screen bg-background">
     {/* Hero */}
-    <section className="relative bg-background px-8 lg:px-16 pt-32 pb-20">
-      <motion.div {...fade()}>
-        <p className="text-[0.625rem] uppercase tracking-[0.3em] text-muted-foreground mb-4">Resort Encyclopedia 🗺️</p>
-        <h1 className="font-display text-5xl sm:text-6xl lg:text-7xl leading-[1.05] text-foreground mb-4">Park Guides</h1>
-        <p className="font-editorial text-lg text-muted-foreground max-w-2xl">
-          Everything your family needs — parks, hotels, dining, and insider tips for the most magical vacation ever.
-        </p>
-      </motion.div>
+    <section className="relative h-[25vh] min-h-[160px] overflow-hidden">
+      <img src={headerGuides} alt="Park Guides" className="w-full h-full object-cover" />
+      <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-black/10" />
+      <SparkleField count={6} />
+      <div className="absolute bottom-0 left-0 right-0 px-8 lg:px-16 pb-8">
+        <motion.p {...fade()} className="label-text !text-white/60 mb-2 tracking-[0.3em]">Resort Encyclopedia 🗺️</motion.p>
+        <motion.h1 {...fade(0.2)} className="font-display text-white text-3xl sm:text-5xl leading-[1.02]">Park Guides</motion.h1>
+      </div>
     </section>
 
     {/* Resort Selection */}

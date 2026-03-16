@@ -80,21 +80,14 @@ const Circle = ({ partyMembers }: CircleProps) => {
 
   return (
     <div className="min-h-screen bg-background pt-16">
-      {/* Hero split */}
-      <section className="grid grid-cols-1 lg:grid-cols-2 min-h-[60vh]">
-        <div className="px-4 sm:px-8 lg:px-16 py-16 sm:py-20 lg:py-28 flex flex-col justify-center">
-          <motion.div {...fade()}>
-            <p className="label-text mb-6 tracking-[0.3em]">The Inner Circle</p>
-            <h1 className="font-display text-5xl sm:text-6xl text-foreground leading-[1.02] mb-6">
-              Your party.
-            </h1>
-            <p className="font-editorial text-lg text-muted-foreground max-w-md leading-relaxed">
-              The people who make the magic real. Manage your persistent traveler registry — profiles, preferences, and trip history in one place.
-            </p>
-          </motion.div>
-        </div>
-        <div className="relative min-h-[40vh] lg:min-h-0">
-          <img src={familyMainstreet} alt="Family on Main Street" className="w-full h-full object-cover rounded-lg" />
+      {/* Hero */}
+      <section className="relative h-[25vh] min-h-[160px] overflow-hidden">
+        <img src={headerCircle} alt="The Inner Circle" className="w-full h-full object-cover" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-black/10" />
+        <SparkleField count={6} />
+        <div className="absolute bottom-0 left-0 right-0 px-8 lg:px-16 pb-8">
+          <motion.p {...fade()} className="label-text !text-white/60 mb-2 tracking-[0.3em]">The Inner Circle</motion.p>
+          <motion.h1 {...fade(0.2)} className="font-display text-white text-3xl sm:text-5xl leading-[1.02]">Your party.</motion.h1>
         </div>
       </section>
 

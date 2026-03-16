@@ -657,46 +657,117 @@ const BookedTripDetail = ({ trip }: { trip: BookedTrip }) => {
 
           {diningSubTab === "reservations" && (
             <>
-              <motion.div {...fade(0.1)} className="grid grid-cols-2 sm:grid-cols-4 gap-6 mb-16">
-                {[
-                  { label: "Reservations", value: String(allDiningReservations.length) },
-                  { label: "Confirmed", value: String(allDiningReservations.filter(d => d.status === "confirmed").length) },
-                  { label: "Pending", value: String(allDiningReservations.filter(d => d.status === "pending").length) },
-                  { label: "Dietary Flags", value: String(new Set(allDiningReservations.flatMap(d => d.dietaryFlags ?? [])).size) },
-                ].map((stat) => (
-                  <div key={stat.label} className="border border-border bg-card p-5 shadow-[var(--shadow-soft)]"><p className="label-text mb-2">{stat.label}</p><p className="font-display text-3xl text-foreground">{stat.value}</p></div>
-                ))}
-              </motion.div>
-              <div className="space-y-12">
-                {diningByDate.map(([date, reservations], groupIdx) => (
-                  <motion.div key={date} {...fade(0.15 + groupIdx * 0.05)}>
-                    <p className="label-text mb-4 tracking-[0.25em]">{date}</p>
-                    <div className="space-y-4">
-                      {reservations.map((res) => {
-                        const colors = statusColors[res.status];
-                        return (
-                          <div key={res.reservationId} className="border border-border bg-card shadow-[var(--shadow-soft)] hover:shadow-[var(--shadow-hover)] transition-shadow duration-500 overflow-hidden">
-                            <div className="p-6">
-                              <div className="flex items-start justify-between mb-4">
-                                <div className="flex items-center gap-3"><span className="text-2xl">{mealIcons[res.mealType]}</span><div><h3 className="font-display text-xl text-foreground">{res.restaurantName}</h3><p className="font-editorial text-sm text-muted-foreground">{res.parkOrResort} · {res.cuisine}</p></div></div>
-                                <span className="px-3 py-1 text-[0.625rem] uppercase tracking-[0.15em] font-medium border" style={{ background: colors.bg, color: colors.text, borderColor: colors.border }}>{res.status}</span>
-                              </div>
-                              <div className="flex flex-wrap gap-6 mb-4">
-                                <div><p className="label-text mb-1">Time</p><p className="font-display text-lg text-foreground">{res.time}</p></div>
-                                <div><p className="label-text mb-1">Party</p><p className="font-display text-lg text-foreground">{res.partySize}</p></div>
-                                <div><p className="label-text mb-1">Confirmation</p><p className="font-editorial text-sm text-foreground tracking-wide">{res.confirmationNumber}</p></div>
-                              </div>
-                              {res.notes && <p className="font-editorial text-sm text-muted-foreground italic mb-4">{res.notes}</p>}
-                              {res.dietaryFlags && res.dietaryFlags.length > 0 && (<div className="flex flex-wrap gap-2">{res.dietaryFlags.map((flag) => (<span key={flag} className="text-[0.625rem] uppercase tracking-[0.12em] px-3 py-1 bg-[hsl(var(--warm))] text-muted-foreground border border-border">⚠ {flag}</span>))}</div>)}
-                            </div>
-                          </div>
-                        );
-                      })}
+              {/* Status summary bar */}
+              <motion.div {...fade(0.05)} className="flex gap-3 mb-10">
+                {(["confirmed", "pending", "cancelled"] as const).map((status) => {
+                  const count = allDiningReservations.filter(d => d.status === status).length;
+                  if (count === 0 && status === "cancelled") return null;
+                  const colors = statusColors[status];
+                  return (
+                    <div key={status} className="flex items-center gap-2 px-4 py-2 border" style={{ background: colors.bg, borderColor: colors.border }}>
+                      <span className="font-display text-xl" style={{ color: colors.text }}>{count}</span>
+                      <span className="text-[0.625rem] uppercase tracking-[0.15em] font-medium" style={{ color: colors.text }}>{status}</span>
                     </div>
-                  </motion.div>
-                ))}
+                  );
+                })}
+                <div className="flex items-center gap-2 px-4 py-2 border border-border bg-card ml-auto">
+                  <span className="label-text">Dietary Flags</span>
+                  <span className="font-display text-xl text-foreground">{new Set(allDiningReservations.flatMap(d => d.dietaryFlags ?? [])).size}</span>
+                </div>
+              </motion.div>
+
+              {/* Two-column: Confirmed | Pending */}
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
+                {/* Confirmed column */}
+                <div>
+                  <p className="label-text mb-4 flex items-center gap-2">
+                    <span className="w-2 h-2 rounded-full" style={{ background: statusColors.confirmed.text }} />
+                    Confirmed ({allDiningReservations.filter(d => d.status === "confirmed").length})
+                  </p>
+                  <div className="space-y-3">
+                    {allDiningReservations.filter(d => d.status === "confirmed").map((res) => (
+                      <div key={res.reservationId} className="border border-[hsl(var(--gold)/0.3)] bg-[hsl(var(--gold)/0.04)] p-4 transition-shadow duration-500 hover:shadow-[var(--shadow-hover)]">
+                        <div className="flex items-start justify-between mb-2">
+                          <div className="flex items-center gap-2">
+                            <span className="text-lg">{mealIcons[res.mealType]}</span>
+                            <h4 className="font-display text-foreground">{res.restaurantName}</h4>
+                          </div>
+                          <span className="px-2 py-0.5 text-[0.5625rem] uppercase tracking-[0.12em] font-medium border" style={{ background: statusColors.confirmed.bg, color: statusColors.confirmed.text, borderColor: statusColors.confirmed.border }}>✓ Confirmed</span>
+                        </div>
+                        <p className="font-editorial text-xs text-muted-foreground mb-2">{res.parkOrResort} · {res.cuisine}</p>
+                        <div className="flex flex-wrap gap-4 text-xs">
+                          <span className="font-editorial text-foreground">{res.date} · {res.time}</span>
+                          <span className="font-editorial text-muted-foreground">Party of {res.partySize}</span>
+                          <span className="font-editorial text-muted-foreground/60">#{res.confirmationNumber}</span>
+                        </div>
+                        {res.dietaryFlags && res.dietaryFlags.length > 0 && (
+                          <div className="flex flex-wrap gap-1.5 mt-2">{res.dietaryFlags.map((flag) => (<span key={flag} className="text-[0.5rem] uppercase tracking-[0.1em] px-2 py-0.5 bg-[hsl(var(--warm))] text-muted-foreground border border-border">⚠ {flag}</span>))}</div>
+                        )}
+                        {res.notes && <p className="font-editorial text-xs text-muted-foreground/60 italic mt-2">{res.notes}</p>}
+                      </div>
+                    ))}
+                    {allDiningReservations.filter(d => d.status === "confirmed").length === 0 && (
+                      <p className="font-editorial text-sm text-muted-foreground/40 italic py-6 text-center">No confirmed reservations yet.</p>
+                    )}
+                  </div>
+                </div>
+
+                {/* Pending column */}
+                <div>
+                  <p className="label-text mb-4 flex items-center gap-2">
+                    <span className="w-2 h-2 rounded-full bg-muted-foreground" />
+                    Pending ({allDiningReservations.filter(d => d.status === "pending").length})
+                  </p>
+                  <div className="space-y-3">
+                    {allDiningReservations.filter(d => d.status === "pending").map((res) => (
+                      <div key={res.reservationId} className="border border-dashed border-border bg-card p-4 transition-shadow duration-500 hover:shadow-[var(--shadow-hover)]">
+                        <div className="flex items-start justify-between mb-2">
+                          <div className="flex items-center gap-2">
+                            <span className="text-lg">{mealIcons[res.mealType]}</span>
+                            <h4 className="font-display text-foreground">{res.restaurantName}</h4>
+                          </div>
+                          <span className="px-2 py-0.5 text-[0.5625rem] uppercase tracking-[0.12em] font-medium border" style={{ background: statusColors.pending.bg, color: statusColors.pending.text, borderColor: statusColors.pending.border }}>Pending</span>
+                        </div>
+                        <p className="font-editorial text-xs text-muted-foreground mb-2">{res.parkOrResort} · {res.cuisine}</p>
+                        <div className="flex flex-wrap gap-4 text-xs">
+                          <span className="font-editorial text-foreground">{res.date} · {res.time}</span>
+                          <span className="font-editorial text-muted-foreground">Party of {res.partySize}</span>
+                        </div>
+                        {res.notes && <p className="font-editorial text-xs text-muted-foreground/60 italic mt-2">{res.notes}</p>}
+                        <div className="mt-3 pt-2 border-t border-border/50">
+                          <p className="font-editorial text-[0.625rem] text-muted-foreground/50 italic">Add confirmation # once booked</p>
+                        </div>
+                      </div>
+                    ))}
+                    {allDiningReservations.filter(d => d.status === "pending").length === 0 && (
+                      <p className="font-editorial text-sm text-muted-foreground/40 italic py-6 text-center">No pending reservations.</p>
+                    )}
+                  </div>
+                </div>
               </div>
-              <motion.div {...fade(0.3)} className="mt-12 border border-dashed border-border py-12 text-center cursor-pointer hover:border-[hsl(var(--gold)/0.5)] transition-colors duration-500">
+
+              {/* Cancelled (if any) */}
+              {allDiningReservations.filter(d => d.status === "cancelled").length > 0 && (
+                <motion.div {...fade(0.2)} className="mb-12">
+                  <p className="label-text mb-4 flex items-center gap-2">
+                    <span className="w-2 h-2 rounded-full bg-destructive" />
+                    Cancelled
+                  </p>
+                  <div className="space-y-3 opacity-50">
+                    {allDiningReservations.filter(d => d.status === "cancelled").map((res) => (
+                      <div key={res.reservationId} className="border border-border bg-card p-4 line-through">
+                        <div className="flex items-center gap-2">
+                          <span className="text-lg">{mealIcons[res.mealType]}</span>
+                          <span className="font-display text-foreground">{res.restaurantName}</span>
+                          <span className="font-editorial text-xs text-muted-foreground ml-2">{res.date} · {res.time}</span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </motion.div>
+              )}
+
+              <motion.div {...fade(0.3)} className="border border-dashed border-border py-10 text-center cursor-pointer hover:border-[hsl(var(--gold)/0.5)] transition-colors duration-500">
                 <p className="font-display text-xl text-muted-foreground/40 mb-2">+ Add Reservation</p>
                 <p className="font-editorial text-sm text-muted-foreground/30">Track a new dining booking for your trip.</p>
               </motion.div>

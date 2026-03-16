@@ -336,6 +336,56 @@ const BookedTripDetail = ({ trip }: { trip: BookedTrip }) => {
   const allDiningReservations = useMemo(() => [...diningReservations, ...pendingDining], [diningReservations, pendingDining]);
   const allBookedExperiences = useMemo(() => [...bookedExperiences, ...pendingExperiences], [bookedExperiences, pendingExperiences]);
 
+  /* ── Overlap detection for dining & experiences ─────────────────── */
+  const parseTimeToMin = (timeStr: string): number => {
+    const m = timeStr.match(/(\d+):(\d+)\s*(AM|PM)/i);
+    if (!m) return -1;
+    let h = parseInt(m[1]);
+    const min = parseInt(m[2]);
+    if (m[3].toUpperCase() === "PM" && h !== 12) h += 12;
+    if (m[3].toUpperCase() === "AM" && h === 12) h = 0;
+    return h * 60 + min;
+  };
+
+  const diningDurationByMeal: Record<string, number> = { breakfast: 60, lunch: 75, dinner: 90, snack: 30 };
+
+  type BookingSlot = { id: string; name: string; date: string; startMin: number; endMin: number; type: "dining" | "experience"; status: string };
+
+  const allBookingSlots = useMemo((): BookingSlot[] => {
+    const slots: BookingSlot[] = [];
+    allDiningReservations.filter(d => d.status !== "cancelled").forEach(d => {
+      const start = parseTimeToMin(d.time);
+      const dur = diningDurationByMeal[d.mealType] || 75;
+      if (start >= 0) slots.push({ id: d.reservationId, name: d.restaurantName, date: d.date, startMin: start, endMin: start + dur, type: "dining", status: d.status });
+    });
+    allBookedExperiences.filter(e => e.status !== "cancelled").forEach(e => {
+      const start = parseTimeToMin(e.time);
+      const dur = parseInt(e.duration || "60") || 60;
+      if (start >= 0) slots.push({ id: e.experienceId, name: e.experienceName, date: e.date, startMin: start, endMin: start + dur, type: "experience", status: e.status });
+    });
+    return slots;
+  }, [allDiningReservations, allBookedExperiences]);
+
+  const overlapMap = useMemo(() => {
+    const map: Record<string, BookingSlot[]> = {};
+    for (let i = 0; i < allBookingSlots.length; i++) {
+      for (let j = i + 1; j < allBookingSlots.length; j++) {
+        const a = allBookingSlots[i];
+        const b = allBookingSlots[j];
+        if (a.date !== b.date) continue;
+        if (a.startMin < b.endMin && b.startMin < a.endMin) {
+          if (!map[a.id]) map[a.id] = [];
+          if (!map[b.id]) map[b.id] = [];
+          map[a.id].push(b);
+          map[b.id].push(a);
+        }
+      }
+    }
+    return map;
+  }, [allBookingSlots]);
+
+  const hasAnyOverlaps = Object.keys(overlapMap).length > 0;
+
   const handleBookDining = (venue: DiningVenue, data: { date: string; time: string; partySize: number; notes: string }) => {
     const newRes: DiningReservation = {
       reservationId: `din-pending-${Date.now()}`,

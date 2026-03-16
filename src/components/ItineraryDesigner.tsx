@@ -834,7 +834,7 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
             )}
 
             {/* Scheduled activity blocks — proportionally positioned */}
-            {scheduledItems.map(({ item, startMin, checkin, blockMin, travelMin, overlaps }) => {
+            {scheduledItems.map(({ item, startMin, checkin, blockMin, travelMin, overlaps, gapAfter, gapFitsCount }, idx) => {
               const globalIdx = itinerary.indexOf(item);
               const isBooked = item.id.startsWith("booked-");
               const isMeal = item.type === "meal" || item.type === "snack";
@@ -845,11 +845,12 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
 
               const topPx = (startMin - DAY_START_MIN) * PX_PER_MIN;
               const activityHeight = Math.max(blockMin * PX_PER_MIN, 40);
-              const travelHeight = travelMin > 0 ? Math.max(travelMin * PX_PER_MIN, 16) : 0;
+              const travelHeight = travelMin > 0 ? Math.max(travelMin * PX_PER_MIN, 14) : 0;
+              const gapHeight = gapAfter > 0 ? Math.max(gapAfter * PX_PER_MIN, 20) : 0;
 
               const wait = item.waitTime || 0;
               const dur = item.duration;
-              const totalBlock = checkin + wait + dur + travelMin;
+              const endTimeStr = formatMin(startMin + blockMin);
 
               return (
                 <div key={item.id} className="absolute left-[60px] right-2" style={{ top: `${topPx}px`, zIndex: isDragging ? 50 : 10 }}
@@ -863,7 +864,6 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
                       if (isLocked || isBooked) { e.preventDefault(); return; }
                       e.dataTransfer.setData("timelineItemId", item.id);
                       e.dataTransfer.effectAllowed = "move";
-                      // Set a drag image to make drag feel responsive
                       if (e.currentTarget) {
                         e.dataTransfer.setDragImage(e.currentTarget, 20, 20);
                       }
@@ -898,7 +898,7 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
                       </div>
                     )}
 
-                    {/* Header row */}
+                    {/* Header row: Name + Wait Time */}
                     <div className="flex items-center gap-2">
                       {!isLocked && !isBooked && (
                         <GripVertical className="w-3 h-3 text-muted-foreground/30 shrink-0 cursor-grab" />
@@ -931,29 +931,18 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
                       )}
                     </div>
 
-                    {/* Segmented time breakdown */}
-                    <div className="mt-1.5 flex items-center gap-2 flex-wrap">
-                      {checkin > 0 && (
-                        <span className="flex items-center gap-1 px-1.5 py-0.5 bg-[hsl(280,30%,55%,0.08)] text-[0.4375rem] text-[hsl(280,30%,45%)] font-medium">
-                          📋 Check-in {checkin}m
-                        </span>
-                      )}
-                      {wait > 0 && (
-                        <span className="flex items-center gap-1 px-1.5 py-0.5 bg-[hsl(var(--destructive)/0.06)] text-[0.4375rem] text-destructive font-medium">
-                          ⏱ Est. Wait {wait}m
-                        </span>
-                      )}
-                      <span className={`flex items-center gap-1 px-1.5 py-0.5 text-[0.4375rem] font-medium ${
-                        isMeal ? "bg-[hsl(var(--gold)/0.1)] text-[hsl(var(--gold-dark))]" :
-                        isExperience ? "bg-[hsl(280,30%,55%,0.08)] text-[hsl(280,30%,45%)]" :
-                        isBreak ? "bg-muted text-muted-foreground" :
-                        "bg-foreground/5 text-foreground"
-                      }`}>
-                        {isBreak ? "⏸" : isMeal ? "🍽" : isExperience ? "🎭" : "🎢"} {isBreak ? "Rest" : isMeal ? "Meal" : "Duration"} {dur}m
-                      </span>
+                    {/* Time span + total block */}
+                    <div className="mt-1 flex items-center gap-2 text-[0.4375rem] text-muted-foreground">
+                      <Clock className="w-2.5 h-2.5" />
+                      <span>{item.startTime} → {endTimeStr}</span>
+                      <span className="text-foreground/50">·</span>
+                      <span className="font-medium text-foreground">{blockMin}m total</span>
+                      {checkin > 0 && <span>(📋 {checkin}m check-in)</span>}
+                      {wait > 0 && <span>(⏱ {wait}m wait)</span>}
+                      <span>({isBreak ? "⏸" : isMeal ? "🍽" : isExperience ? "🎭" : "🎢"} {dur}m {isBreak ? "rest" : isMeal ? "meal" : "duration"})</span>
                     </div>
 
-                    {/* Visual time bar — shows proportion of wait vs ride */}
+                    {/* Visual time bar */}
                     {(wait > 0 || checkin > 0) && (
                       <div className="mt-1.5 flex h-1.5 overflow-hidden bg-muted/30">
                         {checkin > 0 && (
@@ -985,15 +974,34 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
                     )}
                   </div>
 
-                  {/* ── Travel block (separate, after activity) ────── */}
+                  {/* ── Walk time to next (dynamic) ───────────────── */}
                   {travelMin > 0 && (
                     <div
                       style={{ height: `${travelHeight}px` }}
                       className="flex items-center gap-2 pl-4 border-l border-dashed border-muted-foreground/20 ml-1"
                     >
                       <span className="text-[0.4375rem] text-muted-foreground font-medium flex items-center gap-1">
-                        🚶 Travel / Stroller time — {travelMin} min
+                        🚶 Walk to next — {travelMin} min
                       </span>
+                    </div>
+                  )}
+
+                  {/* ── Gap indicator (open slot) ─────────────────── */}
+                  {gapAfter > 0 && (
+                    <div
+                      style={{ height: `${gapHeight}px` }}
+                      className="flex items-center ml-1 border-l-2 border-dashed border-[hsl(var(--gold)/0.3)]"
+                    >
+                      <div className="ml-3 px-3 py-1.5 bg-[hsl(var(--gold)/0.04)] border border-dashed border-[hsl(var(--gold)/0.2)]">
+                        <span className="text-[0.5rem] font-display text-[hsl(var(--gold-dark))] font-medium">
+                          ⏳ {gapAfter} min open
+                        </span>
+                        {gapFitsCount > 0 && (
+                          <span className="text-[0.4375rem] text-muted-foreground ml-2">
+                            — fits ~{gapFitsCount} ride{gapFitsCount > 1 ? "s" : ""}
+                          </span>
+                        )}
+                      </div>
                     </div>
                   )}
                 </div>

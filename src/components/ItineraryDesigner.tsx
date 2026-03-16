@@ -53,6 +53,13 @@ const defaultWaitByCategory: Record<string, number> = {
   "ill-required": 60,
 };
 
+/* ─── Walk-time presets by pacing ─────────────────────────────────── */
+const baseWalkByPacing: Record<string, number> = {
+  "Intense": 5,
+  "Moderate": 8,
+  "Relaxed": 12,
+};
+
 /* ═══════════════════════════════════════════════════════════════════
    COMPONENT
    ═══════════════════════════════════════════════════════════════════ */
@@ -78,6 +85,32 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
   const [ropeDrop, setRopeDrop] = useState("7:30 AM");
   const [leavePark, setLeavePark] = useState("10:00 PM");
 
+  /* ── Stroller / young-kids detection ───────────────────────────── */
+  const activeMembers = useMemo(
+    () => partyMembers.filter(m => groupMembers.includes(m.memberId)),
+    [partyMembers, groupMembers]
+  );
+
+  const hasYoungKids = useMemo(
+    () => activeMembers.some(m => m.age !== undefined && m.age <= 5),
+    [activeMembers]
+  );
+
+  const hasStrollerAge = useMemo(
+    () => activeMembers.some(m => m.age !== undefined && m.age <= 7),
+    [activeMembers]
+  );
+
+  /** Walk time derived from pacing + party composition */
+  const getEstWalkTime = useCallback(() => {
+    let base = baseWalkByPacing[pacing] || 8;
+    if (hasStrollerAge) base += 3; // stroller adds ~3 min
+    if (hasYoungKids) base += 2;   // extra potty/snack stops
+    return base;
+  }, [pacing, hasStrollerAge, hasYoungKids]);
+
+  const walkTimeEstimate = getEstWalkTime();
+
   // Seed itinerary with confirmed bookings
   const seededBookings = useMemo((): ItineraryItem[] => {
     const items: ItineraryItem[] = [];
@@ -88,7 +121,7 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
         type: "meal",
         startTime: d.time,
         duration: 75,
-        walkTime: 10,
+        walkTime: walkTimeEstimate,
         isConfirmed: d.status === "confirmed",
         notes: d.status === "confirmed" ? `✓ CONFIRMED · ${d.confirmationNumber}` : "PENDING",
       });
@@ -100,13 +133,13 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
         type: "show",
         startTime: e.time,
         duration: parseInt(e.duration) || 30,
-        walkTime: 10,
+        walkTime: walkTimeEstimate,
         isConfirmed: e.status === "confirmed",
         notes: e.status === "confirmed" ? `✓ CONFIRMED · ${e.confirmationNumber}` : "PENDING",
       });
     });
     return items.sort((a, b) => toMinutes(a.startTime) - toMinutes(b.startTime));
-  }, [diningReservations, bookedExperiences]);
+  }, [diningReservations, bookedExperiences, walkTimeEstimate]);
 
   const [itinerary, setItinerary] = useState<ItineraryItem[]>(seededBookings);
   const [isLocked, setIsLocked] = useState(false);
@@ -116,6 +149,36 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
   // Drop zone hover for timeline
   const [timelineDropHour, setTimelineDropHour] = useState<number | null>(null);
   const timelineRef = useRef<HTMLDivElement>(null);
+
+  /* ── Auto-insert planned break when midDayBreak changes ────────── */
+  const [lastBreakType, setLastBreakType] = useState(midDayBreak);
+
+  const insertPlannedBreak = useCallback((breakType: string) => {
+    // Remove any previously auto-inserted mid-day break
+    setItinerary(prev => {
+      const filtered = prev.filter(i => i.id !== "auto-midday-break");
+      if (breakType === "Power Through") return filtered;
+
+      const breakItem: ItineraryItem = {
+        id: "auto-midday-break",
+        name: breakType === "Pool Break" ? "Pool Break" : "Hotel Break",
+        type: breakType === "Pool Break" ? "pool" : "hotel",
+        startTime: pacing === "Intense" ? "1:00 PM" : "12:30 PM",
+        duration: breakType === "Pool Break" ? 90 : 60,
+        walkTime: walkTimeEstimate,
+        notes: breakType === "Pool Break"
+          ? "🏊 Recharge at the resort pool — built into your pace"
+          : "😴 Head back for naps & recharge — built into your pace",
+      };
+      return [...filtered, breakItem];
+    });
+  }, [pacing, walkTimeEstimate]);
+
+  // Trigger when midDayBreak changes
+  if (midDayBreak !== lastBreakType) {
+    setLastBreakType(midDayBreak);
+    insertPlannedBreak(midDayBreak);
+  }
 
   /* ── Derived ────────────────────────────────────────────────────── */
 

@@ -336,7 +336,7 @@ const Index = ({
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent" />
                     <div className="absolute bottom-0 left-0 right-0 p-6">
-                      <p className="label-text !text-white/60 mb-2 tracking-[0.2em]">{park.resortName}</p>
+                      <p className="label-text !text-white/70 mb-2 tracking-[0.2em]">{park.resortName}</p>
                       <h3 className="font-display text-2xl text-white mb-4 group-hover:text-[hsl(var(--gold-light))] transition-colors duration-500">{park.parkName}</h3>
                       <div className="space-y-2 mb-4">
                         <div className="flex justify-between items-center">

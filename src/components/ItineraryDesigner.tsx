@@ -326,7 +326,7 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
   const ropeDropMin = toMinutes(ropeDrop);
   const leaveMin = toMinutes(leavePark);
 
-  /** Scheduled items with overlap detection */
+  /** Scheduled items with overlap detection and dynamic walk/gap calculation */
   const scheduledItems = useMemo(() => {
     const items = itinerary
       .filter(i => i.startTime && toMinutes(i.startTime) >= 0)
@@ -334,13 +334,12 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
         const startMin = toMinutes(item.startTime);
         const checkin = getCheckinTime(item);
         const blockMin = checkin + (item.waitTime || 0) + item.duration;
-        const travelMin = item.walkTime || 0;
         const endMin = startMin + blockMin;
-        return { item, startMin, checkin, blockMin, travelMin, endMin, overlaps: false };
+        return { item, startMin, checkin, blockMin, travelMin: 0, endMin, overlaps: false, gapAfter: 0, gapFitsCount: 0 };
       })
       .sort((a, b) => a.startMin - b.startMin);
 
-    // Detect overlaps
+    // Detect overlaps + calculate dynamic walk/gaps between consecutive items
     for (let i = 0; i < items.length; i++) {
       for (let j = i + 1; j < items.length; j++) {
         if (items[j].startMin < items[i].endMin) {
@@ -348,10 +347,24 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
           items[j].overlaps = true;
         }
       }
+      // Dynamic gap: time between this item's end and next item's start
+      if (i < items.length - 1) {
+        const rawGap = items[i + 1].startMin - items[i].endMin;
+        items[i].travelMin = Math.min(walkTimeEstimate, Math.max(0, rawGap)); // walk time capped by actual gap
+        items[i].gapAfter = Math.max(0, rawGap - walkTimeEstimate); // free time after walking
+        // Estimate how many avg rides (~25 min block) fit in the gap
+        items[i].gapFitsCount = items[i].gapAfter >= 15 ? Math.floor(items[i].gapAfter / 25) : 0;
+      } else {
+        // Last item: gap until leave park
+        const rawGap = leaveMin - items[i].endMin;
+        items[i].travelMin = Math.min(walkTimeEstimate, Math.max(0, rawGap));
+        items[i].gapAfter = Math.max(0, rawGap - walkTimeEstimate);
+        items[i].gapFitsCount = items[i].gapAfter >= 15 ? Math.floor(items[i].gapAfter / 25) : 0;
+      }
     }
 
     return items;
-  }, [itinerary]);
+  }, [itinerary, walkTimeEstimate, leaveMin]);
 
   const unscheduledItems = useMemo(() => itinerary.filter(i => !i.startTime), [itinerary]);
 

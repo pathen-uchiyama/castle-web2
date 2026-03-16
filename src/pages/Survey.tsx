@@ -44,10 +44,21 @@ const Survey = () => {
   const member = mockData.partyMembers.find((m) => m.initial.toLowerCase() === memberId?.toLowerCase());
 
   const [step, setStep] = useState<1 | 2 | 3>(1);
+  const [categoryFilter, setCategoryFilter] = useState<string>("all");
   const [rankings, setRankings] = useState<Record<string, SurveyRanking>>({});
   const [openToAnything, setOpenToAnything] = useState(false);
   const [topFive, setTopFive] = useState<string[]>([]);
   const [submitted, setSubmitted] = useState(false);
+
+  const filteredAttractions = useMemo(
+    () => categoryFilter === "all" ? attractions : attractions.filter((a) => a.category === categoryFilter),
+    [attractions, categoryFilter]
+  );
+
+  const availableCategories = useMemo(() => {
+    const cats = new Set(attractions.map((a) => a.category));
+    return ["all", ...Array.from(cats)];
+  }, [attractions]);
 
   const mustDos = useMemo(
     () => attractions.filter((a) => rankings[a.attractionId] === "must-do"),
@@ -59,13 +70,14 @@ const Survey = () => {
 
   const parkGroups = useMemo(() => {
     const groups: Record<string, SurveyAttraction[]> = {};
-    for (const a of attractions) {
-      const park = mockData.parkGuides.find((p) => p.parkId === a.parkId)?.parkName ?? a.parkId;
+    for (const a of filteredAttractions) {
+      const park = a.parkId === "resort" ? "Resort Dining"
+        : mockData.parkGuides.find((p) => p.parkId === a.parkId)?.parkName ?? a.parkId;
       if (!groups[park]) groups[park] = [];
       groups[park].push(a);
     }
     return groups;
-  }, [attractions]);
+  }, [filteredAttractions]);
 
   const handleRank = (attractionId: string, ranking: SurveyRanking) => {
     setRankings((prev) => {

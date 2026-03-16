@@ -602,8 +602,8 @@ const ResortHub = () => {
               {filteredRestaurants.map((r, i) => {
                 const isExpanded = expandedRestaurant === r.restaurantId;
                 return (
-                  <motion.div key={r.restaurantId} {...fade(0.02 + i * 0.01)}
-                    className="border border-border bg-card shadow-[var(--shadow-soft)] hover:shadow-[var(--shadow-hover)] transition-shadow duration-500">
+                   <motion.div key={r.restaurantId} {...fade(0.02 + i * 0.01)}
+                     className="border border-border bg-card rounded-lg shadow-[var(--shadow-soft)] hover:shadow-[var(--shadow-hover)] transition-shadow duration-500">
                     <button onClick={() => setExpandedRestaurant(isExpanded ? null : r.restaurantId)}
                       className="w-full text-left p-5">
                       <div className="flex items-start justify-between mb-2">

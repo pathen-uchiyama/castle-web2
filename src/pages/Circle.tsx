@@ -434,7 +434,7 @@ const Circle = ({ partyMembers }: CircleProps) => {
             {members.map((member, i) => {
               const isComplete = i < 2;
               return (
-                <div key={member.memberId} className="flex items-center justify-between border border-border bg-card p-5 shadow-[var(--shadow-soft)]">
+                <div key={member.memberId} className="flex items-center justify-between border border-border bg-card rounded-lg p-5 shadow-[var(--shadow-soft)]">
                   <div className="flex items-center gap-4">
                     <div className="w-10 h-10 bg-foreground flex items-center justify-center shrink-0">
                       <span className="font-display text-sm text-background">{member.initial}</span>

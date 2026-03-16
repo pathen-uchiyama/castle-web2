@@ -85,6 +85,7 @@ export const magicKingdomAttractions: ParkAttraction[] = [
     notableInsight: "Intense Launch",
     rules: ["DAS", "EARLY MORNING ACCESS", "SINGLE RIDER", "CHILD SWITCH"],
     warnings: ["LOUD NOISES", "STROBES"],
+    attractionStatus: { status: "recently-opened", label: "Recently Opened", note: "Opened April 2023 — still drawing massive crowds", crowdImpact: "high" },
   },
   {
     id: "mk-space", name: "Space Mountain", parkId: "mk", type: "ride", rating: 4.6,

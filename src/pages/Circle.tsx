@@ -1,5 +1,7 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { useState } from "react";
+import { toast } from "sonner";
+import { Pencil, RefreshCw } from "lucide-react";
 import Footer from "@/components/Footer";
 import SectionNav from "@/components/SectionNav";
 import SparkleField from "@/components/SparkleField";

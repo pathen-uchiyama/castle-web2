@@ -161,7 +161,7 @@ const Index = ({
                 <p className="font-display text-2xl sm:text-3xl text-white/60 leading-[1.2] mb-8">
                   {bookedTrip.tripName}
                 </p>
-                <p className="font-editorial text-base text-white/45 max-w-md leading-relaxed">
+                <p className="font-editorial text-base text-white/60 max-w-md leading-relaxed">
                   {bookedTrip.countdownDays} days until the fun begins! A party of {bookedTrip.partySize} — {bookedTrip.todaysPark?.weather?.toLowerCase() || 'clear skies'} ahead. 🌤️
                 </p>
               </motion.div>

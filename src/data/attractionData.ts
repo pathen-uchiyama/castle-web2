@@ -187,6 +187,7 @@ export const magicKingdomAttractions: ParkAttraction[] = [
     rules: ["DAS"],
     warnings: [],
     isClosed: true,
+    attractionStatus: { status: "refurbishment", label: "Refurbishment", note: "Closed for track maintenance. Expected return: TBD.", crowdImpact: "none" },
   },
   {
     id: "mk-small-world", name: "It's a Small World", parkId: "mk", type: "ride", rating: 4.0,

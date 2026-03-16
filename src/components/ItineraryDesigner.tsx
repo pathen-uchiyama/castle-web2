@@ -566,11 +566,16 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
           <div className="flex items-center gap-3 mb-4 p-4 bg-[hsl(var(--gold)/0.06)] border border-[hsl(var(--gold)/0.2)]" style={{ borderRadius: 0 }}>
             <div className="text-center shrink-0 w-16">
               <span className="font-display text-lg text-[hsl(var(--gold-dark))] font-bold block leading-none">{ropeDrop}</span>
-              <span className="text-[0.5625rem] uppercase tracking-[0.1em] text-[hsl(var(--gold-dark))]/70">Arrive</span>
+              <span className="text-[0.5625rem] uppercase tracking-[0.1em] text-[hsl(var(--gold-dark))]/70">Gates Open</span>
             </div>
-            <div className="border-l border-[hsl(var(--gold)/0.3)] pl-3">
-              <p className="font-display text-sm text-[hsl(var(--ink))]">🏰 Park Arrival · {selectedParks.map(p => parkLabels[p] || p).join(" & ")}</p>
-              <p className="text-xs text-[hsl(var(--ink-light))] mt-0.5">Rope drop strategy · Gates open {ropeDrop}</p>
+            <div className="border-l border-[hsl(var(--gold)/0.3)] pl-3 flex-1">
+              <p className="font-display text-sm text-[hsl(var(--ink))]">🏰 Rope Drop · {selectedParks.map(p => parkLabels[p] || p).join(" & ")}</p>
+              <p className="text-xs text-[hsl(var(--ink-light))] mt-1">
+                🚌 <strong>On-site guests:</strong> Leave resort by <strong>{formatMin(ropeDropMin - 60)}</strong> (Disney transport)
+              </p>
+              <p className="text-xs text-[hsl(var(--ink-light))] mt-0.5">
+                🚗 <strong>Off-site guests:</strong> Arrive at park by <strong>{formatMin(ropeDropMin - 30)}</strong> (30 min before opening)
+              </p>
             </div>
           </div>
 

@@ -730,14 +730,48 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
                     </div>{/* end content */}
                   </motion.div>
 
-                  {/* Drop zone after this item */}
-                  <DropZone
-                    idx={idx + 1}
-                    isActive={dropTargetIdx === idx + 1}
-                    onDragOver={(e) => { e.preventDefault(); setDropTargetIdx(idx + 1); }}
-                    onDragLeave={() => setDropTargetIdx(null)}
-                    onDrop={(e) => handleDropOnZone(e, idx + 1)}
-                  />
+                  {/* Gap analysis between items */}
+                  {(() => {
+                    const nextRi = ribbon[idx + 1];
+                    const gapMin = nextRi ? nextRi.startMin - endMin - (nextRi.walkBuffer || 0) : (leaveMin - endMin);
+                    const isLastItem = idx === ribbon.length - 1;
+                    const showGap = gapMin >= 15 && !isLastItem;
+                    const currentZone = item.zone;
+                    const nextZone = nextRi?.item?.zone;
+                    const sameZone = currentZone && nextZone && currentZone === nextZone;
+                    
+                    return showGap ? (
+                      <div className="my-1 mx-2 border-2 border-dashed border-[hsl(var(--gold)/0.4)] bg-[hsl(var(--gold)/0.04)] p-3 flex items-center justify-between"
+                        style={{ borderRadius: 0 }}
+                        onDragOver={(e) => { e.preventDefault(); setDropTargetIdx(idx + 1); }}
+                        onDragLeave={() => setDropTargetIdx(null)}
+                        onDrop={(e) => handleDropOnZone(e, idx + 1)}
+                      >
+                        <div className="flex items-center gap-2">
+                          <span className="text-lg">⏳</span>
+                          <div>
+                            <span className="font-display text-sm text-[hsl(var(--gold-dark))] font-bold">{gapMin}m open</span>
+                            <span className="text-[0.625rem] text-[hsl(var(--ink-light))] ml-2">
+                              ~{Math.floor(gapMin / 25)} rides could fit
+                            </span>
+                          </div>
+                        </div>
+                        {currentZone && (
+                          <span className="text-[0.5625rem] uppercase tracking-[0.1em] px-2 py-1 bg-[hsl(var(--gold)/0.1)] text-[hsl(var(--gold-dark))]" style={{ borderRadius: 0 }}>
+                            📍 Near {zoneLabel(currentZone)}
+                          </span>
+                        )}
+                      </div>
+                    ) : (
+                      <DropZone
+                        idx={idx + 1}
+                        isActive={dropTargetIdx === idx + 1}
+                        onDragOver={(e) => { e.preventDefault(); setDropTargetIdx(idx + 1); }}
+                        onDragLeave={() => setDropTargetIdx(null)}
+                        onDrop={(e) => handleDropOnZone(e, idx + 1)}
+                      />
+                    );
+                  })()}
                 </Reorder.Item>
               );
             })}

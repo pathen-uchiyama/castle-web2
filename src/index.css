@@ -44,17 +44,17 @@
     --shadow-soft: 0 8px 32px -4px hsla(263, 24%, 40%, 0.07);
     --shadow-hover: 0 12px 40px -4px hsla(263, 24%, 40%, 0.12);
 
-    /* Whimsy accent palette */
-    --coral: 12 80% 65%;
-    --coral-light: 12 85% 78%;
-    --sky: 200 75% 60%;
-    --sky-light: 200 80% 78%;
-    --mint: 160 50% 55%;
-    --mint-light: 160 55% 75%;
-    --lavender: 270 50% 70%;
-    --lavender-light: 270 55% 82%;
-    --sunshine: 45 95% 60%;
-    --sunshine-light: 45 90% 78%;
+    /* Whimsy accent palette — text-safe dark values + light tints for backgrounds */
+    --coral: 12 70% 45%;
+    --coral-light: 12 75% 92%;
+    --sky: 200 70% 38%;
+    --sky-light: 200 70% 92%;
+    --mint: 160 55% 35%;
+    --mint-light: 160 45% 92%;
+    --lavender: 270 40% 48%;
+    --lavender-light: 270 45% 93%;
+    --sunshine: 42 80% 38%;
+    --sunshine-light: 45 80% 92%;
 
     --sidebar-background: 0 0% 100%;
     --sidebar-foreground: 0 0% 8%;

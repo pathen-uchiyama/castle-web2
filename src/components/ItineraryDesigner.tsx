@@ -526,12 +526,31 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
     const displayH = hour > 12 ? hour - 12 : hour === 0 ? 12 : hour;
     const timeStr = `${displayH}:${roundedMin.toString().padStart(2, "0")} ${ampm}`;
 
-    // Case 1: Repositioning an existing itinerary item (via state or dataTransfer)
+    // Case 1: Repositioning an existing itinerary item
     const timelineItemId = draggingItemId || e.dataTransfer.getData("timelineItemId");
     if (timelineItemId) {
-      setItinerary(prev => prev.map(item =>
-        item.id === timelineItemId ? { ...item, startTime: timeStr } : item
-      ));
+      // Check if we're dropping onto another scheduled item — swap their times
+      const dropTarget = scheduledItems.find(s => {
+        if (s.item.id === timelineItemId) return false;
+        return totalMin >= s.startMin && totalMin < s.startMin + s.blockMin;
+      });
+
+      if (dropTarget) {
+        // Swap start times between dragged item and drop target
+        setItinerary(prev => prev.map(item => {
+          if (item.id === timelineItemId) return { ...item, startTime: dropTarget.item.startTime };
+          if (item.id === dropTarget.item.id) {
+            const draggedItem = prev.find(i => i.id === timelineItemId);
+            return { ...item, startTime: draggedItem?.startTime || timeStr };
+          }
+          return item;
+        }));
+      } else {
+        // Drop onto empty space — just reposition
+        setItinerary(prev => prev.map(item =>
+          item.id === timelineItemId ? { ...item, startTime: timeStr } : item
+        ));
+      }
       setTimelineDropHour(null);
       setDraggingItemId(null);
       setDragIdx(null);
@@ -564,7 +583,7 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
     setTimelineDropHour(null);
     setDraggingAttractionId(null);
     setDraggingItemId(null);
-  }, [selectedParks, isLocked, draggingItemId]);
+  }, [selectedParks, isLocked, draggingItemId, scheduledItems]);
 
   const toggleGroupMember = (id: string) => {
     setGroupMembers(prev => prev.includes(id) ? prev.filter(m => m !== id) : [...prev, id]);
@@ -1285,11 +1304,10 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
 
           {/* Attraction cards */}
           <div className="space-y-2.5">
-            {filteredAttractions.map(attraction => {
+            {filteredAttractions.filter(a => !itinerary.some(i => i.attractionId === a.id)).map(attraction => {
               const isTopFive = topFiveIds.has(attraction.id);
               const voters = topFiveVoters[attraction.id];
               const satisfies = attractionSatisfies[attraction.id];
-              const alreadyAdded = itinerary.some(i => i.attractionId === attraction.id);
               const isExpanded = expandedCardId === attraction.id;
               const isDraggingThis = draggingAttractionId === attraction.id;
               const estWait = attraction.waitCategory ? (defaultWaitByCategory[attraction.waitCategory] || 15) : 15;
@@ -1300,7 +1318,7 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
                 <motion.div
                   key={attraction.id}
                   layout
-                  draggable={!attraction.isClosed && !alreadyAdded && !isLocked}
+                  draggable={!attraction.isClosed && !isLocked}
                   onDragStart={(e: any) => handleResearchDragStart(e, attraction)}
                   onDragEnd={() => setDraggingAttractionId(null)}
                   className={`border transition-all duration-300 shadow-soft hover:shadow-soft-hover ${
@@ -1309,7 +1327,7 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
                     attraction.isClosed ? "opacity-30 pointer-events-none" :
                     isTopFive ? "border-[hsl(var(--gold)/0.35)] bg-card" :
                     "border-border bg-card"
-                  } ${!attraction.isClosed && !alreadyAdded && !isLocked ? "cursor-grab" : ""}`}
+                  } ${!attraction.isClosed && !isLocked ? "cursor-grab" : ""}`}
                 >
                   {/* Header — always visible */}
                   <button
@@ -1562,14 +1580,10 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
                           {!attraction.isClosed && (
                             <button
                               onClick={(e) => { e.stopPropagation(); addToItinerary(attraction); }}
-                              disabled={alreadyAdded || isLocked}
-                              className={`w-full py-2 text-[0.5625rem] tracking-[0.15em] uppercase font-medium transition-all duration-300 ${
-                                alreadyAdded
-                                  ? "bg-muted text-muted-foreground border border-border cursor-default"
-                                  : "bg-foreground text-background hover:opacity-90 shadow-soft"
-                              }`}
+                              disabled={isLocked}
+                              className="w-full py-2 text-[0.5625rem] tracking-[0.15em] uppercase font-medium transition-all duration-300 bg-foreground text-background hover:opacity-90 shadow-soft"
                             >
-                              {alreadyAdded ? "✓ Added to Itinerary" : "+ Add to Itinerary"}
+                              + Add to Itinerary
                             </button>
                           )}
                         </div>

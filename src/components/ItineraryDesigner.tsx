@@ -476,10 +476,11 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
     const displayH = hour > 12 ? hour - 12 : hour === 0 ? 12 : hour;
     const timeStr = `${displayH}:${roundedMin.toString().padStart(2, "0")} ${ampm}`;
 
-    // Case 1: Repositioning an existing itinerary item
-    if (draggingItemId) {
+    // Case 1: Repositioning an existing itinerary item (via state or dataTransfer)
+    const timelineItemId = draggingItemId || e.dataTransfer.getData("timelineItemId");
+    if (timelineItemId) {
       setItinerary(prev => prev.map(item =>
-        item.id === draggingItemId ? { ...item, startTime: timeStr } : item
+        item.id === timelineItemId ? { ...item, startTime: timeStr } : item
       ));
       setTimelineDropHour(null);
       setDraggingItemId(null);

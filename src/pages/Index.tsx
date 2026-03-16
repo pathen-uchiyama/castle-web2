@@ -127,7 +127,7 @@ const Index = ({
           <motion.h1 initial={{ opacity: 0, y: 50 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1.6, delay: 0.8, ease }} className="font-display text-white text-5xl sm:text-7xl md:text-8xl lg:text-[8rem] leading-[0.95] max-w-5xl">
             Welcome, <em className="italic" style={{ fontWeight: 400 }}>{guestName}</em>.
           </motion.h1>
-          <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 1, delay: 1.4 }} className="font-editorial text-white/50 text-base sm:text-lg mt-10 max-w-md leading-relaxed tracking-[-0.005em]">
+          <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 1, delay: 1.4 }} className="font-editorial text-white/60 text-base sm:text-lg mt-10 max-w-md leading-relaxed tracking-[-0.005em]">
             The magic is waiting. Your family's next adventure begins here. 🏰
           </motion.p>
           <motion.div initial={{ scaleX: 0 }} animate={{ scaleX: 1 }} transition={{ duration: 1, delay: 1.8, ease }} className="mt-10 w-16 h-px bg-white/30 origin-left" />

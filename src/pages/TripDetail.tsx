@@ -541,7 +541,7 @@ const BookedTripDetail = ({ trip }: { trip: BookedTrip }) => {
                     {mdeConnected[member.memberId] && <span className="text-[0.5rem]">✓</span>}
                   </div>
                   <div className="flex items-center gap-2">
-                    <div className="w-7 h-7 flex items-center justify-center bg-foreground text-background text-xs font-medium">{member.initial}</div>
+                    <div className="w-7 h-7 rounded-md flex items-center justify-center bg-foreground text-background text-xs font-medium">{member.initial}</div>
                     <span className="font-display text-sm text-foreground">{member.name}</span>
                   </div>
                   <span className="ml-auto label-text">{mdeConnected[member.memberId] ? "Connected" : "Not Yet"}</span>

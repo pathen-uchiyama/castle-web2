@@ -309,7 +309,7 @@ const ResortHub = () => {
                         <p className="label-text mb-3">Typical Crowd Levels by Day</p>
                         <div className="flex gap-2 flex-wrap">
                           {park.typicalCrowds.map(c => (
-                            <div key={c.day} className="border px-3 py-2 text-center min-w-[90px]"
+                            <div key={c.day} className="border rounded-md px-3 py-2 text-center min-w-[90px]"
                               style={{ background: crowdColors[c.level]?.bg, borderColor: `${crowdColors[c.level]?.text}30` }}>
                               <p className="font-display text-[0.625rem] text-foreground mb-0.5">{c.day}</p>
                               <p className="text-[0.5rem] uppercase tracking-[0.1em] font-medium" style={{ color: crowdColors[c.level]?.text }}>

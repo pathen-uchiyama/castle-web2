@@ -1029,6 +1029,14 @@ const BookedTripDetail = ({ trip }: { trip: BookedTrip }) => {
                           <span className="font-editorial text-muted-foreground">Party of {exp.partySize}</span>
                         </div>
                         {exp.notes && <p className="font-editorial text-xs text-muted-foreground/60 italic mt-2">{exp.notes}</p>}
+                        {overlapMap[exp.experienceId] && (
+                          <div className="mt-2 flex items-start gap-2 px-2 py-1.5 bg-[hsl(var(--destructive)/0.04)] border border-[hsl(var(--destructive)/0.15)]">
+                            <span className="text-xs shrink-0">⚠️</span>
+                            <p className="font-editorial text-[0.625rem] text-muted-foreground">
+                              Overlaps with <strong className="text-foreground">{overlapMap[exp.experienceId].map(o => o.name).join(", ")}</strong>. Cancel unused bookings to avoid no-show fees.
+                            </p>
+                          </div>
+                        )}
                         <div className="mt-3 pt-2 border-t border-border/50">
                           <p className="font-editorial text-[0.625rem] text-muted-foreground/50 italic">Add confirmation # once booked</p>
                         </div>

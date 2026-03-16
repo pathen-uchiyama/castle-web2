@@ -292,7 +292,7 @@ const ResortHub = () => {
                           <Clock className="w-3 h-3 text-muted-foreground" />
                           <span className="text-[0.5625rem] text-foreground font-medium">{park.operatingHours.regular}</span>
                         </div>
-                        <div className="flex items-center gap-1.5 px-3 py-1.5 bg-[hsl(var(--gold)/0.06)] border border-[hsl(var(--gold)/0.2)]">
+                        <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-[hsl(var(--gold)/0.06)] border border-[hsl(var(--gold)/0.2)]">
                           <span className="text-[0.5rem]">⭐</span>
                           <span className="text-[0.5625rem] text-[hsl(var(--gold-dark))] font-medium">Early Entry: {park.operatingHours.earlyEntry}</span>
                         </div>

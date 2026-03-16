@@ -324,6 +324,7 @@ const Index = ({
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 1, delay: i * 0.12, ease }}
+                whileHover={{ y: -6 }}
                 className="flex-shrink-0 w-[300px] sm:w-[340px] group"
               >
                 <Link to={`/parks/${park.parkId}`}>

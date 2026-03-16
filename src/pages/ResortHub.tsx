@@ -831,7 +831,6 @@ const ResortHub = () => {
             ))}
           </div>
         )}
-        )}
       </div>
       </div>
 

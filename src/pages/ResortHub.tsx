@@ -553,7 +553,7 @@ const ResortHub = () => {
                   <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground/40" />
                   <input type="text" placeholder="Search restaurants or cuisine..."
                     value={diningSearch} onChange={e => setDiningSearch(e.target.value)}
-                    className="w-full border border-border bg-background pl-9 pr-3 py-2 font-editorial text-xs text-foreground placeholder:text-muted-foreground/30 focus:outline-none focus:border-[hsl(var(--gold))]"
+                    className="w-full border border-border bg-background rounded-md pl-9 pr-3 py-2 font-editorial text-xs text-foreground placeholder:text-muted-foreground/30 focus:outline-none focus:border-[hsl(var(--gold))]"
                   />
                 </div>
                 <span className="font-display text-sm text-muted-foreground">{filteredRestaurants.length} results</span>

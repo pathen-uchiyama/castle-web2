@@ -267,7 +267,7 @@ const ResortHub = () => {
                 const isExpanded = expandedPark === park.parkId;
                 return (
                   <motion.div key={park.parkId} {...fade(0.05 + i * 0.03)}
-                    className="border border-border bg-card shadow-[var(--shadow-soft)] overflow-hidden">
+                    className="border border-border bg-card rounded-lg shadow-[var(--shadow-soft)] overflow-hidden">
                     <div className="p-6 lg:p-8">
                       <div className="flex items-start justify-between mb-4">
                         <div className="flex items-center gap-3">

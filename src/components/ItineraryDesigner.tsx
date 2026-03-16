@@ -234,15 +234,47 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
       .filter(a => {
         if (researchCategory !== "all" && a.type !== researchCategory) return false;
         if (searchQuery && !a.name.toLowerCase().includes(searchQuery.toLowerCase())) return false;
+
+        // Focus-based filtering
+        if (focus === "Thrill Seekers") {
+          // Hide mild rides that aren't in anyone's top-5
+          if (a.thrillLevel === "mild" && a.type === "ride" && !topFiveIds.has(a.id)) return false;
+        }
+        if (focus === "Toddler Friendly") {
+          // Hide rides with height requirements the group can't meet, and high-thrill rides
+          if (a.thrillLevel === "high") return false;
+          if (a.heightRequirement && a.heightRequirement !== "ANY") {
+            const reqInches = parseInt(a.heightRequirement);
+            if (reqInches >= 44) return false; // toddlers won't meet 44"+
+          }
+        }
+        if (focus === "Shows & Characters") {
+          // Prioritize shows/characters/parades — hide rides unless top-5
+          if (a.type === "ride" && !topFiveIds.has(a.id) && a.rating < 4.5) return false;
+        }
+
         return true;
       })
       .sort((a, b) => {
         const aTop = topFiveIds.has(a.id) ? 1 : 0;
         const bTop = topFiveIds.has(b.id) ? 1 : 0;
         if (aTop !== bTop) return bTop - aTop;
+
+        // Focus-based sorting boosts
+        if (focus === "Thrill Seekers") {
+          const thrillOrder = { high: 3, moderate: 2, mild: 1 };
+          const diff = thrillOrder[b.thrillLevel] - thrillOrder[a.thrillLevel];
+          if (diff !== 0) return diff;
+        }
+        if (focus === "Shows & Characters") {
+          const typeBoost = (t: AttractionType) => (["show", "character", "parade"].includes(t) ? 1 : 0);
+          const diff = typeBoost(b.type) - typeBoost(a.type);
+          if (diff !== 0) return diff;
+        }
+
         return b.rating - a.rating;
       });
-  }, [selectedParks, researchCategory, searchQuery, topFiveIds]);
+  }, [selectedParks, researchCategory, searchQuery, topFiveIds, focus]);
 
   const parkSchedules = useMemo(() => {
     const s: { parkId: string; name: string; hours: string; earlyEntry?: string }[] = [];

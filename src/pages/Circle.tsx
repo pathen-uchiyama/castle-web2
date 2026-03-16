@@ -244,7 +244,7 @@ const Circle = ({ partyMembers }: CircleProps) => {
                                   value={member.birthday ?? ""}
                                   onChange={(e) => handleFieldChange(member.memberId, "birthday", e.target.value)}
                                   placeholder="e.g. June 15"
-                                  className="w-full px-4 py-2.5 text-sm bg-background border border-border text-foreground placeholder:text-muted-foreground/40 focus:outline-none focus:border-[hsl(var(--gold))] transition-colors"
+                                  className="w-full px-4 py-2.5 rounded-md text-sm bg-background border border-border text-foreground placeholder:text-muted-foreground/40 focus:outline-none focus:border-[hsl(var(--gold))] transition-colors"
                                 />
                               </div>
                               <div>

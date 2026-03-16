@@ -758,7 +758,7 @@ const BookedTripDetail = ({ trip }: { trip: BookedTrip }) => {
                   </p>
                   <div className="space-y-3">
                     {allDiningReservations.filter(d => d.status === "confirmed").map((res) => (
-                      <div key={res.reservationId} className="border border-[hsl(var(--gold)/0.3)] bg-[hsl(var(--gold)/0.04)] p-4 transition-shadow duration-500 hover:shadow-[var(--shadow-hover)]">
+                      <div key={res.reservationId} className="border border-[hsl(var(--gold)/0.3)] bg-[hsl(var(--gold)/0.04)] rounded-lg p-4 transition-shadow duration-500 hover:shadow-[var(--shadow-hover)]">
                         <div className="flex items-start justify-between mb-2">
                           <div className="flex items-center gap-2">
                             <span className="text-lg">{mealIcons[res.mealType]}</span>

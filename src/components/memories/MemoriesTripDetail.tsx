@@ -1,6 +1,6 @@
-import { motion } from "framer-motion";
-import { useState, useEffect } from "react";
-import { ArrowLeft, Award, Share2, Download, ChevronDown, ChevronUp } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { useState, useEffect, useCallback } from "react";
+import { ArrowLeft, Award, Share2, Download, ChevronLeft, ChevronRight, ChevronDown, ChevronUp } from "lucide-react";
 import SectionNav from "@/components/SectionNav";
 import AudioEcho from "./AudioEcho";
 import JoyBlueprint from "./JoyBlueprint";

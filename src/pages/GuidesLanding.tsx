@@ -15,6 +15,11 @@ const fade = (delay = 0) => ({
   transition: { duration: 1.2, delay, ease },
 });
 
+const resortImages: Record<string, string> = {
+  wdw: guideWdw,
+  dlr: guideDlr,
+};
+
 const resorts = [
   {
     id: "wdw",

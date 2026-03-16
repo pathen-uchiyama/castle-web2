@@ -1067,6 +1067,14 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
               <p className="font-editorial text-xs text-muted-foreground">
                 Drag a card onto the timeline to schedule it · Top 5 picks float up ✦
               </p>
+              {focus !== "Classic Magic" && (
+                <p className="text-[0.4375rem] uppercase tracking-[0.1em] text-[hsl(var(--gold-dark))] mt-1.5">
+                  🎯 Filtered for: <strong>{focus}</strong>
+                  {focus === "Toddler Friendly" && " · Hiding high-thrill & tall height requirements"}
+                  {focus === "Thrill Seekers" && " · Hiding mild rides"}
+                  {focus === "Shows & Characters" && " · Prioritizing entertainment"}
+                </p>
+              )}
             </div>
           </div>
 

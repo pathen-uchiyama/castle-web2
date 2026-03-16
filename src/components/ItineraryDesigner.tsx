@@ -877,7 +877,7 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
                     <div
                       key={item.id}
                       draggable={!isLocked}
-                      onDragStart={() => handleDragStart(globalIdx)}
+                      onDragStart={() => handleDragStart(globalIdx, item.id)}
                       onDragOver={(e) => handleDragOver(e, globalIdx)}
                       onDrop={() => handleDrop(globalIdx)}
                       onDragEnd={handleDragEnd}

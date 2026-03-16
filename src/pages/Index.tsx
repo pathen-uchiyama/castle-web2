@@ -242,8 +242,8 @@ const Index = ({
                       <div className="space-y-2 mb-5">
                         {bookedTrip.packingLists.map((list) => (
                           <div key={list.category} className="flex justify-between items-center">
-                            <p className="font-editorial text-sm text-white/50 truncate mr-3">{list.category}</p>
-                            <p className="label-text !text-white/25 shrink-0" style={{ fontSize: '0.6rem' }}>{list.packedCount}/{list.totalCount}</p>
+                            <p className="font-editorial text-sm text-white/60 truncate mr-3">{list.category}</p>
+                            <p className="label-text !text-white/40 shrink-0" style={{ fontSize: '0.6rem' }}>{list.packedCount}/{list.totalCount}</p>
                           </div>
                         ))}
                       </div>

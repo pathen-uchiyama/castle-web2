@@ -277,9 +277,9 @@ const ResortHub = () => {
                             <p className="font-editorial text-sm text-muted-foreground">{park.tagline} · {park.size} · Est. {park.opened}</p>
                           </div>
                         </div>
-                        <span className={`px-3 py-1 text-[0.5625rem] uppercase tracking-[0.12em] border ${
-                          park.type === "water-park" ? "bg-[hsl(200,70%,50%,0.1)] text-[hsl(200,70%,40%)] border-[hsl(200,70%,50%,0.2)]" : "bg-[hsl(var(--gold)/0.1)] text-[hsl(var(--gold-dark))] border-[hsl(var(--gold)/0.2)]"
-                        }`}>
+                         <span className={`px-3 py-1 rounded-md text-[0.5625rem] uppercase tracking-[0.12em] border ${
+                           park.type === "water-park" ? "bg-[hsl(200,70%,50%,0.1)] text-[hsl(200,70%,40%)] border-[hsl(200,70%,50%,0.2)]" : "bg-[hsl(var(--gold)/0.1)] text-[hsl(var(--gold-dark))] border-[hsl(var(--gold)/0.2)]"
+                         }`}>
                           {park.type === "water-park" ? "Water Park" : "Theme Park"}
                         </span>
                       </div>

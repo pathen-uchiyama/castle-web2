@@ -729,7 +729,7 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
                   {/* ── Activity block ───────────────────────────── */}
                   <div
                     draggable={!isLocked && !isBooked}
-                    onDragStart={() => handleDragStart(globalIdx)}
+                    onDragStart={(e) => { e.stopPropagation(); handleDragStart(globalIdx, item.id); }}
                     onDragOver={(e) => handleDragOver(e, globalIdx)}
                     onDrop={() => handleDrop(globalIdx)}
                     onDragEnd={handleDragEnd}

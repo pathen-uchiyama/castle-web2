@@ -150,7 +150,7 @@ const ResortHub = () => {
             <span className="px-3 py-1.5 rounded-md text-[0.5625rem] uppercase tracking-[0.12em] border border-background/20 text-background/70">
               🏰 {data.parks.filter(p => p.type === "theme-park").length} Theme Parks{data.parks.filter(p => p.type === "water-park").length > 0 ? ` · ${data.parks.filter(p => p.type === "water-park").length} Water Parks` : ""}
             </span>
-            <span className="px-3 py-1.5 text-[0.5625rem] uppercase tracking-[0.12em] border border-background/20 text-background/70">🏨 {data.hotels.length} Resort Hotels</span>
+            <span className="px-3 py-1.5 rounded-md text-[0.5625rem] uppercase tracking-[0.12em] border border-background/20 text-background/70">🏨 {data.hotels.length} Resort Hotels</span>
           </div>
           {/* Resort switcher */}
           <div className="mt-6 flex gap-2">

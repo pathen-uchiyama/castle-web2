@@ -1180,38 +1180,46 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
 
           {/* Quick-add strip */}
           {!isLocked && (
-            <div className="flex items-center gap-1.5 mt-5 ml-[64px]">
-              {quickAdds.map(qa => (
-                <button key={qa.type} onClick={() => addQuickItem(qa.type, qa.label, qa.dur)}
-                  className="flex items-center gap-1 px-2.5 py-1 bg-background border border-dashed border-border text-muted-foreground hover:border-foreground/30 hover:text-foreground transition-all duration-300 shadow-soft">
-                  <span className="text-[0.625rem]">{qa.emoji}</span>
-                  <span className="text-[0.4375rem] uppercase tracking-[0.1em]">{qa.label}</span>
-                </button>
-              ))}
+            <div className="mt-5 ml-[64px]">
+              <p className="text-[0.4375rem] uppercase tracking-[0.12em] text-muted-foreground mb-2">Quick Add</p>
+              <div className="flex items-center gap-1.5 flex-wrap">
+                {quickAdds.map((qa, i) => (
+                  <button key={`${qa.label}-${i}`} onClick={() => addQuickItem(qa.type, qa.label, qa.dur)}
+                    className="flex items-center gap-1 px-2.5 py-1.5 bg-background border border-dashed border-border text-muted-foreground hover:border-foreground/30 hover:text-foreground transition-all duration-300 shadow-soft">
+                    <span className="text-[0.625rem]">{qa.emoji}</span>
+                    <span className="text-[0.4375rem] uppercase tracking-[0.1em]">{qa.label}</span>
+                    <span className="text-[0.35rem] text-muted-foreground/50">{qa.dur}m</span>
+                  </button>
+                ))}
+              </div>
             </div>
           )}
 
           {/* Color legend */}
-          <div className="flex items-center gap-4 mt-6 ml-[64px] flex-wrap">
+          <div className="flex items-center gap-3 mt-6 ml-[64px] flex-wrap">
             <div className="flex items-center gap-1.5">
-              <div className="w-2.5 h-2.5 bg-[hsl(var(--gold))]" />
-              <span className="text-[0.5rem] text-muted-foreground">Dining</span>
-            </div>
-            <div className="flex items-center gap-1.5">
-              <div className="w-2.5 h-2.5 bg-[hsl(280,30%,55%)]" />
-              <span className="text-[0.5rem] text-muted-foreground">Experience</span>
-            </div>
-            <div className="flex items-center gap-1.5">
-              <div className="w-2.5 h-2.5 bg-foreground/50" />
-              <span className="text-[0.5rem] text-muted-foreground">Ride</span>
-            </div>
-            <div className="flex items-center gap-1.5">
-              <div className="w-2.5 h-2.5 bg-muted-foreground/20" />
-              <span className="text-[0.5rem] text-muted-foreground">Break</span>
+              <div className="w-2.5 h-2.5 bg-foreground/30" />
+              <span className="text-[0.5rem] text-muted-foreground">Ride/Show</span>
             </div>
             <div className="flex items-center gap-1.5">
               <div className="w-2.5 h-2.5 bg-destructive/30" />
-              <span className="text-[0.5rem] text-muted-foreground">Wait Time</span>
+              <span className="text-[0.5rem] text-muted-foreground">Wait</span>
+            </div>
+            <div className="flex items-center gap-1.5">
+              <div className="w-2.5 h-2.5 bg-[hsl(var(--gold)/0.4)]" />
+              <span className="text-[0.5rem] text-muted-foreground">Walk / Stroller</span>
+            </div>
+            <div className="flex items-center gap-1.5">
+              <div className="w-2.5 h-2.5 bg-[hsl(280,30%,55%,0.3)]" />
+              <span className="text-[0.5rem] text-muted-foreground">Check-in</span>
+            </div>
+            <div className="flex items-center gap-1.5">
+              <div className="w-2.5 h-2.5 bg-muted" />
+              <span className="text-[0.5rem] text-muted-foreground">Break/Meal</span>
+            </div>
+            <div className="flex items-center gap-1.5">
+              <div className="w-2.5 h-2.5 border-2 border-dashed border-[hsl(var(--gold)/0.3)] bg-[hsl(var(--gold)/0.04)]" />
+              <span className="text-[0.5rem] text-muted-foreground">Open Slot</span>
             </div>
           </div>
         </div>

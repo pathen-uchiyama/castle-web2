@@ -511,7 +511,7 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
       {/* ═══════════════════════════════════════════════════════════════
           TWO-COLUMN: RIBBON + RESEARCH
          ═══════════════════════════════════════════════════════════════ */}
-      <div className="grid grid-cols-1 lg:grid-cols-[1fr_380px]">
+      <div className="grid grid-cols-1 lg:grid-cols-2">
 
         {/* ─── LEFT: The Ribbon ────────────────────────────────────── */}
         <div className="px-6 lg:px-10 py-8 border-r border-[hsl(var(--border))]">

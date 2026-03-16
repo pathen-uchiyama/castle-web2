@@ -906,7 +906,7 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
             )}
 
             {/* Scheduled activity blocks — proportionally positioned */}
-            {scheduledItems.map(({ item, startMin, checkin, blockMin, travelMin, overlaps, gapAfter, gapFitsCount }, idx) => {
+            {scheduledItems.map(({ item, startMin, stroller, checkin, blockMin, travelMin, overlaps, gapAfter, gapFitsCount }, idx) => {
               const globalIdx = itinerary.indexOf(item);
               const isBooked = item.id.startsWith("booked-");
               const isMeal = item.type === "meal" || item.type === "snack";
@@ -970,7 +970,7 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
                       </div>
                     )}
 
-                    {/* Header row: Name + Wait Time */}
+                    {/* Header row: Name + Wait Time badge */}
                     <div className="flex items-center gap-2">
                       {!isLocked && !isBooked && (
                         <GripVertical className="w-3 h-3 text-muted-foreground/30 shrink-0 cursor-grab" />
@@ -1003,33 +1003,67 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
                       )}
                     </div>
 
-                    {/* Time span + total block */}
-                    <div className="mt-1 flex items-center gap-2 text-[0.4375rem] text-muted-foreground">
+                    {/* Time span */}
+                    <div className="mt-1 flex items-center gap-1 text-[0.4375rem] text-muted-foreground">
                       <Clock className="w-2.5 h-2.5" />
-                      <span>{item.startTime} → {endTimeStr}</span>
-                      <span className="text-foreground/50">·</span>
-                      <span className="font-medium text-foreground">{blockMin}m total</span>
-                      {checkin > 0 && <span>(📋 {checkin}m check-in)</span>}
-                      {wait > 0 && <span>(⏱ {wait}m wait)</span>}
-                      <span>({isBreak ? "⏸" : isMeal ? "🍽" : isExperience ? "🎭" : "🎢"} {dur}m {isBreak ? "rest" : isMeal ? "meal" : "duration"})</span>
+                      <span className="font-medium text-foreground">{item.startTime}</span>
+                      <span>→</span>
+                      <span className="font-medium text-foreground">{endTimeStr}</span>
+                      <span className="text-foreground/30 mx-0.5">·</span>
+                      <span className="font-display text-foreground">{blockMin}m</span>
+                      <span>block</span>
+                    </div>
+
+                    {/* Segmented time breakdown chips */}
+                    <div className="mt-1.5 flex items-center gap-1 flex-wrap">
+                      {stroller > 0 && (
+                        <span className="flex items-center gap-0.5 px-1.5 py-0.5 bg-[hsl(var(--gold)/0.08)] text-[0.375rem] text-[hsl(var(--gold-dark))] font-medium">
+                          🍼 Stroller {stroller}m
+                        </span>
+                      )}
+                      {checkin > 0 && (
+                        <span className="flex items-center gap-0.5 px-1.5 py-0.5 bg-[hsl(280,30%,55%,0.08)] text-[0.375rem] text-[hsl(280,30%,45%)] font-medium">
+                          📋 {isExperience ? "Arrive Early" : "Check-in"} {checkin}m
+                        </span>
+                      )}
+                      {wait > 0 && (
+                        <span className="flex items-center gap-0.5 px-1.5 py-0.5 bg-[hsl(var(--destructive)/0.06)] text-[0.375rem] text-destructive font-medium">
+                          ⏱ Wait {wait}m
+                        </span>
+                      )}
+                      <span className={`flex items-center gap-0.5 px-1.5 py-0.5 text-[0.375rem] font-medium ${
+                        isMeal ? "bg-[hsl(var(--gold)/0.08)] text-[hsl(var(--gold-dark))]" :
+                        isExperience ? "bg-[hsl(280,30%,55%,0.08)] text-[hsl(280,30%,45%)]" :
+                        isBreak ? "bg-muted text-muted-foreground" :
+                        "bg-foreground/5 text-foreground"
+                      }`}>
+                        {isBreak ? "⏸" : isMeal ? "🍽" : isExperience ? "🎭" : "🎢"} {dur}m
+                      </span>
+                      {isMeal && item.isConfirmed && (
+                        <span className="px-1.5 py-0.5 text-[0.35rem] text-[hsl(var(--gold-dark))] bg-[hsl(var(--gold)/0.1)] font-medium">
+                          ± 15m window
+                        </span>
+                      )}
                     </div>
 
                     {/* Visual time bar */}
-                    {(wait > 0 || checkin > 0) && (
-                      <div className="mt-1.5 flex h-1.5 overflow-hidden bg-muted/30">
-                        {checkin > 0 && (
-                          <div className="bg-[hsl(280,30%,55%,0.3)]" style={{ width: `${(checkin / blockMin) * 100}%` }} />
-                        )}
-                        {wait > 0 && (
-                          <div className="bg-destructive/20" style={{ width: `${(wait / blockMin) * 100}%` }} />
-                        )}
-                        <div className={`${
-                          isMeal ? "bg-[hsl(var(--gold)/0.4)]" :
-                          isExperience ? "bg-[hsl(280,30%,55%,0.4)]" :
-                          "bg-foreground/20"
-                        }`} style={{ width: `${(dur / blockMin) * 100}%` }} />
-                      </div>
-                    )}
+                    <div className="mt-1.5 flex h-1.5 overflow-hidden bg-muted/30">
+                      {stroller > 0 && (
+                        <div className="bg-[hsl(var(--gold)/0.3)]" style={{ width: `${(stroller / blockMin) * 100}%` }} />
+                      )}
+                      {checkin > 0 && (
+                        <div className="bg-[hsl(280,30%,55%,0.3)]" style={{ width: `${(checkin / blockMin) * 100}%` }} />
+                      )}
+                      {wait > 0 && (
+                        <div className="bg-destructive/25" style={{ width: `${(wait / blockMin) * 100}%` }} />
+                      )}
+                      <div className={`${
+                        isMeal ? "bg-[hsl(var(--gold)/0.4)]" :
+                        isExperience ? "bg-[hsl(280,30%,55%,0.4)]" :
+                        isBreak ? "bg-muted-foreground/20" :
+                        "bg-foreground/20"
+                      }`} style={{ width: `${(dur / blockMin) * 100}%` }} />
+                    </div>
 
                     {/* LL badge */}
                     {item.llType && item.llType !== "none" && (
@@ -1046,14 +1080,14 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
                     )}
                   </div>
 
-                  {/* ── Walk time to next (dynamic) ───────────────── */}
+                  {/* ── Walk time connector ────────────────────────── */}
                   {travelMin > 0 && (
                     <div
                       style={{ height: `${travelHeight}px` }}
                       className="flex items-center gap-2 pl-4 border-l border-dashed border-muted-foreground/20 ml-1"
                     >
                       <span className="text-[0.4375rem] text-muted-foreground font-medium flex items-center gap-1">
-                        🚶 Walk to next — {travelMin} min
+                        🚶 {travelMin} min walk{hasStrollerAge ? " (w/ stroller)" : ""}
                       </span>
                     </div>
                   )}
@@ -1068,9 +1102,13 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
                         <span className="text-[0.5rem] font-display text-[hsl(var(--gold-dark))] font-medium">
                           ⏳ {gapAfter} min open
                         </span>
-                        {gapFitsCount > 0 && (
+                        {gapFitsCount > 0 ? (
                           <span className="text-[0.4375rem] text-muted-foreground ml-2">
                             — fits ~{gapFitsCount} ride{gapFitsCount > 1 ? "s" : ""}
+                          </span>
+                        ) : gapAfter >= 5 && (
+                          <span className="text-[0.4375rem] text-muted-foreground ml-2">
+                            — {gapAfter >= 10 ? "bathroom / snack / photo" : "quick stop"}
                           </span>
                         )}
                       </div>

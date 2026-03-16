@@ -13,6 +13,7 @@ import Memories from "./pages/Memories";
 import Circle from "./pages/Circle";
 import Account from "./pages/Account";
 import ParkGuidePage from "./pages/ParkGuide";
+import ResortHub from "./pages/ResortHub";
 import NotFound from "./pages/NotFound";
 import { mockData } from "./data/mockData";
 

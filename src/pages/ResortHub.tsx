@@ -502,7 +502,7 @@ const ResortHub = () => {
                       <p className="text-[0.4375rem] uppercase tracking-[0.12em] text-muted-foreground mb-2">Room Types</p>
                       <div className="flex flex-wrap gap-2">
                         {hotel.roomTypes.map(r => (
-                          <div key={r.name} className="px-3 py-2 border border-border bg-[hsl(var(--warm))]">
+                          <div key={r.name} className="px-3 py-2 rounded-md border border-border bg-[hsl(var(--warm))]">
                             <p className="font-display text-[0.625rem] text-foreground">{r.name}</p>
                             <p className="text-[0.5rem] text-muted-foreground">Sleeps {r.sleeps} · From ${r.priceFrom}/night</p>
                           </div>

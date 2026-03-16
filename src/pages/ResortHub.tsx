@@ -146,7 +146,7 @@ const ResortHub = () => {
           <p className="font-editorial text-lg text-background/60 max-w-2xl mb-6">{resort.tagline} · {resort.location}</p>
           <div className="flex flex-wrap gap-3">
             <span className="px-3 py-1.5 rounded-md text-[0.5625rem] uppercase tracking-[0.12em] border border-background/20 text-background/70">📍 {resort.size}</span>
-            <span className="px-3 py-1.5 text-[0.5625rem] uppercase tracking-[0.12em] border border-background/20 text-background/70">🗓 Est. {resort.opened}</span>
+            <span className="px-3 py-1.5 rounded-md text-[0.5625rem] uppercase tracking-[0.12em] border border-background/20 text-background/70">🗓 Est. {resort.opened}</span>
             <span className="px-3 py-1.5 text-[0.5625rem] uppercase tracking-[0.12em] border border-background/20 text-background/70">
               🏰 {data.parks.filter(p => p.type === "theme-park").length} Theme Parks{data.parks.filter(p => p.type === "water-park").length > 0 ? ` · ${data.parks.filter(p => p.type === "water-park").length} Water Parks` : ""}
             </span>

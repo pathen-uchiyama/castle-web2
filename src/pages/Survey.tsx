@@ -350,7 +350,7 @@ const Survey = () => {
               <div className="flex justify-between pt-12">
                 <button
                   onClick={() => setStep(2)}
-                  className="px-8 py-4 text-sm tracking-[0.15em] uppercase font-medium text-muted-foreground border border-border transition-opacity duration-500 hover:opacity-70"
+                  className="px-8 py-4 rounded-lg text-sm tracking-[0.15em] uppercase font-medium text-muted-foreground border border-border transition-opacity duration-500 hover:opacity-70"
                 >
                   Back
                 </button>

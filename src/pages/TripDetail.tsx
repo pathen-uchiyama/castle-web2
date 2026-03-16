@@ -240,7 +240,7 @@ const AlertModal = ({ venueName, opensDate, onClose, onSetAlert }: AlertModalPro
       <motion.div
         initial={{ opacity: 0, y: 20, scale: 0.97 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: 20, scale: 0.97 }}
         transition={{ duration: 0.3 }}
-        className="w-full max-w-sm bg-card border border-border shadow-lg"
+        className="w-full max-w-sm bg-card border border-border rounded-lg shadow-lg"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="p-6 border-b border-border">

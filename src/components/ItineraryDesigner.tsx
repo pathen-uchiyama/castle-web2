@@ -450,10 +450,10 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
       <div className="grid grid-cols-1 lg:grid-cols-2">
 
         {/* ─── LEFT: Daily Itinerary ─────────────────────────────────── */}
-        <div className="border-r border-border/60 px-6 lg:px-8 py-8 lg:overflow-y-auto lg:max-h-[calc(100vh-80px)] bg-card">
+        <div className="border-r border-border/60 px-4 lg:px-6 py-6 lg:overflow-y-auto lg:max-h-[calc(100vh-80px)] bg-card">
 
           {/* Park hours — compact */}
-          <div className="flex items-center gap-3 mb-5 flex-wrap">
+          <div className="flex items-center gap-3 mb-4 flex-wrap">
             <p className="label-text">Your Day</p>
             <div className="gold-rule" />
             {parkSchedules.map(park => (
@@ -469,125 +469,212 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
             ))}
           </div>
 
-          {/* Timeline */}
+          {/* ── Fixed Time Ruler + Items ──────────────────────────────── */}
           <div className="relative">
-            <div className="absolute left-[44px] top-0 bottom-0 w-px bg-border" />
+            {timeRulerHours.map((hourLabel, hIdx) => {
+              const hourValue = hIdx + 7; // starts at 7 AM
+              const hourItems = scheduledByHour[hourValue] || [];
+              const hasItems = hourItems.length > 0;
 
-            <AnimatePresence>
-              {itinerary.map((item, idx) => {
-                const isBooked = item.id.startsWith("booked-");
-                return (
-                  <motion.div
-                    key={item.id}
-                    layout
-                    initial={{ opacity: 0, x: -8 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    exit={{ opacity: 0, x: -8 }}
-                    transition={{ duration: 0.2 }}
-                    className="relative group mb-1.5"
-                  >
-                    <div className="flex items-start gap-2">
-                      {/* Time */}
-                      <div className="w-[36px] shrink-0 text-right pt-2.5">
-                        {item.startTime && (
-                          <span className="font-display text-[0.5625rem] text-foreground leading-none">{item.startTime}</span>
-                        )}
-                      </div>
+              return (
+                <div key={hourLabel} className="relative flex min-h-[36px]">
+                  {/* Hour label — fixed left gutter */}
+                  <div className="w-[52px] shrink-0 relative">
+                    <span className={`font-display text-[0.5625rem] absolute top-0 right-3 ${hasItems ? "text-foreground" : "text-muted-foreground/30"}`}>
+                      {hourLabel}
+                    </span>
+                  </div>
 
-                      {/* Dot */}
-                      <div className="relative shrink-0 pt-3.5 z-10">
-                        <div className={`w-2 h-2 ${
-                          item.isConfirmed ? "bg-[hsl(var(--gold))]" :
-                          item.type === "rope-drop" ? "bg-foreground" :
-                          ["break","pool","hotel","snack","walk"].includes(item.type) ? "bg-muted-foreground/30" :
-                          "bg-foreground/50"
-                        }`} />
-                      </div>
+                  {/* Timeline line */}
+                  <div className="relative w-px shrink-0 mr-3">
+                    <div className={`absolute inset-0 ${hasItems ? "bg-foreground/20" : "bg-border/50"}`} />
+                    <div className={`absolute top-0 w-2 h-px -left-[3px] ${hasItems ? "bg-foreground/30" : "bg-border"}`} />
+                  </div>
 
-                      {/* Card */}
-                      <div className="flex-1 pb-0.5">
-                        <div className={`border px-3.5 py-2.5 transition-all duration-300 shadow-soft ${
-                          !isLocked && !isBooked ? "hover:shadow-soft-hover cursor-grab" : ""
-                        } ${
-                          item.isConfirmed ? "border-[hsl(var(--gold)/0.3)] bg-[hsl(var(--gold)/0.04)]" :
-                          isBooked ? "border-dashed border-[hsl(var(--gold)/0.2)] bg-[hsl(var(--gold)/0.02)]" :
-                          ["break","pool","hotel","walk"].includes(item.type) ? "border-dashed border-border bg-[hsl(var(--warm))]" :
-                          "border-border bg-background"
-                        }`}>
-                          <div className="flex items-center justify-between">
-                            <div className="flex items-center gap-2 min-w-0">
-                              <span className="font-display text-[0.8125rem] text-foreground truncate">{item.name}</span>
-                              <span className={`px-1.5 py-0.5 text-[0.375rem] uppercase tracking-[0.1em] shrink-0 ${
-                                item.type === "ride" ? "bg-foreground text-background" :
-                                item.type === "meal" ? "bg-[hsl(var(--gold)/0.12)] text-[hsl(var(--gold-dark))]" :
-                                item.type === "show" ? "bg-accent text-accent-foreground" :
-                                "bg-muted text-muted-foreground"
-                              }`}>
-                                {item.type === "rope-drop" ? "Arrive" : item.type}
-                              </span>
-                            </div>
-                            <div className="flex items-center gap-1.5 shrink-0 ml-2">
-                              <span className="text-[0.5rem] text-muted-foreground">{item.duration}m</span>
-                              {!isLocked && !isBooked && (
-                                <button onClick={() => removeFromItinerary(item.id)}
-                                  className="opacity-0 group-hover:opacity-100 w-4 h-4 flex items-center justify-center text-muted-foreground hover:text-destructive transition-all duration-200">
-                                  <X className="w-2.5 h-2.5" />
-                                </button>
-                              )}
-                            </div>
-                          </div>
+                  {/* Items or empty gap */}
+                  <div className="flex-1 pb-1">
+                    {hasItems ? (
+                      <div className="space-y-1">
+                        {hourItems.map(item => {
+                          const globalIdx = itinerary.indexOf(item);
+                          const isBooked = item.id.startsWith("booked-");
+                          const isMeal = item.type === "meal" || item.type === "snack";
+                          const isExperience = item.type === "show" || item.type === "character" || item.type === "parade" || item.type === "seasonal";
+                          const isBreak = ["break", "pool", "hotel", "walk"].includes(item.type);
+                          const isDragging = dragIdx === globalIdx;
+                          const isDragOver = dragOverIdx === globalIdx;
 
-                          {/* LL badge */}
-                          {item.llType && item.llType !== "none" && (
-                            <span className="inline-block mt-1 px-1.5 py-0.5 text-[0.375rem] uppercase tracking-[0.1em] bg-accent text-accent-foreground border border-border">
-                              {llLabels[item.llType]}
-                            </span>
-                          )}
+                          return (
+                            <div
+                              key={item.id}
+                              draggable={!isLocked && !isBooked}
+                              onDragStart={() => handleDragStart(globalIdx)}
+                              onDragOver={(e) => handleDragOver(e, globalIdx)}
+                              onDrop={() => handleDrop(globalIdx)}
+                              onDragEnd={handleDragEnd}
+                              className={`group border px-3 py-2 transition-all duration-200 shadow-soft ${
+                                isDragging ? "opacity-40 scale-95" : ""
+                              } ${isDragOver ? "border-[hsl(var(--gold))] shadow-soft-hover" : ""} ${
+                                isMeal
+                                  ? "bg-[hsl(42,64%,35%,0.06)] border-[hsl(var(--gold)/0.3)]"
+                                  : isExperience
+                                  ? "bg-[hsl(280,30%,55%,0.04)] border-[hsl(280,30%,55%,0.2)]"
+                                  : isBreak
+                                  ? "bg-[hsl(var(--warm))] border-dashed border-border"
+                                  : item.isConfirmed
+                                  ? "bg-[hsl(var(--gold)/0.04)] border-[hsl(var(--gold)/0.3)]"
+                                  : "bg-background border-border"
+                              } ${!isLocked && !isBooked ? "hover:shadow-soft-hover cursor-grab" : ""}`}
+                            >
+                              <div className="flex items-center gap-2">
+                                {/* Drag handle */}
+                                {!isLocked && !isBooked && (
+                                  <GripVertical className="w-3 h-3 text-muted-foreground/30 shrink-0 cursor-grab" />
+                                )}
 
-                          {/* Notes */}
-                          {item.notes && (
-                            <p className="font-editorial text-[0.5625rem] text-muted-foreground mt-1 italic">{item.notes}</p>
-                          )}
-                        </div>
+                                {/* Color dot */}
+                                <div className={`w-2 h-2 shrink-0 ${
+                                  isMeal ? "bg-[hsl(var(--gold))]" :
+                                  isExperience ? "bg-[hsl(280,30%,55%)]" :
+                                  isBreak ? "bg-muted-foreground/20" :
+                                  item.type === "rope-drop" ? "bg-foreground" :
+                                  "bg-foreground/50"
+                                }`} />
 
-                        {/* Walk connector */}
-                        {item.walkTime && idx < itinerary.length - 1 && (
-                          <div className="flex items-center gap-2 pl-2 py-1.5">
-                            <div className="w-4 h-px bg-muted-foreground/20" />
-                            <div className="flex items-center gap-1.5 px-2 py-0.5 bg-muted/80 border border-border/50">
-                              <span className="text-[0.5rem]">🚶</span>
-                              <span className="text-[0.5625rem] text-muted-foreground font-medium tracking-wide">
-                                {item.walkTime} min walk
-                              </span>
-                              {item.waitTime && (
-                                <>
-                                  <span className="text-muted-foreground/30">·</span>
-                                  <span className="text-[0.5625rem] text-foreground font-medium tracking-wide">
-                                    {item.waitTime} min wait
+                                {/* Name + type badge */}
+                                <div className="flex items-center gap-1.5 min-w-0 flex-1">
+                                  <span className="font-display text-[0.8125rem] text-foreground truncate">{item.name}</span>
+                                  <span className={`px-1.5 py-0.5 text-[0.35rem] uppercase tracking-[0.1em] shrink-0 ${
+                                    item.type === "ride" ? "bg-foreground text-background" :
+                                    isMeal ? "bg-[hsl(var(--gold)/0.15)] text-[hsl(var(--gold-dark))]" :
+                                    isExperience ? "bg-[hsl(280,30%,55%,0.1)] text-[hsl(280,30%,45%)]" :
+                                    "bg-muted text-muted-foreground"
+                                  }`}>
+                                    {isMeal ? "🍽 Dining" :
+                                     isExperience ? "✨ Experience" :
+                                     item.type === "rope-drop" ? "Arrive" : item.type}
                                   </span>
-                                </>
+                                </div>
+
+                                {/* Duration + remove */}
+                                <div className="flex items-center gap-2 shrink-0">
+                                  <div className="text-right">
+                                    <span className="text-[0.5625rem] text-foreground font-medium block leading-tight">{item.duration} min</span>
+                                    <span className="text-[0.4375rem] text-muted-foreground uppercase tracking-wide">Duration</span>
+                                  </div>
+                                  {!isLocked && !isBooked && (
+                                    <button onClick={() => removeFromItinerary(item.id)}
+                                      className="opacity-0 group-hover:opacity-100 w-4 h-4 flex items-center justify-center text-muted-foreground hover:text-destructive transition-all duration-200">
+                                      <X className="w-3 h-3" />
+                                    </button>
+                                  )}
+                                </div>
+                              </div>
+
+                              {/* Details row */}
+                              <div className="flex items-center gap-2 mt-1 ml-[calc(0.75rem+8px+0.5rem)]">
+                                {/* LL badge */}
+                                {item.llType && item.llType !== "none" && (
+                                  <span className="px-1.5 py-0.5 text-[0.35rem] uppercase tracking-[0.08em] bg-accent text-accent-foreground border border-border">
+                                    {llLabels[item.llType]}
+                                  </span>
+                                )}
+                                {/* Wait time */}
+                                {item.waitTime != null && item.waitTime > 0 && (
+                                  <span className="px-1.5 py-0.5 text-[0.4375rem] text-muted-foreground bg-muted border border-border/50">
+                                    ⏱ Est. {item.waitTime} min standby wait
+                                  </span>
+                                )}
+                              </div>
+
+                              {/* Notes */}
+                              {item.notes && (
+                                <p className="font-editorial text-[0.5625rem] text-muted-foreground mt-1.5 ml-[calc(0.75rem+8px+0.5rem)] italic">{item.notes}</p>
+                              )}
+
+                              {/* Walk connector */}
+                              {item.walkTime && item.walkTime > 0 && (
+                                <div className="flex items-center gap-2 mt-1.5 ml-[calc(0.75rem+8px+0.5rem)]">
+                                  <div className="flex items-center gap-1.5 px-2 py-0.5 bg-muted/60 border border-border/40">
+                                    <span className="text-[0.5rem]">🚶</span>
+                                    <span className="text-[0.5rem] text-muted-foreground font-medium">{item.walkTime} min walk to next</span>
+                                  </div>
+                                </div>
                               )}
                             </div>
-                          </div>
-                        )}
+                          );
+                        })}
                       </div>
-                    </div>
-                  </motion.div>
-                );
-              })}
-            </AnimatePresence>
-
-            {itinerary.length === 0 && (
-              <div className="py-16 text-center ml-12">
-                <p className="font-editorial text-sm text-muted-foreground/40 italic">Your itinerary is empty.</p>
-                <p className="font-editorial text-xs text-muted-foreground/30 mt-1">Add attractions from the research panel →</p>
-              </div>
-            )}
+                    ) : (
+                      /* Empty hour — subtle gap indicator */
+                      <div className="h-[28px] flex items-center">
+                        <div className="w-full border-b border-dashed border-border/20" />
+                      </div>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
           </div>
+
+          {/* Unscheduled items (added from research but no time yet) */}
+          {unscheduledItems.length > 0 && (
+            <div className="mt-6 ml-[64px]">
+              <p className="label-text mb-2">Unscheduled</p>
+              <p className="font-editorial text-[0.625rem] text-muted-foreground/50 mb-3 italic">
+                Drag to reorder · Assign times when you're ready
+              </p>
+              <div className="space-y-1.5">
+                {unscheduledItems.map(item => {
+                  const globalIdx = itinerary.indexOf(item);
+                  const isMeal = item.type === "meal" || item.type === "snack";
+                  const isExperience = item.type === "show" || item.type === "character";
+                  const isDragging = dragIdx === globalIdx;
+                  const isDragOver = dragOverIdx === globalIdx;
+
+                  return (
+                    <div
+                      key={item.id}
+                      draggable={!isLocked}
+                      onDragStart={() => handleDragStart(globalIdx)}
+                      onDragOver={(e) => handleDragOver(e, globalIdx)}
+                      onDrop={() => handleDrop(globalIdx)}
+                      onDragEnd={handleDragEnd}
+                      className={`group flex items-center gap-2 border px-3 py-2 shadow-soft transition-all duration-200 ${
+                        isDragging ? "opacity-40" : ""
+                      } ${isDragOver ? "border-[hsl(var(--gold))]" : ""} ${
+                        isMeal ? "bg-[hsl(42,64%,35%,0.06)] border-[hsl(var(--gold)/0.3)]" :
+                        isExperience ? "bg-[hsl(280,30%,55%,0.04)] border-[hsl(280,30%,55%,0.2)]" :
+                        "bg-background border-border"
+                      } ${!isLocked ? "cursor-grab hover:shadow-soft-hover" : ""}`}
+                    >
+                      {!isLocked && <GripVertical className="w-3 h-3 text-muted-foreground/30 shrink-0" />}
+                      <div className={`w-2 h-2 shrink-0 ${
+                        isMeal ? "bg-[hsl(var(--gold))]" :
+                        isExperience ? "bg-[hsl(280,30%,55%)]" :
+                        "bg-foreground/50"
+                      }`} />
+                      <span className="font-display text-[0.75rem] text-foreground flex-1 truncate">{item.name}</span>
+                      <div className="text-right shrink-0">
+                        <span className="text-[0.5rem] text-foreground font-medium">{item.duration} min</span>
+                        <span className="text-[0.375rem] text-muted-foreground block">Duration</span>
+                      </div>
+                      {!isLocked && (
+                        <button onClick={() => removeFromItinerary(item.id)}
+                          className="opacity-0 group-hover:opacity-100 text-muted-foreground hover:text-destructive transition-all">
+                          <X className="w-3 h-3" />
+                        </button>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
 
           {/* Quick-add strip */}
           {!isLocked && (
-            <div className="flex items-center gap-1.5 mt-5 ml-[52px]">
+            <div className="flex items-center gap-1.5 mt-5 ml-[64px]">
               {quickAdds.map(qa => (
                 <button key={qa.type} onClick={() => addQuickItem(qa.type, qa.label, qa.dur)}
                   className="flex items-center gap-1 px-2.5 py-1 bg-background border border-dashed border-border text-muted-foreground hover:border-foreground/30 hover:text-foreground transition-all duration-300 shadow-soft">
@@ -597,6 +684,26 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
               ))}
             </div>
           )}
+
+          {/* Color legend */}
+          <div className="flex items-center gap-4 mt-6 ml-[64px]">
+            <div className="flex items-center gap-1.5">
+              <div className="w-2.5 h-2.5 bg-[hsl(var(--gold))]" />
+              <span className="text-[0.5rem] text-muted-foreground">Dining</span>
+            </div>
+            <div className="flex items-center gap-1.5">
+              <div className="w-2.5 h-2.5 bg-[hsl(280,30%,55%)]" />
+              <span className="text-[0.5rem] text-muted-foreground">Experience</span>
+            </div>
+            <div className="flex items-center gap-1.5">
+              <div className="w-2.5 h-2.5 bg-foreground/50" />
+              <span className="text-[0.5rem] text-muted-foreground">Ride</span>
+            </div>
+            <div className="flex items-center gap-1.5">
+              <div className="w-2.5 h-2.5 bg-muted-foreground/20" />
+              <span className="text-[0.5rem] text-muted-foreground">Break</span>
+            </div>
+          </div>
         </div>
 
         {/* ─── RIGHT: Research Assistant ──────────────────────────────── */}

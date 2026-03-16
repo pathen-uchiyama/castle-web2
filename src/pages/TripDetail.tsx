@@ -776,6 +776,19 @@ const BookedTripDetail = ({ trip }: { trip: BookedTrip }) => {
                           <div className="flex flex-wrap gap-1.5 mt-2">{res.dietaryFlags.map((flag) => (<span key={flag} className="text-[0.5rem] uppercase tracking-[0.1em] px-2 py-0.5 bg-[hsl(var(--warm))] text-muted-foreground border border-border">⚠ {flag}</span>))}</div>
                         )}
                         {res.notes && <p className="font-editorial text-xs text-muted-foreground/60 italic mt-2">{res.notes}</p>}
+                        {overlapMap[res.reservationId] && (
+                          <div className="mt-3 pt-2 border-t border-[hsl(var(--destructive)/0.15)]">
+                            <div className="flex items-start gap-2 px-2 py-1.5 bg-[hsl(var(--destructive)/0.04)]">
+                              <span className="text-xs shrink-0">⚠️</span>
+                              <div>
+                                <p className="font-display text-[0.5625rem] text-destructive mb-0.5">Time Conflict</p>
+                                <p className="font-editorial text-[0.625rem] text-muted-foreground">
+                                  Overlaps with {overlapMap[res.reservationId].map(o => o.name).join(", ")}. Cancel unused reservations at least <strong className="text-foreground">2 hours before</strong> to avoid a <strong className="text-foreground">$10/person no-show fee</strong>.
+                                </p>
+                              </div>
+                            </div>
+                          </div>
+                        )}
                       </div>
                     ))}
                     {allDiningReservations.filter(d => d.status === "confirmed").length === 0 && (

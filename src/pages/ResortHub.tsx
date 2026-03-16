@@ -138,7 +138,7 @@ const ResortHub = () => {
       {/* Hero */}
       <section className="relative bg-foreground text-background px-8 lg:px-16 pt-32 pb-16">
         <motion.div {...fade()}>
-          <Link to="/guides" className="inline-flex items-center gap-1.5 text-background/40 hover:text-background/70 transition-colors mb-6 text-[0.625rem] uppercase tracking-[0.2em]">
+          <Link to="/guides" className="inline-flex items-center gap-1.5 text-background/60 hover:text-background/80 transition-colors mb-6 text-[0.625rem] uppercase tracking-[0.2em]">
             <ArrowLeft className="w-3 h-3" /> All Resorts
           </Link>
           <p className="text-[0.625rem] uppercase tracking-[0.3em] text-background/70 mb-4">Resort Guide 🗺️</p>

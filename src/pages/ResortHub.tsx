@@ -221,7 +221,7 @@ const ResortHub = () => {
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                 {data.parks.map(park => (
                   <button key={park.parkId} onClick={() => { setActiveTab("parks"); setParkType(park.type); }}
-                    className="text-left border border-border bg-card p-5 shadow-[var(--shadow-soft)] hover:shadow-[var(--shadow-hover)] transition-shadow duration-500">
+                    className="text-left border border-border bg-card rounded-lg p-5 shadow-[var(--shadow-soft)] hover:shadow-[var(--shadow-hover)] transition-shadow duration-500">
                     <div className="flex items-center gap-2 mb-2">
                       <span className="text-2xl">{park.icon}</span>
                       <h3 className="font-display text-lg text-foreground">{park.name}</h3>

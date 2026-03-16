@@ -181,7 +181,7 @@ const ParkGuidePage = ({ parkGuides }: ParkGuidePageProps) => {
                     <PopoverTrigger asChild>
                       <button
                         className={cn(
-                          "inline-flex items-center gap-3 px-5 py-3 text-sm bg-card border border-border transition-colors duration-300 hover:border-[hsl(var(--gold))]",
+                          "inline-flex items-center gap-3 px-5 py-3 rounded-lg text-sm bg-card border border-border transition-colors duration-300 hover:border-[hsl(var(--gold))]",
                           !selectedDate && "text-muted-foreground"
                         )}
                         style={{ fontFamily: "Inter, system-ui, sans-serif" }}

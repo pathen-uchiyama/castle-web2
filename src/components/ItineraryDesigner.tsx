@@ -661,23 +661,23 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
                     </div>
 
                     {/* Time breakdown chips */}
-                    <div className="mt-1.5 flex items-center gap-1 flex-wrap">
+                    <div className="mt-2 flex items-center gap-1.5 flex-wrap">
                       {strollerTime > 0 && (
-                        <span className="flex items-center gap-0.5 px-1.5 py-0.5 bg-[hsl(var(--gold)/0.08)] text-[0.375rem] text-[hsl(var(--gold-dark))] font-medium" style={{ borderRadius: 0 }}>
+                        <span className="flex items-center gap-0.5 px-2 py-1 bg-[hsl(var(--gold)/0.08)] text-[0.5625rem] text-[hsl(var(--gold-dark))] font-medium" style={{ borderRadius: 0 }}>
                           🍼 Park {strollerTime}m
                         </span>
                       )}
                       {checkinTime > 0 && (
-                        <span className="flex items-center gap-0.5 px-1.5 py-0.5 bg-[hsl(280,30%,55%,0.08)] text-[0.375rem] text-[hsl(280,30%,45%)] font-medium" style={{ borderRadius: 0 }}>
+                        <span className="flex items-center gap-0.5 px-2 py-1 bg-[hsl(280,30%,55%,0.08)] text-[0.5625rem] text-[hsl(280,30%,45%)] font-medium" style={{ borderRadius: 0 }}>
                           📋 Check-in {checkinTime}m
                         </span>
                       )}
                       {wait > 0 && (
-                        <span className="flex items-center gap-0.5 px-1.5 py-0.5 bg-[hsl(var(--destructive)/0.06)] text-[0.375rem] text-destructive font-medium" style={{ borderRadius: 0 }}>
+                        <span className="flex items-center gap-0.5 px-2 py-1 bg-[hsl(var(--destructive)/0.06)] text-[0.5625rem] text-destructive font-medium" style={{ borderRadius: 0 }}>
                           ⏱ Wait {wait}m
                         </span>
                       )}
-                      <span className={`flex items-center gap-0.5 px-1.5 py-0.5 text-[0.375rem] font-medium ${
+                      <span className={`flex items-center gap-0.5 px-2 py-1 text-[0.5625rem] font-medium ${
                         isMeal ? "bg-[hsl(var(--gold)/0.08)] text-[hsl(var(--gold-dark))]" :
                         isExperience ? "bg-[hsl(280,30%,55%,0.08)] text-[hsl(280,30%,45%)]" :
                         isBreak ? "bg-[hsl(var(--muted))] text-[hsl(var(--ink-light))]" :
@@ -686,7 +686,7 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
                         {isBreak ? "⏸" : isMeal ? "🍽" : isExperience ? "🎭" : "🎢"} {item.duration}m
                       </span>
                       {item.llType && item.llType !== "none" && (
-                        <span className="px-1.5 py-0.5 text-[0.35rem] uppercase tracking-[0.08em] bg-[hsl(var(--accent))] text-[hsl(var(--accent-foreground))] border border-[hsl(var(--border))]" style={{ borderRadius: 0 }}>
+                        <span className="px-2 py-1 text-[0.5rem] uppercase tracking-[0.08em] bg-[hsl(var(--accent))] text-[hsl(var(--accent-foreground))] border border-[hsl(var(--border))]" style={{ borderRadius: 0 }}>
                           {llLabels[item.llType]}
                         </span>
                       )}

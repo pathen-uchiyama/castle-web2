@@ -86,7 +86,7 @@ const DayZeroIndex = () => {
               color: "hsl(222, 20%, 45%)",
             }}
           >
-            Logic over luck begins with a single step. Let us architect your perfect park day.
+            Your family's best vacation starts with a little planning — and a whole lot of magic. Let's make it unforgettable.
           </p>
 
           {/* ═══ PRIMARY CTA — "Sovereign" Button ═══ */}

@@ -924,12 +924,12 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
                         attraction.attractionStatus.status === "recently-opened" ? "bg-[hsl(var(--gold)/0.08)] border border-[hsl(var(--gold)/0.2)]" :
                         "bg-[hsl(var(--muted))] border border-[hsl(var(--border))]"
                       }`} style={{ borderRadius: 0 }}>
-                        <span className="text-[0.5rem]">
+                        <span className="text-sm">
                           {attraction.attractionStatus.status === "new" ? "🆕" : attraction.attractionStatus.status === "recently-opened" ? "✨" : "🔧"}
                         </span>
-                        <span className="font-display text-[0.5rem] text-[hsl(var(--ink))]">{attraction.attractionStatus.label}</span>
+                        <span className="font-display text-xs text-[hsl(var(--ink))]">{attraction.attractionStatus.label}</span>
                         {attraction.attractionStatus.crowdImpact && attraction.attractionStatus.crowdImpact !== "none" && (
-                          <span className={`px-1 py-0.5 text-[0.35rem] uppercase tracking-[0.08em] ${
+                          <span className={`px-1.5 py-0.5 text-[0.5625rem] uppercase tracking-[0.08em] ${
                             attraction.attractionStatus.crowdImpact === "extreme" ? "bg-[hsl(var(--destructive)/0.1)] text-destructive" :
                             "bg-[hsl(var(--gold)/0.1)] text-[hsl(var(--gold-dark))]"
                           }`} style={{ borderRadius: 0 }}>

@@ -174,4 +174,24 @@
     70% { transform: scale(2); opacity: 0; }
     100% { transform: scale(2); opacity: 0; }
   }
+
+  /* Whimsy bounce */
+  @keyframes wiggle {
+    0%, 100% { transform: rotate(0deg); }
+    25% { transform: rotate(-3deg); }
+    75% { transform: rotate(3deg); }
+  }
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-6px); }
+  }
+
+  .wiggle-hover:hover {
+    animation: wiggle 0.4s ease-in-out;
+  }
+
+  .float-gentle {
+    animation: float 3s ease-in-out infinite;
+  }
 }

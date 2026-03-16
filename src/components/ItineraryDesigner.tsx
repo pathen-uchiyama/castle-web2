@@ -748,7 +748,7 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
           {ribbon.length > 0 && (
             <div className="flex items-center gap-2 mt-4 ml-4">
               <div className="flex-1 border-t-2 border-[hsl(var(--ink))]" />
-              <span className="px-3 py-1 bg-[hsl(var(--ink))] text-[#F9F7F2] text-[0.5rem] uppercase tracking-[0.12em] font-medium" style={{ borderRadius: 0 }}>
+              <span className="px-3 py-1.5 bg-[hsl(var(--ink))] text-[#F9F7F2] text-xs uppercase tracking-[0.12em] font-medium" style={{ borderRadius: 0 }}>
                 🚗 End of Day · {ribbon.length > 0 ? formatMin(ribbon[ribbon.length - 1].endMin) : leavePark}
               </span>
             </div>

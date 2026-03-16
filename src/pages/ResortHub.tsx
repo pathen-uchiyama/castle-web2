@@ -40,7 +40,9 @@ type Tab = "overview" | "parks" | "hotels" | "dining" | "transport" | "shopping"
 
 const ResortHub = () => {
   const { resortId } = useParams<{ resortId: string }>();
-  if (resortId !== "wdw") return <Navigate to="/parks/wdw" replace />;
+
+  const resort = wdwResort;
+  const [activeTab, setActiveTab] = useState<Tab>("overview");
 
   const resort = wdwResort;
   const [activeTab, setActiveTab] = useState<Tab>("overview");

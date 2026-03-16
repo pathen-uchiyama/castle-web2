@@ -336,6 +336,56 @@ const BookedTripDetail = ({ trip }: { trip: BookedTrip }) => {
   const allDiningReservations = useMemo(() => [...diningReservations, ...pendingDining], [diningReservations, pendingDining]);
   const allBookedExperiences = useMemo(() => [...bookedExperiences, ...pendingExperiences], [bookedExperiences, pendingExperiences]);
 
+  /* ── Overlap detection for dining & experiences ─────────────────── */
+  const parseTimeToMin = (timeStr: string): number => {
+    const m = timeStr.match(/(\d+):(\d+)\s*(AM|PM)/i);
+    if (!m) return -1;
+    let h = parseInt(m[1]);
+    const min = parseInt(m[2]);
+    if (m[3].toUpperCase() === "PM" && h !== 12) h += 12;
+    if (m[3].toUpperCase() === "AM" && h === 12) h = 0;
+    return h * 60 + min;
+  };
+
+  const diningDurationByMeal: Record<string, number> = { breakfast: 60, lunch: 75, dinner: 90, snack: 30 };
+
+  type BookingSlot = { id: string; name: string; date: string; startMin: number; endMin: number; type: "dining" | "experience"; status: string };
+
+  const allBookingSlots = useMemo((): BookingSlot[] => {
+    const slots: BookingSlot[] = [];
+    allDiningReservations.filter(d => d.status !== "cancelled").forEach(d => {
+      const start = parseTimeToMin(d.time);
+      const dur = diningDurationByMeal[d.mealType] || 75;
+      if (start >= 0) slots.push({ id: d.reservationId, name: d.restaurantName, date: d.date, startMin: start, endMin: start + dur, type: "dining", status: d.status });
+    });
+    allBookedExperiences.filter(e => e.status !== "cancelled").forEach(e => {
+      const start = parseTimeToMin(e.time);
+      const dur = parseInt(e.duration || "60") || 60;
+      if (start >= 0) slots.push({ id: e.experienceId, name: e.experienceName, date: e.date, startMin: start, endMin: start + dur, type: "experience", status: e.status });
+    });
+    return slots;
+  }, [allDiningReservations, allBookedExperiences]);
+
+  const overlapMap = useMemo(() => {
+    const map: Record<string, BookingSlot[]> = {};
+    for (let i = 0; i < allBookingSlots.length; i++) {
+      for (let j = i + 1; j < allBookingSlots.length; j++) {
+        const a = allBookingSlots[i];
+        const b = allBookingSlots[j];
+        if (a.date !== b.date) continue;
+        if (a.startMin < b.endMin && b.startMin < a.endMin) {
+          if (!map[a.id]) map[a.id] = [];
+          if (!map[b.id]) map[b.id] = [];
+          map[a.id].push(b);
+          map[b.id].push(a);
+        }
+      }
+    }
+    return map;
+  }, [allBookingSlots]);
+
+  const hasAnyOverlaps = Object.keys(overlapMap).length > 0;
+
   const handleBookDining = (venue: DiningVenue, data: { date: string; time: string; partySize: number; notes: string }) => {
     const newRes: DiningReservation = {
       reservationId: `din-pending-${Date.now()}`,
@@ -658,6 +708,27 @@ const BookedTripDetail = ({ trip }: { trip: BookedTrip }) => {
 
           {diningSubTab === "reservations" && (
             <>
+              {/* Overlap warning banner */}
+              {hasAnyOverlaps && allDiningReservations.some(d => overlapMap[d.reservationId]) && (
+                <motion.div {...fade(0.02)} className="mb-6 border border-[hsl(var(--destructive)/0.25)] bg-[hsl(var(--destructive)/0.04)] p-4">
+                  <div className="flex items-start gap-3">
+                    <span className="text-lg shrink-0">⚠️</span>
+                    <div>
+                      <p className="font-display text-sm text-destructive mb-1">Overlapping Reservations Detected</p>
+                      <p className="font-editorial text-xs text-muted-foreground leading-relaxed mb-2">
+                        You have dining reservations that overlap in time. This is fine if you're holding multiple options to decide later — but remember to cancel the ones you won't use.
+                      </p>
+                      <div className="border-t border-[hsl(var(--destructive)/0.15)] pt-2 mt-2">
+                        <p className="font-display text-[0.625rem] text-destructive uppercase tracking-[0.1em] mb-1">💰 Disney No-Show Fee Policy</p>
+                        <p className="font-editorial text-[0.6875rem] text-muted-foreground leading-relaxed">
+                          Walt Disney World charges a <strong className="text-foreground">$10 per person no-show fee</strong> for table-service dining reservations not cancelled at least <strong className="text-foreground">2 hours before</strong> the reservation time. Signature & fine dining restaurants (Victoria & Albert's, Topolino's Terrace character breakfast, etc.) may charge <strong className="text-foreground">$25–$50 per person</strong> and require cancellation <strong className="text-foreground">24 hours in advance</strong>.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </motion.div>
+              )}
+
               {/* Status summary bar */}
               <motion.div {...fade(0.05)} className="flex gap-3 mb-10">
                 {(["confirmed", "pending", "cancelled"] as const).map((status) => {
@@ -705,6 +776,19 @@ const BookedTripDetail = ({ trip }: { trip: BookedTrip }) => {
                           <div className="flex flex-wrap gap-1.5 mt-2">{res.dietaryFlags.map((flag) => (<span key={flag} className="text-[0.5rem] uppercase tracking-[0.1em] px-2 py-0.5 bg-[hsl(var(--warm))] text-muted-foreground border border-border">⚠ {flag}</span>))}</div>
                         )}
                         {res.notes && <p className="font-editorial text-xs text-muted-foreground/60 italic mt-2">{res.notes}</p>}
+                        {overlapMap[res.reservationId] && (
+                          <div className="mt-3 pt-2 border-t border-[hsl(var(--destructive)/0.15)]">
+                            <div className="flex items-start gap-2 px-2 py-1.5 bg-[hsl(var(--destructive)/0.04)]">
+                              <span className="text-xs shrink-0">⚠️</span>
+                              <div>
+                                <p className="font-display text-[0.5625rem] text-destructive mb-0.5">Time Conflict</p>
+                                <p className="font-editorial text-[0.625rem] text-muted-foreground">
+                                  Overlaps with {overlapMap[res.reservationId].map(o => o.name).join(", ")}. Cancel unused reservations at least <strong className="text-foreground">2 hours before</strong> to avoid a <strong className="text-foreground">$10/person no-show fee</strong>.
+                                </p>
+                              </div>
+                            </div>
+                          </div>
+                        )}
                       </div>
                     ))}
                     {allDiningReservations.filter(d => d.status === "confirmed").length === 0 && (
@@ -735,6 +819,14 @@ const BookedTripDetail = ({ trip }: { trip: BookedTrip }) => {
                           <span className="font-editorial text-muted-foreground">Party of {res.partySize}</span>
                         </div>
                         {res.notes && <p className="font-editorial text-xs text-muted-foreground/60 italic mt-2">{res.notes}</p>}
+                        {overlapMap[res.reservationId] && (
+                          <div className="mt-2 flex items-start gap-2 px-2 py-1.5 bg-[hsl(var(--destructive)/0.04)] border border-[hsl(var(--destructive)/0.15)]">
+                            <span className="text-xs shrink-0">⚠️</span>
+                            <p className="font-editorial text-[0.625rem] text-muted-foreground">
+                              Overlaps with <strong className="text-foreground">{overlapMap[res.reservationId].map(o => o.name).join(", ")}</strong>. Cancel at least <strong className="text-foreground">2 hrs before</strong> to avoid a <strong className="text-foreground">$10/person</strong> no-show fee.
+                            </p>
+                          </div>
+                        )}
                         <div className="mt-3 pt-2 border-t border-border/50">
                           <p className="font-editorial text-[0.625rem] text-muted-foreground/50 italic">Add confirmation # once booked</p>
                         </div>
@@ -853,6 +945,27 @@ const BookedTripDetail = ({ trip }: { trip: BookedTrip }) => {
 
           {experienceSubTab === "reservations" && (
             <>
+              {/* Overlap warning banner */}
+              {hasAnyOverlaps && allBookedExperiences.some(e => overlapMap[e.experienceId]) && (
+                <motion.div {...fade(0.02)} className="mb-6 border border-[hsl(var(--destructive)/0.25)] bg-[hsl(var(--destructive)/0.04)] p-4">
+                  <div className="flex items-start gap-3">
+                    <span className="text-lg shrink-0">⚠️</span>
+                    <div>
+                      <p className="font-display text-sm text-destructive mb-1">Overlapping Bookings Detected</p>
+                      <p className="font-editorial text-xs text-muted-foreground leading-relaxed mb-2">
+                        Some of your experience bookings overlap in time. If you're holding options to decide later, be sure to cancel the unused ones before the deadline.
+                      </p>
+                      <div className="border-t border-[hsl(var(--destructive)/0.15)] pt-2 mt-2">
+                        <p className="font-display text-[0.625rem] text-destructive uppercase tracking-[0.1em] mb-1">💰 Disney No-Show Fee Policy</p>
+                        <p className="font-editorial text-[0.6875rem] text-muted-foreground leading-relaxed">
+                          Premium experiences (Savi's Workshop, Bibbidi Bobbidi Boutique, etc.) charge <strong className="text-foreground">$10–$50 per person</strong> for no-shows. Most require cancellation at least <strong className="text-foreground">24 hours in advance</strong>. Standard recreation bookings typically require <strong className="text-foreground">1–2 hours notice</strong>.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </motion.div>
+              )}
+
               {/* Status summary bar */}
               <motion.div {...fade(0.05)} className="flex gap-3 mb-10">
                 {(["confirmed", "pending", "cancelled"] as const).map((status) => {
@@ -898,6 +1011,14 @@ const BookedTripDetail = ({ trip }: { trip: BookedTrip }) => {
                           <span className="font-editorial text-muted-foreground/60">#{exp.confirmationNumber}</span>
                         </div>
                         {exp.notes && <p className="font-editorial text-xs text-muted-foreground/60 italic mt-2">{exp.notes}</p>}
+                        {overlapMap[exp.experienceId] && (
+                          <div className="mt-2 flex items-start gap-2 px-2 py-1.5 bg-[hsl(var(--destructive)/0.04)] border border-[hsl(var(--destructive)/0.15)]">
+                            <span className="text-xs shrink-0">⚠️</span>
+                            <p className="font-editorial text-[0.625rem] text-muted-foreground">
+                              Overlaps with <strong className="text-foreground">{overlapMap[exp.experienceId].map(o => o.name).join(", ")}</strong>. Some experiences charge <strong className="text-foreground">$10–$50/person</strong> for no-shows. Cancel at least <strong className="text-foreground">24 hours before</strong> for premium experiences.
+                            </p>
+                          </div>
+                        )}
                       </div>
                     ))}
                     {allBookedExperiences.filter(e => e.status === "confirmed").length === 0 && (
@@ -929,6 +1050,14 @@ const BookedTripDetail = ({ trip }: { trip: BookedTrip }) => {
                           <span className="font-editorial text-muted-foreground">Party of {exp.partySize}</span>
                         </div>
                         {exp.notes && <p className="font-editorial text-xs text-muted-foreground/60 italic mt-2">{exp.notes}</p>}
+                        {overlapMap[exp.experienceId] && (
+                          <div className="mt-2 flex items-start gap-2 px-2 py-1.5 bg-[hsl(var(--destructive)/0.04)] border border-[hsl(var(--destructive)/0.15)]">
+                            <span className="text-xs shrink-0">⚠️</span>
+                            <p className="font-editorial text-[0.625rem] text-muted-foreground">
+                              Overlaps with <strong className="text-foreground">{overlapMap[exp.experienceId].map(o => o.name).join(", ")}</strong>. Cancel unused bookings to avoid no-show fees.
+                            </p>
+                          </div>
+                        )}
                         <div className="mt-3 pt-2 border-t border-border/50">
                           <p className="font-editorial text-[0.625rem] text-muted-foreground/50 italic">Add confirmation # once booked</p>
                         </div>

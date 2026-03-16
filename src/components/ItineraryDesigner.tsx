@@ -999,10 +999,10 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
 
                           {attraction.rules.length > 0 && (
                             <div className="mb-3">
-                              <p className="text-[0.4375rem] uppercase tracking-[0.12em] text-[hsl(var(--ink-light))] mb-1">Options</p>
-                              <div className="flex flex-wrap gap-1">
+                              <p className="text-[0.625rem] uppercase tracking-[0.12em] text-[hsl(var(--ink-light))] mb-1.5">Options</p>
+                              <div className="flex flex-wrap gap-1.5">
                                 {attraction.rules.map(rule => (
-                                  <span key={rule} className="px-1.5 py-0.5 text-[0.375rem] uppercase tracking-[0.08em] bg-[hsl(var(--accent))] text-[hsl(var(--accent-foreground))] border border-[hsl(var(--border))]" style={{ borderRadius: 0 }}>
+                                  <span key={rule} className="px-2 py-1 text-[0.5625rem] uppercase tracking-[0.08em] bg-[hsl(var(--accent))] text-[hsl(var(--accent-foreground))] border border-[hsl(var(--border))]" style={{ borderRadius: 0 }}>
                                     {rule}
                                   </span>
                                 ))}
@@ -1012,10 +1012,10 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
 
                           {attraction.warnings.length > 0 && (
                             <div className="mb-3">
-                              <p className="text-[0.4375rem] uppercase tracking-[0.12em] text-[hsl(var(--ink-light))] mb-1">Warnings</p>
-                              <div className="flex flex-wrap gap-1">
+                              <p className="text-[0.625rem] uppercase tracking-[0.12em] text-[hsl(var(--ink-light))] mb-1.5">Warnings</p>
+                              <div className="flex flex-wrap gap-1.5">
                                 {attraction.warnings.map(w => (
-                                  <span key={w} className="px-1.5 py-0.5 text-[0.375rem] uppercase tracking-[0.08em] bg-[hsl(var(--destructive)/0.06)] text-destructive border border-[hsl(var(--destructive)/0.15)]" style={{ borderRadius: 0 }}>
+                                  <span key={w} className="px-2 py-1 text-[0.5625rem] uppercase tracking-[0.08em] bg-[hsl(var(--destructive)/0.06)] text-destructive border border-[hsl(var(--destructive)/0.15)]" style={{ borderRadius: 0 }}>
                                     ⚠ {w}
                                   </span>
                                 ))}

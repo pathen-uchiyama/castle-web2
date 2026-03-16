@@ -136,10 +136,11 @@ export const magicKingdomAttractions: ParkAttraction[] = [
     id: "mk-tianas", name: "Tiana's Bayou Adventure", parkId: "mk", type: "ride", rating: 4.4,
     duration: "9 MIN", heightRequirement: "40 IN", thrillLevel: "moderate", environment: "OUTDOOR/INDOOR",
     llType: "ll-multi-1", waitCategory: "hard-to-get",
-    description: "Log flume celebrating the spirit of New Orleans.",
+    description: "Log flume celebrating the spirit of New Orleans. Reimagined from Splash Mountain.",
     notableInsight: "Gets You Wet",
     rules: ["DAS", "CHILD SWITCH"],
     warnings: [],
+    attractionStatus: { status: "new", label: "Brand New", note: "Opened June 2024 — replaced Splash Mountain. Expect extreme waits.", crowdImpact: "extreme" },
   },
   {
     id: "mk-pirates", name: "Pirates of the Caribbean", parkId: "mk", type: "ride", rating: 4.7,

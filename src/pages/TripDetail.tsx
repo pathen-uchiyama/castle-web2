@@ -710,7 +710,7 @@ const BookedTripDetail = ({ trip }: { trip: BookedTrip }) => {
             <>
               {/* Overlap warning banner */}
               {hasAnyOverlaps && allDiningReservations.some(d => overlapMap[d.reservationId]) && (
-                <motion.div {...fade(0.02)} className="mb-6 border border-[hsl(var(--destructive)/0.25)] bg-[hsl(var(--destructive)/0.04)] p-4">
+                 <motion.div {...fade(0.02)} className="mb-6 border border-[hsl(var(--destructive)/0.25)] bg-[hsl(var(--destructive)/0.04)] rounded-lg p-4">
                   <div className="flex items-start gap-3">
                     <span className="text-lg shrink-0">⚠️</span>
                     <div>

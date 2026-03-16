@@ -66,8 +66,8 @@ const DayZeroIndex = () => {
               fontSize: "clamp(3rem, 8vw, 7rem)",
             }}
           >
-            Your Story<br />
-            <em style={{ fontWeight: 400, fontStyle: "italic" }}>Awaits.</em>
+            Your Family's Story<br />
+            <em style={{ fontWeight: 400, fontStyle: "italic" }}>Begins Here. ✨</em>
           </h1>
 
           <motion.div

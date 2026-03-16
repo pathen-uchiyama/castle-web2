@@ -1,6 +1,8 @@
 import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 import SovereignBridge from "./SovereignBridge";
+import SparkleField from "@/components/SparkleField";
+import headerMemories from "@/assets/header-memories.jpg";
 
 import type { TripMemory } from "@/data/types";
 
@@ -25,29 +27,29 @@ const MemoriesHub = ({
 }: MemoriesHubProps) => {
   return (
     <>
-      {/* Header */}
-      <section className="max-w-6xl mx-auto px-4 sm:px-8 py-16 sm:py-20">
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1.2, ease }}
-        >
-          <p
-            className="mb-4 uppercase tracking-[0.3em] text-muted-foreground"
-            style={{ fontFamily: "Inter, system-ui, sans-serif", fontSize: "0.6875rem", fontWeight: 400 }}
+      {/* Hero */}
+      <section className="relative h-[25vh] min-h-[160px] overflow-hidden">
+        <img src={headerMemories} alt="Memories" className="w-full h-full object-cover" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-black/10" />
+        <SparkleField count={6} />
+        <div className="absolute bottom-0 left-0 right-0 px-8 lg:px-16 pb-8">
+          <motion.p
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 1.2, ease }}
+            className="label-text !text-white/60 mb-2 tracking-[0.3em]"
           >
-            Memories
-          </p>
-          <h1 className="font-display text-5xl sm:text-7xl text-foreground leading-[1.02] mb-4">
+            Memories ✨
+          </motion.p>
+          <motion.h1
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 1.2, delay: 0.2, ease }}
+            className="font-display text-white text-3xl sm:text-5xl leading-[1.02]"
+          >
             Your Adventures.
-          </h1>
-          <p
-            className="text-muted-foreground max-w-lg"
-            style={{ fontFamily: "Inter, system-ui, sans-serif", fontSize: "0.9375rem", letterSpacing: "-0.02em", lineHeight: 1.7 }}
-          >
-            Every trip leaves behind a constellation of memories. Select an adventure to explore its vault, echoes, and joy report.
-          </p>
-        </motion.div>
+          </motion.h1>
+        </div>
       </section>
 
 

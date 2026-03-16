@@ -224,7 +224,7 @@ const Index = ({
                       <p className="font-display text-lg text-white mb-1 truncate">{leg.legName}</p>
                       <p className="font-editorial text-sm text-white/55 mb-5" style={{ fontSize: '0.75rem', letterSpacing: '-0.02em' }}>{leg.time}</p>
                       <div className="gold-rule mb-3" />
-                      <p className="font-editorial text-xs text-white/30 italic group-hover:text-white/50 transition-colors duration-500 line-clamp-2">{leg.note}</p>
+                      <p className="font-editorial text-xs text-white/45 italic group-hover:text-white/60 transition-colors duration-500 line-clamp-2">{leg.note}</p>
                     </div>
                   </motion.div>
                 ))}

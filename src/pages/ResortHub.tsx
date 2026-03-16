@@ -189,7 +189,7 @@ const ResortHub = () => {
         {activeTab === "overview" && (
           <div className="space-y-16">
             <motion.div {...fade()}>
-              <p className="label-text mb-4">About the Resort</p>
+              <p className="label-text mb-4">About the Resort ☀️</p>
               <p className="font-editorial text-lg text-foreground/80 leading-relaxed max-w-3xl mb-8">{resort.description}</p>
               <div className="flex flex-wrap gap-2 mb-12">
                 {resort.knownFor.map(item => (

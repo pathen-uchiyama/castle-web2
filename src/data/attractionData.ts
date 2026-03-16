@@ -398,6 +398,7 @@ export const epcotAttractions: ParkAttraction[] = [
     rules: ["DAS", "CHILD SWITCH"],
     warnings: ["LOUD NOISES", "STROBES"],
     attractionStatus: { status: "recently-opened", label: "Recently Opened", note: "Still one of the hardest-to-ride attractions at WDW", crowdImpact: "high" },
+    zone: "future-world-east",
   },
   {
     id: "ep-frozen", name: "Frozen Ever After", parkId: "epcot", type: "ride", rating: 4.5,
@@ -407,6 +408,7 @@ export const epcotAttractions: ParkAttraction[] = [
     notableInsight: "Best for Elsa Fans",
     rules: ["DAS"],
     warnings: [],
+    zone: "world-showcase",
   },
   {
     id: "ep-test-track", name: "Test Track", parkId: "epcot", type: "ride", rating: 4.5,
@@ -416,6 +418,7 @@ export const epcotAttractions: ParkAttraction[] = [
     notableInsight: "Design Phase is Fun",
     rules: ["DAS", "SINGLE RIDER", "CHILD SWITCH"],
     warnings: [],
+    zone: "future-world-east",
   },
   {
     id: "ep-remy", name: "Remy's Ratatouille Adventure", parkId: "epcot", type: "ride", rating: 4.4,
@@ -425,6 +428,7 @@ export const epcotAttractions: ParkAttraction[] = [
     notableInsight: "No Height Req",
     rules: ["DAS"],
     warnings: [],
+    zone: "world-showcase",
   },
   {
     id: "ep-soarin", name: "Soarin' Around the World", parkId: "epcot", type: "ride", rating: 4.6,
@@ -434,6 +438,7 @@ export const epcotAttractions: ParkAttraction[] = [
     notableInsight: "Request Row 1",
     rules: ["DAS"],
     warnings: [],
+    zone: "future-world-west",
   },
   {
     id: "ep-spaceship-earth", name: "Spaceship Earth", parkId: "epcot", type: "ride", rating: 4.3,
@@ -443,6 +448,7 @@ export const epcotAttractions: ParkAttraction[] = [
     notableInsight: "Rainy Day Classic",
     rules: ["DAS"],
     warnings: [],
+    zone: "future-world-east",
   },
   {
     id: "ep-living-seas", name: "The Seas with Nemo & Friends", parkId: "epcot", type: "ride", rating: 4.0,
@@ -452,6 +458,7 @@ export const epcotAttractions: ParkAttraction[] = [
     notableInsight: "Aquarium Worth Lingering",
     rules: ["DAS"],
     warnings: [],
+    zone: "future-world-west",
   },
   // Shows
   {
@@ -462,6 +469,7 @@ export const epcotAttractions: ParkAttraction[] = [
     notableInsight: "Best View from Japan/Italy",
     rules: [],
     warnings: ["LOUD NOISES"],
+    zone: "world-showcase",
   },
   // Characters
   {
@@ -472,6 +480,7 @@ export const epcotAttractions: ParkAttraction[] = [
     notableInsight: "Long Waits — Go Early",
     rules: [],
     warnings: [],
+    zone: "world-showcase",
   },
   // Seasonal
   {
@@ -483,6 +492,7 @@ export const epcotAttractions: ParkAttraction[] = [
     rules: [],
     warnings: [],
     tags: ["FESTIVAL", "FOOD"],
+    zone: "world-showcase",
   },
 ];
 

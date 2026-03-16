@@ -83,6 +83,8 @@ const ResortHub = () => {
     [parkType]
   );
 
+  if (resortId !== "wdw") return <Navigate to="/parks/wdw" replace />;
+
   const tabs: { id: Tab; label: string; icon: React.ReactNode }[] = [
     { id: "overview", label: "Overview", icon: <MapPin className="w-3.5 h-3.5" /> },
     { id: "parks", label: "Parks", icon: <TreePine className="w-3.5 h-3.5" /> },

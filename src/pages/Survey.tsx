@@ -121,9 +121,9 @@ const Survey = () => {
         <motion.div {...fade(0.1)} className="mt-8 flex items-center gap-6">
           {[1, 2, 3].map((s) => (
             <div key={s} className="flex items-center gap-2">
-              <div className={`w-7 h-7 flex items-center justify-center text-xs font-medium transition-all duration-500 ${
-                step === s ? "bg-foreground text-background" : step > s ? "bg-[hsl(var(--gold))] text-background" : "bg-secondary text-muted-foreground"
-              }`}>
+               <div className={`w-7 h-7 rounded-md flex items-center justify-center text-xs font-medium transition-all duration-500 ${
+                 step === s ? "bg-foreground text-background" : step > s ? "bg-[hsl(var(--gold))] text-background" : "bg-secondary text-muted-foreground"
+               }`}>
                 {step > s ? "✓" : s}
               </div>
               <span className="label-text hidden sm:inline">

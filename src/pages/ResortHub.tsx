@@ -547,7 +547,7 @@ const ResortHub = () => {
               </p>
             </motion.div>
 
-            <div className="border border-border bg-card p-4 mb-8 shadow-[var(--shadow-soft)]">
+            <div className="border border-border bg-card rounded-lg p-4 mb-8 shadow-[var(--shadow-soft)]">
               <div className="flex flex-wrap items-center gap-3 mb-3">
                 <div className="relative flex-1 min-w-[200px]">
                   <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground/40" />

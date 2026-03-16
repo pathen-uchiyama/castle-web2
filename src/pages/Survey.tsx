@@ -291,7 +291,7 @@ const Survey = () => {
                         <motion.div
                           key={id}
                           layout
-                          className="flex items-center gap-4 border border-[hsl(var(--gold))] bg-[hsl(var(--gold)/0.06)] p-4"
+                          className="flex items-center gap-4 border border-[hsl(var(--gold))] bg-[hsl(var(--gold)/0.06)] rounded-lg p-4"
                         >
                           <span className="font-display text-2xl text-[hsl(var(--gold-dark))] w-8 text-center">{idx + 1}</span>
                           <div className="flex-1 min-w-0">

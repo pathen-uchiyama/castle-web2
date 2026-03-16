@@ -433,12 +433,45 @@ const Circle = ({ partyMembers }: CircleProps) => {
                                   })}
                                 </div>
                               </div>
+                              {/* ── Accessibility & Safety Needs ── */}
+                              <div className="sm:col-span-2">
+                                <label className="label-text mb-3 block tracking-[0.2em]">Accessibility & Safety Needs</label>
+                                <p className="font-editorial text-xs text-muted-foreground mb-4 leading-relaxed">
+                                  Select anything that applies so we can flag rides and experiences accordingly.
+                                </p>
+                                {["Accommodation", "Sensory", "Physical", "Medical"].map((category) => (
+                                  <div key={category} className="mb-4">
+                                    <p className="text-[0.5625rem] uppercase tracking-[0.15em] text-muted-foreground mb-2 font-medium">{category}</p>
+                                    <div className="flex flex-wrap gap-2">
+                                      {accessibilityOptions
+                                        .filter((opt) => opt.category === category)
+                                        .map((opt) => {
+                                          const checked = member.accessibilityNeeds?.includes(opt.id) ?? false;
+                                          return (
+                                            <button
+                                              key={opt.id}
+                                              onClick={() => handleAccessibilityChange(member.memberId, opt.id, !checked)}
+                                              className="px-4 py-2 text-xs tracking-[0.05em] rounded-md transition-all duration-300"
+                                              style={{
+                                                background: checked ? "hsl(var(--destructive) / 0.1)" : "transparent",
+                                                color: checked ? "hsl(var(--destructive))" : "hsl(var(--muted-foreground))",
+                                                border: `1px solid ${checked ? "hsl(var(--destructive) / 0.35)" : "hsl(var(--border))"}`,
+                                              }}
+                                            >
+                                              {checked ? "✓ " : ""}{opt.label}
+                                            </button>
+                                          );
+                                        })}
+                                    </div>
+                                  </div>
+                                ))}
+                              </div>
                               <div className="sm:col-span-2">
                                 <label className="label-text mb-2 block">Sensory Notes</label>
                                 <textarea
                                   value={member.sensoryNotes ?? ""}
                                   onChange={(e) => handleFieldChange(member.memberId, "sensoryNotes", e.target.value)}
-                                  placeholder="Any sensory sensitivities for planning..."
+                                  placeholder="Any additional sensory details for planning..."
                                   rows={2}
                                   className="w-full px-4 py-2.5 text-sm bg-background border border-border text-foreground placeholder:text-muted-foreground/40 focus:outline-none focus:border-[hsl(var(--gold))] transition-colors resize-none"
                                 />

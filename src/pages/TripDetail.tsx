@@ -260,7 +260,7 @@ const AlertModal = ({ venueName, opensDate, onClose, onSetAlert }: AlertModalPro
           </div>
           <div>
             <label className="label-text mb-2 block">Reminder Note (optional)</label>
-            <input type="text" value={alertNote} onChange={(e) => setAlertNote(e.target.value)} placeholder="e.g., Request West Wing" className="w-full border border-border bg-background px-3 py-2 font-editorial text-sm text-foreground focus:outline-none focus:border-[hsl(var(--gold))] transition-colors" />
+            <input type="text" value={alertNote} onChange={(e) => setAlertNote(e.target.value)} placeholder="e.g., Request West Wing" className="w-full border border-border bg-background rounded-md px-3 py-2 font-editorial text-sm text-foreground focus:outline-none focus:border-[hsl(var(--gold))] transition-colors" />
           </div>
         </div>
         <div className="p-6 border-t border-border">

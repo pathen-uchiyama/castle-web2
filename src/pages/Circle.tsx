@@ -218,7 +218,7 @@ const Circle = ({ partyMembers }: CircleProps) => {
                                 <input
                                   value={member.name}
                                   onChange={(e) => handleFieldChange(member.memberId, "name", e.target.value)}
-                                  className="w-full px-4 py-2.5 text-sm bg-background border border-border text-foreground focus:outline-none focus:border-[hsl(var(--gold))] transition-colors"
+                                   className="w-full px-4 py-2.5 rounded-md text-sm bg-background border border-border text-foreground focus:outline-none focus:border-[hsl(var(--gold))] transition-colors"
                                 />
                               </div>
                               <div>

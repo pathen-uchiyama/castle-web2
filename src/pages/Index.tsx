@@ -237,7 +237,7 @@ const Index = ({
                 >
                   <Link to={`/trip/${bookedTrip.tripId}`}>
                     <div className="bg-white/10 backdrop-blur-md rounded-lg p-5 h-full hover:bg-white/15 transition-colors duration-500 overflow-hidden">
-                      <p className="label-text !text-white/35 mb-3" style={{ fontSize: '0.625rem' }}>Preparations</p>
+                      <p className="label-text !text-white/50 mb-3" style={{ fontSize: '0.625rem' }}>Preparations</p>
                       <p className="font-display text-lg text-white mb-3">Packing</p>
                       <div className="space-y-2 mb-5">
                         {bookedTrip.packingLists.map((list) => (

@@ -347,14 +347,256 @@ const ParkGuidePage = ({ parkGuides }: ParkGuidePageProps) => {
             </section>
           )}
 
-          {/* Categories + Weather/Crowd detail */}
+          {/* Crowd Calendar — Tiered */}
           <section className="max-w-5xl mx-auto px-8 py-16 lg:py-24">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-16">
-              <motion.div {...fade()}>
+            <motion.div {...fade()} className="mb-12">
+              <div className="flex items-center justify-between mb-6">
+                <div>
+                  <p className="label-text mb-2">Crowd Calendar</p>
+                  <h2 className="font-display text-3xl text-foreground leading-[1.08]">When to Go</h2>
+                </div>
+                {/* Dev toggle for testing */}
+                <button
+                  onClick={togglePaid}
+                  className="px-4 py-2 text-[0.625rem] uppercase tracking-[0.15em] rounded-lg border border-border text-muted-foreground hover:text-foreground transition-colors"
+                >
+                  {isPaid ? "👑 Paid Tier" : "🆓 Free Tier"}
+                </button>
+              </div>
+              <p className="font-editorial text-base text-muted-foreground leading-relaxed max-w-2xl">
+                {park.crowdCalendarSummary}
+              </p>
+            </motion.div>
+
+            {/* ── FREE TIER: Typical Crowds by Day ── */}
+            <motion.div {...fade(0.1)}>
+              <p className="label-text mb-6 tracking-[0.2em]">Typical Crowd Levels by Day</p>
+              <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-3 mb-12">
+                {Object.entries(typicalCrowdsByDay).map(([day, data]) => (
+                  <div
+                    key={day}
+                    className="border border-border bg-card rounded-lg p-4 shadow-[var(--shadow-soft)]"
+                  >
+                    <p className="font-display text-sm text-foreground mb-2">{day.slice(0, 3)}</p>
+                    <div className="flex gap-0.5 mb-2">
+                      {Array.from({ length: 10 }).map((_, i) => (
+                        <div
+                          key={i}
+                          className="w-1 h-3 rounded-sm transition-colors"
+                          style={{
+                            background: i < data.score
+                              ? crowdColor(data.level)
+                              : "hsl(var(--border))",
+                          }}
+                        />
+                      ))}
+                    </div>
+                    <p
+                      className="text-[0.5625rem] uppercase tracking-[0.1em] font-medium mb-1"
+                      style={{ color: crowdColor(data.level) }}
+                    >
+                      {data.level}
+                    </p>
+                    <p className="font-editorial text-[0.625rem] text-muted-foreground leading-snug">{data.tip}</p>
+                  </div>
+                ))}
+              </div>
+            </motion.div>
+
+            {/* ── PAID TIER: Interactive Projection Calendar ── */}
+            <motion.div {...fade(0.2)}>
+              <div className="flex items-center gap-3 mb-6">
+                <Crown className="w-4 h-4 text-[hsl(var(--gold))]" />
+                <p className="label-text tracking-[0.2em]">Crowd Projection Calendar</p>
+              </div>
+
+              {isPaid ? (
+                <div className="border border-border bg-card rounded-lg shadow-[var(--shadow-soft)] p-6 sm:p-8">
+                  {/* Month navigation */}
+                  <div className="flex items-center justify-between mb-6">
+                    <button
+                      onClick={() => setCalendarMonth((m) => new Date(m.getFullYear(), m.getMonth() - 1, 1))}
+                      className="w-8 h-8 rounded-lg border border-border flex items-center justify-center text-muted-foreground hover:text-foreground hover:border-[hsl(var(--gold))] transition-all"
+                    >
+                      <ChevronLeft className="w-4 h-4" />
+                    </button>
+                    <p className="font-display text-xl text-foreground">{format(calendarMonth, "MMMM yyyy")}</p>
+                    <button
+                      onClick={() => setCalendarMonth((m) => new Date(m.getFullYear(), m.getMonth() + 1, 1))}
+                      className="w-8 h-8 rounded-lg border border-border flex items-center justify-center text-muted-foreground hover:text-foreground hover:border-[hsl(var(--gold))] transition-all"
+                    >
+                      <ChevronRight className="w-4 h-4" />
+                    </button>
+                  </div>
+
+                  {/* Day headers */}
+                  <div className="grid grid-cols-7 gap-1 mb-2">
+                    {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((d) => (
+                      <div key={d} className="text-center">
+                        <p className="label-text text-[0.5625rem]">{d}</p>
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Calendar grid */}
+                  <div className="grid grid-cols-7 gap-1">
+                    {/* Empty cells for offset */}
+                    {Array.from({ length: getDay(startOfMonth(calendarMonth)) }).map((_, i) => (
+                      <div key={`empty-${i}`} />
+                    ))}
+                    {projections.map((day) => {
+                      const isSelected = selectedDate && format(selectedDate, "yyyy-MM-dd") === format(day.date, "yyyy-MM-dd");
+                      const isToday = format(day.date, "yyyy-MM-dd") === format(new Date(), "yyyy-MM-dd");
+                      return (
+                        <motion.button
+                          key={format(day.date, "yyyy-MM-dd")}
+                          whileHover={{ scale: 1.05 }}
+                          whileTap={{ scale: 0.97 }}
+                          onClick={() => setSelectedDate(day.date)}
+                          className={cn(
+                            "relative p-2 rounded-lg text-left transition-all duration-300 min-h-[72px]",
+                            isSelected
+                              ? "border-2 border-[hsl(var(--gold))] bg-[hsl(var(--gold)/0.08)]"
+                              : "border border-border hover:border-[hsl(var(--gold))]/50",
+                            isToday && !isSelected && "ring-1 ring-[hsl(var(--gold))]/30"
+                          )}
+                        >
+                          <p className={cn(
+                            "font-display text-xs mb-1",
+                            isToday ? "text-[hsl(var(--gold-dark))]" : "text-foreground"
+                          )}>
+                            {format(day.date, "d")}
+                          </p>
+                          <div className="flex gap-px mb-1">
+                            {Array.from({ length: 10 }).map((_, i) => (
+                              <div
+                                key={i}
+                                className="w-[3px] h-2 rounded-[1px]"
+                                style={{
+                                  background: i < day.crowdScore
+                                    ? crowdColor(day.crowdLevel)
+                                    : "hsl(var(--border))",
+                                }}
+                              />
+                            ))}
+                          </div>
+                          <p
+                            className="text-[0.5rem] uppercase tracking-[0.05em] font-medium"
+                            style={{ color: crowdColor(day.crowdLevel) }}
+                          >
+                            {day.crowdLevel}
+                          </p>
+                        </motion.button>
+                      );
+                    })}
+                  </div>
+
+                  {/* Selected date detail */}
+                  <AnimatePresence>
+                    {selectedDate && (
+                      <motion.div
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: "auto" }}
+                        exit={{ opacity: 0, height: 0 }}
+                        transition={{ duration: 0.3, ease }}
+                        className="overflow-hidden"
+                      >
+                        <div className="mt-6 pt-6 border-t border-border">
+                          <div className="flex items-center justify-between mb-4">
+                            <p className="font-display text-lg text-foreground">{format(selectedDate, "EEEE, MMMM d, yyyy")}</p>
+                            <button
+                              onClick={() => setSelectedDate(undefined)}
+                              className="label-text text-muted-foreground hover:text-foreground transition-colors"
+                            >
+                              ✕ Clear
+                            </button>
+                          </div>
+                          <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+                            <div>
+                              <p className="label-text mb-1">Projected Crowd</p>
+                              <p className="font-display text-lg" style={{ color: crowdColor(displayCrowd) }}>{displayCrowd}</p>
+                            </div>
+                            <div>
+                              <p className="label-text mb-1">Weather</p>
+                              <p className="font-display text-lg text-foreground">{displayWeather}</p>
+                            </div>
+                            <div>
+                              <p className="label-text mb-1">Hours</p>
+                              <p className="font-display text-sm text-foreground">{displayHours.regular}</p>
+                            </div>
+                          </div>
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+
+                  {/* Legend */}
+                  <div className="mt-6 pt-4 border-t border-border flex flex-wrap gap-6">
+                    {[
+                      { label: "Low", level: "Low" },
+                      { label: "Moderate", level: "Moderate" },
+                      { label: "High", level: "High" },
+                    ].map((item) => (
+                      <div key={item.label} className="flex items-center gap-2">
+                        <div className="w-3 h-3 rounded-sm" style={{ background: crowdColor(item.level) }} />
+                        <span className="label-text text-[0.5625rem]">{item.label}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ) : (
+                /* ── GATED STATE ── */
+                <div className="relative border border-border bg-card rounded-lg shadow-[var(--shadow-soft)] overflow-hidden">
+                  {/* Blurred preview */}
+                  <div className="p-6 sm:p-8 blur-[3px] opacity-50 pointer-events-none select-none">
+                    <div className="grid grid-cols-7 gap-1">
+                      {Array.from({ length: 35 }).map((_, i) => (
+                        <div key={i} className="p-2 rounded-lg border border-border min-h-[60px]">
+                          <p className="font-display text-xs text-muted-foreground">{(i % 28) + 1}</p>
+                          <div className="flex gap-px mt-1">
+                            {Array.from({ length: 10 }).map((_, j) => (
+                              <div
+                                key={j}
+                                className="w-[3px] h-2 rounded-[1px]"
+                                style={{ background: j < (3 + (i % 7)) ? "hsl(var(--gold))" : "hsl(var(--border))" }}
+                              />
+                            ))}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                  {/* Overlay CTA */}
+                  <div className="absolute inset-0 flex items-center justify-center bg-background/60 backdrop-blur-[1px]">
+                    <motion.div
+                      initial={{ opacity: 0, y: 20 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      className="text-center max-w-sm px-6"
+                    >
+                      <div className="w-12 h-12 rounded-lg bg-[hsl(var(--gold)/0.12)] flex items-center justify-center mx-auto mb-4">
+                        <Lock className="w-5 h-5 text-[hsl(var(--gold-dark))]" />
+                      </div>
+                      <p className="font-display text-xl text-foreground mb-2">Unlock Crowd Projections</p>
+                      <p className="font-editorial text-sm text-muted-foreground mb-6 leading-relaxed">
+                        See daily crowd projections up to 6 months out. Pick the perfect dates for your trip.
+                      </p>
+                      <button
+                        onClick={togglePaid}
+                        className="px-8 py-3 rounded-lg text-sm tracking-[0.15em] uppercase font-medium bg-foreground text-background hover:opacity-90 transition-opacity"
+                      >
+                        Upgrade to unlock
+                      </button>
+                    </motion.div>
+                  </div>
+                </div>
+              )}
+            </motion.div>
+
+            {/* Typical Weather + Categories */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 mt-16">
+              <motion.div {...fade(0.3)}>
                 <p className="label-text mb-6">Typical Weather</p>
-                <p className="font-editorial text-lg text-foreground mb-10">{park.typicalWeather}</p>
-                <p className="label-text mb-6">Crowd Calendar</p>
-                <p className="font-editorial text-base text-muted-foreground leading-relaxed">{park.crowdCalendarSummary}</p>
+                <p className="font-editorial text-lg text-foreground">{park.typicalWeather}</p>
               </motion.div>
               <motion.div {...slideRight()} className="space-y-8">
                 {park.categories.map((cat, i) => (

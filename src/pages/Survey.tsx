@@ -17,6 +17,18 @@ const categoryIcons: Record<string, string> = {
   show: "🎭",
   character: "✨",
   dining: "🍽️",
+  parade: "🎆",
+  experience: "🎪",
+};
+
+const categoryLabels: Record<string, string> = {
+  all: "All",
+  ride: "Rides",
+  show: "Shows",
+  character: "Character Meets",
+  dining: "Dining",
+  parade: "Parades & Nighttime",
+  experience: "Experiences",
 };
 
 const rankingConfig: { value: SurveyRanking; label: string; color: string; activeColor: string }[] = [

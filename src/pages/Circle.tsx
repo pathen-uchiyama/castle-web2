@@ -115,7 +115,7 @@ const Circle = ({ partyMembers }: CircleProps) => {
               { label: "Active Trips", value: "1" },
               { label: "Pending Surveys", value: "2" },
             ].map((stat) => (
-              <div key={stat.label} className="border border-border bg-card p-5 shadow-[var(--shadow-soft)]">
+              <div key={stat.label} className="border border-border bg-card rounded-lg p-5 shadow-[var(--shadow-soft)]">
                 <p className="label-text mb-2">{stat.label}</p>
                 <p className="font-display text-3xl text-foreground">{stat.value}</p>
               </div>

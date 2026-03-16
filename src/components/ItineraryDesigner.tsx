@@ -387,44 +387,57 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
           </div>
         </div>
 
-        {/* 3 widget cards — Sovereign sharp corners + boutique shadows */}
-        <div className="grid grid-cols-3 gap-3">
-          <div className="bg-white p-3 flex items-center gap-3" style={{ borderRadius: 0, boxShadow: "0 10px 30px rgba(26,26,27,0.05)" }}>
-            <span className="text-xl">⛅</span>
+        {/* 4 widget cards — Sovereign sharp corners + boutique shadows */}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+          <div className="bg-white p-4 flex items-center gap-3" style={{ borderRadius: 0, boxShadow: "0 10px 30px rgba(26,26,27,0.05)" }}>
+            <span className="text-2xl">⛅</span>
             <div>
-              <p className="font-display text-sm text-[hsl(var(--ink))]">74°F · Showers</p>
-              <p className="text-[0.5rem] text-[hsl(var(--ink-light))] uppercase tracking-[0.1em]">Pack ponchos</p>
+              <p className="font-display text-base text-[hsl(var(--ink))]">74°F · Showers</p>
+              <p className="text-[0.625rem] text-[hsl(var(--ink-light))] uppercase tracking-[0.1em]">Pack ponchos</p>
             </div>
           </div>
-          <div className="bg-white p-3" style={{ borderRadius: 0, boxShadow: "0 10px 30px rgba(26,26,27,0.05)", borderLeft: "3px solid hsl(var(--gold))" }}>
-            <p className="text-[0.5rem] uppercase tracking-[0.12em] text-[hsl(var(--gold-dark))] mb-0.5">On-Site Resort</p>
-            <p className="font-display text-sm text-[hsl(var(--ink))]">Polynesian Village</p>
-            <p className="text-[0.5rem] text-[hsl(var(--ink-light))] mt-0.5">Early Entry · Extended Hours</p>
+          <div className="bg-white p-4" style={{ borderRadius: 0, boxShadow: "0 10px 30px rgba(26,26,27,0.05)", borderLeft: "3px solid hsl(var(--gold))" }}>
+            <p className="text-[0.625rem] uppercase tracking-[0.12em] text-[hsl(var(--gold-dark))] mb-1">On-Site Resort</p>
+            <p className="font-display text-base text-[hsl(var(--ink))]">Polynesian Village</p>
+            <p className="text-[0.625rem] text-[hsl(var(--ink-light))] mt-1">Early Entry · Extended Hours</p>
           </div>
-          <div className="bg-white p-3" style={{ borderRadius: 0, boxShadow: "0 10px 30px rgba(26,26,27,0.05)" }}>
+          {/* Wait Time Widget */}
+          <div className="bg-white p-4" style={{ borderRadius: 0, boxShadow: "0 10px 30px rgba(26,26,27,0.05)", borderLeft: "3px solid hsl(var(--destructive))" }}>
+            <p className="text-[0.625rem] uppercase tracking-[0.12em] text-destructive/70 mb-1">Est. Wait Time Today</p>
+            <div className="flex items-baseline gap-1.5">
+              <span className="font-display text-2xl text-destructive font-bold">{daySummary.totalWaitTime}</span>
+              <span className="text-xs text-destructive/60">min total</span>
+            </div>
+            <p className="text-[0.625rem] text-[hsl(var(--ink-light))] mt-1">
+              {ribbon.length > 0
+                ? `~${Math.round(daySummary.totalWaitTime / Math.max(1, ribbon.filter(r => (r.item.waitTime || 0) > 0).length))}m avg per ride`
+                : "Add rides to estimate"}
+            </p>
+          </div>
+          <div className="bg-white p-4" style={{ borderRadius: 0, boxShadow: "0 10px 30px rgba(26,26,27,0.05)" }}>
             <div className="grid grid-cols-2 gap-2">
               <div>
-                <p className="text-[0.45rem] uppercase tracking-[0.1em] text-[hsl(var(--ink-light))] mb-0.5">Pace</p>
+                <p className="text-[0.5625rem] uppercase tracking-[0.1em] text-[hsl(var(--ink-light))] mb-0.5">Pace</p>
                 <Select value={pacing} onValueChange={setPacing}>
-                  <SelectTrigger className="h-6 border-[hsl(var(--border))] bg-[#F9F7F2] text-[0.5625rem] font-display text-[hsl(var(--ink))] focus:ring-0 focus:ring-offset-0 px-1.5 rounded-none">
+                  <SelectTrigger className="h-7 border-[hsl(var(--border))] bg-[#F9F7F2] text-xs font-display text-[hsl(var(--ink))] focus:ring-0 focus:ring-offset-0 px-2 rounded-none">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
                     {["Intense", "Moderate", "Relaxed"].map(o => (
-                      <SelectItem key={o} value={o} className="text-xs font-sans">{o}</SelectItem>
+                      <SelectItem key={o} value={o} className="text-sm font-sans">{o}</SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
               </div>
               <div>
-                <p className="text-[0.45rem] uppercase tracking-[0.1em] text-[hsl(var(--ink-light))] mb-0.5">Focus</p>
+                <p className="text-[0.5625rem] uppercase tracking-[0.1em] text-[hsl(var(--ink-light))] mb-0.5">Focus</p>
                 <Select value={focus} onValueChange={setFocus}>
-                  <SelectTrigger className="h-6 border-[hsl(var(--border))] bg-[#F9F7F2] text-[0.5625rem] font-display text-[hsl(var(--ink))] focus:ring-0 focus:ring-offset-0 px-1.5 rounded-none">
+                  <SelectTrigger className="h-7 border-[hsl(var(--border))] bg-[#F9F7F2] text-xs font-display text-[hsl(var(--ink))] focus:ring-0 focus:ring-offset-0 px-2 rounded-none">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
                     {["Thrill Seekers", "Toddler Friendly", "Classic Magic", "Shows & Characters"].map(o => (
-                      <SelectItem key={o} value={o} className="text-xs font-sans">{o}</SelectItem>
+                      <SelectItem key={o} value={o} className="text-sm font-sans">{o}</SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
@@ -432,8 +445,8 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
             </div>
             {/* Stroller toggle */}
             <div className="mt-2 flex items-center justify-between px-2 py-1.5 bg-[#F9F7F2]">
-              <span className="text-[0.4375rem] text-[hsl(var(--ink-light))] flex items-center gap-1">
-                <Baby className="w-3 h-3" /> Stroller
+              <span className="text-[0.5625rem] text-[hsl(var(--ink-light))] flex items-center gap-1">
+                <Baby className="w-3.5 h-3.5" /> Stroller
               </span>
               <button
                 onClick={() => setHasStroller(!hasStroller)}

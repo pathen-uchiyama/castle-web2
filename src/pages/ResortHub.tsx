@@ -346,7 +346,7 @@ const ResortHub = () => {
                           <p className="label-text mb-2">Must-Do</p>
                           <div className="space-y-1">
                             {park.mustDo.map(item => (
-                              <div key={item} className="flex items-center gap-2 px-3 py-1.5 bg-[hsl(var(--gold)/0.04)] border border-[hsl(var(--gold)/0.1)]">
+                              <div key={item} className="flex items-center gap-2 px-3 py-1.5 rounded-md bg-[hsl(var(--gold)/0.04)] border border-[hsl(var(--gold)/0.1)]">
                                 <Star className="w-3 h-3 text-[hsl(var(--gold))] fill-[hsl(var(--gold))]" />
                                 <span className="font-editorial text-xs text-foreground">{item}</span>
                               </div>

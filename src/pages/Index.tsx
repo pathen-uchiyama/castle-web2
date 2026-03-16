@@ -259,7 +259,7 @@ const Index = ({
                   transition={{ duration: 0.8, delay: 0.4, ease }}
                   className="flex-shrink-0 w-[260px] sm:w-[300px]"
                 >
-                  <div className="bg-[hsl(var(--gold-dark))]/10 backdrop-blur-md p-5 h-full border border-[hsl(var(--gold))]/10 overflow-hidden">
+                  <div className="bg-[hsl(var(--gold-dark))]/10 backdrop-blur-md rounded-lg p-5 h-full border border-[hsl(var(--gold))]/10 overflow-hidden">
                     <p className="label-text !text-[hsl(var(--gold-light))]/50 mb-3" style={{ fontSize: '0.625rem' }}>Time Reclaimed</p>
                     <p className="font-display text-3xl text-[hsl(var(--gold-light))] mb-1">{bookedTrip.timeReclaimed}</p>
                     <p className="font-editorial text-xs text-white/35 mb-4 italic">Given back to your family.</p>

@@ -111,7 +111,7 @@ const TripDetail = ({ bookedTrip, futureTrips }: TripDetailProps) => {
       <div className="min-h-screen bg-background pt-16">
         <section className="relative h-[50vh] overflow-hidden">
           <img src={futureTrip.heroImage} alt={futureTrip.destination} className="w-full h-full object-cover" />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-black/10" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-black/20" />
           <div className="absolute bottom-0 left-0 right-0 px-8 lg:px-16 pb-12">
             <motion.div {...fade()}>
               <Link to="/adventure" className="label-text !text-white/60 mb-4 tracking-[0.3em] hover:!text-white/80 transition-colors inline-block">← All Trips</Link>

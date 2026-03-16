@@ -10,6 +10,21 @@ import {
 } from "@/data/resortEncyclopedia";
 import { dlrResort, dlrHotels, dlrRestaurants, dlrParks, dlrShopping } from "@/data/dlrEncyclopedia";
 import { wdwEncyclopediaAttractions, dlrEncyclopediaAttractions } from "@/data/encyclopediaAttractions";
+import headerOverview from "@/assets/header-overview.jpg";
+import headerParks from "@/assets/header-parks.jpg";
+import headerHotels from "@/assets/header-hotels.jpg";
+import headerDining from "@/assets/header-dining.jpg";
+import headerTransport from "@/assets/header-transport.jpg";
+import headerShopping from "@/assets/header-shopping.jpg";
+
+const tabHeaderImages: Record<string, string> = {
+  overview: headerOverview,
+  parks: headerParks,
+  hotels: headerHotels,
+  dining: headerDining,
+  transport: headerTransport,
+  shopping: headerShopping,
+};
 
 const ease: [number, number, number, number] = [0.19, 1, 0.22, 1];
 const fade = (delay = 0) => ({
@@ -136,28 +151,28 @@ const ResortHub = () => {
   return (
     <main className="min-h-screen bg-background">
       {/* Hero */}
-      <section className="relative bg-foreground text-background px-8 lg:px-16 pt-32 pb-16">
+      <section className="relative bg-background px-8 lg:px-16 pt-32 pb-16">
         <motion.div {...fade()}>
-          <Link to="/guides" className="inline-flex items-center gap-1.5 text-background/60 hover:text-background/80 transition-colors mb-6 text-[0.625rem] uppercase tracking-[0.2em]">
+          <Link to="/guides" className="inline-flex items-center gap-1.5 text-muted-foreground hover:text-foreground transition-colors mb-6 text-[0.625rem] uppercase tracking-[0.2em]">
             <ArrowLeft className="w-3 h-3" /> All Resorts
           </Link>
-          <p className="text-[0.625rem] uppercase tracking-[0.3em] text-background/70 mb-4">Resort Guide 🗺️</p>
-          <h1 className="font-display text-5xl sm:text-6xl lg:text-7xl leading-[1.05] mb-4">{resort.name}</h1>
-          <p className="font-editorial text-lg text-background/70 max-w-2xl mb-6">{resort.tagline} · {resort.location}</p>
+          <p className="text-[0.625rem] uppercase tracking-[0.3em] text-muted-foreground mb-4">Resort Guide 🗺️</p>
+          <h1 className="font-display text-5xl sm:text-6xl lg:text-7xl leading-[1.05] text-foreground mb-4">{resort.name}</h1>
+          <p className="font-editorial text-lg text-muted-foreground max-w-2xl mb-6">{resort.tagline} · {resort.location}</p>
           <div className="flex flex-wrap gap-3">
-            <span className="px-3 py-1.5 rounded-md text-[0.5625rem] uppercase tracking-[0.12em] border border-background/25 text-background/80">📍 {resort.size}</span>
-            <span className="px-3 py-1.5 rounded-md text-[0.5625rem] uppercase tracking-[0.12em] border border-background/25 text-background/80">🗓 Est. {resort.opened}</span>
-            <span className="px-3 py-1.5 rounded-md text-[0.5625rem] uppercase tracking-[0.12em] border border-background/25 text-background/80">
+            <span className="px-3 py-1.5 rounded-lg text-[0.5625rem] uppercase tracking-[0.12em] border border-border text-muted-foreground">📍 {resort.size}</span>
+            <span className="px-3 py-1.5 rounded-lg text-[0.5625rem] uppercase tracking-[0.12em] border border-border text-muted-foreground">🗓 Est. {resort.opened}</span>
+            <span className="px-3 py-1.5 rounded-lg text-[0.5625rem] uppercase tracking-[0.12em] border border-border text-muted-foreground">
               🏰 {data.parks.filter(p => p.type === "theme-park").length} Theme Parks{data.parks.filter(p => p.type === "water-park").length > 0 ? ` · ${data.parks.filter(p => p.type === "water-park").length} Water Parks` : ""}
             </span>
-            <span className="px-3 py-1.5 rounded-md text-[0.5625rem] uppercase tracking-[0.12em] border border-background/25 text-background/80">🏨 {data.hotels.length} Resort Hotels</span>
+            <span className="px-3 py-1.5 rounded-lg text-[0.5625rem] uppercase tracking-[0.12em] border border-border text-muted-foreground">🏨 {data.hotels.length} Resort Hotels</span>
           </div>
           {/* Resort switcher */}
           <div className="mt-6 flex gap-2">
             {["wdw", "dlr"].map(rid => (
               <Link key={rid} to={`/resort/${rid}`}
-                className={`px-4 py-2 rounded-md text-[0.5625rem] uppercase tracking-[0.12em] border transition-all ${
-                  resortId === rid ? "bg-background text-foreground border-background" : "text-background/60 border-background/25 hover:text-background/80 hover:border-background/50"
+                className={`px-4 py-2 rounded-lg text-[0.5625rem] uppercase tracking-[0.12em] border transition-all ${
+                  resortId === rid ? "bg-foreground text-background border-foreground" : "text-muted-foreground border-border hover:text-foreground hover:border-foreground/30"
                 }`}>
                 {rid === "wdw" ? "Walt Disney World" : "Disneyland Resort"}
               </Link>
@@ -184,7 +199,18 @@ const ResortHub = () => {
         </div>
       </div>
 
-      <div className="px-8 lg:px-16 py-12 lg:py-20">
+      <div>
+        {/* Tab Header Image */}
+        <div className="relative h-[200px] overflow-hidden">
+          <img
+            src={tabHeaderImages[activeTab]}
+            alt={activeTab}
+            className="w-full h-full object-cover"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-background via-background/40 to-transparent" />
+        </div>
+
+        <div className="px-8 lg:px-16 py-12 lg:py-20">
         {/* ═══ OVERVIEW ═══ */}
         {activeTab === "overview" && (
           <div className="space-y-16">
@@ -193,7 +219,7 @@ const ResortHub = () => {
               <p className="font-editorial text-lg text-foreground/80 leading-relaxed max-w-3xl mb-8">{resort.description}</p>
               <div className="flex flex-wrap gap-2 mb-12">
                 {resort.knownFor.map((item) => (
-                  <span key={item} className="px-3 py-1.5 rounded-md text-[0.5625rem] uppercase tracking-[0.1em] border border-border bg-secondary text-muted-foreground">{item}</span>
+                  <span key={item} className="px-3 py-1.5 rounded-lg text-[0.5625rem] uppercase tracking-[0.1em] border border-border bg-secondary text-muted-foreground">{item}</span>
                 ))}
               </div>
             </motion.div>
@@ -805,6 +831,7 @@ const ResortHub = () => {
             ))}
           </div>
         )}
+      </div>
       </div>
 
       <Footer />

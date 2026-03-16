@@ -518,26 +518,26 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
 
           {/* Day Summary */}
           {ribbon.length > 0 && (
-            <div className="mb-6 p-4 bg-white" style={{ borderRadius: 0, boxShadow: "0 10px 30px rgba(26,26,27,0.05)" }}>
-              <p className="text-[0.4375rem] uppercase tracking-[0.12em] text-[hsl(var(--ink-light))] mb-2">
+            <div className="mb-6 p-5 bg-white" style={{ borderRadius: 0, boxShadow: "0 10px 30px rgba(26,26,27,0.05)" }}>
+              <p className="text-[0.625rem] uppercase tracking-[0.12em] text-[hsl(var(--ink-light))] mb-3">
                 Day Summary · {ropeDrop} → {leavePark} · {Math.floor(daySummary.dayLength / 60)}h {daySummary.dayLength % 60}m
               </p>
-              <div className="grid grid-cols-4 gap-2 mb-2">
+              <div className="grid grid-cols-4 gap-3 mb-3">
                 <div>
-                  <span className="font-display text-sm text-[hsl(var(--ink))]">{daySummary.totalRideTime}m</span>
-                  <span className="text-[0.375rem] text-[hsl(var(--ink-light))] block uppercase tracking-[0.1em]">🎢 Rides & Shows</span>
+                  <span className="font-display text-base text-[hsl(var(--ink))]">{daySummary.totalRideTime}m</span>
+                  <span className="text-[0.5625rem] text-[hsl(var(--ink-light))] block uppercase tracking-[0.1em]">🎢 Rides & Shows</span>
                 </div>
                 <div>
-                  <span className="font-display text-sm text-destructive">{daySummary.totalWaitTime}m</span>
-                  <span className="text-[0.375rem] text-[hsl(var(--ink-light))] block uppercase tracking-[0.1em]">⏱ In Line</span>
+                  <span className="font-display text-base text-destructive">{daySummary.totalWaitTime}m</span>
+                  <span className="text-[0.5625rem] text-[hsl(var(--ink-light))] block uppercase tracking-[0.1em]">⏱ In Line</span>
                 </div>
                 <div>
-                  <span className="font-display text-sm text-[hsl(var(--ink))]">{daySummary.totalWalkTime}m</span>
-                  <span className="text-[0.375rem] text-[hsl(var(--ink-light))] block uppercase tracking-[0.1em]">🚶 Walking{hasStroller ? " (×1.35)" : ""}</span>
+                  <span className="font-display text-base text-[hsl(var(--ink))]">{daySummary.totalWalkTime}m</span>
+                  <span className="text-[0.5625rem] text-[hsl(var(--ink-light))] block uppercase tracking-[0.1em]">🚶 Walking{hasStroller ? " (×1.35)" : ""}</span>
                 </div>
                 <div>
-                  <span className="font-display text-sm text-[hsl(var(--ink))]">{daySummary.totalBreakTime}m</span>
-                  <span className="text-[0.375rem] text-[hsl(var(--ink-light))] block uppercase tracking-[0.1em]">⏸ Breaks & Meals</span>
+                  <span className="font-display text-base text-[hsl(var(--ink))]">{daySummary.totalBreakTime}m</span>
+                  <span className="text-[0.5625rem] text-[hsl(var(--ink-light))] block uppercase tracking-[0.1em]">⏸ Breaks & Meals</span>
                 </div>
               </div>
               {/* Utilization bar */}

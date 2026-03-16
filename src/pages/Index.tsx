@@ -121,7 +121,7 @@ const Index = ({
       {/* Hero text — scrolls with the page */}
       <header className="relative z-10 h-screen flex items-end overflow-hidden">
         <div className="relative w-full max-w-6xl mx-auto px-4 sm:px-8 pb-16 sm:pb-20 lg:pb-28">
-          <motion.p initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1, delay: 0.5 }} className="label-text !text-white/40 mb-10 tracking-[0.3em]">
+          <motion.p initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1, delay: 0.5 }} className="label-text !text-white/60 mb-10 tracking-[0.3em]">
             Castle Companion ✨
           </motion.p>
           <motion.h1 initial={{ opacity: 0, y: 50 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1.6, delay: 0.8, ease }} className="font-display text-white text-5xl sm:text-7xl md:text-8xl lg:text-[8rem] leading-[0.95] max-w-5xl">

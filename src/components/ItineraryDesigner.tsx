@@ -387,44 +387,57 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
           </div>
         </div>
 
-        {/* 3 widget cards — Sovereign sharp corners + boutique shadows */}
-        <div className="grid grid-cols-3 gap-3">
-          <div className="bg-white p-3 flex items-center gap-3" style={{ borderRadius: 0, boxShadow: "0 10px 30px rgba(26,26,27,0.05)" }}>
-            <span className="text-xl">⛅</span>
+        {/* 4 widget cards — Sovereign sharp corners + boutique shadows */}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+          <div className="bg-white p-4 flex items-center gap-3" style={{ borderRadius: 0, boxShadow: "0 10px 30px rgba(26,26,27,0.05)" }}>
+            <span className="text-2xl">⛅</span>
             <div>
-              <p className="font-display text-sm text-[hsl(var(--ink))]">74°F · Showers</p>
-              <p className="text-[0.5rem] text-[hsl(var(--ink-light))] uppercase tracking-[0.1em]">Pack ponchos</p>
+              <p className="font-display text-base text-[hsl(var(--ink))]">74°F · Showers</p>
+              <p className="text-[0.625rem] text-[hsl(var(--ink-light))] uppercase tracking-[0.1em]">Pack ponchos</p>
             </div>
           </div>
-          <div className="bg-white p-3" style={{ borderRadius: 0, boxShadow: "0 10px 30px rgba(26,26,27,0.05)", borderLeft: "3px solid hsl(var(--gold))" }}>
-            <p className="text-[0.5rem] uppercase tracking-[0.12em] text-[hsl(var(--gold-dark))] mb-0.5">On-Site Resort</p>
-            <p className="font-display text-sm text-[hsl(var(--ink))]">Polynesian Village</p>
-            <p className="text-[0.5rem] text-[hsl(var(--ink-light))] mt-0.5">Early Entry · Extended Hours</p>
+          <div className="bg-white p-4" style={{ borderRadius: 0, boxShadow: "0 10px 30px rgba(26,26,27,0.05)", borderLeft: "3px solid hsl(var(--gold))" }}>
+            <p className="text-[0.625rem] uppercase tracking-[0.12em] text-[hsl(var(--gold-dark))] mb-1">On-Site Resort</p>
+            <p className="font-display text-base text-[hsl(var(--ink))]">Polynesian Village</p>
+            <p className="text-[0.625rem] text-[hsl(var(--ink-light))] mt-1">Early Entry · Extended Hours</p>
           </div>
-          <div className="bg-white p-3" style={{ borderRadius: 0, boxShadow: "0 10px 30px rgba(26,26,27,0.05)" }}>
+          {/* Wait Time Widget */}
+          <div className="bg-white p-4" style={{ borderRadius: 0, boxShadow: "0 10px 30px rgba(26,26,27,0.05)", borderLeft: "3px solid hsl(var(--destructive))" }}>
+            <p className="text-[0.625rem] uppercase tracking-[0.12em] text-destructive/70 mb-1">Est. Wait Time Today</p>
+            <div className="flex items-baseline gap-1.5">
+              <span className="font-display text-2xl text-destructive font-bold">{daySummary.totalWaitTime}</span>
+              <span className="text-xs text-destructive/60">min total</span>
+            </div>
+            <p className="text-[0.625rem] text-[hsl(var(--ink-light))] mt-1">
+              {ribbon.length > 0
+                ? `~${Math.round(daySummary.totalWaitTime / Math.max(1, ribbon.filter(r => (r.item.waitTime || 0) > 0).length))}m avg per ride`
+                : "Add rides to estimate"}
+            </p>
+          </div>
+          <div className="bg-white p-4" style={{ borderRadius: 0, boxShadow: "0 10px 30px rgba(26,26,27,0.05)" }}>
             <div className="grid grid-cols-2 gap-2">
               <div>
-                <p className="text-[0.45rem] uppercase tracking-[0.1em] text-[hsl(var(--ink-light))] mb-0.5">Pace</p>
+                <p className="text-[0.5625rem] uppercase tracking-[0.1em] text-[hsl(var(--ink-light))] mb-0.5">Pace</p>
                 <Select value={pacing} onValueChange={setPacing}>
-                  <SelectTrigger className="h-6 border-[hsl(var(--border))] bg-[#F9F7F2] text-[0.5625rem] font-display text-[hsl(var(--ink))] focus:ring-0 focus:ring-offset-0 px-1.5 rounded-none">
+                  <SelectTrigger className="h-7 border-[hsl(var(--border))] bg-[#F9F7F2] text-xs font-display text-[hsl(var(--ink))] focus:ring-0 focus:ring-offset-0 px-2 rounded-none">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
                     {["Intense", "Moderate", "Relaxed"].map(o => (
-                      <SelectItem key={o} value={o} className="text-xs font-sans">{o}</SelectItem>
+                      <SelectItem key={o} value={o} className="text-sm font-sans">{o}</SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
               </div>
               <div>
-                <p className="text-[0.45rem] uppercase tracking-[0.1em] text-[hsl(var(--ink-light))] mb-0.5">Focus</p>
+                <p className="text-[0.5625rem] uppercase tracking-[0.1em] text-[hsl(var(--ink-light))] mb-0.5">Focus</p>
                 <Select value={focus} onValueChange={setFocus}>
-                  <SelectTrigger className="h-6 border-[hsl(var(--border))] bg-[#F9F7F2] text-[0.5625rem] font-display text-[hsl(var(--ink))] focus:ring-0 focus:ring-offset-0 px-1.5 rounded-none">
+                  <SelectTrigger className="h-7 border-[hsl(var(--border))] bg-[#F9F7F2] text-xs font-display text-[hsl(var(--ink))] focus:ring-0 focus:ring-offset-0 px-2 rounded-none">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
                     {["Thrill Seekers", "Toddler Friendly", "Classic Magic", "Shows & Characters"].map(o => (
-                      <SelectItem key={o} value={o} className="text-xs font-sans">{o}</SelectItem>
+                      <SelectItem key={o} value={o} className="text-sm font-sans">{o}</SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
@@ -432,8 +445,8 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
             </div>
             {/* Stroller toggle */}
             <div className="mt-2 flex items-center justify-between px-2 py-1.5 bg-[#F9F7F2]">
-              <span className="text-[0.4375rem] text-[hsl(var(--ink-light))] flex items-center gap-1">
-                <Baby className="w-3 h-3" /> Stroller
+              <span className="text-[0.5625rem] text-[hsl(var(--ink-light))] flex items-center gap-1">
+                <Baby className="w-3.5 h-3.5" /> Stroller
               </span>
               <button
                 onClick={() => setHasStroller(!hasStroller)}
@@ -498,33 +511,33 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
       {/* ═══════════════════════════════════════════════════════════════
           TWO-COLUMN: RIBBON + RESEARCH
          ═══════════════════════════════════════════════════════════════ */}
-      <div className="grid grid-cols-1 lg:grid-cols-[1fr_380px]">
+      <div className="grid grid-cols-1 lg:grid-cols-2">
 
         {/* ─── LEFT: The Ribbon ────────────────────────────────────── */}
         <div className="px-6 lg:px-10 py-8 border-r border-[hsl(var(--border))]">
 
           {/* Day Summary */}
           {ribbon.length > 0 && (
-            <div className="mb-6 p-4 bg-white" style={{ borderRadius: 0, boxShadow: "0 10px 30px rgba(26,26,27,0.05)" }}>
-              <p className="text-[0.4375rem] uppercase tracking-[0.12em] text-[hsl(var(--ink-light))] mb-2">
+            <div className="mb-6 p-5 bg-white" style={{ borderRadius: 0, boxShadow: "0 10px 30px rgba(26,26,27,0.05)" }}>
+              <p className="text-[0.625rem] uppercase tracking-[0.12em] text-[hsl(var(--ink-light))] mb-3">
                 Day Summary · {ropeDrop} → {leavePark} · {Math.floor(daySummary.dayLength / 60)}h {daySummary.dayLength % 60}m
               </p>
-              <div className="grid grid-cols-4 gap-2 mb-2">
+              <div className="grid grid-cols-4 gap-3 mb-3">
                 <div>
-                  <span className="font-display text-sm text-[hsl(var(--ink))]">{daySummary.totalRideTime}m</span>
-                  <span className="text-[0.375rem] text-[hsl(var(--ink-light))] block uppercase tracking-[0.1em]">🎢 Rides & Shows</span>
+                  <span className="font-display text-base text-[hsl(var(--ink))]">{daySummary.totalRideTime}m</span>
+                  <span className="text-[0.5625rem] text-[hsl(var(--ink-light))] block uppercase tracking-[0.1em]">🎢 Rides & Shows</span>
                 </div>
                 <div>
-                  <span className="font-display text-sm text-destructive">{daySummary.totalWaitTime}m</span>
-                  <span className="text-[0.375rem] text-[hsl(var(--ink-light))] block uppercase tracking-[0.1em]">⏱ In Line</span>
+                  <span className="font-display text-base text-destructive">{daySummary.totalWaitTime}m</span>
+                  <span className="text-[0.5625rem] text-[hsl(var(--ink-light))] block uppercase tracking-[0.1em]">⏱ In Line</span>
                 </div>
                 <div>
-                  <span className="font-display text-sm text-[hsl(var(--ink))]">{daySummary.totalWalkTime}m</span>
-                  <span className="text-[0.375rem] text-[hsl(var(--ink-light))] block uppercase tracking-[0.1em]">🚶 Walking{hasStroller ? " (×1.35)" : ""}</span>
+                  <span className="font-display text-base text-[hsl(var(--ink))]">{daySummary.totalWalkTime}m</span>
+                  <span className="text-[0.5625rem] text-[hsl(var(--ink-light))] block uppercase tracking-[0.1em]">🚶 Walking{hasStroller ? " (×1.35)" : ""}</span>
                 </div>
                 <div>
-                  <span className="font-display text-sm text-[hsl(var(--ink))]">{daySummary.totalBreakTime}m</span>
-                  <span className="text-[0.375rem] text-[hsl(var(--ink-light))] block uppercase tracking-[0.1em]">⏸ Breaks & Meals</span>
+                  <span className="font-display text-base text-[hsl(var(--ink))]">{daySummary.totalBreakTime}m</span>
+                  <span className="text-[0.5625rem] text-[hsl(var(--ink-light))] block uppercase tracking-[0.1em]">⏸ Breaks & Meals</span>
                 </div>
               </div>
               {/* Utilization bar */}
@@ -534,12 +547,12 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
                 <div className="bg-[hsl(var(--gold)/0.3)]" style={{ width: `${(daySummary.totalWalkTime / daySummary.dayLength) * 100}%` }} />
                 <div className="bg-[hsl(var(--muted))]" style={{ width: `${(daySummary.totalBreakTime / daySummary.dayLength) * 100}%` }} />
               </div>
-              <div className="flex items-center justify-between mt-1.5">
-                <span className="text-[0.375rem] text-[hsl(var(--ink-light))]" style={{ letterSpacing: "-0.02em" }}>
+              <div className="flex items-center justify-between mt-2">
+                <span className="text-[0.625rem] text-[hsl(var(--ink-light))]" style={{ letterSpacing: "-0.02em" }}>
                   {Math.round((daySummary.totalPlanned / daySummary.dayLength) * 100)}% of day planned
                 </span>
                 {daySummary.freeTime > 0 && (
-                  <span className="text-[0.375rem] text-[hsl(var(--gold-dark))] font-medium">
+                  <span className="text-[0.625rem] text-[hsl(var(--gold-dark))] font-medium">
                     ⏳ {daySummary.freeTime}m unplanned — room for {Math.floor(daySummary.freeTime / 25)} more rides
                   </span>
                 )}
@@ -584,7 +597,7 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
                       layout
                       className="flex items-center gap-2 py-1.5 pl-6 ml-4 border-l-2 border-dashed border-[hsl(var(--gold)/0.3)]"
                     >
-                      <span className="text-[0.4375rem] text-[hsl(var(--ink-light))] font-sans flex items-center gap-1" style={{ letterSpacing: "-0.02em" }}>
+                      <span className="text-[0.625rem] text-[hsl(var(--ink-light))] font-sans flex items-center gap-1" style={{ letterSpacing: "-0.02em" }}>
                         🚶 {walkBuffer}m walk
                         {item.zone && <span className="text-[hsl(var(--ink-light))]/50">→ {zoneLabel(item.zone)}</span>}
                         {hasStroller && <span className="text-[hsl(var(--gold-dark))]">· 🍼 ×1.35</span>}
@@ -614,8 +627,8 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
                       {!isLocked && !isBooked && (
                         <GripVertical className="w-3 h-3 text-[hsl(var(--ink-light))]/30 shrink-0 cursor-grab" />
                       )}
-                      <span className="font-display text-[0.875rem] text-[hsl(var(--ink))] truncate flex-1">{item.name}</span>
-                      <span className={`px-1.5 py-0.5 text-[0.35rem] uppercase tracking-[0.1em] shrink-0 ${
+                      <span className="font-display text-base text-[hsl(var(--ink))] truncate flex-1">{item.name}</span>
+                      <span className={`px-2 py-0.5 text-[0.5625rem] uppercase tracking-[0.1em] shrink-0 ${
                         item.type === "ride" ? "bg-[hsl(var(--ink))] text-[#F9F7F2]" :
                         isMeal ? "bg-[hsl(var(--gold)/0.15)] text-[hsl(var(--gold-dark))]" :
                         isExperience ? "bg-[hsl(280,30%,55%,0.1)] text-[hsl(280,30%,45%)]" :
@@ -624,9 +637,9 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
                         {isMeal ? "🍽 Dining" : isExperience ? "✨ Experience" : item.type}
                       </span>
                       {wait > 0 && (
-                        <div className="text-right shrink-0 px-2 py-1 bg-[hsl(var(--destructive)/0.06)] border border-[hsl(var(--destructive)/0.15)]" style={{ borderRadius: 0 }}>
-                          <span className="text-[0.875rem] text-destructive font-display font-bold leading-none">{wait}m</span>
-                          <span className="text-[0.35rem] text-destructive/70 uppercase block tracking-[0.1em]">Wait</span>
+                        <div className="text-right shrink-0 px-2.5 py-1.5 bg-[hsl(var(--destructive)/0.06)] border border-[hsl(var(--destructive)/0.15)]" style={{ borderRadius: 0 }}>
+                          <span className="text-base text-destructive font-display font-bold leading-none">{wait}m</span>
+                          <span className="text-[0.5625rem] text-destructive/70 uppercase block tracking-[0.1em]">Wait</span>
                         </div>
                       )}
                       {!isLocked && !isBooked && (
@@ -638,7 +651,7 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
                     </div>
 
                     {/* Computed time span */}
-                    <div className="mt-1 flex items-center gap-1 text-[0.4375rem] text-[hsl(var(--ink-light))]" style={{ letterSpacing: "-0.02em" }}>
+                    <div className="mt-1.5 flex items-center gap-1.5 text-[0.625rem] text-[hsl(var(--ink-light))]" style={{ letterSpacing: "-0.02em" }}>
                       <Clock className="w-2.5 h-2.5" />
                       <span className="font-medium text-[hsl(var(--ink))]">{formatMin(startMin)}</span>
                       <span>→</span>
@@ -648,23 +661,23 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
                     </div>
 
                     {/* Time breakdown chips */}
-                    <div className="mt-1.5 flex items-center gap-1 flex-wrap">
+                    <div className="mt-2 flex items-center gap-1.5 flex-wrap">
                       {strollerTime > 0 && (
-                        <span className="flex items-center gap-0.5 px-1.5 py-0.5 bg-[hsl(var(--gold)/0.08)] text-[0.375rem] text-[hsl(var(--gold-dark))] font-medium" style={{ borderRadius: 0 }}>
+                        <span className="flex items-center gap-0.5 px-2 py-1 bg-[hsl(var(--gold)/0.08)] text-[0.5625rem] text-[hsl(var(--gold-dark))] font-medium" style={{ borderRadius: 0 }}>
                           🍼 Park {strollerTime}m
                         </span>
                       )}
                       {checkinTime > 0 && (
-                        <span className="flex items-center gap-0.5 px-1.5 py-0.5 bg-[hsl(280,30%,55%,0.08)] text-[0.375rem] text-[hsl(280,30%,45%)] font-medium" style={{ borderRadius: 0 }}>
+                        <span className="flex items-center gap-0.5 px-2 py-1 bg-[hsl(280,30%,55%,0.08)] text-[0.5625rem] text-[hsl(280,30%,45%)] font-medium" style={{ borderRadius: 0 }}>
                           📋 Check-in {checkinTime}m
                         </span>
                       )}
                       {wait > 0 && (
-                        <span className="flex items-center gap-0.5 px-1.5 py-0.5 bg-[hsl(var(--destructive)/0.06)] text-[0.375rem] text-destructive font-medium" style={{ borderRadius: 0 }}>
+                        <span className="flex items-center gap-0.5 px-2 py-1 bg-[hsl(var(--destructive)/0.06)] text-[0.5625rem] text-destructive font-medium" style={{ borderRadius: 0 }}>
                           ⏱ Wait {wait}m
                         </span>
                       )}
-                      <span className={`flex items-center gap-0.5 px-1.5 py-0.5 text-[0.375rem] font-medium ${
+                      <span className={`flex items-center gap-0.5 px-2 py-1 text-[0.5625rem] font-medium ${
                         isMeal ? "bg-[hsl(var(--gold)/0.08)] text-[hsl(var(--gold-dark))]" :
                         isExperience ? "bg-[hsl(280,30%,55%,0.08)] text-[hsl(280,30%,45%)]" :
                         isBreak ? "bg-[hsl(var(--muted))] text-[hsl(var(--ink-light))]" :
@@ -673,7 +686,7 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
                         {isBreak ? "⏸" : isMeal ? "🍽" : isExperience ? "🎭" : "🎢"} {item.duration}m
                       </span>
                       {item.llType && item.llType !== "none" && (
-                        <span className="px-1.5 py-0.5 text-[0.35rem] uppercase tracking-[0.08em] bg-[hsl(var(--accent))] text-[hsl(var(--accent-foreground))] border border-[hsl(var(--border))]" style={{ borderRadius: 0 }}>
+                        <span className="px-2 py-1 text-[0.5rem] uppercase tracking-[0.08em] bg-[hsl(var(--accent))] text-[hsl(var(--accent-foreground))] border border-[hsl(var(--border))]" style={{ borderRadius: 0 }}>
                           {llLabels[item.llType]}
                         </span>
                       )}
@@ -693,7 +706,7 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
                     </div>
 
                     {item.notes && (
-                      <p className="font-sans text-[0.5625rem] text-[hsl(var(--ink-light))] mt-1.5 italic" style={{ letterSpacing: "-0.02em" }}>{item.notes}</p>
+                      <p className="font-sans text-xs text-[hsl(var(--ink-light))] mt-2 italic" style={{ letterSpacing: "-0.02em" }}>{item.notes}</p>
                     )}
                   </motion.div>
 
@@ -723,15 +736,15 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
           {/* Quick-add strip */}
           {!isLocked && (
             <div className="mt-6">
-              <p className="text-[0.4375rem] uppercase tracking-[0.12em] text-[hsl(var(--ink-light))] mb-2">Quick Add</p>
-              <div className="flex items-center gap-1.5 flex-wrap">
+              <p className="text-[0.625rem] uppercase tracking-[0.12em] text-[hsl(var(--ink-light))] mb-2">Quick Add</p>
+              <div className="flex items-center gap-2 flex-wrap">
                 {quickAdds.map((qa, i) => (
                   <button key={`${qa.label}-${i}`} onClick={() => addQuickItem(qa.type, qa.label, qa.dur)}
-                    className="flex items-center gap-1 px-2.5 py-1.5 bg-white border border-dashed border-[hsl(var(--border))] text-[hsl(var(--ink-light))] hover:border-[hsl(var(--ink))]/30 hover:text-[hsl(var(--ink))] transition-all duration-300"
+                    className="flex items-center gap-1.5 px-3 py-2 bg-white border border-dashed border-[hsl(var(--border))] text-[hsl(var(--ink-light))] hover:border-[hsl(var(--ink))]/30 hover:text-[hsl(var(--ink))] transition-all duration-300"
                     style={{ borderRadius: 0, boxShadow: "0 10px 30px rgba(26,26,27,0.03)" }}>
-                    <span className="text-[0.625rem]">{qa.emoji}</span>
-                    <span className="text-[0.4375rem] uppercase tracking-[0.1em]">{qa.label}</span>
-                    <span className="text-[0.35rem] text-[hsl(var(--ink-light))]/50">{qa.dur}m</span>
+                    <span className="text-sm">{qa.emoji}</span>
+                    <span className="text-[0.625rem] uppercase tracking-[0.1em]">{qa.label}</span>
+                    <span className="text-[0.5625rem] text-[hsl(var(--ink-light))]/50">{qa.dur}m</span>
                   </button>
                 ))}
               </div>
@@ -758,8 +771,8 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
               { color: "bg-[hsl(var(--muted))]", label: "Break/Meal" },
             ].map(l => (
               <div key={l.label} className="flex items-center gap-1.5">
-                <div className={`w-2.5 h-2.5 ${l.color}`} style={{ borderRadius: 0 }} />
-                <span className="text-[0.5rem] text-[hsl(var(--ink-light))]">{l.label}</span>
+                <div className={`w-3 h-3 ${l.color}`} style={{ borderRadius: 0 }} />
+                <span className="text-xs text-[hsl(var(--ink-light))]">{l.label}</span>
               </div>
             ))}
           </div>
@@ -854,10 +867,10 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
                     <div className="flex items-center justify-between mb-1.5">
                       <div className="flex items-center gap-2 min-w-0">
                         {isTopFive && <Star className="w-3.5 h-3.5 text-[hsl(var(--gold))] shrink-0 fill-[hsl(var(--gold))]" />}
-                        <h4 className="font-display text-sm text-[hsl(var(--ink))] truncate">{attraction.name}</h4>
+                        <h4 className="font-display text-base text-[hsl(var(--ink))] truncate">{attraction.name}</h4>
                       </div>
                       <div className="flex items-center gap-2 shrink-0 ml-2">
-                        <span className="font-display text-[0.6875rem] text-[hsl(var(--ink))]">{attraction.rating.toFixed(1)}</span>
+                        <span className="font-display text-sm text-[hsl(var(--ink))]">{attraction.rating.toFixed(1)}</span>
                         <span className="text-[hsl(var(--gold))] text-xs">★</span>
                         <ChevronDown className={`w-3 h-3 text-[hsl(var(--ink-light))] transition-transform duration-300 ${isExpanded ? "rotate-180" : ""}`} />
                       </div>
@@ -865,42 +878,42 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
 
                     {/* Quick summary — wait time + LL class prominent */}
                     <div className="flex flex-wrap gap-1.5 items-center">
-                      <span className="text-[0.5rem]">{thrillEmoji[attraction.thrillLevel]}</span>
-                      <span className="px-1.5 py-0.5 text-[0.375rem] uppercase tracking-[0.08em] bg-[hsl(var(--ink))]/5 text-[hsl(var(--ink-light))]" style={{ borderRadius: 0 }}>
+                      <span className="text-sm">{thrillEmoji[attraction.thrillLevel]}</span>
+                      <span className="px-2 py-0.5 text-[0.5625rem] uppercase tracking-[0.08em] bg-[hsl(var(--ink))]/5 text-[hsl(var(--ink-light))]" style={{ borderRadius: 0 }}>
                         {typeLabels[attraction.type]}
                       </span>
                       {/* Prominent wait time */}
-                      <span className="px-1.5 py-0.5 text-[0.375rem] uppercase tracking-[0.08em] bg-[hsl(var(--destructive)/0.08)] text-destructive font-bold" style={{ borderRadius: 0 }}>
+                      <span className="px-2 py-0.5 text-[0.5625rem] uppercase tracking-[0.08em] bg-[hsl(var(--destructive)/0.08)] text-destructive font-bold" style={{ borderRadius: 0 }}>
                         ⏱ {estWait}m wait
                       </span>
                       {/* Prominent LL class */}
                       {attraction.llType && attraction.llType !== "none" && (
-                        <span className="px-1.5 py-0.5 text-[0.375rem] uppercase tracking-[0.08em] bg-[hsl(var(--accent))] text-[hsl(var(--accent-foreground))] border border-[hsl(var(--border))] font-medium" style={{ borderRadius: 0 }}>
+                        <span className="px-2 py-0.5 text-[0.5625rem] uppercase tracking-[0.08em] bg-[hsl(var(--accent))] text-[hsl(var(--accent-foreground))] border border-[hsl(var(--border))] font-medium" style={{ borderRadius: 0 }}>
                           🎟 {llLabels[attraction.llType]}
                         </span>
                       )}
-                      <span className="px-1.5 py-0.5 text-[0.375rem] uppercase tracking-[0.08em] bg-[hsl(var(--ink))]/8 text-[hsl(var(--ink))] font-medium" style={{ borderRadius: 0 }}>
+                      <span className="px-2 py-0.5 text-[0.5625rem] uppercase tracking-[0.08em] bg-[hsl(var(--ink))]/8 text-[hsl(var(--ink))] font-medium" style={{ borderRadius: 0 }}>
                         📅 {totalBlockEst}m block
                       </span>
                     </div>
 
                     {/* Time breakdown bar */}
                     <div className="w-full mt-2 flex items-center gap-2">
-                      <div className="flex-1 flex h-2 overflow-hidden bg-[#F9F7F2]">
+                      <div className="flex-1 flex h-2.5 overflow-hidden bg-[#F9F7F2]">
                         <div className="bg-destructive/25" style={{ width: `${(estWait / totalBlockEst) * 100}%` }} />
                         <div className="bg-[hsl(var(--ink))]/10" style={{ width: `${(rideDur / totalBlockEst) * 100}%` }} />
                       </div>
                       <div className="flex items-center gap-1.5 shrink-0">
-                        <span className="text-[0.375rem] text-destructive font-medium">⏱ {estWait}m</span>
-                        <span className="text-[hsl(var(--ink-light))]/30 text-[0.375rem]">·</span>
-                        <span className="text-[0.375rem] text-[hsl(var(--ink))] font-medium">🎢 {rideDur}m</span>
+                        <span className="text-[0.5625rem] text-destructive font-medium">⏱ {estWait}m</span>
+                        <span className="text-[hsl(var(--ink-light))]/30 text-[0.5625rem]">·</span>
+                        <span className="text-[0.5625rem] text-[hsl(var(--ink))] font-medium">🎢 {rideDur}m</span>
                       </div>
                     </div>
 
                     {/* Zone badge */}
                     {attraction.zone && (
                       <div className="mt-1.5">
-                        <span className="text-[0.375rem] text-[hsl(var(--ink-light))]/60 uppercase tracking-[0.08em]">📍 {zoneLabel(attraction.zone)}</span>
+                        <span className="text-[0.5625rem] text-[hsl(var(--ink-light))]/60 uppercase tracking-[0.08em]">📍 {zoneLabel(attraction.zone)}</span>
                       </div>
                     )}
 
@@ -911,12 +924,12 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
                         attraction.attractionStatus.status === "recently-opened" ? "bg-[hsl(var(--gold)/0.08)] border border-[hsl(var(--gold)/0.2)]" :
                         "bg-[hsl(var(--muted))] border border-[hsl(var(--border))]"
                       }`} style={{ borderRadius: 0 }}>
-                        <span className="text-[0.5rem]">
+                        <span className="text-sm">
                           {attraction.attractionStatus.status === "new" ? "🆕" : attraction.attractionStatus.status === "recently-opened" ? "✨" : "🔧"}
                         </span>
-                        <span className="font-display text-[0.5rem] text-[hsl(var(--ink))]">{attraction.attractionStatus.label}</span>
+                        <span className="font-display text-xs text-[hsl(var(--ink))]">{attraction.attractionStatus.label}</span>
                         {attraction.attractionStatus.crowdImpact && attraction.attractionStatus.crowdImpact !== "none" && (
-                          <span className={`px-1 py-0.5 text-[0.35rem] uppercase tracking-[0.08em] ${
+                          <span className={`px-1.5 py-0.5 text-[0.5625rem] uppercase tracking-[0.08em] ${
                             attraction.attractionStatus.crowdImpact === "extreme" ? "bg-[hsl(var(--destructive)/0.1)] text-destructive" :
                             "bg-[hsl(var(--gold)/0.1)] text-[hsl(var(--gold-dark))]"
                           }`} style={{ borderRadius: 0 }}>
@@ -932,7 +945,7 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
                         <Users className="w-3 h-3 text-[hsl(var(--gold-dark))] shrink-0" />
                         <div className="flex items-center gap-1 flex-wrap">
                           {satisfies.map(s => (
-                            <span key={s.memberId} className="inline-flex items-center gap-1 px-1.5 py-0.5 bg-[hsl(var(--gold)/0.1)] text-[0.4375rem] text-[hsl(var(--gold-dark))]" style={{ borderRadius: 0 }}>
+                            <span key={s.memberId} className="inline-flex items-center gap-1 px-2 py-0.5 bg-[hsl(var(--gold)/0.1)] text-[0.625rem] text-[hsl(var(--gold-dark))]" style={{ borderRadius: 0 }}>
                               {s.name} · <span className="italic">{s.reason}</span>
                             </span>
                           ))}
@@ -952,44 +965,44 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
                         className="overflow-hidden"
                       >
                         <div className="px-4 pb-4 border-t border-[hsl(var(--border))]/50 pt-3">
-                          <p className="font-sans text-[0.75rem] text-[hsl(var(--ink))] leading-relaxed mb-3" style={{ letterSpacing: "-0.02em" }}>
+                          <p className="font-sans text-sm text-[hsl(var(--ink))] leading-relaxed mb-3" style={{ letterSpacing: "-0.02em" }}>
                             {attraction.description}
                           </p>
 
                           <div className="flex items-start gap-2 mb-3 px-3 py-2 bg-[#F9F7F2] border border-[hsl(var(--border))]/40" style={{ borderRadius: 0 }}>
                             <Info className="w-3 h-3 text-[hsl(var(--gold-dark))] shrink-0 mt-0.5" />
-                            <p className="font-sans text-[0.6875rem] text-[hsl(var(--ink))] italic" style={{ letterSpacing: "-0.02em" }}>{attraction.notableInsight}</p>
+                            <p className="font-sans text-xs text-[hsl(var(--ink))] italic" style={{ letterSpacing: "-0.02em" }}>{attraction.notableInsight}</p>
                           </div>
 
                           <div className="grid grid-cols-2 gap-2 mb-3">
                             <div className="flex items-center gap-1.5">
                               <Clock className="w-3 h-3 text-[hsl(var(--ink-light))]" />
-                              <span className="text-[0.5625rem] text-[hsl(var(--ink-light))]">Duration: <strong className="text-[hsl(var(--ink))]">{attraction.duration}</strong></span>
+                              <span className="text-xs text-[hsl(var(--ink-light))]">Duration: <strong className="text-[hsl(var(--ink))]">{attraction.duration}</strong></span>
                             </div>
                             <div className="flex items-center gap-1.5">
-                              <Zap className="w-3 h-3 text-[hsl(var(--ink-light))]" />
-                              <span className="text-[0.5625rem] text-[hsl(var(--ink-light))]">Thrill: <strong className="text-[hsl(var(--ink))] capitalize">{attraction.thrillLevel}</strong></span>
+                              <Zap className="w-3.5 h-3.5 text-[hsl(var(--ink-light))]" />
+                              <span className="text-xs text-[hsl(var(--ink-light))]">Thrill: <strong className="text-[hsl(var(--ink))] capitalize">{attraction.thrillLevel}</strong></span>
                             </div>
                             {attraction.heightRequirement && (
                               <div className="flex items-center gap-1.5">
-                                <Ruler className="w-3 h-3 text-[hsl(var(--ink-light))]" />
-                                <span className="text-[0.5625rem] text-[hsl(var(--ink-light))]">Height: <strong className="text-[hsl(var(--ink))]">{attraction.heightRequirement === "ANY" ? "Any" : attraction.heightRequirement}</strong></span>
+                                <Ruler className="w-3.5 h-3.5 text-[hsl(var(--ink-light))]" />
+                                <span className="text-xs text-[hsl(var(--ink-light))]">Height: <strong className="text-[hsl(var(--ink))]">{attraction.heightRequirement === "ANY" ? "Any" : attraction.heightRequirement}</strong></span>
                               </div>
                             )}
                             {attraction.llType !== "none" && (
                               <div className="flex items-center gap-1.5">
-                                <Shield className="w-3 h-3 text-[hsl(var(--ink-light))]" />
-                                <span className="text-[0.5625rem] text-[hsl(var(--ink-light))]">{llLabels[attraction.llType]}</span>
+                                <Shield className="w-3.5 h-3.5 text-[hsl(var(--ink-light))]" />
+                                <span className="text-xs text-[hsl(var(--ink-light))]">{llLabels[attraction.llType]}</span>
                               </div>
                             )}
                           </div>
 
                           {attraction.rules.length > 0 && (
                             <div className="mb-3">
-                              <p className="text-[0.4375rem] uppercase tracking-[0.12em] text-[hsl(var(--ink-light))] mb-1">Options</p>
-                              <div className="flex flex-wrap gap-1">
+                              <p className="text-[0.625rem] uppercase tracking-[0.12em] text-[hsl(var(--ink-light))] mb-1.5">Options</p>
+                              <div className="flex flex-wrap gap-1.5">
                                 {attraction.rules.map(rule => (
-                                  <span key={rule} className="px-1.5 py-0.5 text-[0.375rem] uppercase tracking-[0.08em] bg-[hsl(var(--accent))] text-[hsl(var(--accent-foreground))] border border-[hsl(var(--border))]" style={{ borderRadius: 0 }}>
+                                  <span key={rule} className="px-2 py-1 text-[0.5625rem] uppercase tracking-[0.08em] bg-[hsl(var(--accent))] text-[hsl(var(--accent-foreground))] border border-[hsl(var(--border))]" style={{ borderRadius: 0 }}>
                                     {rule}
                                   </span>
                                 ))}
@@ -999,10 +1012,10 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
 
                           {attraction.warnings.length > 0 && (
                             <div className="mb-3">
-                              <p className="text-[0.4375rem] uppercase tracking-[0.12em] text-[hsl(var(--ink-light))] mb-1">Warnings</p>
-                              <div className="flex flex-wrap gap-1">
+                              <p className="text-[0.625rem] uppercase tracking-[0.12em] text-[hsl(var(--ink-light))] mb-1.5">Warnings</p>
+                              <div className="flex flex-wrap gap-1.5">
                                 {attraction.warnings.map(w => (
-                                  <span key={w} className="px-1.5 py-0.5 text-[0.375rem] uppercase tracking-[0.08em] bg-[hsl(var(--destructive)/0.06)] text-destructive border border-[hsl(var(--destructive)/0.15)]" style={{ borderRadius: 0 }}>
+                                  <span key={w} className="px-2 py-1 text-[0.5625rem] uppercase tracking-[0.08em] bg-[hsl(var(--destructive)/0.06)] text-destructive border border-[hsl(var(--destructive)/0.15)]" style={{ borderRadius: 0 }}>
                                     ⚠ {w}
                                   </span>
                                 ))}
@@ -1015,7 +1028,7 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
                             <button
                               onClick={(e) => { e.stopPropagation(); addToItinerary(attraction); }}
                               disabled={isLocked}
-                              className="w-full py-2 text-[0.5625rem] tracking-[0.15em] uppercase font-medium transition-all duration-300 bg-[hsl(var(--ink))] text-[#F9F7F2] hover:opacity-90"
+                              className="w-full py-2.5 text-xs tracking-[0.15em] uppercase font-medium transition-all duration-300 bg-[hsl(var(--ink))] text-[#F9F7F2] hover:opacity-90"
                               style={{ borderRadius: 0, boxShadow: "0 10px 30px rgba(26,26,27,0.05)" }}
                             >
                               + Add to Itinerary
@@ -1028,7 +1041,7 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
 
                   {attraction.isClosed && (
                     <div className="px-4 pb-2">
-                      <span className="text-[0.4375rem] uppercase tracking-[0.1em] px-1.5 py-0.5 bg-[hsl(var(--muted))] text-[hsl(var(--ink-light))]" style={{ borderRadius: 0 }}>Temporarily Closed</span>
+                      <span className="text-[0.625rem] uppercase tracking-[0.1em] px-2 py-1 bg-[hsl(var(--muted))] text-[hsl(var(--ink-light))]" style={{ borderRadius: 0 }}>Temporarily Closed</span>
                     </div>
                   )}
                 </motion.div>

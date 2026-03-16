@@ -173,7 +173,7 @@ const Survey = () => {
                             {attraction.sensoryTags && (
                               <div className="flex gap-2 mt-2 flex-wrap">
                                 {attraction.sensoryTags.map((tag) => (
-                                  <span key={tag} className="text-[0.625rem] uppercase tracking-[0.15em] px-2 py-0.5 bg-secondary text-muted-foreground">{tag}</span>
+                                  <span key={tag} className="text-[0.625rem] uppercase tracking-[0.15em] px-2 py-0.5 rounded-md bg-secondary text-muted-foreground">{tag}</span>
                                 ))}
                               </div>
                             )}

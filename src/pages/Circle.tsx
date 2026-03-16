@@ -538,6 +538,31 @@ const Circle = ({ partyMembers }: CircleProps) => {
                                 )}
                               </div>
 
+                              {/* Full-width: Accessibility Needs */}
+                              {member.accessibilityNeeds && member.accessibilityNeeds.length > 0 && (
+                                <div className="sm:col-span-2 border-t border-border pt-5">
+                                  <p className="label-text mb-3 tracking-[0.2em]">Accessibility & Safety Needs</p>
+                                  <div className="flex flex-wrap gap-2">
+                                    {member.accessibilityNeeds.map((needId) => {
+                                      const opt = accessibilityOptions.find((o) => o.id === needId);
+                                      return (
+                                        <span
+                                          key={needId}
+                                          className="px-3 py-1 text-[0.625rem] uppercase tracking-[0.1em] rounded-md"
+                                          style={{
+                                            background: "hsl(var(--destructive) / 0.08)",
+                                            color: "hsl(var(--destructive))",
+                                            border: "1px solid hsl(var(--destructive) / 0.2)",
+                                          }}
+                                        >
+                                          {opt?.label ?? needId}
+                                        </span>
+                                      );
+                                    })}
+                                  </div>
+                                </div>
+                              )}
+
                               {/* Full-width: Sensory & Notes */}
                               {member.sensoryNotes && (
                                 <div className="sm:col-span-2 border-t border-border pt-5">

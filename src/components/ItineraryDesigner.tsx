@@ -309,10 +309,13 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
     setItinerary(prev => prev.filter(i => i.id !== id));
   };
 
-  /* ── Internal drag and drop (reorder) ──────────────────────────── */
-  const handleDragStart = useCallback((idx: number) => {
+  /* ── Internal drag and drop (reorder + timeline repositioning) ── */
+  const [draggingItemId, setDraggingItemId] = useState<string | null>(null);
+
+  const handleDragStart = useCallback((idx: number, itemId?: string) => {
     if (isLocked) return;
     setDragIdx(idx);
+    if (itemId) setDraggingItemId(itemId);
   }, [isLocked]);
 
   const handleDragOver = useCallback((e: React.DragEvent, idx: number) => {
@@ -335,6 +338,7 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
   const handleDragEnd = useCallback(() => {
     setDragIdx(null);
     setDragOverIdx(null);
+    setDraggingItemId(null);
     setTimelineDropHour(null);
   }, []);
 
@@ -351,7 +355,7 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
     e.preventDefault();
     if (!timelineRef.current) return;
     const rect = timelineRef.current.getBoundingClientRect();
-    const y = e.clientY - rect.top;
+    const y = e.clientY - rect.top + timelineRef.current.scrollTop;
     const min = Math.floor(y / PX_PER_MIN) + DAY_START_MIN;
     const hour = Math.floor(min / 60);
     setTimelineDropHour(hour);
@@ -359,42 +363,61 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
 
   const handleTimelineDrop = useCallback((e: React.DragEvent) => {
     e.preventDefault();
-    const attractionId = e.dataTransfer.getData("attractionId");
-    if (!attractionId || !timelineRef.current) {
+    if (!timelineRef.current) {
       setTimelineDropHour(null);
       setDraggingAttractionId(null);
+      setDraggingItemId(null);
       return;
     }
+
     const rect = timelineRef.current.getBoundingClientRect();
-    const y = e.clientY - rect.top;
+    const y = e.clientY - rect.top + timelineRef.current.scrollTop;
     const min = Math.round(y / PX_PER_MIN) + DAY_START_MIN;
     const hour = Math.floor(min / 60);
     const roundedMin = Math.round((min % 60) / 5) * 5;
+    const totalMin = hour * 60 + roundedMin;
+    const ampm = hour >= 12 ? "PM" : "AM";
+    const displayH = hour > 12 ? hour - 12 : hour === 0 ? 12 : hour;
+    const timeStr = `${displayH}:${roundedMin.toString().padStart(2, "0")} ${ampm}`;
 
-    // Find the attraction
-    const allAttractions = selectedParks.flatMap(p => allParkAttractions[p] || []);
-    const attraction = allAttractions.find(a => a.id === attractionId);
-    if (attraction) {
-      const ampm = hour >= 12 ? "PM" : "AM";
-      const displayH = hour > 12 ? hour - 12 : hour;
-      const timeStr = `${displayH}:${roundedMin.toString().padStart(2, "0")} ${ampm}`;
-      const estWait = attraction.waitCategory ? (defaultWaitByCategory[attraction.waitCategory] || 15) : 15;
-      setItinerary(prev => [...prev, {
-        id: `it-${Date.now()}`,
-        attractionId: attraction.id,
-        name: attraction.name,
-        type: attraction.type,
-        startTime: timeStr,
-        duration: parseInt(attraction.duration) || 15,
-        waitTime: estWait,
-        walkTime: 8,
-        llType: attraction.llType,
-        waitCategory: attraction.waitCategory,
-      }]);
+    // Case 1: Repositioning an existing itinerary item
+    if (draggingItemId) {
+      setItinerary(prev => prev.map(item =>
+        item.id === draggingItemId ? { ...item, startTime: timeStr } : item
+      ));
+      setTimelineDropHour(null);
+      setDraggingItemId(null);
+      setDragIdx(null);
+      setDragOverIdx(null);
+      return;
     }
+
+    // Case 2: Dropping a new attraction from research
+    const attractionId = e.dataTransfer.getData("attractionId");
+    if (attractionId) {
+      const allAttractions = selectedParks.flatMap(p => allParkAttractions[p] || []);
+      const attraction = allAttractions.find(a => a.id === attractionId);
+      if (attraction) {
+        const estWait = attraction.waitCategory ? (defaultWaitByCategory[attraction.waitCategory] || 15) : 15;
+        setItinerary(prev => [...prev, {
+          id: `it-${Date.now()}`,
+          attractionId: attraction.id,
+          name: attraction.name,
+          type: attraction.type,
+          startTime: timeStr,
+          duration: parseInt(attraction.duration) || 15,
+          waitTime: estWait,
+          walkTime: 8,
+          llType: attraction.llType,
+          waitCategory: attraction.waitCategory,
+        }]);
+      }
+    }
+
     setTimelineDropHour(null);
     setDraggingAttractionId(null);
-  }, [selectedParks, isLocked]);
+    setDraggingItemId(null);
+  }, [selectedParks, isLocked, draggingItemId]);
 
   const toggleGroupMember = (id: string) => {
     setGroupMembers(prev => prev.includes(id) ? prev.filter(m => m !== id) : [...prev, id]);
@@ -706,7 +729,7 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
                   {/* ── Activity block ───────────────────────────── */}
                   <div
                     draggable={!isLocked && !isBooked}
-                    onDragStart={() => handleDragStart(globalIdx)}
+                    onDragStart={(e) => { e.stopPropagation(); handleDragStart(globalIdx, item.id); }}
                     onDragOver={(e) => handleDragOver(e, globalIdx)}
                     onDrop={() => handleDrop(globalIdx)}
                     onDragEnd={handleDragEnd}
@@ -854,7 +877,7 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
                     <div
                       key={item.id}
                       draggable={!isLocked}
-                      onDragStart={() => handleDragStart(globalIdx)}
+                      onDragStart={() => handleDragStart(globalIdx, item.id)}
                       onDragOver={(e) => handleDragOver(e, globalIdx)}
                       onDrop={() => handleDrop(globalIdx)}
                       onDragEnd={handleDragEnd}

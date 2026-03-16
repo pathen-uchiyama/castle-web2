@@ -775,7 +775,7 @@ const ResortHub = () => {
                       <p className="label-text mb-3">Notable Stores</p>
                       <div className="space-y-2">
                         {area.notableStores.map(store => (
-                          <div key={store.name} className="border border-border bg-[hsl(var(--warm))] p-3">
+                          <div key={store.name} className="border border-border bg-[hsl(var(--warm))] rounded-lg p-3">
                             <p className="font-display text-sm text-foreground">{store.name}</p>
                             <p className="font-editorial text-[0.625rem] text-muted-foreground">{store.description}</p>
                             <span className="text-[0.4375rem] uppercase tracking-[0.08em] text-muted-foreground/60">{store.category}</span>

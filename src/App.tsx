@@ -50,6 +50,7 @@ const App = () => (
           <Route path="/circle" element={<Circle partyMembers={mockData.partyMembers} />} />
           <Route path="/account" element={<Account account={mockData.account} />} />
           <Route path="/parks/:parkId" element={<ParkGuidePage parkGuides={mockData.parkGuides} />} />
+          <Route path="/resort/:resortId" element={<ResortHub />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>

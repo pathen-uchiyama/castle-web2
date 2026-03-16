@@ -569,6 +569,18 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
             onDrop={(e) => handleDropOnZone(e, 0)}
           />
 
+          {/* Rope Drop / Park Arrival */}
+          <div className="flex items-center gap-3 mb-4 p-4 bg-[hsl(var(--gold)/0.06)] border border-[hsl(var(--gold)/0.2)]" style={{ borderRadius: 0 }}>
+            <div className="text-center shrink-0 w-16">
+              <span className="font-display text-lg text-[hsl(var(--gold-dark))] font-bold block leading-none">{ropeDrop}</span>
+              <span className="text-[0.5625rem] uppercase tracking-[0.1em] text-[hsl(var(--gold-dark))]/70">Arrive</span>
+            </div>
+            <div className="border-l border-[hsl(var(--gold)/0.3)] pl-3">
+              <p className="font-display text-sm text-[hsl(var(--ink))]">🏰 Park Arrival · {selectedParks.map(p => parkLabels[p] || p).join(" & ")}</p>
+              <p className="text-xs text-[hsl(var(--ink-light))] mt-0.5">Rope drop strategy · Gates open {ropeDrop}</p>
+            </div>
+          </div>
+
           {/* The Ribbon — Reorder list */}
           <Reorder.Group
             axis="y"
@@ -609,7 +621,7 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
                   <motion.div
                     layout
                     transition={{ type: "spring", damping: 25, stiffness: 300 }}
-                    className={`group border-l-[3px] border px-4 py-3 transition-all duration-200 ${
+                    className={`group flex border-l-[3px] border transition-all duration-200 ${
                       isMeal
                         ? "bg-white border-[hsl(var(--gold)/0.3)] border-l-[hsl(var(--gold))]"
                         : isExperience
@@ -622,6 +634,14 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
                     } ${!isLocked && !isBooked ? "hover:shadow-[0_10px_30px_rgba(26,26,27,0.08)] cursor-grab active:cursor-grabbing" : ""}`}
                     style={{ borderRadius: 0, boxShadow: "0 10px 30px rgba(26,26,27,0.05)" }}
                   >
+                    {/* Time column */}
+                    <div className="shrink-0 w-16 flex flex-col items-center justify-center border-r border-[hsl(var(--border))]/30 py-3 px-2">
+                      <span className="font-display text-sm text-[hsl(var(--ink))] font-bold leading-none">{formatMin(startMin)}</span>
+                      <span className="text-[0.5rem] text-[hsl(var(--ink-light))]/60 mt-0.5">→ {formatMin(endMin)}</span>
+                    </div>
+
+                    {/* Content */}
+                    <div className="flex-1 px-4 py-3">
                     {/* Header */}
                     <div className="flex items-center gap-2">
                       {!isLocked && !isBooked && (
@@ -708,6 +728,7 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
                     {item.notes && (
                       <p className="font-sans text-xs text-[hsl(var(--ink-light))] mt-2 italic" style={{ letterSpacing: "-0.02em" }}>{item.notes}</p>
                     )}
+                    </div>{/* end content */}
                   </motion.div>
 
                   {/* Drop zone after this item */}
@@ -727,7 +748,7 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
           {ribbon.length > 0 && (
             <div className="flex items-center gap-2 mt-4 ml-4">
               <div className="flex-1 border-t-2 border-[hsl(var(--ink))]" />
-              <span className="px-3 py-1 bg-[hsl(var(--ink))] text-[#F9F7F2] text-[0.5rem] uppercase tracking-[0.12em] font-medium" style={{ borderRadius: 0 }}>
+              <span className="px-3 py-1.5 bg-[hsl(var(--ink))] text-[#F9F7F2] text-xs uppercase tracking-[0.12em] font-medium" style={{ borderRadius: 0 }}>
                 🚗 End of Day · {ribbon.length > 0 ? formatMin(ribbon[ribbon.length - 1].endMin) : leavePark}
               </span>
             </div>

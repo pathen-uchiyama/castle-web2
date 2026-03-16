@@ -628,7 +628,7 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
                         <GripVertical className="w-3 h-3 text-[hsl(var(--ink-light))]/30 shrink-0 cursor-grab" />
                       )}
                       <span className="font-display text-base text-[hsl(var(--ink))] truncate flex-1">{item.name}</span>
-                      <span className={`px-1.5 py-0.5 text-[0.35rem] uppercase tracking-[0.1em] shrink-0 ${
+                      <span className={`px-2 py-0.5 text-[0.5625rem] uppercase tracking-[0.1em] shrink-0 ${
                         item.type === "ride" ? "bg-[hsl(var(--ink))] text-[#F9F7F2]" :
                         isMeal ? "bg-[hsl(var(--gold)/0.15)] text-[hsl(var(--gold-dark))]" :
                         isExperience ? "bg-[hsl(280,30%,55%,0.1)] text-[hsl(280,30%,45%)]" :

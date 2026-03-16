@@ -449,9 +449,10 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
 
   const handleTimelineDragOver = useCallback((e: React.DragEvent) => {
     e.preventDefault();
+    e.dataTransfer.dropEffect = "move";
     if (!timelineRef.current) return;
     const rect = timelineRef.current.getBoundingClientRect();
-    const y = e.clientY - rect.top + timelineRef.current.scrollTop;
+    const y = e.clientY - rect.top;
     const min = Math.floor(y / PX_PER_MIN) + DAY_START_MIN;
     const hour = Math.floor(min / 60);
     setTimelineDropHour(hour);

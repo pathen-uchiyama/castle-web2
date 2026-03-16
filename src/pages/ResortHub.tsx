@@ -715,7 +715,7 @@ const ResortHub = () => {
                 const modeEmoji: Record<string, string> = { bus: "🚌", monorail: "🚝", skyliner: "🚡", boat: "⛴", "minnie-van": "🚗", car: "🅿️", walking: "🚶" };
                 return (
                   <motion.div key={t.mode} {...fade(0.05 + i * 0.03)}
-                    className="border border-border bg-card p-6 shadow-[var(--shadow-soft)]">
+                    className="border border-border bg-card rounded-lg p-6 shadow-[var(--shadow-soft)]">
                     <div className="flex items-start gap-4">
                       <span className="text-3xl">{modeEmoji[t.mode]}</span>
                       <div className="flex-1">

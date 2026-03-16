@@ -267,7 +267,7 @@ const Index = ({
                       {bookedTrip.ridesSaved.slice(0, 3).map((s) => (
                         <div key={s.rideName} className="flex items-center gap-2 overflow-hidden">
                           <span className="text-xs opacity-40 shrink-0">{s.emoji}</span>
-                          <p className="font-editorial text-xs text-white/50 truncate" style={{ letterSpacing: '-0.02em' }}>{s.minutesSaved} · {s.rideName}</p>
+                          <p className="font-editorial text-xs text-white/55 truncate" style={{ letterSpacing: '-0.02em' }}>{s.minutesSaved} · {s.rideName}</p>
                         </div>
                       ))}
                     </div>

@@ -93,7 +93,7 @@ const Circle = ({ partyMembers }: CircleProps) => {
           </motion.div>
         </div>
         <div className="relative min-h-[40vh] lg:min-h-0">
-          <img src={familyMainstreet} alt="Family on Main Street" className="w-full h-full object-cover" />
+          <img src={familyMainstreet} alt="Family on Main Street" className="w-full h-full object-cover rounded-lg" />
         </div>
       </section>
 

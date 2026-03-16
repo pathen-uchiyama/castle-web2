@@ -152,7 +152,7 @@ const Account = ({ account }: AccountProps) => {
             <p className="font-editorial text-sm text-muted-foreground mb-8 max-w-md">
               Sign out of your Castle Companion account. Your plans, memories, and party data will be here when you return.
             </p>
-            <button className="px-8 py-3 text-sm tracking-[0.15em] uppercase font-medium text-muted-foreground border border-border hover:border-destructive hover:text-destructive transition-all duration-500">
+            <button className="px-8 py-3 rounded-lg text-sm tracking-[0.15em] uppercase font-medium text-muted-foreground border border-border hover:border-destructive hover:text-destructive transition-all duration-500">
               Sign Out
             </button>
           </motion.div>

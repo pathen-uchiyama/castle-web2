@@ -479,7 +479,7 @@ const BookedTripDetail = ({ trip }: { trip: BookedTrip }) => {
             <Link to="/adventure" className="label-text !text-white/60 mb-4 tracking-[0.3em] hover:!text-white/80 transition-colors inline-block">← All Trips</Link>
           </motion.div>
           <motion.h1 {...fade(0.2)} className="font-display text-white text-4xl sm:text-6xl leading-[1.02] mt-4">{destination}</motion.h1>
-          <motion.p {...fade(0.4)} className="font-editorial text-white/60 text-lg mt-4">{tripName} · {countdownDays} days away · Party of {trip.partySize}</motion.p>
+          <motion.p {...fade(0.4)} className="font-editorial text-white/80 text-lg mt-4">{tripName} · {countdownDays} days away · Party of {trip.partySize}</motion.p>
         </div>
       </section>
 

@@ -771,8 +771,8 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
               { color: "bg-[hsl(var(--muted))]", label: "Break/Meal" },
             ].map(l => (
               <div key={l.label} className="flex items-center gap-1.5">
-                <div className={`w-2.5 h-2.5 ${l.color}`} style={{ borderRadius: 0 }} />
-                <span className="text-[0.5rem] text-[hsl(var(--ink-light))]">{l.label}</span>
+                <div className={`w-3 h-3 ${l.color}`} style={{ borderRadius: 0 }} />
+                <span className="text-xs text-[hsl(var(--ink-light))]">{l.label}</span>
               </div>
             ))}
           </div>

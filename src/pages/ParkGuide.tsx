@@ -429,7 +429,7 @@ const ParkGuidePage = ({ parkGuides }: ParkGuidePageProps) => {
           {/* Crowd flow placeholder */}
           <motion.div {...fade(0.3)}>
             <p className="label-text mb-6">Crowd Flow Map</p>
-            <div className="border border-dashed border-border py-16 text-center">
+            <div className="border border-dashed border-border rounded-lg py-16 text-center">
               <p className="font-display text-xl text-muted-foreground/40 mb-2">Heat Map Coming Soon</p>
               <p className="font-editorial text-sm text-muted-foreground/30">
                 Visual crowd density by park area with movement predictions.

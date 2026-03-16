@@ -1041,7 +1041,7 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
 
                   {attraction.isClosed && (
                     <div className="px-4 pb-2">
-                      <span className="text-[0.4375rem] uppercase tracking-[0.1em] px-1.5 py-0.5 bg-[hsl(var(--muted))] text-[hsl(var(--ink-light))]" style={{ borderRadius: 0 }}>Temporarily Closed</span>
+                      <span className="text-[0.625rem] uppercase tracking-[0.1em] px-2 py-1 bg-[hsl(var(--muted))] text-[hsl(var(--ink-light))]" style={{ borderRadius: 0 }}>Temporarily Closed</span>
                     </div>
                   )}
                 </motion.div>

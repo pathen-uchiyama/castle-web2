@@ -728,6 +728,7 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
                     {item.notes && (
                       <p className="font-sans text-xs text-[hsl(var(--ink-light))] mt-2 italic" style={{ letterSpacing: "-0.02em" }}>{item.notes}</p>
                     )}
+                    </div>{/* end content */}
                   </motion.div>
 
                   {/* Drop zone after this item */}

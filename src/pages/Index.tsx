@@ -248,7 +248,7 @@ const Index = ({
                         ))}
                       </div>
                       <div className="gold-rule mb-3" />
-                      <p className="font-editorial text-xs text-white/30 italic group-hover:text-white/50 transition-colors duration-500">Review list →</p>
+                      <p className="font-editorial text-xs text-white/45 italic group-hover:text-white/60 transition-colors duration-500">Review list →</p>
                     </div>
                   </Link>
                 </motion.div>

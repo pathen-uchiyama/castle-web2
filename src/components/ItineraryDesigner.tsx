@@ -119,6 +119,7 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
   /* ── State ──────────────────────────────────────────────────────── */
   const [pacing, setPacing] = useState("Moderate");
   const [focus, setFocus] = useState("Classic Magic");
+  const [minimizeWalking, setMinimizeWalking] = useState(false);
 
   const availableParks = Object.keys(allParkAttractions);
   const [selectedParks, setSelectedParks] = useState<string[]>(["mk"]);
@@ -270,9 +271,18 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
         const aMustDo = topFiveIds.has(a.id) || attractionSatisfies[a.id]?.some(s => s.reason === "Must-Do" || s.reason === "Top 5 Must-Do") ? 1 : 0;
         const bMustDo = topFiveIds.has(b.id) || attractionSatisfies[b.id]?.some(s => s.reason === "Must-Do" || s.reason === "Top 5 Must-Do") ? 1 : 0;
         if (aMustDo !== bMustDo) return bMustDo - aMustDo;
+        // Zone-aware: prioritize attractions in the same zone as last itinerary item
+        if (minimizeWalking && itinerary.length > 0) {
+          const lastZone = itinerary[itinerary.length - 1].zone;
+          if (lastZone) {
+            const aInZone = a.zone === lastZone ? 1 : 0;
+            const bInZone = b.zone === lastZone ? 1 : 0;
+            if (aInZone !== bInZone) return bInZone - aInZone;
+          }
+        }
         return b.rating - a.rating;
       });
-  }, [selectedParks, researchCategory, searchQuery, topFiveIds, focus, attractionSatisfies]);
+  }, [selectedParks, researchCategory, searchQuery, topFiveIds, focus, attractionSatisfies, minimizeWalking, itinerary]);
 
   /* ── Handlers ───────────────────────────────────────────────────── */
 
@@ -456,6 +466,19 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
                 <span className={`absolute top-0.5 w-3 h-3 bg-white transition-transform duration-200 ${hasStroller ? "translate-x-4" : "translate-x-0.5"}`} style={{ borderRadius: 0 }} />
               </button>
             </div>
+            {/* Minimize Walking toggle */}
+            <div className="mt-1 flex items-center justify-between px-2 py-1.5 bg-[#F9F7F2]">
+              <span className="text-[0.5625rem] text-[hsl(var(--ink-light))] flex items-center gap-1">
+                🚶 Min. Walking
+              </span>
+              <button
+                onClick={() => setMinimizeWalking(!minimizeWalking)}
+                className={`relative w-8 h-4 transition-colors duration-200 ${minimizeWalking ? "bg-[hsl(var(--gold))]" : "bg-[hsl(var(--border))]"}`}
+                style={{ borderRadius: 0 }}
+              >
+                <span className={`absolute top-0.5 w-3 h-3 bg-white transition-transform duration-200 ${minimizeWalking ? "translate-x-4" : "translate-x-0.5"}`} style={{ borderRadius: 0 }} />
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -511,7 +534,7 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
       {/* ═══════════════════════════════════════════════════════════════
           TWO-COLUMN: RIBBON + RESEARCH
          ═══════════════════════════════════════════════════════════════ */}
-      <div className="grid grid-cols-1 lg:grid-cols-2">
+      <div className="grid grid-cols-1 lg:grid-cols-2 relative">
 
         {/* ─── LEFT: The Ribbon ────────────────────────────────────── */}
         <div className="px-6 lg:px-10 py-8 border-r border-[hsl(var(--border))]">
@@ -730,14 +753,48 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
                     </div>{/* end content */}
                   </motion.div>
 
-                  {/* Drop zone after this item */}
-                  <DropZone
-                    idx={idx + 1}
-                    isActive={dropTargetIdx === idx + 1}
-                    onDragOver={(e) => { e.preventDefault(); setDropTargetIdx(idx + 1); }}
-                    onDragLeave={() => setDropTargetIdx(null)}
-                    onDrop={(e) => handleDropOnZone(e, idx + 1)}
-                  />
+                  {/* Gap analysis between items */}
+                  {(() => {
+                    const nextRi = ribbon[idx + 1];
+                    const gapMin = nextRi ? nextRi.startMin - endMin - (nextRi.walkBuffer || 0) : (leaveMin - endMin);
+                    const isLastItem = idx === ribbon.length - 1;
+                    const showGap = gapMin >= 15 && !isLastItem;
+                    const currentZone = item.zone;
+                    const nextZone = nextRi?.item?.zone;
+                    const sameZone = currentZone && nextZone && currentZone === nextZone;
+                    
+                    return showGap ? (
+                      <div className="my-1 mx-2 border-2 border-dashed border-[hsl(var(--gold)/0.4)] bg-[hsl(var(--gold)/0.04)] p-3 flex items-center justify-between"
+                        style={{ borderRadius: 0 }}
+                        onDragOver={(e) => { e.preventDefault(); setDropTargetIdx(idx + 1); }}
+                        onDragLeave={() => setDropTargetIdx(null)}
+                        onDrop={(e) => handleDropOnZone(e, idx + 1)}
+                      >
+                        <div className="flex items-center gap-2">
+                          <span className="text-lg">⏳</span>
+                          <div>
+                            <span className="font-display text-sm text-[hsl(var(--gold-dark))] font-bold">{gapMin}m open</span>
+                            <span className="text-[0.625rem] text-[hsl(var(--ink-light))] ml-2">
+                              ~{Math.floor(gapMin / 25)} rides could fit
+                            </span>
+                          </div>
+                        </div>
+                        {currentZone && (
+                          <span className="text-[0.5625rem] uppercase tracking-[0.1em] px-2 py-1 bg-[hsl(var(--gold)/0.1)] text-[hsl(var(--gold-dark))]" style={{ borderRadius: 0 }}>
+                            📍 Near {zoneLabel(currentZone)}
+                          </span>
+                        )}
+                      </div>
+                    ) : (
+                      <DropZone
+                        idx={idx + 1}
+                        isActive={dropTargetIdx === idx + 1}
+                        onDragOver={(e) => { e.preventDefault(); setDropTargetIdx(idx + 1); }}
+                        onDragLeave={() => setDropTargetIdx(null)}
+                        onDrop={(e) => handleDropOnZone(e, idx + 1)}
+                      />
+                    );
+                  })()}
                 </Reorder.Item>
               );
             })}
@@ -799,7 +856,7 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
         </div>
 
         {/* ─── RIGHT: Research Assistant ──────────────────────────────── */}
-        <div className="px-6 lg:px-8 py-8 lg:overflow-y-auto lg:max-h-[calc(100vh-80px)] bg-[#F9F7F2]">
+        <div className="px-6 lg:px-8 py-8 lg:overflow-y-auto lg:sticky lg:top-0 lg:max-h-screen bg-[#F9F7F2]">
 
           <div className="flex items-end justify-between mb-4">
             <div>
@@ -807,6 +864,11 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
               <p className="font-sans text-xs text-[hsl(var(--ink-light))]" style={{ letterSpacing: "-0.02em" }}>
                 Drag cards into the ribbon to schedule · Top 5 picks float up ✦
               </p>
+              {minimizeWalking && itinerary.length > 0 && itinerary[itinerary.length - 1].zone && (
+                <p className="font-sans text-xs text-[hsl(var(--gold-dark))] mt-1 flex items-center gap-1">
+                  📍 Prioritizing near <strong>{zoneLabel(itinerary[itinerary.length - 1].zone)}</strong>
+                </p>
+              )}
             </div>
           </div>
 

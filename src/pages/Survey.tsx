@@ -47,6 +47,7 @@ const Survey = () => {
   const [categoryFilter, setCategoryFilter] = useState<string>("all");
   const [rankings, setRankings] = useState<Record<string, SurveyRanking>>({});
   const [openToAnything, setOpenToAnything] = useState(false);
+  const [minimizeWalking, setMinimizeWalking] = useState(false);
   const [topFive, setTopFive] = useState<string[]>([]);
   const [submitted, setSubmitted] = useState(false);
 
@@ -285,6 +286,26 @@ const Survey = () => {
                    }`}
                 >
                   {openToAnything ? "✓ I'm Flexible" : "I'm Open to Anything"}
+                </button>
+              </motion.div>
+
+              {/* Minimize Walking preference */}
+              <motion.div {...fade(0.15)} className="border border-border rounded-lg p-10 bg-card text-center mt-6">
+                <span className="text-5xl mb-6 block">🚶</span>
+                <h2 className="font-display text-3xl text-foreground mb-4">Minimize Walking?</h2>
+                <p className="font-editorial text-muted-foreground mb-8 leading-relaxed">
+                  "I'd prefer to stay in the same area of the park." When this is on, the itinerary planner
+                  will group nearby attractions together and reduce back-and-forth across the park.
+                </p>
+                <button
+                  onClick={() => setMinimizeWalking(!minimizeWalking)}
+                   className={`px-8 py-4 rounded-lg text-sm tracking-[0.15em] uppercase font-medium border transition-all duration-500 ${
+                     minimizeWalking
+                       ? "border-[hsl(var(--gold))] bg-[hsl(var(--gold)/0.12)] text-foreground"
+                       : "border-border text-muted-foreground hover:border-foreground/30"
+                   }`}
+                >
+                  {minimizeWalking ? "✓ Minimize Walking" : "Keep Walking Short"}
                 </button>
               </motion.div>
 

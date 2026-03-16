@@ -623,6 +623,16 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
                 </Select>
               </div>
             </div>
+            {/* Walk time indicator */}
+            <div className="mt-2 flex items-center gap-2 px-2 py-1.5 bg-muted/30 border border-border/30">
+              <span className="text-[0.5rem]">🚶</span>
+              <span className="text-[0.4375rem] text-muted-foreground">
+                Est. walk time: <strong className="text-foreground">{walkTimeEstimate} min</strong>
+                <span className="text-muted-foreground/60 ml-1">
+                  ({pacing} pace{hasStrollerAge ? " · 🍼 Stroller" : ""}{hasYoungKids ? " · 👶 Young kids" : ""})
+                </span>
+              </span>
+            </div>
           </div>
         </div>
 

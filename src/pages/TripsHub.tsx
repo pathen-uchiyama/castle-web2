@@ -144,11 +144,18 @@ const TripsHub = ({ bookedTrip, futureTrips }: TripsHubProps) => {
       {/* Plan New Adventure CTA */}
       <section className="py-16 sm:py-24 text-center bg-[hsl(var(--warm))]">
         <motion.div {...fade()}>
-          <p className="label-text mb-6">The Voyage Canvas</p>
+          <p className="label-text mb-6">The Voyage Canvas 🌍</p>
           <h2 className="font-display text-foreground leading-[1.08] mb-4" style={{ fontSize: "clamp(1.875rem, 5vw, 3rem)" }}>Plan a new adventure.</h2>
           <div className="gold-rule mx-auto mb-6" />
-          <p className="font-editorial text-sm text-muted-foreground max-w-md mx-auto mb-10">Launch the Strategy Wizard to architect your next perfect park day.</p>
-          <button onClick={() => setWizardOpen(true)} className="inline-flex items-center justify-center px-10 py-4 text-sm tracking-[0.15em] uppercase font-medium bg-foreground text-background border border-[hsl(var(--gold-dark))] transition-all duration-500 hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-ring">Initialize Your Journey</button>
+          <p className="font-editorial text-sm text-muted-foreground max-w-md mx-auto mb-10">Choose your destination, pick your dates, and we'll help your family make the most of every moment.</p>
+          <motion.button
+            onClick={() => setWizardOpen(true)}
+            whileHover={{ scale: 1.03 }}
+            whileTap={{ scale: 0.97 }}
+            className="inline-flex items-center justify-center px-10 py-4 rounded-lg text-sm tracking-[0.15em] uppercase font-medium bg-foreground text-background border border-[hsl(var(--gold-dark))] transition-all duration-500 hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-ring"
+          >
+            Start Your Journey ✨
+          </motion.button>
         </motion.div>
       </section>
 

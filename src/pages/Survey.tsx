@@ -230,11 +230,11 @@ const Survey = () => {
                 </p>
                 <button
                   onClick={() => setOpenToAnything(!openToAnything)}
-                  className={`px-8 py-4 text-sm tracking-[0.15em] uppercase font-medium border transition-all duration-500 ${
-                    openToAnything
-                      ? "border-[hsl(var(--gold))] bg-[hsl(var(--gold)/0.12)] text-foreground"
-                      : "border-border text-muted-foreground hover:border-foreground/30"
-                  }`}
+                   className={`px-8 py-4 rounded-lg text-sm tracking-[0.15em] uppercase font-medium border transition-all duration-500 ${
+                     openToAnything
+                       ? "border-[hsl(var(--gold))] bg-[hsl(var(--gold)/0.12)] text-foreground"
+                       : "border-border text-muted-foreground hover:border-foreground/30"
+                   }`}
                 >
                   {openToAnything ? "✓ I'm Flexible" : "I'm Open to Anything"}
                 </button>

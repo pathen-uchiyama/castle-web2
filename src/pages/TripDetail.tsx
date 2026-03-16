@@ -972,33 +972,12 @@ const BookedTripDetail = ({ trip }: { trip: BookedTrip }) => {
 
       {/* ═══ DESIGNER TAB ═══ */}
       {activeTab === "designer" && (
-        <section className="px-8 lg:px-16 py-16 lg:py-24">
-          <motion.div {...fade()}>
-            <p className="label-text mb-6">The Architect</p>
-            <h2 className="font-display text-4xl sm:text-5xl text-foreground leading-[1.08] mb-4">The Designer</h2>
-            <p className="font-editorial text-muted-foreground text-lg max-w-2xl mb-16">Generate a concierge-quality itinerary from your party's consensus, then refine it to perfection.</p>
-          </motion.div>
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-16">
-            <motion.div {...fade(0.1)} className="border border-border bg-card p-8 shadow-[var(--shadow-soft)] hover:shadow-[var(--shadow-hover)] transition-shadow duration-500">
-              <div className="relative h-48 -mx-8 -mt-8 mb-6 overflow-hidden"><img src={editorialCalendar} alt="Plan" className="w-full h-full object-cover" /><div className="absolute inset-0 bg-gradient-to-t from-card via-transparent to-transparent" /></div>
-              <p className="label-text mb-4">Step 1</p>
-              <h3 className="font-display text-2xl text-foreground mb-3">Generate Concierge Draft</h3>
-              <p className="font-editorial text-sm text-muted-foreground mb-8 leading-relaxed">Our algorithm builds a baseline plan using your survey data, park hours, crowd predictions, and Lightning Lane strategy.</p>
-              <button className="px-8 py-3 text-sm tracking-[0.15em] uppercase font-medium bg-foreground text-background border border-[hsl(var(--gold-dark))] transition-opacity duration-500 hover:opacity-90">Generate Plan</button>
-            </motion.div>
-            <motion.div {...fade(0.2)} className="border border-border bg-card p-8 shadow-[var(--shadow-soft)] hover:shadow-[var(--shadow-hover)] transition-shadow duration-500">
-              <div className="relative h-48 -mx-8 -mt-8 mb-6 overflow-hidden"><img src={editorialDining} alt="Dining" className="w-full h-full object-cover" /><div className="absolute inset-0 bg-gradient-to-t from-card via-transparent to-transparent" /></div>
-              <p className="label-text mb-4">Step 2</p>
-              <h3 className="font-display text-2xl text-foreground mb-3">Set Your Itinerary</h3>
-              <p className="font-editorial text-sm text-muted-foreground mb-8 leading-relaxed">Drag and drop to reorder. Delete what doesn't fit. Add hidden gems. When you're ready, commit to lock it in.</p>
-              <button className="px-8 py-3 text-sm tracking-[0.15em] uppercase font-medium text-muted-foreground border border-border transition-opacity duration-500 hover:opacity-70" disabled>Awaiting Draft</button>
-            </motion.div>
-          </div>
-          <motion.div {...fade(0.3)} className="border border-dashed border-border py-20 text-center">
-            <p className="font-display text-2xl text-muted-foreground/40 mb-3">No itinerary yet</p>
-            <p className="font-editorial text-sm text-muted-foreground/30">Generate a draft above, or complete your party surveys first for the best results.</p>
-          </motion.div>
-        </section>
+        <ItineraryDesigner
+          trip={trip}
+          partyMembers={mockData.partyMembers}
+          diningReservations={allDiningReservations}
+          bookedExperiences={allBookedExperiences}
+        />
       )}
 
       {/* ═══ PREP & CHECKLISTS TAB ═══ */}

@@ -297,7 +297,7 @@ const ResortHub = () => {
                           <span className="text-[0.5625rem] text-[hsl(var(--gold-dark))] font-medium">Early Entry: {park.operatingHours.earlyEntry}</span>
                         </div>
                         {park.operatingHours.extendedEvening && (
-                          <div className="flex items-center gap-1.5 px-3 py-1.5 bg-foreground/5 border border-border">
+                          <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-foreground/5 border border-border">
                             <span className="text-[0.5rem]">🌙</span>
                             <span className="text-[0.5625rem] text-foreground font-medium">Extended: {park.operatingHours.extendedEvening}</span>
                           </div>

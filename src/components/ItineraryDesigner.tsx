@@ -247,7 +247,11 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
     return h * 60 + min;
   };
 
-  // Build scheduled items map (hour → items)
+  /** Total time an item actually consumes (wait + experience + travel) */
+  const totalItemTime = (item: ItineraryItem) =>
+    (item.waitTime || 0) + item.duration + (item.walkTime || 0);
+
+  // Build scheduled items map (hour → items) with total time per hour
   const scheduledByHour = useMemo(() => {
     const map: Record<number, ItineraryItem[]> = {};
     itinerary.forEach(item => {
@@ -260,6 +264,13 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
     });
     return map;
   }, [itinerary]);
+
+  /** Compute the total minutes consumed in an hour slot */
+  const hourSlotMinutes = (hourValue: number) => {
+    const items = scheduledByHour[hourValue] || [];
+    if (items.length === 0) return 0;
+    return items.reduce((sum, item) => sum + totalItemTime(item), 0);
+  };
 
   // Unscheduled items (no start time)
   const unscheduledItems = useMemo(() => itinerary.filter(i => !i.startTime), [itinerary]);
@@ -472,12 +483,15 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
           {/* ── Fixed Time Ruler + Items ──────────────────────────────── */}
           <div className="relative">
             {timeRulerHours.map((hourLabel, hIdx) => {
-              const hourValue = hIdx + 7; // starts at 7 AM
+              const hourValue = hIdx + 7;
               const hourItems = scheduledByHour[hourValue] || [];
               const hasItems = hourItems.length > 0;
+              const slotMins = hourSlotMinutes(hourValue);
+              // Proportional height: empty = 20px, filled = based on total minutes (min 52px)
+              const slotHeight = hasItems ? Math.max(52, slotMins * 1.2) : 20;
 
               return (
-                <div key={hourLabel} className="relative flex min-h-[36px]">
+                <div key={hourLabel} className="relative flex" style={{ minHeight: `${slotHeight}px` }}>
                   {/* Hour label — fixed left gutter */}
                   <div className="w-[52px] shrink-0 relative">
                     <span className={`font-display text-[0.5625rem] absolute top-0 right-3 ${hasItems ? "text-foreground" : "text-muted-foreground/30"}`}>
@@ -487,14 +501,14 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
 
                   {/* Timeline line */}
                   <div className="relative w-px shrink-0 mr-3">
-                    <div className={`absolute inset-0 ${hasItems ? "bg-foreground/20" : "bg-border/50"}`} />
-                    <div className={`absolute top-0 w-2 h-px -left-[3px] ${hasItems ? "bg-foreground/30" : "bg-border"}`} />
+                    <div className={`absolute inset-0 ${hasItems ? "bg-foreground/20" : "bg-border/30"}`} />
+                    <div className={`absolute top-0 w-2 h-px -left-[3px] ${hasItems ? "bg-foreground/30" : "bg-border/40"}`} />
                   </div>
 
                   {/* Items or empty gap */}
                   <div className="flex-1 pb-1">
                     {hasItems ? (
-                      <div className="space-y-1">
+                      <div className="space-y-1.5">
                         {hourItems.map(item => {
                           const globalIdx = itinerary.indexOf(item);
                           const isBooked = item.id.startsWith("booked-");
@@ -504,6 +518,11 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
                           const isDragging = dragIdx === globalIdx;
                           const isDragOver = dragOverIdx === globalIdx;
 
+                          const wait = item.waitTime || 0;
+                          const dur = item.duration;
+                          const travel = item.walkTime || 0;
+                          const total = wait + dur + travel;
+
                           return (
                             <div
                               key={item.id}
@@ -512,7 +531,7 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
                               onDragOver={(e) => handleDragOver(e, globalIdx)}
                               onDrop={() => handleDrop(globalIdx)}
                               onDragEnd={handleDragEnd}
-                              className={`group border px-3 py-2 transition-all duration-200 shadow-soft ${
+                              className={`group border px-3 py-2.5 transition-all duration-200 shadow-soft ${
                                 isDragging ? "opacity-40 scale-95" : ""
                               } ${isDragOver ? "border-[hsl(var(--gold))] shadow-soft-hover" : ""} ${
                                 isMeal
@@ -526,13 +545,11 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
                                   : "bg-background border-border"
                               } ${!isLocked && !isBooked ? "hover:shadow-soft-hover cursor-grab" : ""}`}
                             >
+                              {/* Top row: drag handle + name + type + total */}
                               <div className="flex items-center gap-2">
-                                {/* Drag handle */}
                                 {!isLocked && !isBooked && (
                                   <GripVertical className="w-3 h-3 text-muted-foreground/30 shrink-0 cursor-grab" />
                                 )}
-
-                                {/* Color dot */}
                                 <div className={`w-2 h-2 shrink-0 ${
                                   isMeal ? "bg-[hsl(var(--gold))]" :
                                   isExperience ? "bg-[hsl(280,30%,55%)]" :
@@ -540,8 +557,6 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
                                   item.type === "rope-drop" ? "bg-foreground" :
                                   "bg-foreground/50"
                                 }`} />
-
-                                {/* Name + type badge */}
                                 <div className="flex items-center gap-1.5 min-w-0 flex-1">
                                   <span className="font-display text-[0.8125rem] text-foreground truncate">{item.name}</span>
                                   <span className={`px-1.5 py-0.5 text-[0.35rem] uppercase tracking-[0.1em] shrink-0 ${
@@ -556,11 +571,11 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
                                   </span>
                                 </div>
 
-                                {/* Duration + remove */}
+                                {/* Total time + remove */}
                                 <div className="flex items-center gap-2 shrink-0">
                                   <div className="text-right">
-                                    <span className="text-[0.5625rem] text-foreground font-medium block leading-tight">{item.duration} min</span>
-                                    <span className="text-[0.4375rem] text-muted-foreground uppercase tracking-wide">Duration</span>
+                                    <span className="text-[0.6875rem] text-foreground font-display leading-tight">{total} min</span>
+                                    <span className="text-[0.375rem] text-muted-foreground uppercase tracking-wide block">Total Block</span>
                                   </div>
                                   {!isLocked && !isBooked && (
                                     <button onClick={() => removeFromItinerary(item.id)}
@@ -571,44 +586,89 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
                                 </div>
                               </div>
 
-                              {/* Details row */}
-                              <div className="flex items-center gap-2 mt-1 ml-[calc(0.75rem+8px+0.5rem)]">
-                                {/* LL badge */}
-                                {item.llType && item.llType !== "none" && (
+                              {/* ── Segmented time bar ──────────────────────── */}
+                              {total > 0 && (
+                                <div className="mt-2 ml-[calc(0.75rem+8px+0.5rem)]">
+                                  <div className="flex h-[6px] w-full overflow-hidden rounded-sm">
+                                    {wait > 0 && (
+                                      <div
+                                        className="bg-[hsl(var(--destructive)/0.45)]"
+                                        style={{ width: `${(wait / total) * 100}%` }}
+                                        title={`Standby Wait: ${wait} min`}
+                                      />
+                                    )}
+                                    <div
+                                      className={`${
+                                        isMeal ? "bg-[hsl(var(--gold))]" :
+                                        isExperience ? "bg-[hsl(280,30%,55%)]" :
+                                        isBreak ? "bg-muted-foreground/30" :
+                                        "bg-foreground/60"
+                                      }`}
+                                      style={{ width: `${(dur / total) * 100}%` }}
+                                      title={`Experience: ${dur} min`}
+                                    />
+                                    {travel > 0 && (
+                                      <div
+                                        className="bg-[hsl(var(--accent-foreground)/0.15)]"
+                                        style={{ width: `${(travel / total) * 100}%` }}
+                                        title={`Travel/Stroller: ${travel} min`}
+                                      />
+                                    )}
+                                  </div>
+                                  {/* Segment labels */}
+                                  <div className="flex items-center gap-3 mt-1">
+                                    {wait > 0 && (
+                                      <div className="flex items-center gap-1">
+                                        <div className="w-1.5 h-1.5 bg-[hsl(var(--destructive)/0.45)]" />
+                                        <span className="text-[0.4375rem] text-muted-foreground font-medium uppercase tracking-wide">
+                                          ⏱ Wait {wait}m
+                                        </span>
+                                      </div>
+                                    )}
+                                    <div className="flex items-center gap-1">
+                                      <div className={`w-1.5 h-1.5 ${
+                                        isMeal ? "bg-[hsl(var(--gold))]" :
+                                        isExperience ? "bg-[hsl(280,30%,55%)]" :
+                                        isBreak ? "bg-muted-foreground/30" :
+                                        "bg-foreground/60"
+                                      }`} />
+                                      <span className="text-[0.4375rem] text-muted-foreground font-medium uppercase tracking-wide">
+                                        {isBreak ? "⏸ Rest" : isMeal ? "🍽 Meal" : "🎢 Ride"} {dur}m
+                                      </span>
+                                    </div>
+                                    {travel > 0 && (
+                                      <div className="flex items-center gap-1">
+                                        <div className="w-1.5 h-1.5 bg-[hsl(var(--accent-foreground)/0.15)]" />
+                                        <span className="text-[0.4375rem] text-muted-foreground font-medium uppercase tracking-wide">
+                                          🚶 Travel {travel}m
+                                        </span>
+                                      </div>
+                                    )}
+                                  </div>
+                                </div>
+                              )}
+
+                              {/* LL badge */}
+                              {item.llType && item.llType !== "none" && (
+                                <div className="mt-1.5 ml-[calc(0.75rem+8px+0.5rem)]">
                                   <span className="px-1.5 py-0.5 text-[0.35rem] uppercase tracking-[0.08em] bg-accent text-accent-foreground border border-border">
                                     {llLabels[item.llType]}
                                   </span>
-                                )}
-                                {/* Wait time */}
-                                {item.waitTime != null && item.waitTime > 0 && (
-                                  <span className="px-1.5 py-0.5 text-[0.4375rem] text-muted-foreground bg-muted border border-border/50">
-                                    ⏱ Est. {item.waitTime} min standby wait
-                                  </span>
-                                )}
-                              </div>
+                                </div>
+                              )}
 
                               {/* Notes */}
                               {item.notes && (
                                 <p className="font-editorial text-[0.5625rem] text-muted-foreground mt-1.5 ml-[calc(0.75rem+8px+0.5rem)] italic">{item.notes}</p>
-                              )}
-
-                              {/* Walk connector */}
-                              {item.walkTime && item.walkTime > 0 && (
-                                <div className="flex items-center gap-2 mt-1.5 ml-[calc(0.75rem+8px+0.5rem)]">
-                                  <div className="flex items-center gap-1.5 px-2 py-0.5 bg-muted/60 border border-border/40">
-                                    <span className="text-[0.5rem]">🚶</span>
-                                    <span className="text-[0.5rem] text-muted-foreground font-medium">{item.walkTime} min walk to next</span>
-                                  </div>
-                                </div>
                               )}
                             </div>
                           );
                         })}
                       </div>
                     ) : (
-                      /* Empty hour — subtle gap indicator */
-                      <div className="h-[28px] flex items-center">
-                        <div className="w-full border-b border-dashed border-border/20" />
+                      /* Empty hour — compact */
+                      <div className="h-full flex items-center">
+                        <div className="w-full border-b border-dashed border-border/15" />
                       </div>
                     )}
                   </div>

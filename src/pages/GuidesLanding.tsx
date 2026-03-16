@@ -56,7 +56,7 @@ const GuidesLanding = () => (
           <motion.div key={resort.id} {...fade(0.05 + i * 0.08)}>
             <Link
               to={`/resort/${resort.id}`}
-              className="block border border-border bg-card p-8 lg:p-10 shadow-[var(--shadow-soft)] hover:shadow-[var(--shadow-hover)] transition-all duration-500 group"
+              className="block rounded-lg border border-border bg-card p-8 lg:p-10 shadow-[var(--shadow-soft)] hover:shadow-[var(--shadow-hover)] transition-all duration-500 group"
             >
               <div className="flex items-center gap-4 mb-4">
                 <span className="text-4xl">{resort.icon}</span>

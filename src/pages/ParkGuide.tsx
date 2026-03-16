@@ -92,7 +92,7 @@ const generateProjections = (baseDate: Date, parkSchedule: ParkDaySchedule[]) =>
   const end = endOfMonth(baseDate);
   const days = eachDayOfInterval({ start, end });
 
-Hu  return days.map((day) => {
+return days.map((day) => {
     const dateStr = format(day, "yyyy-MM-dd");
     const existing = parkSchedule.find((s) => s.date === dateStr);
     if (existing) return { date: day, ...existing };

@@ -106,20 +106,11 @@ const Memories = ({ tripMemories }: MemoriesProps) => {
 
                     {/* Highlights */}
                     <div className="mt-4 flex flex-wrap gap-2">
-                      {memory.highlights.map((h, hi) => {
-                        const colors = [
-                          "bg-[hsl(var(--coral)/0.08)] text-[hsl(var(--coral))] border-[hsl(var(--coral)/0.2)]",
-                          "bg-[hsl(var(--sky)/0.08)] text-[hsl(var(--sky))] border-[hsl(var(--sky)/0.2)]",
-                          "bg-[hsl(var(--mint)/0.08)] text-[hsl(var(--mint))] border-[hsl(var(--mint)/0.2)]",
-                          "bg-[hsl(var(--lavender)/0.08)] text-[hsl(var(--lavender))] border-[hsl(var(--lavender)/0.2)]",
-                          "bg-[hsl(var(--sunshine)/0.1)] text-[hsl(var(--gold-dark))] border-[hsl(var(--sunshine)/0.25)]",
-                        ];
-                        return (
-                          <span key={h} className={`text-[0.625rem] uppercase tracking-[0.15em] px-3 py-1 rounded-md border ${colors[hi % colors.length]}`}>
-                            {h}
-                          </span>
-                        );
-                      })}
+                      {memory.highlights.map((h) => (
+                        <span key={h} className="text-[0.625rem] uppercase tracking-[0.15em] px-3 py-1 rounded-md border border-border bg-secondary text-muted-foreground">
+                          {h}
+                        </span>
+                      ))}
                     </div>
                   </motion.div>
                 ))}

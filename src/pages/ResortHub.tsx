@@ -141,7 +141,7 @@ const ResortHub = () => {
           <Link to="/guides" className="inline-flex items-center gap-1.5 text-background/40 hover:text-background/70 transition-colors mb-6 text-[0.625rem] uppercase tracking-[0.2em]">
             <ArrowLeft className="w-3 h-3" /> All Resorts
           </Link>
-          <p className="text-[0.625rem] uppercase tracking-[0.3em] text-background/50 mb-4">Resort Guide</p>
+          <p className="text-[0.625rem] uppercase tracking-[0.3em] text-background/50 mb-4">Resort Guide 🗺️</p>
           <h1 className="font-display text-5xl sm:text-6xl lg:text-7xl leading-[1.05] mb-4">{resort.name}</h1>
           <p className="font-editorial text-lg text-background/60 max-w-2xl mb-6">{resort.tagline} · {resort.location}</p>
           <div className="flex flex-wrap gap-3">
@@ -189,12 +189,21 @@ const ResortHub = () => {
         {activeTab === "overview" && (
           <div className="space-y-16">
             <motion.div {...fade()}>
-              <p className="label-text mb-4">About the Resort</p>
+              <p className="label-text mb-4">About the Resort ☀️</p>
               <p className="font-editorial text-lg text-foreground/80 leading-relaxed max-w-3xl mb-8">{resort.description}</p>
               <div className="flex flex-wrap gap-2 mb-12">
-                {resort.knownFor.map(item => (
-                  <span key={item} className="px-3 py-1.5 rounded-md text-[0.5625rem] uppercase tracking-[0.1em] bg-[hsl(var(--gold)/0.08)] text-[hsl(var(--gold-dark))] border border-[hsl(var(--gold)/0.2)]">{item}</span>
-                ))}
+                {resort.knownFor.map((item, ki) => {
+                  const colors = [
+                    "bg-[hsl(var(--coral)/0.1)] text-[hsl(var(--coral))] border-[hsl(var(--coral)/0.25)]",
+                    "bg-[hsl(var(--sky)/0.1)] text-[hsl(var(--sky))] border-[hsl(var(--sky)/0.25)]",
+                    "bg-[hsl(var(--mint)/0.1)] text-[hsl(var(--mint))] border-[hsl(var(--mint)/0.25)]",
+                    "bg-[hsl(var(--lavender)/0.1)] text-[hsl(var(--lavender))] border-[hsl(var(--lavender)/0.25)]",
+                    "bg-[hsl(var(--sunshine)/0.12)] text-[hsl(var(--gold-dark))] border-[hsl(var(--sunshine)/0.3)]",
+                  ];
+                  return (
+                    <span key={item} className={`px-3 py-1.5 rounded-md text-[0.5625rem] uppercase tracking-[0.1em] border ${colors[ki % colors.length]}`}>{item}</span>
+                  );
+                })}
               </div>
             </motion.div>
 

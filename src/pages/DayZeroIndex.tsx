@@ -66,8 +66,8 @@ const DayZeroIndex = () => {
               fontSize: "clamp(3rem, 8vw, 7rem)",
             }}
           >
-            Your Story<br />
-            <em style={{ fontWeight: 400, fontStyle: "italic" }}>Awaits.</em>
+            Your Family's Story<br />
+            <em style={{ fontWeight: 400, fontStyle: "italic" }}>Begins Here. ✨</em>
           </h1>
 
           <motion.div
@@ -86,7 +86,7 @@ const DayZeroIndex = () => {
               color: "hsl(222, 20%, 45%)",
             }}
           >
-            Logic over luck begins with a single step. Let us architect your perfect park day.
+            Your family's best vacation starts with a little planning — and a whole lot of magic. Let's make it unforgettable.
           </p>
 
           {/* ═══ PRIMARY CTA — "Sovereign" Button ═══ */}
@@ -110,7 +110,7 @@ const DayZeroIndex = () => {
               } as React.CSSProperties}
             >
               <span className="relative z-10 font-medium" style={{ fontFamily: "Inter, system-ui, sans-serif" }}>
-                Initialize Your First Journey
+                Plan Your First Adventure 🏰
               </span>
               <div
                 className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"

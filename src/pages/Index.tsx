@@ -122,13 +122,13 @@ const Index = ({
       <header className="relative z-10 h-screen flex items-end overflow-hidden">
         <div className="relative w-full max-w-6xl mx-auto px-4 sm:px-8 pb-16 sm:pb-20 lg:pb-28">
           <motion.p initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1, delay: 0.5 }} className="label-text !text-white/40 mb-10 tracking-[0.3em]">
-            Castle Companion
+            Castle Companion ✨
           </motion.p>
           <motion.h1 initial={{ opacity: 0, y: 50 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1.6, delay: 0.8, ease }} className="font-display text-white text-5xl sm:text-7xl md:text-8xl lg:text-[8rem] leading-[0.95] max-w-5xl">
             Welcome, <em className="italic" style={{ fontWeight: 400 }}>{guestName}</em>.
           </motion.h1>
           <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 1, delay: 1.4 }} className="font-editorial text-white/50 text-base sm:text-lg mt-10 max-w-md leading-relaxed tracking-[-0.005em]">
-            The realm is at rest. Your next chapter awaits.
+            The magic is waiting. Your family's next adventure begins here. 🏰
           </motion.p>
           <motion.div initial={{ scaleX: 0 }} animate={{ scaleX: 1 }} transition={{ duration: 1, delay: 1.8, ease }} className="mt-10 w-16 h-px bg-white/30 origin-left" />
         </div>
@@ -154,7 +154,7 @@ const Index = ({
           <div className="grid grid-cols-1 md:grid-cols-2 min-h-[70vh]">
             <div className="flex flex-col justify-center px-4 sm:px-8 lg:px-16 py-16 sm:py-20 lg:py-28">
               <motion.div {...slideLeft()}>
-                <p className="label-text !text-white/40 mb-10 tracking-[0.25em]" style={{ letterSpacing: '0.25em' }}>Your Booked Adventure</p>
+                <p className="label-text !text-white/40 mb-10 tracking-[0.25em]" style={{ letterSpacing: '0.25em' }}>Your Booked Adventure 🎉</p>
                 <h2 className="font-display text-4xl sm:text-5xl xl:text-6xl text-white leading-[1.08] mb-6">
                   {bookedTrip.destination}
                 </h2>
@@ -162,7 +162,7 @@ const Index = ({
                   {bookedTrip.tripName}
                 </p>
                 <p className="font-editorial text-base text-white/45 max-w-md leading-relaxed">
-                  Your {bookedTrip.countdownDays}-day countdown to {bookedTrip.destination} continues — a party of {bookedTrip.partySize}, {bookedTrip.todaysPark?.weather?.toLowerCase() || 'clear skies'} ahead.
+                  {bookedTrip.countdownDays} days until the fun begins! A party of {bookedTrip.partySize} — {bookedTrip.todaysPark?.weather?.toLowerCase() || 'clear skies'} ahead. 🌤️
                 </p>
               </motion.div>
               <motion.div {...slideLeft(0.2)} className="mt-14 flex gap-10 sm:gap-16 flex-wrap">
@@ -262,7 +262,7 @@ const Index = ({
                   <div className="bg-[hsl(var(--gold-dark))]/10 backdrop-blur-md rounded-lg p-5 h-full border border-[hsl(var(--gold))]/10 overflow-hidden">
                     <p className="label-text !text-[hsl(var(--gold-light))]/50 mb-3" style={{ fontSize: '0.625rem' }}>Time Reclaimed</p>
                     <p className="font-display text-3xl text-[hsl(var(--gold-light))] mb-1">{bookedTrip.timeReclaimed}</p>
-                    <p className="font-editorial text-xs text-white/35 mb-4 italic">Given back to your family.</p>
+                    <p className="font-editorial text-xs text-white/35 mb-4 italic">Given back to your family. 💛</p>
                     <div className="space-y-2">
                       {bookedTrip.ridesSaved.slice(0, 3).map((s) => (
                         <div key={s.rideName} className="flex items-center gap-2 overflow-hidden">
@@ -302,10 +302,11 @@ const Index = ({
       <section className="py-20 lg:py-28 bg-[hsl(var(--warm))]">
         <div className="max-w-6xl mx-auto px-4 sm:px-8 mb-12">
           <motion.div {...fade()}>
-            <p className="label-text mb-6 tracking-[0.25em]">Park Guide</p>
+            <p className="label-text mb-6 tracking-[0.25em]">Park Guide 🗺️</p>
             <h2 className="font-display text-4xl sm:text-5xl text-foreground leading-[1.08]">
               Know before you go.
             </h2>
+            <p className="font-editorial text-sm text-muted-foreground mt-3">Insider tips, crowd levels, and must-do's for the whole family.</p>
           </motion.div>
         </div>
         <div className="relative">
@@ -323,6 +324,7 @@ const Index = ({
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 1, delay: i * 0.12, ease }}
+                whileHover={{ y: -6 }}
                 className="flex-shrink-0 w-[300px] sm:w-[340px] group"
               >
                 <Link to={`/parks/${park.parkId}`}>
@@ -394,15 +396,15 @@ const Index = ({
               <div className="absolute bottom-0 left-0 right-0 px-6 sm:px-8 lg:px-12 pb-10 sm:pb-12">
                 <motion.div {...fade(0.1)}>
                   <p className="label-text !text-white/60 mb-4 tracking-[0.3em]">
-                    {futureTrips.length > 0 ? "Plan Your Next Trip" : "Plan Your First Trip"}
+                    {futureTrips.length > 0 ? "Plan Your Next Trip ✈️" : "Plan Your First Trip 🌟"}
                   </p>
                   <h3 className="font-display text-2xl sm:text-3xl lg:text-4xl text-white leading-[1.1] mb-3">
-                    {futureTrips.length > 0 ? "Where will the magic take you?" : "Your adventure starts here."}
+                    {futureTrips.length > 0 ? "Where will the magic take you next?" : "Your family adventure starts here."}
                   </h3>
                   <p className="font-editorial text-sm text-white/80 mb-6 max-w-sm">
                     {futureTrips.length > 0
                       ? `${futureTrips.length} trip${futureTrips.length > 1 ? "s" : ""} in the works — tap to explore dates, parks, and strategies.`
-                      : "Choose a destination and let us handle the rest."}
+                      : "Choose a destination and we'll help you plan every magical moment."}
                   </p>
                   <span className="inline-flex items-center gap-2 font-editorial text-sm text-white border-b border-white/50 pb-1 group-hover:border-white transition-all duration-500">
                     Start planning →
@@ -417,9 +419,9 @@ const Index = ({
         <div className="bg-[hsl(var(--warm))] border border-[hsl(var(--border))] rounded-lg shadow-soft hover:shadow-soft-hover transition-shadow duration-500 flex flex-col px-4 sm:px-6 lg:px-8 py-7 sm:py-8 h-auto md:h-[500px] overflow-hidden">
           <div className="shrink-0">
             <motion.div {...slideRight()}>
-              <p className="label-text mb-2 tracking-[0.3em]">The Inner Circle</p>
+              <p className="label-text mb-2 tracking-[0.3em]">The Inner Circle 👨‍👩‍👧‍👦</p>
               <h3 className="font-display text-2xl sm:text-3xl text-foreground leading-[1.1] mb-1">Your party</h3>
-              <p className="font-editorial text-sm text-muted-foreground mb-4">The crew that makes the magic happen.</p>
+              <p className="font-editorial text-sm text-muted-foreground mb-4">The crew that makes every trip unforgettable.</p>
             </motion.div>
           </div>
 
@@ -464,10 +466,11 @@ const Index = ({
       <section className="bg-[hsl(var(--warm))] py-16 sm:py-24 lg:py-32">
         <div className="max-w-6xl mx-auto px-4 sm:px-8">
           <motion.div {...fade()} className="mb-16 sm:mb-24">
-            <p className="label-text mb-6 sm:mb-8">The Digital Gallery</p>
+            <p className="label-text mb-6 sm:mb-8">The Digital Gallery 📸</p>
             <h2 className="font-display text-3xl sm:text-4xl lg:text-5xl text-foreground leading-[1.1]">
               Moments worth keeping. ✦
             </h2>
+            <p className="font-editorial text-sm text-muted-foreground mt-3 max-w-lg">Relive the laughs, the fireworks, and the ice cream faces.</p>
           </motion.div>
         </div>
 

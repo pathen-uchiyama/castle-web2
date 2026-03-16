@@ -42,7 +42,7 @@ const TripsHub = ({ bookedTrip, futureTrips }: TripsHubProps) => {
         <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-black/10" />
         <SparkleField count={6} />
         <div className="absolute bottom-0 left-0 right-0 px-8 lg:px-16 pb-8">
-          <motion.p {...fade()} className="label-text !text-white/40 mb-2 tracking-[0.3em]">Your Adventures</motion.p>
+          <motion.p {...fade()} className="label-text !text-white/40 mb-2 tracking-[0.3em]">Your Adventures ✨</motion.p>
           <motion.h1 {...fade(0.2)} className="font-display text-white text-3xl sm:text-5xl leading-[1.02]">Plan Your Trip</motion.h1>
         </div>
       </section>
@@ -50,7 +50,7 @@ const TripsHub = ({ bookedTrip, futureTrips }: TripsHubProps) => {
       {/* Active Trip Card */}
       <section className="px-8 lg:px-16 py-16 lg:py-24">
         <motion.div {...fade()}>
-          <p className="label-text mb-6">Active Adventure</p>
+          <p className="label-text mb-6">Active Adventure 🎒</p>
           <h2 className="font-display text-4xl sm:text-5xl text-foreground leading-[1.08] mb-4">Your trips at a glance.</h2>
           <div className="gold-rule mb-12" />
         </motion.div>
@@ -111,7 +111,7 @@ const TripsHub = ({ bookedTrip, futureTrips }: TripsHubProps) => {
         {/* Future Trips */}
         {futureTrips.length > 0 && (
           <motion.div {...fade(0.2)}>
-            <p className="label-text mb-6">On the Horizon</p>
+            <p className="label-text mb-6">On the Horizon 🌅</p>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
               {futureTrips.map((trip, i) => (
                 <motion.div key={trip.tripId} {...fade(0.25 + i * 0.1)} className="group border border-border bg-card overflow-hidden shadow-[var(--shadow-soft)] hover:shadow-[var(--shadow-hover)] transition-shadow duration-500 cursor-pointer">
@@ -144,11 +144,18 @@ const TripsHub = ({ bookedTrip, futureTrips }: TripsHubProps) => {
       {/* Plan New Adventure CTA */}
       <section className="py-16 sm:py-24 text-center bg-[hsl(var(--warm))]">
         <motion.div {...fade()}>
-          <p className="label-text mb-6">The Voyage Canvas</p>
+          <p className="label-text mb-6">The Voyage Canvas 🌍</p>
           <h2 className="font-display text-foreground leading-[1.08] mb-4" style={{ fontSize: "clamp(1.875rem, 5vw, 3rem)" }}>Plan a new adventure.</h2>
           <div className="gold-rule mx-auto mb-6" />
-          <p className="font-editorial text-sm text-muted-foreground max-w-md mx-auto mb-10">Launch the Strategy Wizard to architect your next perfect park day.</p>
-          <button onClick={() => setWizardOpen(true)} className="inline-flex items-center justify-center px-10 py-4 text-sm tracking-[0.15em] uppercase font-medium bg-foreground text-background border border-[hsl(var(--gold-dark))] transition-all duration-500 hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-ring">Initialize Your Journey</button>
+          <p className="font-editorial text-sm text-muted-foreground max-w-md mx-auto mb-10">Choose your destination, pick your dates, and we'll help your family make the most of every moment.</p>
+          <motion.button
+            onClick={() => setWizardOpen(true)}
+            whileHover={{ scale: 1.03 }}
+            whileTap={{ scale: 0.97 }}
+            className="inline-flex items-center justify-center px-10 py-4 rounded-lg text-sm tracking-[0.15em] uppercase font-medium bg-foreground text-background border border-[hsl(var(--gold-dark))] transition-all duration-500 hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-ring"
+          >
+            Start Your Journey ✨
+          </motion.button>
         </motion.div>
       </section>
 

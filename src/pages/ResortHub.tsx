@@ -357,7 +357,7 @@ const ResortHub = () => {
                           <p className="label-text mb-2">Insider Tips</p>
                           <div className="space-y-1">
                             {park.tips.map(tip => (
-                              <div key={tip} className="flex items-start gap-2 px-3 py-1.5 bg-muted/30 border border-border/50">
+                              <div key={tip} className="flex items-start gap-2 px-3 py-1.5 rounded-md bg-muted/30 border border-border/50">
                                 <span className="text-[0.5rem] mt-0.5">💡</span>
                                 <span className="font-editorial text-[0.6875rem] text-muted-foreground">{tip}</span>
                               </div>

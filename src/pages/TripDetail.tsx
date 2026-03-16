@@ -253,7 +253,7 @@ const AlertModal = ({ venueName, opensDate, onClose, onSetAlert }: AlertModalPro
           </div>
         </div>
         <div className="p-6 space-y-4">
-          <div className="border border-[hsl(var(--gold)/0.3)] bg-[hsl(var(--gold)/0.04)] p-4">
+          <div className="border border-[hsl(var(--gold)/0.3)] bg-[hsl(var(--gold)/0.04)] rounded-lg p-4">
             <p className="font-editorial text-sm text-foreground mb-1">Booking window opens:</p>
             <p className="font-display text-xl text-foreground">{opensDate || "TBD"}</p>
             <p className="font-editorial text-xs text-muted-foreground mt-2">We'll remind you to book at 6 AM ET on this date.</p>

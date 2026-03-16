@@ -846,7 +846,7 @@ const MemoriesTripDetail = ({ memory, allMemories, onBack }: MemoriesTripDetailP
           {activeTab === "vault" && <DayCarousel memory={memory} />}
 
           {activeTab === "echoes" && <AudioEcho />}
-          {activeTab === "joy" && <JoyBlueprint tripMemories={[memory]} />}
+          {activeTab === "joy" && <JoyBlueprint tripMemories={allMemories} />}
         </>
       )}
     </>

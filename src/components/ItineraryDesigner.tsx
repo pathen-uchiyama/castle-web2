@@ -971,7 +971,7 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
 
                           <div className="flex items-start gap-2 mb-3 px-3 py-2 bg-[#F9F7F2] border border-[hsl(var(--border))]/40" style={{ borderRadius: 0 }}>
                             <Info className="w-3 h-3 text-[hsl(var(--gold-dark))] shrink-0 mt-0.5" />
-                            <p className="font-sans text-[0.6875rem] text-[hsl(var(--ink))] italic" style={{ letterSpacing: "-0.02em" }}>{attraction.notableInsight}</p>
+                            <p className="font-sans text-xs text-[hsl(var(--ink))] italic" style={{ letterSpacing: "-0.02em" }}>{attraction.notableInsight}</p>
                           </div>
 
                           <div className="grid grid-cols-2 gap-2 mb-3">

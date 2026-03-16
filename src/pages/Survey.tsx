@@ -157,7 +157,7 @@ const Survey = () => {
                       <motion.div
                         key={attraction.attractionId}
                         {...fade(i * 0.03)}
-                        className="border border-border p-6 bg-card hover:shadow-[var(--shadow-soft)] transition-shadow duration-500"
+                        className="border border-border rounded-lg p-6 bg-card hover:shadow-[var(--shadow-soft)] transition-shadow duration-500"
                       >
                         <div className="flex flex-col sm:flex-row sm:items-start gap-4">
                           <div className="flex-1 min-w-0">

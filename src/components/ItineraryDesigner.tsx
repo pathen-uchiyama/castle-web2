@@ -1,6 +1,6 @@
 import { motion, AnimatePresence } from "framer-motion";
-import { useState, useMemo } from "react";
-import { ChevronDown, Plus, X, Search, Star, Lock, Unlock, Sparkles, AlertTriangle, Clock, Ruler, Zap, Shield, Info } from "lucide-react";
+import { useState, useMemo, useCallback } from "react";
+import { ChevronDown, Plus, X, Search, Star, Lock, Unlock, Sparkles, AlertTriangle, Clock, Ruler, Zap, Shield, Info, GripVertical, Utensils, Ticket } from "lucide-react";
 import type { BookedTrip, PartyMember, DiningReservation, BookedExperience } from "@/data/types";
 import {
   allParkAttractions, parkLabels, typeLabels, llLabels, waitLabels,

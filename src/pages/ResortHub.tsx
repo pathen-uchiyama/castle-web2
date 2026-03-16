@@ -193,7 +193,7 @@ const ResortHub = () => {
               <p className="font-editorial text-lg text-foreground/80 leading-relaxed max-w-3xl mb-8">{resort.description}</p>
               <div className="flex flex-wrap gap-2 mb-12">
                 {resort.knownFor.map(item => (
-                  <span key={item} className="px-3 py-1.5 text-[0.5625rem] uppercase tracking-[0.1em] bg-[hsl(var(--gold)/0.08)] text-[hsl(var(--gold-dark))] border border-[hsl(var(--gold)/0.2)]">{item}</span>
+                  <span key={item} className="px-3 py-1.5 rounded-md text-[0.5625rem] uppercase tracking-[0.1em] bg-[hsl(var(--gold)/0.08)] text-[hsl(var(--gold-dark))] border border-[hsl(var(--gold)/0.2)]">{item}</span>
                 ))}
               </div>
             </motion.div>

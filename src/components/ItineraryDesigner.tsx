@@ -502,7 +502,7 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
           startTime: timeStr,
           duration: parseInt(attraction.duration) || 15,
           waitTime: estWait,
-          walkTime: 8,
+          walkTime: walkTimeEstimate,
           llType: attraction.llType,
           waitCategory: attraction.waitCategory,
         }]);

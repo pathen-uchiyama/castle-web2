@@ -119,7 +119,7 @@ const ParkGuidePage = ({ parkGuides }: ParkGuidePageProps) => {
         <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
         <div className="absolute bottom-0 left-0 right-0 px-8 lg:px-16 pb-10">
           <motion.div {...fade()}>
-            <p className="label-text !text-white/40 mb-3 tracking-[0.3em]">{park.resortName}</p>
+            <p className="label-text !text-white/60 mb-3 tracking-[0.3em]">{park.resortName}</p>
             <h1 className="font-display text-white text-4xl sm:text-6xl leading-[1.02]">{park.parkName}</h1>
           </motion.div>
         </div>

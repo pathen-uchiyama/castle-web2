@@ -121,13 +121,13 @@ const Index = ({
       {/* Hero text — scrolls with the page */}
       <header className="relative z-10 h-screen flex items-end overflow-hidden">
         <div className="relative w-full max-w-6xl mx-auto px-4 sm:px-8 pb-16 sm:pb-20 lg:pb-28">
-          <motion.p initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1, delay: 0.5 }} className="label-text !text-white/40 mb-10 tracking-[0.3em]">
+          <motion.p initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1, delay: 0.5 }} className="label-text !text-white/60 mb-10 tracking-[0.3em]">
             Castle Companion ✨
           </motion.p>
           <motion.h1 initial={{ opacity: 0, y: 50 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1.6, delay: 0.8, ease }} className="font-display text-white text-5xl sm:text-7xl md:text-8xl lg:text-[8rem] leading-[0.95] max-w-5xl">
             Welcome, <em className="italic" style={{ fontWeight: 400 }}>{guestName}</em>.
           </motion.h1>
-          <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 1, delay: 1.4 }} className="font-editorial text-white/50 text-base sm:text-lg mt-10 max-w-md leading-relaxed tracking-[-0.005em]">
+          <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 1, delay: 1.4 }} className="font-editorial text-white/60 text-base sm:text-lg mt-10 max-w-md leading-relaxed tracking-[-0.005em]">
             The magic is waiting. Your family's next adventure begins here. 🏰
           </motion.p>
           <motion.div initial={{ scaleX: 0 }} animate={{ scaleX: 1 }} transition={{ duration: 1, delay: 1.8, ease }} className="mt-10 w-16 h-px bg-white/30 origin-left" />
@@ -154,14 +154,14 @@ const Index = ({
           <div className="grid grid-cols-1 md:grid-cols-2 min-h-[70vh]">
             <div className="flex flex-col justify-center px-4 sm:px-8 lg:px-16 py-16 sm:py-20 lg:py-28">
               <motion.div {...slideLeft()}>
-                <p className="label-text !text-white/40 mb-10 tracking-[0.25em]" style={{ letterSpacing: '0.25em' }}>Your Booked Adventure 🎉</p>
+                <p className="label-text !text-white/60 mb-10 tracking-[0.25em]" style={{ letterSpacing: '0.25em' }}>Your Booked Adventure 🎉</p>
                 <h2 className="font-display text-4xl sm:text-5xl xl:text-6xl text-white leading-[1.08] mb-6">
                   {bookedTrip.destination}
                 </h2>
-                <p className="font-display text-2xl sm:text-3xl text-white/50 leading-[1.2] mb-8">
+                <p className="font-display text-2xl sm:text-3xl text-white/60 leading-[1.2] mb-8">
                   {bookedTrip.tripName}
                 </p>
-                <p className="font-editorial text-base text-white/45 max-w-md leading-relaxed">
+                <p className="font-editorial text-base text-white/60 max-w-md leading-relaxed">
                   {bookedTrip.countdownDays} days until the fun begins! A party of {bookedTrip.partySize} — {bookedTrip.todaysPark?.weather?.toLowerCase() || 'clear skies'} ahead. 🌤️
                 </p>
               </motion.div>
@@ -171,7 +171,7 @@ const Index = ({
                   { label: "Party", value: String(bookedTrip.partySize) },
                 ].map((d) => (
                   <div key={d.label}>
-                    <p className="label-text !text-white/30 mb-2" style={{ fontSize: '0.625rem', letterSpacing: '0.2em' }}>{d.label}</p>
+                    <p className="label-text !text-white/50 mb-2" style={{ fontSize: '0.625rem', letterSpacing: '0.2em' }}>{d.label}</p>
                     <p className="font-display text-3xl sm:text-4xl text-white">{d.value}</p>
                   </div>
                 ))}
@@ -220,11 +220,11 @@ const Index = ({
                     className="flex-shrink-0 w-[260px] sm:w-[300px] group cursor-pointer"
                   >
                      <div className="bg-white/10 backdrop-blur-md rounded-lg p-5 h-full hover:bg-white/15 transition-colors duration-500 overflow-hidden">
-                      <p className="label-text !text-white/35 mb-3" style={{ fontSize: '0.625rem' }}>{leg.date}</p>
+                      <p className="label-text !text-white/50 mb-3" style={{ fontSize: '0.625rem' }}>{leg.date}</p>
                       <p className="font-display text-lg text-white mb-1 truncate">{leg.legName}</p>
-                      <p className="font-editorial text-sm text-white/40 mb-5" style={{ fontSize: '0.75rem', letterSpacing: '-0.02em' }}>{leg.time}</p>
+                      <p className="font-editorial text-sm text-white/55 mb-5" style={{ fontSize: '0.75rem', letterSpacing: '-0.02em' }}>{leg.time}</p>
                       <div className="gold-rule mb-3" />
-                      <p className="font-editorial text-xs text-white/30 italic group-hover:text-white/50 transition-colors duration-500 line-clamp-2">{leg.note}</p>
+                      <p className="font-editorial text-xs text-white/45 italic group-hover:text-white/60 transition-colors duration-500 line-clamp-2">{leg.note}</p>
                     </div>
                   </motion.div>
                 ))}
@@ -237,18 +237,18 @@ const Index = ({
                 >
                   <Link to={`/trip/${bookedTrip.tripId}`}>
                     <div className="bg-white/10 backdrop-blur-md rounded-lg p-5 h-full hover:bg-white/15 transition-colors duration-500 overflow-hidden">
-                      <p className="label-text !text-white/35 mb-3" style={{ fontSize: '0.625rem' }}>Preparations</p>
+                      <p className="label-text !text-white/50 mb-3" style={{ fontSize: '0.625rem' }}>Preparations</p>
                       <p className="font-display text-lg text-white mb-3">Packing</p>
                       <div className="space-y-2 mb-5">
                         {bookedTrip.packingLists.map((list) => (
                           <div key={list.category} className="flex justify-between items-center">
-                            <p className="font-editorial text-sm text-white/50 truncate mr-3">{list.category}</p>
-                            <p className="label-text !text-white/25 shrink-0" style={{ fontSize: '0.6rem' }}>{list.packedCount}/{list.totalCount}</p>
+                            <p className="font-editorial text-sm text-white/60 truncate mr-3">{list.category}</p>
+                            <p className="label-text !text-white/40 shrink-0" style={{ fontSize: '0.6rem' }}>{list.packedCount}/{list.totalCount}</p>
                           </div>
                         ))}
                       </div>
                       <div className="gold-rule mb-3" />
-                      <p className="font-editorial text-xs text-white/30 italic group-hover:text-white/50 transition-colors duration-500">Review list →</p>
+                      <p className="font-editorial text-xs text-white/45 italic group-hover:text-white/60 transition-colors duration-500">Review list →</p>
                     </div>
                   </Link>
                 </motion.div>
@@ -262,12 +262,12 @@ const Index = ({
                   <div className="bg-[hsl(var(--gold-dark))]/10 backdrop-blur-md rounded-lg p-5 h-full border border-[hsl(var(--gold))]/10 overflow-hidden">
                     <p className="label-text !text-[hsl(var(--gold-light))]/50 mb-3" style={{ fontSize: '0.625rem' }}>Time Reclaimed</p>
                     <p className="font-display text-3xl text-[hsl(var(--gold-light))] mb-1">{bookedTrip.timeReclaimed}</p>
-                    <p className="font-editorial text-xs text-white/35 mb-4 italic">Given back to your family. 💛</p>
+                    <p className="font-editorial text-xs text-white/50 mb-4 italic">Given back to your family. 💛</p>
                     <div className="space-y-2">
                       {bookedTrip.ridesSaved.slice(0, 3).map((s) => (
                         <div key={s.rideName} className="flex items-center gap-2 overflow-hidden">
                           <span className="text-xs opacity-40 shrink-0">{s.emoji}</span>
-                          <p className="font-editorial text-xs text-white/50 truncate" style={{ letterSpacing: '-0.02em' }}>{s.minutesSaved} · {s.rideName}</p>
+                          <p className="font-editorial text-xs text-white/55 truncate" style={{ letterSpacing: '-0.02em' }}>{s.minutesSaved} · {s.rideName}</p>
                         </div>
                       ))}
                     </div>
@@ -336,25 +336,25 @@ const Index = ({
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent" />
                     <div className="absolute bottom-0 left-0 right-0 p-6">
-                      <p className="label-text !text-white/60 mb-2 tracking-[0.2em]">{park.resortName}</p>
+                      <p className="label-text !text-white/70 mb-2 tracking-[0.2em]">{park.resortName}</p>
                       <h3 className="font-display text-2xl text-white mb-4 group-hover:text-[hsl(var(--gold-light))] transition-colors duration-500">{park.parkName}</h3>
                       <div className="space-y-2 mb-4">
                         <div className="flex justify-between items-center">
-                          <p className="label-text !text-white/50">Weather</p>
+                          <p className="label-text !text-white/60">Weather</p>
                           <p className="font-editorial text-sm text-white/90">{park.todayWeather}</p>
                         </div>
                         <div className="flex justify-between items-center">
-                          <p className="label-text !text-white/50">Crowds</p>
+                          <p className="label-text !text-white/60">Crowds</p>
                           <p className="font-editorial text-sm text-white/90">{park.todayCrowdLevel}</p>
                         </div>
                         <div className="flex justify-between items-center">
-                          <p className="label-text !text-white/50">Hours</p>
+                          <p className="label-text !text-white/60">Hours</p>
                           <p className="font-editorial text-sm text-white/90">{park.operatingHours.regular}</p>
                         </div>
                       </div>
                       <div className="flex gap-3 flex-wrap">
                         {park.categories.slice(0, 3).map((c) => (
-                          <span key={c.label} className="label-text !text-white/40 text-[0.6rem]">{c.label} · {c.itemCount}</span>
+                          <span key={c.label} className="label-text !text-white/50 text-[0.6rem]">{c.label} · {c.itemCount}</span>
                         ))}
                       </div>
                     </div>

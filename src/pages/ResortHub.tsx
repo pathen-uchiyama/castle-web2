@@ -138,26 +138,26 @@ const ResortHub = () => {
       {/* Hero */}
       <section className="relative bg-foreground text-background px-8 lg:px-16 pt-32 pb-16">
         <motion.div {...fade()}>
-          <Link to="/guides" className="inline-flex items-center gap-1.5 text-background/40 hover:text-background/70 transition-colors mb-6 text-[0.625rem] uppercase tracking-[0.2em]">
+          <Link to="/guides" className="inline-flex items-center gap-1.5 text-background/60 hover:text-background/80 transition-colors mb-6 text-[0.625rem] uppercase tracking-[0.2em]">
             <ArrowLeft className="w-3 h-3" /> All Resorts
           </Link>
-          <p className="text-[0.625rem] uppercase tracking-[0.3em] text-background/50 mb-4">Resort Guide 🗺️</p>
+          <p className="text-[0.625rem] uppercase tracking-[0.3em] text-background/70 mb-4">Resort Guide 🗺️</p>
           <h1 className="font-display text-5xl sm:text-6xl lg:text-7xl leading-[1.05] mb-4">{resort.name}</h1>
-          <p className="font-editorial text-lg text-background/60 max-w-2xl mb-6">{resort.tagline} · {resort.location}</p>
+          <p className="font-editorial text-lg text-background/70 max-w-2xl mb-6">{resort.tagline} · {resort.location}</p>
           <div className="flex flex-wrap gap-3">
-            <span className="px-3 py-1.5 rounded-md text-[0.5625rem] uppercase tracking-[0.12em] border border-background/20 text-background/70">📍 {resort.size}</span>
-            <span className="px-3 py-1.5 rounded-md text-[0.5625rem] uppercase tracking-[0.12em] border border-background/20 text-background/70">🗓 Est. {resort.opened}</span>
-            <span className="px-3 py-1.5 rounded-md text-[0.5625rem] uppercase tracking-[0.12em] border border-background/20 text-background/70">
+            <span className="px-3 py-1.5 rounded-md text-[0.5625rem] uppercase tracking-[0.12em] border border-background/25 text-background/80">📍 {resort.size}</span>
+            <span className="px-3 py-1.5 rounded-md text-[0.5625rem] uppercase tracking-[0.12em] border border-background/25 text-background/80">🗓 Est. {resort.opened}</span>
+            <span className="px-3 py-1.5 rounded-md text-[0.5625rem] uppercase tracking-[0.12em] border border-background/25 text-background/80">
               🏰 {data.parks.filter(p => p.type === "theme-park").length} Theme Parks{data.parks.filter(p => p.type === "water-park").length > 0 ? ` · ${data.parks.filter(p => p.type === "water-park").length} Water Parks` : ""}
             </span>
-            <span className="px-3 py-1.5 rounded-md text-[0.5625rem] uppercase tracking-[0.12em] border border-background/20 text-background/70">🏨 {data.hotels.length} Resort Hotels</span>
+            <span className="px-3 py-1.5 rounded-md text-[0.5625rem] uppercase tracking-[0.12em] border border-background/25 text-background/80">🏨 {data.hotels.length} Resort Hotels</span>
           </div>
           {/* Resort switcher */}
           <div className="mt-6 flex gap-2">
             {["wdw", "dlr"].map(rid => (
               <Link key={rid} to={`/resort/${rid}`}
                 className={`px-4 py-2 rounded-md text-[0.5625rem] uppercase tracking-[0.12em] border transition-all ${
-                  resortId === rid ? "bg-background text-foreground border-background" : "text-background/40 border-background/20 hover:text-background/70 hover:border-background/40"
+                  resortId === rid ? "bg-background text-foreground border-background" : "text-background/60 border-background/25 hover:text-background/80 hover:border-background/50"
                 }`}>
                 {rid === "wdw" ? "Walt Disney World" : "Disneyland Resort"}
               </Link>

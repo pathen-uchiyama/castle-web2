@@ -945,6 +945,27 @@ const BookedTripDetail = ({ trip }: { trip: BookedTrip }) => {
 
           {experienceSubTab === "reservations" && (
             <>
+              {/* Overlap warning banner */}
+              {hasAnyOverlaps && allBookedExperiences.some(e => overlapMap[e.experienceId]) && (
+                <motion.div {...fade(0.02)} className="mb-6 border border-[hsl(var(--destructive)/0.25)] bg-[hsl(var(--destructive)/0.04)] p-4">
+                  <div className="flex items-start gap-3">
+                    <span className="text-lg shrink-0">⚠️</span>
+                    <div>
+                      <p className="font-display text-sm text-destructive mb-1">Overlapping Bookings Detected</p>
+                      <p className="font-editorial text-xs text-muted-foreground leading-relaxed mb-2">
+                        Some of your experience bookings overlap in time. If you're holding options to decide later, be sure to cancel the unused ones before the deadline.
+                      </p>
+                      <div className="border-t border-[hsl(var(--destructive)/0.15)] pt-2 mt-2">
+                        <p className="font-display text-[0.625rem] text-destructive uppercase tracking-[0.1em] mb-1">💰 Disney No-Show Fee Policy</p>
+                        <p className="font-editorial text-[0.6875rem] text-muted-foreground leading-relaxed">
+                          Premium experiences (Savi's Workshop, Bibbidi Bobbidi Boutique, etc.) charge <strong className="text-foreground">$10–$50 per person</strong> for no-shows. Most require cancellation at least <strong className="text-foreground">24 hours in advance</strong>. Standard recreation bookings typically require <strong className="text-foreground">1–2 hours notice</strong>.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </motion.div>
+              )}
+
               {/* Status summary bar */}
               <motion.div {...fade(0.05)} className="flex gap-3 mb-10">
                 {(["confirmed", "pending", "cancelled"] as const).map((status) => {

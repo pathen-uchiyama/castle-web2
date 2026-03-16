@@ -328,43 +328,46 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
           GROUP MEMBERS — collapsible
          ═══════════════════════════════════════════════════════════════ */}
       <Collapsible open={groupOpen} onOpenChange={setGroupOpen}>
-        <div className="border-y border-border/60 bg-card">
-          <CollapsibleTrigger className="w-full px-6 lg:px-10 py-2.5 flex items-center justify-between hover:bg-[hsl(var(--warm))] transition-colors duration-200">
-            <div className="flex items-center gap-3">
-              <p className="text-[0.5625rem] uppercase tracking-[0.15em] text-muted-foreground font-medium">Adventure Group</p>
-              <div className="flex -space-x-1">
+        <div className="border-y border-border bg-card shadow-soft">
+          <CollapsibleTrigger className="w-full px-6 lg:px-10 py-3.5 flex items-center justify-between hover:bg-[hsl(var(--warm))] transition-colors duration-200">
+            <div className="flex items-center gap-4">
+              <p className="label-text !text-foreground font-medium">Adventure Group</p>
+              <div className="flex -space-x-1.5">
                 {partyMembers.filter(m => groupMembers.includes(m.memberId)).map(m => (
-                  <div key={m.memberId} className="w-5 h-5 flex items-center justify-center text-[0.45rem] font-medium bg-foreground text-background border border-background">
+                  <div key={m.memberId} className="w-7 h-7 flex items-center justify-center text-[0.5625rem] font-medium bg-foreground text-background border-2 border-card shadow-soft">
                     {m.initial}
                   </div>
                 ))}
               </div>
-              <span className="text-[0.5rem] text-muted-foreground">{groupMembers.length} going</span>
+              <span className="font-editorial text-xs text-muted-foreground">{groupMembers.length} of {partyMembers.length} going today</span>
             </div>
-            <ChevronDown className={`w-3 h-3 text-muted-foreground transition-transform duration-300 ${groupOpen ? "rotate-180" : ""}`} />
+            <ChevronDown className={`w-4 h-4 text-muted-foreground transition-transform duration-300 ${groupOpen ? "rotate-180" : ""}`} />
           </CollapsibleTrigger>
           <CollapsibleContent>
-            <div className="px-6 lg:px-10 pb-3">
-              <div className="flex flex-wrap gap-2">
+            <div className="px-6 lg:px-10 pb-4 pt-1 border-t border-border/50">
+              <div className="flex flex-wrap gap-2.5">
                 {partyMembers.map(member => {
                   const isAdded = groupMembers.includes(member.memberId);
                   return (
                     <button key={member.memberId} onClick={() => toggleGroupMember(member.memberId)}
-                      className={`flex items-center gap-2 px-3 py-1.5 border transition-all duration-300 ${
+                      className={`flex items-center gap-2.5 px-4 py-2.5 border transition-all duration-300 shadow-soft ${
                         isAdded
                           ? "border-[hsl(var(--gold)/0.4)] bg-[hsl(var(--gold)/0.06)]"
-                          : "border-border hover:border-foreground/20 opacity-40"
+                          : "border-border bg-muted/50 hover:border-foreground/20 opacity-50"
                       }`}>
-                      <div className={`w-5 h-5 flex items-center justify-center text-[0.5rem] font-medium ${
+                      <div className={`w-7 h-7 flex items-center justify-center text-[0.5625rem] font-medium ${
                         isAdded ? "bg-foreground text-background" : "bg-muted text-muted-foreground"
                       }`}>{member.initial}</div>
-                      <span className="font-display text-xs text-foreground">{member.name}</span>
+                      <div className="text-left">
+                        <span className="font-display text-sm text-foreground block leading-tight">{member.name}</span>
+                        <span className="text-[0.5rem] text-muted-foreground">{member.role}</span>
+                      </div>
                     </button>
                   );
                 })}
-                <button className="flex items-center gap-1 px-3 py-1.5 border border-dashed border-border text-muted-foreground hover:border-foreground/30 transition-all duration-300">
-                  <Plus className="w-3 h-3" />
-                  <span className="text-[0.5rem] uppercase tracking-[0.1em]">Invite</span>
+                <button className="flex items-center gap-2 px-4 py-2.5 border border-dashed border-border text-muted-foreground hover:border-foreground/30 transition-all duration-300">
+                  <Plus className="w-3.5 h-3.5" />
+                  <span className="text-[0.5625rem] uppercase tracking-[0.1em]">Invite</span>
                 </button>
               </div>
             </div>
@@ -480,11 +483,22 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
 
                         {/* Walk connector */}
                         {item.walkTime && idx < itinerary.length - 1 && (
-                          <div className="flex items-center gap-1 pl-1.5 py-0.5">
-                            <div className="h-px w-2 bg-border" />
-                            <span className="text-[0.375rem] text-muted-foreground/40 uppercase tracking-[0.08em]">
-                              {item.walkTime}m walk{item.waitTime ? ` · ${item.waitTime}m wait` : ""}
-                            </span>
+                          <div className="flex items-center gap-2 pl-2 py-1.5">
+                            <div className="w-4 h-px bg-muted-foreground/20" />
+                            <div className="flex items-center gap-1.5 px-2 py-0.5 bg-muted/80 border border-border/50">
+                              <span className="text-[0.5rem]">🚶</span>
+                              <span className="text-[0.5625rem] text-muted-foreground font-medium tracking-wide">
+                                {item.walkTime} min walk
+                              </span>
+                              {item.waitTime && (
+                                <>
+                                  <span className="text-muted-foreground/30">·</span>
+                                  <span className="text-[0.5625rem] text-foreground font-medium tracking-wide">
+                                    {item.waitTime} min wait
+                                  </span>
+                                </>
+                              )}
+                            </div>
                           </div>
                         )}
                       </div>

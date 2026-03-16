@@ -833,22 +833,26 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
 
               return (
                 <div key={item.id} className="absolute left-[60px] right-2" style={{ top: `${topPx}px`, zIndex: isDragging ? 50 : 10 }}
-                  onDragOver={(e) => { e.preventDefault(); e.stopPropagation(); handleTimelineDragOver(e); }}
-                  onDrop={(e) => { e.stopPropagation(); handleTimelineDrop(e); }}
+                  onDragOver={(e) => { e.preventDefault(); e.dataTransfer.dropEffect = "move"; handleTimelineDragOver(e); }}
+                  onDrop={(e) => { e.preventDefault(); e.stopPropagation(); handleTimelineDrop(e); }}
                 >
                   {/* ── Activity block ───────────────────────────── */}
                   <div
                     draggable={!isLocked && !isBooked}
                     onDragStart={(e) => {
-                      if (isLocked || isBooked) return;
+                      if (isLocked || isBooked) { e.preventDefault(); return; }
                       e.dataTransfer.setData("timelineItemId", item.id);
                       e.dataTransfer.effectAllowed = "move";
+                      // Set a drag image to make drag feel responsive
+                      if (e.currentTarget) {
+                        e.dataTransfer.setDragImage(e.currentTarget, 20, 20);
+                      }
                       setDraggingItemId(item.id);
                       setDragIdx(globalIdx);
                     }}
                     onDragEnd={handleDragEnd}
                     style={{ minHeight: `${activityHeight}px` }}
-                    className={`group border-l-[3px] border px-3 py-2 transition-all duration-200 shadow-soft overflow-hidden ${
+                    className={`group select-none border-l-[3px] border px-3 py-2 transition-all duration-200 shadow-soft overflow-hidden ${
                       isDragging ? "opacity-40 scale-95" : ""
                     } ${isDragOver ? "ring-1 ring-[hsl(var(--gold))]" : ""} ${
                       overlaps ? "ring-2 ring-destructive/60 border-destructive/40" : ""
@@ -862,7 +866,7 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
                         : item.isConfirmed
                         ? "bg-[hsl(var(--gold)/0.04)] border-[hsl(var(--gold)/0.3)] border-l-[hsl(var(--gold))]"
                         : "bg-background border-border border-l-foreground/40"
-                    } ${!isLocked && !isBooked ? "hover:shadow-soft-hover cursor-grab" : ""}`}
+                    } ${!isLocked && !isBooked ? "hover:shadow-soft-hover cursor-grab active:cursor-grabbing" : ""}`}
                   >
                     {/* Overlap warning banner */}
                     {overlaps && (

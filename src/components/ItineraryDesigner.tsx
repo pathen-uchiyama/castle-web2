@@ -247,7 +247,11 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
     return h * 60 + min;
   };
 
-  // Build scheduled items map (hour → items)
+  /** Total time an item actually consumes (wait + experience + travel) */
+  const totalItemTime = (item: ItineraryItem) =>
+    (item.waitTime || 0) + item.duration + (item.walkTime || 0);
+
+  // Build scheduled items map (hour → items) with total time per hour
   const scheduledByHour = useMemo(() => {
     const map: Record<number, ItineraryItem[]> = {};
     itinerary.forEach(item => {
@@ -260,6 +264,13 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
     });
     return map;
   }, [itinerary]);
+
+  /** Compute the total minutes consumed in an hour slot */
+  const hourSlotMinutes = (hourValue: number) => {
+    const items = scheduledByHour[hourValue] || [];
+    if (items.length === 0) return 0;
+    return items.reduce((sum, item) => sum + totalItemTime(item), 0);
+  };
 
   // Unscheduled items (no start time)
   const unscheduledItems = useMemo(() => itinerary.filter(i => !i.startTime), [itinerary]);

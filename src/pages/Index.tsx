@@ -465,10 +465,11 @@ const Index = ({
       <section className="bg-[hsl(var(--warm))] py-16 sm:py-24 lg:py-32">
         <div className="max-w-6xl mx-auto px-4 sm:px-8">
           <motion.div {...fade()} className="mb-16 sm:mb-24">
-            <p className="label-text mb-6 sm:mb-8">The Digital Gallery</p>
+            <p className="label-text mb-6 sm:mb-8">The Digital Gallery 📸</p>
             <h2 className="font-display text-3xl sm:text-4xl lg:text-5xl text-foreground leading-[1.1]">
               Moments worth keeping. ✦
             </h2>
+            <p className="font-editorial text-sm text-muted-foreground mt-3 max-w-lg">Relive the laughs, the fireworks, and the ice cream faces.</p>
           </motion.div>
         </div>
 

@@ -110,7 +110,7 @@ const DayZeroIndex = () => {
               } as React.CSSProperties}
             >
               <span className="relative z-10 font-medium" style={{ fontFamily: "Inter, system-ui, sans-serif" }}>
-                Initialize Your First Journey
+                Plan Your First Adventure 🏰
               </span>
               <div
                 className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"

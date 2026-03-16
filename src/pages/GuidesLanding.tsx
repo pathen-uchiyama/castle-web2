@@ -56,10 +56,16 @@ const GuidesLanding = () => (
           <motion.div key={resort.id} {...fade(0.05 + i * 0.08)}>
             <Link
               to={`/resort/${resort.id}`}
-              className="block rounded-lg border border-border bg-card p-8 lg:p-10 shadow-[var(--shadow-soft)] hover:shadow-[var(--shadow-hover)] transition-all duration-500 group"
+              className="block rounded-lg border border-border bg-card p-8 lg:p-10 shadow-[var(--shadow-soft)] hover:shadow-[var(--shadow-hover)] transition-all duration-500 group hover:-translate-y-1"
             >
               <div className="flex items-center gap-4 mb-4">
-                <span className="text-4xl">{resort.icon}</span>
+                <motion.span
+                  className="text-4xl"
+                  whileHover={{ rotate: [0, -10, 10, -5, 0], scale: 1.15 }}
+                  transition={{ duration: 0.5 }}
+                >
+                  {resort.icon}
+                </motion.span>
                 <div>
                   <h2 className="font-display text-3xl text-foreground group-hover:text-[hsl(var(--gold-dark))] transition-colors duration-500">
                     {resort.name}
@@ -71,11 +77,19 @@ const GuidesLanding = () => (
               <p className="font-editorial text-sm text-foreground/80 leading-relaxed mb-6">{resort.description}</p>
 
               <div className="flex flex-wrap gap-2 mb-6">
-                {resort.stats.map(stat => (
-                  <span key={stat} className="px-3 py-1.5 rounded-md text-[0.5625rem] uppercase tracking-[0.1em] bg-[hsl(var(--gold)/0.08)] text-[hsl(var(--gold-dark))] border border-[hsl(var(--gold)/0.2)]">
-                    {stat}
-                  </span>
-                ))}
+                {resort.stats.map((stat, si) => {
+                  const colors = [
+                    "bg-[hsl(var(--coral)/0.1)] text-[hsl(var(--coral))] border-[hsl(var(--coral)/0.25)]",
+                    "bg-[hsl(var(--sky)/0.1)] text-[hsl(var(--sky))] border-[hsl(var(--sky)/0.25)]",
+                    "bg-[hsl(var(--mint)/0.1)] text-[hsl(var(--mint))] border-[hsl(var(--mint)/0.25)]",
+                    "bg-[hsl(var(--lavender)/0.1)] text-[hsl(var(--lavender))] border-[hsl(var(--lavender)/0.25)]",
+                  ];
+                  return (
+                    <span key={stat} className={`px-3 py-1.5 rounded-md text-[0.5625rem] uppercase tracking-[0.1em] border ${colors[si % colors.length]}`}>
+                      {stat}
+                    </span>
+                  );
+                })}
               </div>
 
               <div className="flex items-center gap-6 text-muted-foreground">

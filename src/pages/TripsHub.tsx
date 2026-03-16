@@ -111,7 +111,7 @@ const TripsHub = ({ bookedTrip, futureTrips }: TripsHubProps) => {
         {/* Future Trips */}
         {futureTrips.length > 0 && (
           <motion.div {...fade(0.2)}>
-            <p className="label-text mb-6">On the Horizon</p>
+            <p className="label-text mb-6">On the Horizon 🌅</p>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
               {futureTrips.map((trip, i) => (
                 <motion.div key={trip.tripId} {...fade(0.25 + i * 0.1)} className="group border border-border bg-card overflow-hidden shadow-[var(--shadow-soft)] hover:shadow-[var(--shadow-hover)] transition-shadow duration-500 cursor-pointer">

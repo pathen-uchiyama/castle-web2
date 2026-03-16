@@ -466,13 +466,141 @@ const slideVariants = {
   }),
 };
 
+/* ═══════════════════════════════════════════════════════════════
+ * TRIP WRAP-UP — final carousel slide with joy report + favorites
+ * ═══════════════════════════════════════════════════════════════ */
+const tripJoyStats = [
+  { icon: "🎢", title: "Thrill Champion", note: "23 attractions — 8 more than average." },
+  { icon: "🍦", title: "Snack Connoisseur", note: "12 unique snacks discovered." },
+  { icon: "📸", title: "Memory Maker", note: "247 photos, castle sunset most-loved." },
+  { icon: "⚡", title: "Wait-Time Wizard", note: "Saved 4h 35m in queue time." },
+];
+
+const TripWrapUpSlide = ({ memory }: { memory: TripMemory }) => (
+  <div className="space-y-12">
+    {/* Joy summary header */}
+    <div className="text-center">
+      <div className="w-8 h-px mx-auto mb-6" style={{ backgroundColor: "#947120" }} />
+      <p className="mb-2 uppercase tracking-[0.2em] text-muted-foreground" style={{ fontFamily: "Inter, system-ui, sans-serif", fontSize: "0.6875rem", fontWeight: 400 }}>
+        Trip Complete
+      </p>
+      <h2 className="font-display text-4xl sm:text-5xl text-foreground leading-[1.08] mb-3">
+        The Story in Numbers
+      </h2>
+      <p className="text-muted-foreground max-w-md mx-auto" style={{ fontFamily: "Inter, system-ui, sans-serif", fontSize: "0.875rem", letterSpacing: "-0.02em" }}>
+        Four days of magic, distilled.
+      </p>
+    </div>
+
+    {/* Joy highlights grid */}
+    <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+      {tripJoyStats.map((stat) => (
+        <motion.div
+          key={stat.title}
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, ease }}
+          className="bg-white border border-border p-5 text-center"
+          style={{ boxShadow: "0 10px 30px rgba(26,26,27,0.05)" }}
+        >
+          <span className="text-2xl block mb-2">{stat.icon}</span>
+          <p className="font-display text-sm text-foreground mb-1">{stat.title}</p>
+          <p className="text-muted-foreground" style={{ fontFamily: "Inter, system-ui, sans-serif", fontSize: "0.6875rem", letterSpacing: "-0.02em", lineHeight: 1.5 }}>
+            {stat.note}
+          </p>
+        </motion.div>
+      ))}
+    </div>
+
+    {/* Joy score bar */}
+    <div className="bg-white border border-border p-6 sm:p-8" style={{ boxShadow: "0 10px 30px rgba(26,26,27,0.05)" }}>
+      <p className="text-muted-foreground mb-4 uppercase tracking-[0.15em]" style={{ fontFamily: "Inter, system-ui, sans-serif", fontSize: "0.5625rem" }}>
+        Overall Joy Score
+      </p>
+      <div className="flex items-end gap-3">
+        <span className="font-display text-5xl text-foreground">87</span>
+        <span className="text-muted-foreground mb-2" style={{ fontFamily: "Inter, system-ui, sans-serif", fontSize: "0.75rem" }}>/ 100</span>
+      </div>
+      <div className="mt-3 h-2 bg-muted overflow-hidden">
+        <motion.div
+          initial={{ width: 0 }}
+          animate={{ width: "87%" }}
+          transition={{ duration: 1.5, delay: 0.3, ease }}
+          className="h-full"
+          style={{ backgroundColor: "#947120" }}
+        />
+      </div>
+      <p className="mt-3 text-muted-foreground" style={{ fontFamily: "Inter, system-ui, sans-serif", fontSize: "0.75rem", letterSpacing: "-0.02em" }}>
+        Higher than 92% of families visiting this season. Your planning paid off. ✨
+      </p>
+    </div>
+
+    {/* Family Favorites */}
+    <div>
+      <p className="mb-2 uppercase tracking-[0.2em] text-muted-foreground" style={{ fontFamily: "Inter, system-ui, sans-serif", fontSize: "0.6875rem", fontWeight: 400 }}>
+        In Their Own Words
+      </p>
+      <h3 className="font-display text-3xl text-foreground leading-[1.08] mb-8">Family Favorites</h3>
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        {familyFavorites.map((fav) => (
+          <div key={fav.member} className="bg-white border border-border p-6 sm:p-8" style={{ boxShadow: "0 10px 30px rgba(26,26,27,0.05)" }}>
+            <p className="text-muted-foreground mb-1 uppercase tracking-[0.15em]" style={{ fontFamily: "Inter, system-ui, sans-serif", fontSize: "0.5625rem" }}>
+              {fav.member}'s Favorite
+            </p>
+            <h4 className="font-display text-xl text-foreground mb-3">{fav.favorite}</h4>
+            <div className="flex items-start gap-2">
+              <span className="shrink-0 mt-1" style={{ color: "#947120", fontSize: "1.25rem", lineHeight: 1 }}>"</span>
+              <p className="text-muted-foreground italic" style={{ fontFamily: "Inter, system-ui, sans-serif", fontSize: "0.875rem", letterSpacing: "-0.02em", lineHeight: 1.7 }}>
+                {fav.quote}
+              </p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+
+    {/* Closing + CTA */}
+    <div className="text-center pt-4">
+      <div className="w-8 h-px mx-auto mb-8" style={{ backgroundColor: "#947120" }} />
+      <p className="font-display text-2xl sm:text-3xl text-foreground leading-[1.3] max-w-xl mx-auto mb-4">
+        "Nobody wanted to leave. But the memories — those we get to keep."
+      </p>
+      <p className="text-muted-foreground mb-10" style={{ fontFamily: "Inter, system-ui, sans-serif", fontSize: "0.75rem", letterSpacing: "-0.02em" }}>
+        — The Noelke Family, {memory.date}
+      </p>
+      <div className="inline-block bg-white border border-border px-8 py-6 text-center" style={{ boxShadow: "0 10px 30px rgba(26,26,27,0.05)" }}>
+        <p className="text-muted-foreground mb-2 uppercase tracking-[0.15em]" style={{ fontFamily: "Inter, system-ui, sans-serif", fontSize: "0.5625rem" }}>
+          Make it Permanent
+        </p>
+        <p className="font-display text-lg text-foreground mb-4">Order a Coffee Table Book</p>
+        <button
+          className="px-6 text-center transition-opacity hover:opacity-90"
+          style={{
+            backgroundColor: "#1A1A1B", color: "#C8A84E", fontFamily: "Inter, system-ui, sans-serif",
+            fontSize: "0.625rem", letterSpacing: "0.12em", textTransform: "uppercase", fontWeight: 500,
+            minHeight: 44, lineHeight: "44px",
+          }}
+        >
+          Design Your Book — from $49.95
+        </button>
+      </div>
+    </div>
+  </div>
+);
+
+/* ═══════════════════════════════════════════════════════════════
+ * DAY CAROUSEL — horizontal page-flip between days + wrap-up
+ * ═══════════════════════════════════════════════════════════════ */
 const DayCarousel = ({ memory }: { memory: TripMemory }) => {
+  // Total slides = days + 1 wrap-up
+  const totalSlides = spreads.length + 1;
   const [[activeDay, direction], setActiveDay] = useState([0, 0]);
+  const isWrapUp = activeDay === spreads.length;
 
   const paginate = useCallback((newIndex: number) => {
-    if (newIndex < 0 || newIndex >= spreads.length) return;
+    if (newIndex < 0 || newIndex >= totalSlides) return;
     setActiveDay([newIndex, newIndex > activeDay ? 1 : -1]);
-  }, [activeDay]);
+  }, [activeDay, totalSlides]);
 
   const goNext = useCallback(() => paginate(activeDay + 1), [activeDay, paginate]);
   const goPrev = useCallback(() => paginate(activeDay - 1), [activeDay, paginate]);
@@ -487,7 +615,7 @@ const DayCarousel = ({ memory }: { memory: TripMemory }) => {
     return () => window.removeEventListener("keydown", handleKey);
   }, [goNext, goPrev]);
 
-  const spread = spreads[activeDay];
+  const slideLabels = [...spreads.map(s => ({ label: s.day, mood: s.mood, moodLabel: s.moodLabel })), { label: "Wrap-Up", mood: "✨", moodLabel: "Joy Report" }];
 
   return (
     <div className="pb-24">
@@ -508,12 +636,12 @@ const DayCarousel = ({ memory }: { memory: TripMemory }) => {
       <section className="max-w-6xl mx-auto px-4 sm:px-8 pt-12">
         <div className="flex items-center justify-between mb-8">
           {/* Day tabs */}
-          <div className="flex items-center gap-1">
-            {spreads.map((s, i) => (
+          <div className="flex items-center gap-1 overflow-x-auto">
+            {slideLabels.map((s, i) => (
               <button
-                key={s.day}
+                key={s.label}
                 onClick={() => paginate(i)}
-                className="relative px-4 py-3 transition-all duration-500"
+                className="relative px-4 py-3 transition-all duration-500 shrink-0"
               >
                 <span
                   className="uppercase tracking-[0.15em] transition-colors duration-300"
@@ -524,7 +652,7 @@ const DayCarousel = ({ memory }: { memory: TripMemory }) => {
                     color: i === activeDay ? "hsl(var(--foreground))" : "hsl(var(--muted-foreground))",
                   }}
                 >
-                  {s.day}
+                  {s.label}
                 </span>
                 <span
                   className="block mt-0.5 transition-colors duration-300"
@@ -537,7 +665,6 @@ const DayCarousel = ({ memory }: { memory: TripMemory }) => {
                 >
                   {s.mood} {s.moodLabel}
                 </span>
-                {/* Active indicator */}
                 <motion.div
                   className="absolute bottom-0 left-4 right-4 h-px"
                   initial={false}
@@ -568,7 +695,7 @@ const DayCarousel = ({ memory }: { memory: TripMemory }) => {
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               onClick={goNext}
-              disabled={activeDay === spreads.length - 1}
+              disabled={activeDay === totalSlides - 1}
               className="w-10 h-10 flex items-center justify-center border border-border bg-white transition-all disabled:opacity-30"
               style={{ boxShadow: "0 10px 30px rgba(26,26,27,0.05)" }}
             >
@@ -577,7 +704,7 @@ const DayCarousel = ({ memory }: { memory: TripMemory }) => {
           </div>
         </div>
 
-        {/* Day spread — animated page flip */}
+        {/* Slide content — animated page flip */}
         <div className="overflow-hidden">
           <AnimatePresence mode="wait" custom={direction}>
             <motion.div
@@ -596,14 +723,18 @@ const DayCarousel = ({ memory }: { memory: TripMemory }) => {
                 else if (info.offset.x > 80) goPrev();
               }}
             >
-              <DaySpreadContent spread={spread} index={activeDay} />
+              {isWrapUp ? (
+                <TripWrapUpSlide memory={memory} />
+              ) : (
+                <DaySpreadContent spread={spreads[activeDay]} index={activeDay} />
+              )}
             </motion.div>
           </AnimatePresence>
         </div>
 
         {/* Page dots */}
         <div className="flex items-center justify-center gap-2 pt-10">
-          {spreads.map((_, i) => (
+          {slideLabels.map((s, i) => (
             <button key={i} onClick={() => paginate(i)} className="p-1">
               <motion.div
                 animate={{
@@ -616,66 +747,9 @@ const DayCarousel = ({ memory }: { memory: TripMemory }) => {
             </button>
           ))}
           <p className="ml-3 text-muted-foreground" style={{ fontFamily: "Inter, system-ui, sans-serif", fontSize: "0.625rem", letterSpacing: "-0.02em" }}>
-            {activeDay + 1} of {spreads.length} days
+            {isWrapUp ? "Trip Wrap-Up" : `${activeDay + 1} of ${spreads.length} days`}
           </p>
         </div>
-      </section>
-
-      {/* Family Favorites — below the carousel */}
-      <section className="max-w-6xl mx-auto px-4 sm:px-8 pt-24">
-        <motion.div {...fade()}>
-          <p className="mb-2 uppercase tracking-[0.2em] text-muted-foreground" style={{ fontFamily: "Inter, system-ui, sans-serif", fontSize: "0.6875rem", fontWeight: 400 }}>
-            In Their Own Words
-          </p>
-          <h2 className="font-display text-4xl sm:text-5xl text-foreground leading-[1.08] mb-12">Family Favorites</h2>
-        </motion.div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          {familyFavorites.map((fav, i) => (
-            <motion.div key={fav.member} {...fade(0.04 + i * 0.04)} className="bg-white border border-border p-6 sm:p-8" style={{ boxShadow: "0 10px 30px rgba(26,26,27,0.05)" }}>
-              <p className="text-muted-foreground mb-1 uppercase tracking-[0.15em]" style={{ fontFamily: "Inter, system-ui, sans-serif", fontSize: "0.5625rem" }}>
-                {fav.member}'s Favorite
-              </p>
-              <h4 className="font-display text-xl text-foreground mb-3">{fav.favorite}</h4>
-              <div className="flex items-start gap-2">
-                <span className="shrink-0 mt-1" style={{ color: "#947120", fontSize: "1.25rem", lineHeight: 1 }}>"</span>
-                <p className="text-muted-foreground italic" style={{ fontFamily: "Inter, system-ui, sans-serif", fontSize: "0.875rem", letterSpacing: "-0.02em", lineHeight: 1.7 }}>
-                  {fav.quote}
-                </p>
-              </div>
-            </motion.div>
-          ))}
-        </div>
-      </section>
-
-      {/* Closing */}
-      <section className="max-w-4xl mx-auto px-4 sm:px-8 pt-24 pb-8 text-center">
-        <motion.div {...fade()}>
-          <div className="w-8 h-px mx-auto mb-8" style={{ backgroundColor: "#947120" }} />
-          <p className="font-display text-2xl sm:text-3xl text-foreground leading-[1.3] max-w-xl mx-auto mb-4">
-            "Nobody wanted to leave. But the memories — those we get to keep."
-          </p>
-          <p className="text-muted-foreground mb-10" style={{ fontFamily: "Inter, system-ui, sans-serif", fontSize: "0.75rem", letterSpacing: "-0.02em" }}>
-            — The Noelke Family, {memory.date}
-          </p>
-          <motion.div {...fade(0.05)} className="inline-block">
-            <div className="bg-white border border-border px-8 py-6 text-center" style={{ boxShadow: "0 10px 30px rgba(26,26,27,0.05)" }}>
-              <p className="text-muted-foreground mb-2 uppercase tracking-[0.15em]" style={{ fontFamily: "Inter, system-ui, sans-serif", fontSize: "0.5625rem" }}>
-                Make it Permanent
-              </p>
-              <p className="font-display text-lg text-foreground mb-4">Order a Coffee Table Book</p>
-              <button
-                className="px-6 text-center transition-opacity hover:opacity-90"
-                style={{
-                  backgroundColor: "#1A1A1B", color: "#C8A84E", fontFamily: "Inter, system-ui, sans-serif",
-                  fontSize: "0.625rem", letterSpacing: "0.12em", textTransform: "uppercase", fontWeight: 500,
-                  minHeight: 44, lineHeight: "44px",
-                }}
-              >
-                Design Your Book — from $49.95
-              </button>
-            </div>
-          </motion.div>
-        </motion.div>
       </section>
     </div>
   );
@@ -772,7 +846,7 @@ const MemoriesTripDetail = ({ memory, allMemories, onBack }: MemoriesTripDetailP
           {activeTab === "vault" && <DayCarousel memory={memory} />}
 
           {activeTab === "echoes" && <AudioEcho />}
-          {activeTab === "joy" && <JoyBlueprint tripMemories={[memory]} />}
+          {activeTab === "joy" && <JoyBlueprint tripMemories={allMemories} />}
         </>
       )}
     </>

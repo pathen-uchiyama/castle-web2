@@ -4,6 +4,8 @@ import { MapPin, TreePine, Utensils, BedDouble } from "lucide-react";
 import Footer from "@/components/Footer";
 import SparkleField from "@/components/SparkleField";
 import headerGuides from "@/assets/header-guides.jpg";
+import guideWdw from "@/assets/guide-wdw.jpg";
+import guideDlr from "@/assets/guide-dlr.jpg";
 
 const ease: [number, number, number, number] = [0.19, 1, 0.22, 1];
 const fade = (delay = 0) => ({

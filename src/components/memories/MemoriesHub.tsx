@@ -54,27 +54,6 @@ const MemoriesHub = ({
         </motion.div>
       </section>
 
-      {/* Consent gate — shown once */}
-      {!captureConsented && (
-        <section className="max-w-4xl mx-auto px-4 sm:px-8 pb-16">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1, ease }}
-          >
-            <p
-              className="mb-2 uppercase tracking-[0.2em] text-muted-foreground"
-              style={{ fontFamily: "Inter, system-ui, sans-serif", fontSize: "0.6875rem", fontWeight: 400 }}
-            >
-              Before We Begin
-            </p>
-            <h2 className="font-display text-3xl text-foreground leading-[1.12] mb-6">
-              Your Safety Comes First
-            </h2>
-            <CaptureConsentToggle onConsent={onConsent} isAgreed={captureConsented} />
-          </motion.div>
-        </section>
-      )}
 
       {/* Trip Collection Grid */}
       <section className="py-8 lg:py-16">

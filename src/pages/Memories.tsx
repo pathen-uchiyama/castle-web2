@@ -1,5 +1,4 @@
 import { useParams, useNavigate } from "react-router-dom";
-import { useState } from "react";
 import Footer from "@/components/Footer";
 import MemoriesHub from "@/components/memories/MemoriesHub";
 import MemoriesTripDetail from "@/components/memories/MemoriesTripDetail";

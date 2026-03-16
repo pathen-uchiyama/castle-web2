@@ -97,7 +97,7 @@ const DayZeroIndex = () => {
           >
             <button
               onClick={() => setWizardOpen(true)}
-              className="group relative inline-flex items-center justify-center px-10 py-4 text-sm tracking-[0.15em] uppercase transition-all duration-500 focus:outline-none focus:ring-2 focus:ring-offset-2"
+              className="group relative inline-flex items-center justify-center px-10 py-4 rounded-lg text-sm tracking-[0.15em] uppercase transition-all duration-500 focus:outline-none focus:ring-2 focus:ring-offset-2"
               style={{
                 background: "hsl(222, 47%, 21%)",
                 color: "hsl(30, 33%, 96%)",

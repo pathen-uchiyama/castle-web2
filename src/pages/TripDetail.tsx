@@ -527,11 +527,11 @@ const BookedTripDetail = ({ trip }: { trip: BookedTrip }) => {
                 <button
                   key={member.memberId}
                   onClick={() => setMdeConnected((prev) => ({ ...prev, [member.memberId]: !prev[member.memberId] }))}
-                  className={`flex items-center gap-3 border p-4 transition-all duration-300 ${
-                    mdeConnected[member.memberId]
-                      ? "border-[hsl(var(--gold)/0.4)] bg-[hsl(var(--gold)/0.06)]"
-                      : "border-border bg-card hover:border-foreground/20"
-                  }`}
+                   className={`flex items-center gap-3 border rounded-lg p-4 transition-all duration-300 ${
+                     mdeConnected[member.memberId]
+                       ? "border-[hsl(var(--gold)/0.4)] bg-[hsl(var(--gold)/0.06)]"
+                       : "border-border bg-card hover:border-foreground/20"
+                   }`}
                 >
                   <div className={`w-5 h-5 flex items-center justify-center border transition-all duration-300 ${
                     mdeConnected[member.memberId]

@@ -61,19 +61,89 @@ export const crowdImpactLabels: Record<string, { label: string; color: string }>
   "none": { label: "Normal", color: "muted-foreground" },
 };
 
+export type ParkZone =
+  | "main-street" | "adventureland" | "frontierland" | "liberty-square" | "fantasyland" | "tomorrowland"
+  | "future-world-east" | "future-world-west" | "world-showcase"
+  | "resort" | "unknown";
+
+/** Walking time in minutes between zones. Keys are sorted alphabetically: `${zoneA}::${zoneB}` */
+const _walkMatrix: Record<string, number> = {
+  // Magic Kingdom
+  "adventureland::main-street": 8,
+  "adventureland::frontierland": 5,
+  "adventureland::liberty-square": 7,
+  "adventureland::fantasyland": 10,
+  "adventureland::tomorrowland": 12,
+  "frontierland::main-street": 10,
+  "frontierland::liberty-square": 4,
+  "frontierland::fantasyland": 8,
+  "frontierland::tomorrowland": 14,
+  "liberty-square::main-street": 9,
+  "fantasyland::liberty-square": 5,
+  "liberty-square::tomorrowland": 12,
+  "fantasyland::main-street": 8,
+  "fantasyland::tomorrowland": 8,
+  "main-street::tomorrowland": 6,
+  // EPCOT
+  "future-world-east::future-world-west": 8,
+  "future-world-east::world-showcase": 12,
+  "future-world-west::world-showcase": 10,
+};
+
+const DEFAULT_WALK_MIN = 8;
+const STROLLER_MULTIPLIER = 1.35;
+
+/** Get walking buffer in minutes between two zones, with optional stroller multiplier */
+export function getWalkBuffer(from: ParkZone | undefined, to: ParkZone | undefined, hasStroller: boolean): number {
+  if (!from || !to || from === to) {
+    return Math.round((hasStroller ? DEFAULT_WALK_MIN * STROLLER_MULTIPLIER : DEFAULT_WALK_MIN));
+  }
+  const key1 = `${from}::${to}`;
+  const key2 = `${to}::${from}`;
+  const base = _walkMatrix[key1] ?? _walkMatrix[key2] ?? DEFAULT_WALK_MIN;
+  return Math.round(hasStroller ? base * STROLLER_MULTIPLIER : base);
+}
+
+/** Duration defaults when no data available */
+export const DURATION_DEFAULTS: Record<string, number> = {
+  ride: 20,
+  meal: 60,
+  break: 30,
+  show: 45,
+  snack: 15,
+  pool: 90,
+  hotel: 60,
+  walk: 20,
+  character: 20,
+  parade: 30,
+  seasonal: 60,
+  dining: 60,
+  "rope-drop": 30,
+};
+
 export interface ItineraryItem {
   id: string;
   attractionId?: string;
   name: string;
   type: "ride" | "show" | "parade" | "character" | "dining" | "seasonal" | "break" | "snack" | "pool" | "hotel" | "meal" | "rope-drop" | "walk";
-  startTime: string; // "07:00 AM"
   duration: number; // minutes
-  walkTime?: number; // minutes to next
   waitTime?: number; // minutes
+  zone?: ParkZone;
   llType?: LLType;
   waitCategory?: WaitCategory;
   notes?: string;
   isConfirmed?: boolean;
+}
+
+/** Computed ribbon item — produced by the ribbon engine */
+export interface RibbonItem {
+  item: ItineraryItem;
+  startMin: number;
+  endMin: number;
+  walkBuffer: number;
+  checkinTime: number;
+  strollerTime: number;
+  totalBlockMin: number;
 }
 
 export const magicKingdomAttractions: ParkAttraction[] = [

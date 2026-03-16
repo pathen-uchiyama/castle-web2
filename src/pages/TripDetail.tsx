@@ -1188,7 +1188,7 @@ const BookedTripDetail = ({ trip }: { trip: BookedTrip }) => {
                 { icon: "🌧", title: "Rain & Storms", temp: "40% chance", tip: "Afternoon thunderstorms are common. Pack ponchos — they beat umbrellas in crowds." },
                 { icon: "❄️", title: "Cool Evenings", temp: "62–68°F", tip: "Temps drop after sunset. A lightweight layer keeps fireworks comfortable." },
               ].map((w) => (
-                <div key={w.title} className="border border-border bg-card p-5 shadow-[var(--shadow-soft)]">
+                <div key={w.title} className="border border-border bg-card rounded-lg p-5 shadow-[var(--shadow-soft)]">
                   <div className="flex items-center gap-2 mb-3">
                     <span className="text-2xl">{w.icon}</span>
                     <h4 className="font-display text-lg text-foreground">{w.title}</h4>

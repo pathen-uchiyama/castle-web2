@@ -517,7 +517,7 @@ const ResortHub = () => {
                     </div>
                     <div className="flex flex-wrap gap-1">
                       {hotel.tags.map(tag => (
-                        <span key={tag} className="text-[0.4375rem] uppercase tracking-[0.08em] px-2 py-0.5 bg-muted text-muted-foreground">{tag}</span>
+                         <span key={tag} className="text-[0.4375rem] uppercase tracking-[0.08em] px-2 py-0.5 rounded-md bg-muted text-muted-foreground">{tag}</span>
                       ))}
                     </div>
 

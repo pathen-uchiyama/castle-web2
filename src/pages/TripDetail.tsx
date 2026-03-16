@@ -764,7 +764,7 @@ const BookedTripDetail = ({ trip }: { trip: BookedTrip }) => {
                             <span className="text-lg">{mealIcons[res.mealType]}</span>
                             <h4 className="font-display text-foreground">{res.restaurantName}</h4>
                           </div>
-                          <span className="px-2 py-0.5 text-[0.5625rem] uppercase tracking-[0.12em] font-medium border" style={{ background: statusColors.confirmed.bg, color: statusColors.confirmed.text, borderColor: statusColors.confirmed.border }}>✓ Confirmed</span>
+                           <span className="px-2 py-0.5 rounded-md text-[0.5625rem] uppercase tracking-[0.12em] font-medium border" style={{ background: statusColors.confirmed.bg, color: statusColors.confirmed.text, borderColor: statusColors.confirmed.border }}>✓ Confirmed</span>
                         </div>
                         <p className="font-editorial text-xs text-muted-foreground mb-2">{res.parkOrResort} · {res.cuisine}</p>
                         <div className="flex flex-wrap gap-4 text-xs">

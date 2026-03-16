@@ -235,22 +235,23 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
         if (researchCategory !== "all" && a.type !== researchCategory) return false;
         if (searchQuery && !a.name.toLowerCase().includes(searchQuery.toLowerCase())) return false;
 
-        // Focus-based filtering
+        // Survey results ALWAYS override focus filters
+        const hasSurveyVotes = topFiveIds.has(a.id) || !!attractionSatisfies[a.id]?.length;
+        if (hasSurveyVotes) return true;
+
+        // Focus-based filtering (only for non-survey items)
         if (focus === "Thrill Seekers") {
-          // Hide mild rides that aren't in anyone's top-5
-          if (a.thrillLevel === "mild" && a.type === "ride" && !topFiveIds.has(a.id)) return false;
+          if (a.thrillLevel === "mild" && a.type === "ride") return false;
         }
         if (focus === "Toddler Friendly") {
-          // Hide rides with height requirements the group can't meet, and high-thrill rides
           if (a.thrillLevel === "high") return false;
           if (a.heightRequirement && a.heightRequirement !== "ANY") {
             const reqInches = parseInt(a.heightRequirement);
-            if (reqInches >= 44) return false; // toddlers won't meet 44"+
+            if (reqInches >= 44) return false;
           }
         }
         if (focus === "Shows & Characters") {
-          // Prioritize shows/characters/parades — hide rides unless top-5
-          if (a.type === "ride" && !topFiveIds.has(a.id) && a.rating < 4.5) return false;
+          if (a.type === "ride" && a.rating < 4.5) return false;
         }
 
         return true;
@@ -274,7 +275,7 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
 
         return b.rating - a.rating;
       });
-  }, [selectedParks, researchCategory, searchQuery, topFiveIds, focus]);
+  }, [selectedParks, researchCategory, searchQuery, topFiveIds, focus, attractionSatisfies]);
 
   const parkSchedules = useMemo(() => {
     const s: { parkId: string; name: string; hours: string; earlyEntry?: string }[] = [];

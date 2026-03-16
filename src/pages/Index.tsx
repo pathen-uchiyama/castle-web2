@@ -171,7 +171,7 @@ const Index = ({
                   { label: "Party", value: String(bookedTrip.partySize) },
                 ].map((d) => (
                   <div key={d.label}>
-                    <p className="label-text !text-white/30 mb-2" style={{ fontSize: '0.625rem', letterSpacing: '0.2em' }}>{d.label}</p>
+                    <p className="label-text !text-white/50 mb-2" style={{ fontSize: '0.625rem', letterSpacing: '0.2em' }}>{d.label}</p>
                     <p className="font-display text-3xl sm:text-4xl text-white">{d.value}</p>
                   </div>
                 ))}

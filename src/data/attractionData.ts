@@ -177,6 +177,7 @@ export const magicKingdomAttractions: ParkAttraction[] = [
     notableInsight: "Best for Families",
     rules: ["DAS", "EARLY MORNING ACCESS", "CHILD SWITCH"],
     warnings: [],
+    zone: "fantasyland",
   },
   {
     id: "mk-peter", name: "Peter Pan's Flight", parkId: "mk", type: "ride", rating: 4.5,
@@ -186,6 +187,7 @@ export const magicKingdomAttractions: ParkAttraction[] = [
     notableInsight: "Classic Magic",
     rules: ["DAS", "EARLY MORNING ACCESS"],
     warnings: [],
+    zone: "fantasyland",
   },
   {
     id: "mk-haunted", name: "Haunted Mansion", parkId: "mk", type: "ride", rating: 4.8,
@@ -195,6 +197,7 @@ export const magicKingdomAttractions: ParkAttraction[] = [
     notableInsight: "All-Ages Classic",
     rules: ["DAS"],
     warnings: ["LOUD NOISES", "STROBES"],
+    zone: "liberty-square",
   },
   {
     id: "mk-btmr", name: "Big Thunder Mountain Railroad", parkId: "mk", type: "ride", rating: 4.6,
@@ -204,6 +207,7 @@ export const magicKingdomAttractions: ParkAttraction[] = [
     notableInsight: "Good AM Ride",
     rules: ["DAS", "SINGLE RIDER", "CHILD SWITCH"],
     warnings: [],
+    zone: "frontierland",
   },
   {
     id: "mk-tianas", name: "Tiana's Bayou Adventure", parkId: "mk", type: "ride", rating: 4.4,
@@ -214,6 +218,7 @@ export const magicKingdomAttractions: ParkAttraction[] = [
     rules: ["DAS", "CHILD SWITCH"],
     warnings: [],
     attractionStatus: { status: "new", label: "Brand New", note: "Opened June 2024 — replaced Splash Mountain. Expect extreme waits.", crowdImpact: "extreme" },
+    zone: "frontierland",
   },
   {
     id: "mk-pirates", name: "Pirates of the Caribbean", parkId: "mk", type: "ride", rating: 4.7,
@@ -223,6 +228,7 @@ export const magicKingdomAttractions: ParkAttraction[] = [
     notableInsight: "Long Length",
     rules: ["DAS"],
     warnings: ["LOUD NOISES"],
+    zone: "adventureland",
   },
   {
     id: "mk-jungle", name: "Jungle Cruise", parkId: "mk", type: "ride", rating: 4.5,
@@ -232,6 +238,7 @@ export const magicKingdomAttractions: ParkAttraction[] = [
     notableInsight: "Great for Kids",
     rules: ["DAS"],
     warnings: [],
+    zone: "adventureland",
   },
   {
     id: "mk-undersea", name: "Under the Sea", parkId: "mk", type: "ride", rating: 4.2,
@@ -241,6 +248,7 @@ export const magicKingdomAttractions: ParkAttraction[] = [
     notableInsight: "Omnimover",
     rules: ["DAS"],
     warnings: ["LOUD NOISES"],
+    zone: "fantasyland",
   },
   {
     id: "mk-buzz", name: "Buzz Lightyear Space Ranger Spin", parkId: "mk", type: "ride", rating: 4.3,
@@ -250,6 +258,7 @@ export const magicKingdomAttractions: ParkAttraction[] = [
     notableInsight: "Interactive",
     rules: ["DAS"],
     warnings: ["STROBES"],
+    zone: "tomorrowland",
   },
   {
     id: "mk-railroad", name: "Walt Disney World Railroad", parkId: "mk", type: "ride", rating: 4.1,
@@ -261,6 +270,7 @@ export const magicKingdomAttractions: ParkAttraction[] = [
     warnings: [],
     isClosed: true,
     attractionStatus: { status: "refurbishment", label: "Refurbishment", note: "Closed for track maintenance. Expected return: TBD.", crowdImpact: "none" },
+    zone: "main-street",
   },
   {
     id: "mk-small-world", name: "It's a Small World", parkId: "mk", type: "ride", rating: 4.0,
@@ -270,6 +280,7 @@ export const magicKingdomAttractions: ParkAttraction[] = [
     notableInsight: "Holiday Version Dec",
     rules: ["DAS"],
     warnings: ["LOUD NOISES"],
+    zone: "fantasyland",
   },
   {
     id: "mk-pooh", name: "The Many Adventures of Winnie the Pooh", parkId: "mk", type: "ride", rating: 4.2,
@@ -279,6 +290,7 @@ export const magicKingdomAttractions: ParkAttraction[] = [
     notableInsight: "Toddler Fave",
     rules: ["DAS"],
     warnings: [],
+    zone: "fantasyland",
   },
   {
     id: "mk-teacups", name: "Mad Tea Party", parkId: "mk", type: "ride", rating: 3.8,
@@ -288,6 +300,7 @@ export const magicKingdomAttractions: ParkAttraction[] = [
     notableInsight: "Spinning",
     rules: ["DAS"],
     warnings: ["LOUD NOISES"],
+    zone: "fantasyland",
   },
   {
     id: "mk-dumbo", name: "Dumbo the Flying Elephant", parkId: "mk", type: "ride", rating: 4.1,
@@ -297,6 +310,7 @@ export const magicKingdomAttractions: ParkAttraction[] = [
     notableInsight: "Toddler Must-Do",
     rules: ["DAS"],
     warnings: [],
+    zone: "fantasyland",
   },
   // Shows
   {
@@ -307,6 +321,7 @@ export const magicKingdomAttractions: ParkAttraction[] = [
     notableInsight: "Stake Out a Spot 20 Min Early",
     rules: [],
     warnings: [],
+    zone: "main-street",
   },
   {
     id: "mk-hea", name: "Happily Ever After", parkId: "mk", type: "show", rating: 4.9,
@@ -316,6 +331,7 @@ export const magicKingdomAttractions: ParkAttraction[] = [
     notableInsight: "Dessert Party Available",
     rules: [],
     warnings: ["LOUD NOISES"],
+    zone: "main-street",
   },
   {
     id: "mk-laugh-floor", name: "Monsters Inc. Laugh Floor", parkId: "mk", type: "show", rating: 4.3,
@@ -325,6 +341,7 @@ export const magicKingdomAttractions: ParkAttraction[] = [
     notableInsight: "Audience Participation",
     rules: ["DAS"],
     warnings: [],
+    zone: "tomorrowland",
   },
   // Characters
   {
@@ -335,6 +352,7 @@ export const magicKingdomAttractions: ParkAttraction[] = [
     notableInsight: "Photo + Autograph",
     rules: [],
     warnings: [],
+    zone: "main-street",
   },
   {
     id: "mk-princess-meet", name: "Princess Fairytale Hall", parkId: "mk", type: "character", rating: 4.5,
@@ -344,6 +362,7 @@ export const magicKingdomAttractions: ParkAttraction[] = [
     notableInsight: "Rotating Princesses",
     rules: [],
     warnings: [],
+    zone: "fantasyland",
   },
   {
     id: "mk-belle-tales", name: "Enchanted Tales with Belle", parkId: "mk", type: "character", rating: 4.6,
@@ -353,6 +372,7 @@ export const magicKingdomAttractions: ParkAttraction[] = [
     notableInsight: "Kids Get Roles",
     rules: [],
     warnings: [],
+    zone: "fantasyland",
   },
   // Seasonal
   {
@@ -364,6 +384,7 @@ export const magicKingdomAttractions: ParkAttraction[] = [
     rules: [],
     warnings: [],
     tags: ["TICKETED", "LIMITED"],
+    zone: "main-street",
   },
 ];
 

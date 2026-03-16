@@ -419,7 +419,7 @@ const ParkGuidePage = ({ parkGuides }: ParkGuidePageProps) => {
           </motion.div>
 
           {/* Wait times placeholder */}
-          <motion.div {...fade(0.2)} className="border border-dashed border-border py-20 text-center mb-16">
+          <motion.div {...fade(0.2)} className="border border-dashed border-border rounded-lg py-20 text-center mb-16">
             <p className="font-display text-2xl text-muted-foreground/40 mb-3">Live Wait Times</p>
             <p className="font-editorial text-sm text-muted-foreground/30 max-w-md mx-auto">
               Real-time attraction wait times with historical trending, crowd predictions, and optimal ride sequencing will appear here.

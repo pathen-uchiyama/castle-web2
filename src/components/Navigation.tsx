@@ -50,7 +50,7 @@ const Navigation = () => {
             const isActive = isGuideActive(item.path);
             return (
               <Link key={item.path} to={item.path}>
-                <span className={`label-text transition-all duration-500 cursor-pointer ${isHome ? (isActive ? "!text-white" : "!text-white/40 hover:!text-white/70") : (isActive ? "!text-foreground" : "!text-muted-foreground hover:!text-foreground")}`}>
+                <span className={`label-text transition-all duration-500 cursor-pointer ${isHome ? (isActive ? "!text-white" : "!text-white/55 hover:!text-white/80") : (isActive ? "!text-foreground" : "!text-muted-foreground hover:!text-foreground")}`}>
                   {item.label}
                 </span>
               </Link>

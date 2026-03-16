@@ -462,8 +462,8 @@ const ResortHub = () => {
 
             <div className="space-y-6">
               {filteredHotels.map((hotel, i) => (
-                <motion.div key={hotel.hotelId} {...fade(0.05 + i * 0.02)}
-                  className="border border-border bg-card shadow-[var(--shadow-soft)] hover:shadow-[var(--shadow-hover)] transition-shadow duration-500">
+                 <motion.div key={hotel.hotelId} {...fade(0.05 + i * 0.02)}
+                   className="border border-border bg-card rounded-lg shadow-[var(--shadow-soft)] hover:shadow-[var(--shadow-hover)] transition-shadow duration-500">
                   <div className="p-6">
                     <div className="flex items-start justify-between mb-3">
                       <div>

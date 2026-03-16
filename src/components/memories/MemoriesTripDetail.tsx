@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
-import { useState } from "react";
-import { ArrowLeft, Award, Share2, Download, Volume2, Play, Pause } from "lucide-react";
+import { useState, useEffect } from "react";
+import { ArrowLeft, Award, Share2, Download } from "lucide-react";
 import SectionNav from "@/components/SectionNav";
 import AudioEcho from "./AudioEcho";
 import JoyBlueprint from "./JoyBlueprint";
@@ -33,80 +33,144 @@ const tabs = [
   { id: "joy", label: "Joy Report" },
 ];
 
-// Rich mock data for the Christmas 2025 trip (our "full example")
-const mockGalleryPhotos = [
-  { id: "p1", src: fireworksNight, caption: "The moment the sky erupted — MVMCP finale", aspect: "col-span-4 row-span-2" },
-  { id: "p2", src: editorialDining, caption: "Topolino's Terrace character breakfast", aspect: "col-span-2 row-span-1" },
-  { id: "p3", src: editorialCarousel, caption: "Prince Charming Regal Carrousel at golden hour", aspect: "col-span-2 row-span-1" },
-  { id: "p4", src: castleHero, caption: "The castle, dressed for the holidays", aspect: "col-span-3 row-span-2" },
-  { id: "p5", src: familyMainstreet, caption: "Main Street family portrait — the annual tradition", aspect: "col-span-3 row-span-1" },
-  { id: "p6", src: editorialFamilyWalk, caption: "Walking toward Adventureland, hand in hand", aspect: "col-span-3 row-span-1" },
-  { id: "p7", src: editorialSunset, caption: "Sunset over Seven Seas Lagoon", aspect: "col-span-2 row-span-1" },
-  { id: "p8", src: editorialResort, caption: "Contemporary Resort at twilight", aspect: "col-span-2 row-span-1" },
-  { id: "p9", src: editorialJournal, caption: "Sarah's travel journal — day three reflections", aspect: "col-span-2 row-span-1" },
-  { id: "p10", src: castleGolden, caption: "Golden hour from the hub", aspect: "col-span-6 row-span-1" },
-  { id: "p11", src: editorialPacking, caption: "The morning-of essentials", aspect: "col-span-3 row-span-1" },
-  { id: "p12", src: editorialCalendar, caption: "Park strategy board — the master plan", aspect: "col-span-3 row-span-1" },
-];
+/* ═══════════════════════════════════════════════════════════════
+ * SCRAPBOOK DATA — each day is a "spread" with interwoven
+ * photos, narrative text, pull quotes, and moments
+ * ═══════════════════════════════════════════════════════════════ */
 
-const mockDayByDay = [
+interface SpreadPhoto {
+  src: string;
+  caption: string;
+}
+
+interface DaySpread {
+  day: string;
+  date: string;
+  title: string;
+  subtitle: string;
+  mood: string;
+  moodLabel: string;
+  /** Hero image for this day — full-width cinematic */
+  hero: SpreadPhoto;
+  /** Opening narrative paragraph */
+  narrative: string;
+  /** Supporting photos woven into the layout */
+  photos: SpreadPhoto[];
+  /** Key moments as short captions */
+  moments: string[];
+  /** Pull quote from a family member */
+  pullQuote?: { text: string; attribution: string };
+  /** Small stats for the day */
+  stats?: { label: string; value: string }[];
+}
+
+const spreads: DaySpread[] = [
   {
-    day: "Day 1 — December 18",
+    day: "Day One",
+    date: "December 18, 2025",
     title: "The Grand Arrival",
-    moments: [
-      "Checked into Contemporary Resort, Garden Wing at 2:45 PM",
-      "First Dole Whip of the trip — pineapple, no swirl",
-      "Emma saw the castle for the first time and froze mid-sentence",
-      "Rode Tron at rope-drop — 8 minute wait",
-    ],
+    subtitle: "Contemporary Resort · Magic Kingdom",
     mood: "😍",
     moodLabel: "Pure Magic",
+    hero: { src: castleHero, caption: "The castle, dressed in holiday lights — the moment everything became real" },
+    narrative: "We pulled up to the Contemporary Resort at 2:45 PM. The monorail whooshed overhead. Jack pressed his face against the car window and whispered, \"Is this it?\" It was. We dropped bags and practically ran to the Magic Kingdom. The castle was bigger than any of us remembered.",
+    photos: [
+      { src: editorialResort, caption: "Contemporary Resort at golden hour — our home for the next four days" },
+      { src: editorialFamilyWalk, caption: "The walk down Main Street. Emma grabbed Sarah's hand and didn't let go." },
+      { src: editorialCarousel, caption: "First ride of the trip — the carrousel at sunset" },
+    ],
+    moments: [
+      "First Dole Whip of the trip — pineapple, no swirl",
+      "Emma saw the castle and froze mid-sentence",
+      "Rode Tron at rope-drop — 8 minute wait",
+      "Watched the castle lighting ceremony from the hub",
+    ],
+    pullQuote: { text: "She just stood there. Mouth open. Eyes wide. I looked at Sarah and we both knew — this was the trip.", attribution: "Patchen" },
+    stats: [
+      { label: "Steps walked", value: "18,422" },
+      { label: "Attractions", value: "6" },
+      { label: "Snacks", value: "4" },
+    ],
   },
   {
-    day: "Day 2 — December 19",
+    day: "Day Two",
+    date: "December 19, 2025",
     title: "The EPCOT Expedition",
-    moments: [
-      "Guardians of the Galaxy: Cosmic Rewind — September by Earth, Wind & Fire",
-      "Space 220 dinner reservation, table with a view of the station",
-      "Jack tried his first macaron in the France Pavilion",
-      "Festival of the Holidays cookie stroll completed",
-    ],
+    subtitle: "EPCOT · World Showcase · Space 220",
     mood: "🤩",
     moodLabel: "Extraordinary",
+    hero: { src: editorialSunset, caption: "Sunset over World Showcase Lagoon — the golden hour we planned the whole day around" },
+    narrative: "EPCOT days are different. Slower. More intentional. We started with Cosmic Rewind — \"September\" by Earth, Wind & Fire — and Jack screamed the entire time. By afternoon we were in the France Pavilion, where he tried his first macaron and declared it \"basically a cookie sandwich.\"",
+    photos: [
+      { src: editorialDining, caption: "Space 220 — dinner at the edge of the atmosphere" },
+      { src: editorialCalendar, caption: "The Festival of the Holidays passport — every stamp earned" },
+    ],
+    moments: [
+      "Cosmic Rewind — \"September\" by Earth, Wind & Fire",
+      "Space 220 dinner, table with a view of the station",
+      "Jack's first macaron in the France Pavilion",
+      "Festival of the Holidays cookie stroll completed — all stamps",
+    ],
+    pullQuote: { text: "The waiter at Space 220 asked Jack if he'd been to space before. He said yes. Completely deadpan.", attribution: "Sarah" },
+    stats: [
+      { label: "Countries visited", value: "11" },
+      { label: "Snacks", value: "7" },
+      { label: "Steps walked", value: "22,108" },
+    ],
   },
   {
-    day: "Day 3 — December 20",
+    day: "Day Three",
+    date: "December 20, 2025",
     title: "Hollywood & Magic",
+    subtitle: "Hollywood Studios · Galaxy's Edge · Fantasmic!",
+    mood: "⚡",
+    moodLabel: "Thrilling",
+    hero: { src: familyMainstreet, caption: "Walking through the gates — the day we'd been building lightsabers for" },
+    narrative: "This was the day Sarah had been waiting for. Savi's Workshop. She and Emma walked in together and came out with lightsabers, tear-streaked faces, and a story they'll tell forever. Jack, meanwhile, rode Tower of Terror and immediately demanded to go again. Three times.",
+    photos: [
+      { src: editorialJournal, caption: "Sarah's journal entry — \"Today Emma and I became Jedi. I'm not crying, you're crying.\"" },
+      { src: editorialPacking, caption: "The morning ritual — lightsaber parts laid out like surgical instruments" },
+      { src: castleGolden, caption: "Back to Magic Kingdom for an evening hop — golden hour from the hub" },
+    ],
     moments: [
       "Rise of the Resistance — the best 18 minutes in theme parks",
-      "Savi's Workshop: Sarah and Emma built lightsabers together",
+      "Savi's Workshop — Sarah and Emma built lightsabers together",
       "Tower of Terror — Jack's first drop ride (he wants to go again)",
       "Fantasmic! front row, dessert party — unforgettable finale",
     ],
-    mood: "⚡",
-    moodLabel: "Thrilling",
+    pullQuote: { text: "AGAIN! AGAIN! AGAIN!", attribution: "Jack, age 6, exiting Tower of Terror" },
+    stats: [
+      { label: "Tower of Terror rides", value: "3" },
+      { label: "Lightsabers built", value: "2" },
+      { label: "Screams", value: "∞" },
+    ],
   },
   {
-    day: "Day 4 — December 21",
-    title: "The Last Day — MVMCP",
+    day: "Day Four",
+    date: "December 21, 2025",
+    title: "The Last Day",
+    subtitle: "Animal Kingdom · Magic Kingdom · MVMCP",
+    mood: "😭",
+    moodLabel: "Bittersweet",
+    hero: { src: fireworksNight, caption: "The finale. Snow on Main Street. Nobody wanted to leave." },
+    narrative: "We started the last day at Topolino's Terrace — Mickey in his chef whites, Emma in her princess dress. By afternoon we were on the safari watching giraffes walk through golden light. And then, the party. Mickey's Very Merry Christmas. It snowed on Main Street. Emma looked up and said, \"Can we just live here?\"",
+    photos: [
+      { src: editorialDining, caption: "Topolino's Terrace — the character breakfast that started our last day" },
+      { src: editorialFamilyWalk, caption: "The walk back. Slower this time. Nobody was in a hurry." },
+    ],
     moments: [
       "Topolino's Terrace character breakfast — Mickey in chef whites",
       "Animal Kingdom safari at golden hour — giraffes in the sunset",
-      "Back to Magic Kingdom for Mickey's Very Merry Christmas Party",
+      "Mickey's Very Merry Christmas Party — hot cocoa and carols",
       "Fireworks from the hub. Snow on Main Street. Nobody wanted to leave.",
     ],
-    mood: "😭",
-    moodLabel: "Bittersweet",
+    pullQuote: { text: "Can we just live here?", attribution: "Emma, looking up at the snow on Main Street" },
+    stats: [
+      { label: "Photos today", value: "94" },
+      { label: "Hot cocoas", value: "6" },
+      { label: "Tears shed", value: "Several" },
+    ],
   },
-];
-
-const tripStats = [
-  { label: "Photos", value: "248", icon: "📸" },
-  { label: "Audio Echoes", value: "7", icon: "🎙️" },
-  { label: "Parks Visited", value: "4", icon: "🏰" },
-  { label: "Attractions Rode", value: "23", icon: "🎢" },
-  { label: "Snacks Consumed", value: "19", icon: "🍦" },
-  { label: "Miles Walked", value: "42.3", icon: "👟" },
 ];
 
 const familyFavorites = [
@@ -116,6 +180,338 @@ const familyFavorites = [
   { member: "Jack", favorite: "Tower of Terror", quote: "AGAIN! AGAIN! AGAIN!" },
 ];
 
+const tripStats = [
+  { label: "Photos", value: "248", icon: "📸" },
+  { label: "Audio Echoes", value: "7", icon: "🎙️" },
+  { label: "Parks Visited", value: "4", icon: "🏰" },
+  { label: "Attractions", value: "23", icon: "🎢" },
+  { label: "Snacks", value: "19", icon: "🍦" },
+  { label: "Miles Walked", value: "42.3", icon: "👟" },
+];
+
+/* ═══════════════════════════════════════════════════════════════
+ * LAYOUT COMPONENTS — alternating editorial spreads
+ * ═══════════════════════════════════════════════════════════════ */
+
+/** Full-width cinematic hero with overlay text */
+const SpreadHero = ({ photo, day, date, title, subtitle, mood, moodLabel }: {
+  photo: SpreadPhoto; day: string; date: string; title: string; subtitle: string; mood: string; moodLabel: string;
+}) => (
+  <motion.div {...fade()} className="relative overflow-hidden" style={{ boxShadow: "0 10px 30px rgba(26,26,27,0.05)" }}>
+    <img src={photo.src} alt={photo.caption} className="w-full h-[400px] sm:h-[560px] object-cover" />
+    <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent pointer-events-none" />
+    <div className="absolute bottom-0 left-0 right-0 p-6 sm:p-10">
+      <div className="flex items-end justify-between gap-4">
+        <div>
+          <p
+            className="text-white/40 mb-2 uppercase tracking-[0.25em]"
+            style={{ fontFamily: "Inter, system-ui, sans-serif", fontSize: "0.5625rem" }}
+          >
+            {day} · {date}
+          </p>
+          <h2 className="font-display text-4xl sm:text-6xl text-white leading-[1.02] mb-1">
+            {title}
+          </h2>
+          <p
+            className="text-white/50"
+            style={{ fontFamily: "Inter, system-ui, sans-serif", fontSize: "0.75rem", letterSpacing: "-0.02em" }}
+          >
+            {subtitle}
+          </p>
+        </div>
+        <div className="text-center shrink-0">
+          <span className="text-3xl block">{mood}</span>
+          <p
+            className="text-white/40 mt-1"
+            style={{ fontFamily: "Inter, system-ui, sans-serif", fontSize: "0.5rem", letterSpacing: "0.1em", textTransform: "uppercase" }}
+          >
+            {moodLabel}
+          </p>
+        </div>
+      </div>
+    </div>
+    {/* Photo caption — subtle bottom strip */}
+    <div className="absolute top-5 left-5">
+      <span
+        className="px-3 py-1.5 bg-[#947120] text-white"
+        style={{ fontFamily: "Inter, system-ui, sans-serif", fontSize: "0.5rem", letterSpacing: "0.2em", textTransform: "uppercase" }}
+      >
+        Master
+      </span>
+    </div>
+  </motion.div>
+);
+
+/** Pull quote — large, editorial, gold accent */
+const PullQuote = ({ text, attribution }: { text: string; attribution: string }) => (
+  <motion.div {...fade(0.1)} className="py-8 sm:py-12">
+    <div className="max-w-2xl mx-auto text-center">
+      <span className="block mb-4" style={{ color: "#947120", fontSize: "2.5rem", lineHeight: 1, fontFamily: "Georgia, serif" }}>"</span>
+      <p className="font-display text-2xl sm:text-3xl text-foreground leading-[1.35] mb-4">
+        {text}
+      </p>
+      <p
+        className="text-muted-foreground"
+        style={{ fontFamily: "Inter, system-ui, sans-serif", fontSize: "0.6875rem", letterSpacing: "0.1em", textTransform: "uppercase" }}
+      >
+        — {attribution}
+      </p>
+    </div>
+  </motion.div>
+);
+
+/** Photo with caption — editorial style */
+const CaptionedPhoto = ({ photo, className = "" }: { photo: SpreadPhoto; className?: string }) => (
+  <div className={className}>
+    <div className="overflow-hidden group" style={{ boxShadow: "0 10px 30px rgba(26,26,27,0.05)" }}>
+      <img
+        src={photo.src}
+        alt={photo.caption}
+        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-[1.02]"
+      />
+    </div>
+    <p
+      className="text-muted-foreground mt-3 leading-relaxed"
+      style={{ fontFamily: "Inter, system-ui, sans-serif", fontSize: "0.75rem", letterSpacing: "-0.02em", lineHeight: 1.6 }}
+    >
+      {photo.caption}
+    </p>
+  </div>
+);
+
+/* ═══════════════════════════════════════════════════════════════
+ * SPREAD LAYOUTS — each day uses a different editorial layout
+ * to prevent visual monotony (coffee table book rhythm)
+ * ═══════════════════════════════════════════════════════════════ */
+
+/** Layout A: Hero → Narrative left + 2 photos right → moments → pull quote */
+const SpreadLayoutA = ({ spread, index }: { spread: DaySpread; index: number }) => (
+  <div className="space-y-0">
+    <SpreadHero photo={spread.hero} {...spread} />
+
+    {/* Narrative + photos — asymmetric 2-column */}
+    <div className="grid grid-cols-1 lg:grid-cols-5 gap-3 pt-3">
+      {/* Narrative column */}
+      <motion.div {...fade(0.05)} className="lg:col-span-3 bg-white border border-border p-8 sm:p-10" style={{ boxShadow: "0 10px 30px rgba(26,26,27,0.05)" }}>
+        <p
+          className="text-foreground leading-[1.8] mb-8"
+          style={{ fontFamily: "Inter, system-ui, sans-serif", fontSize: "0.9375rem", letterSpacing: "-0.02em" }}
+        >
+          {spread.narrative}
+        </p>
+        <div className="border-t border-border pt-6">
+          <p
+            className="text-muted-foreground uppercase tracking-[0.15em] mb-4"
+            style={{ fontFamily: "Inter, system-ui, sans-serif", fontSize: "0.5625rem" }}
+          >
+            Key Moments
+          </p>
+          <ul className="space-y-2.5">
+            {spread.moments.map((m, j) => (
+              <li
+                key={j}
+                className="flex items-start gap-3 text-muted-foreground"
+                style={{ fontFamily: "Inter, system-ui, sans-serif", fontSize: "0.8125rem", letterSpacing: "-0.02em", lineHeight: 1.6 }}
+              >
+                <span className="shrink-0 mt-2 w-1.5 h-1.5" style={{ backgroundColor: "#947120" }} />
+                {m}
+              </li>
+            ))}
+          </ul>
+        </div>
+        {/* Day stats */}
+        {spread.stats && (
+          <div className="flex gap-6 mt-8 pt-6 border-t border-border">
+            {spread.stats.map((s) => (
+              <div key={s.label}>
+                <p className="font-display text-lg text-foreground">{s.value}</p>
+                <p
+                  className="text-muted-foreground uppercase tracking-[0.12em]"
+                  style={{ fontFamily: "Inter, system-ui, sans-serif", fontSize: "0.5rem" }}
+                >
+                  {s.label}
+                </p>
+              </div>
+            ))}
+          </div>
+        )}
+      </motion.div>
+
+      {/* Photos column */}
+      <div className="lg:col-span-2 flex flex-col gap-3">
+        {spread.photos.slice(0, 2).map((photo, j) => (
+          <motion.div key={j} {...fade(0.08 + j * 0.04)} className="flex-1">
+            <CaptionedPhoto photo={photo} className="h-full [&>div]:h-[220px] sm:[&>div]:h-[260px]" />
+          </motion.div>
+        ))}
+      </div>
+    </div>
+
+    {/* Third photo — full width if present */}
+    {spread.photos[2] && (
+      <motion.div {...fade(0.12)} className="pt-3">
+        <CaptionedPhoto photo={spread.photos[2]} className="[&>div]:h-[280px] sm:[&>div]:h-[360px]" />
+      </motion.div>
+    )}
+
+    {spread.pullQuote && <PullQuote {...spread.pullQuote} />}
+  </div>
+);
+
+/** Layout B: Hero → full-width photo pair → narrative centered → moments grid */
+const SpreadLayoutB = ({ spread, index }: { spread: DaySpread; index: number }) => (
+  <div className="space-y-0">
+    <SpreadHero photo={spread.hero} {...spread} />
+
+    {/* Photo pair — side by side */}
+    {spread.photos.length >= 2 && (
+      <div className="grid grid-cols-2 gap-3 pt-3">
+        {spread.photos.slice(0, 2).map((photo, j) => (
+          <motion.div key={j} {...fade(0.05 + j * 0.04)}>
+            <CaptionedPhoto photo={photo} className="[&>div]:h-[240px] sm:[&>div]:h-[320px]" />
+          </motion.div>
+        ))}
+      </div>
+    )}
+
+    {/* Centered narrative — editorial magazine style */}
+    <motion.div {...fade(0.1)} className="pt-3">
+      <div className="bg-white border border-border p-8 sm:p-12" style={{ boxShadow: "0 10px 30px rgba(26,26,27,0.05)" }}>
+        <div className="max-w-2xl mx-auto">
+          <p
+            className="text-foreground leading-[1.8] mb-8"
+            style={{ fontFamily: "Inter, system-ui, sans-serif", fontSize: "0.9375rem", letterSpacing: "-0.02em" }}
+          >
+            {spread.narrative}
+          </p>
+          <div className="grid grid-cols-2 gap-x-8 gap-y-3">
+            {spread.moments.map((m, j) => (
+              <div
+                key={j}
+                className="flex items-start gap-3 text-muted-foreground"
+                style={{ fontFamily: "Inter, system-ui, sans-serif", fontSize: "0.8125rem", letterSpacing: "-0.02em", lineHeight: 1.6 }}
+              >
+                <span className="shrink-0 mt-2 w-1.5 h-1.5" style={{ backgroundColor: "#947120" }} />
+                {m}
+              </div>
+            ))}
+          </div>
+          {spread.stats && (
+            <div className="flex gap-8 mt-8 pt-6 border-t border-border justify-center">
+              {spread.stats.map((s) => (
+                <div key={s.label} className="text-center">
+                  <p className="font-display text-lg text-foreground">{s.value}</p>
+                  <p
+                    className="text-muted-foreground uppercase tracking-[0.12em]"
+                    style={{ fontFamily: "Inter, system-ui, sans-serif", fontSize: "0.5rem" }}
+                  >
+                    {s.label}
+                  </p>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+    </motion.div>
+
+    {/* Third photo full-width */}
+    {spread.photos[2] && (
+      <motion.div {...fade(0.14)} className="pt-3">
+        <CaptionedPhoto photo={spread.photos[2]} className="[&>div]:h-[280px] sm:[&>div]:h-[380px]" />
+      </motion.div>
+    )}
+
+    {spread.pullQuote && <PullQuote {...spread.pullQuote} />}
+  </div>
+);
+
+/** Layout C: Hero → Narrative right + tall photo left → moments → bottom photos */
+const SpreadLayoutC = ({ spread, index }: { spread: DaySpread; index: number }) => (
+  <div className="space-y-0">
+    <SpreadHero photo={spread.hero} {...spread} />
+
+    {/* Tall photo left + narrative right — reversed asymmetry */}
+    <div className="grid grid-cols-1 lg:grid-cols-5 gap-3 pt-3">
+      {/* Tall photo */}
+      <motion.div {...fade(0.05)} className="lg:col-span-2">
+        {spread.photos[0] && (
+          <CaptionedPhoto photo={spread.photos[0]} className="h-full [&>div]:h-[300px] lg:[&>div]:h-full" />
+        )}
+      </motion.div>
+
+      {/* Narrative + moments */}
+      <motion.div {...fade(0.08)} className="lg:col-span-3 bg-white border border-border p-8 sm:p-10" style={{ boxShadow: "0 10px 30px rgba(26,26,27,0.05)" }}>
+        <p
+          className="text-foreground leading-[1.8] mb-8"
+          style={{ fontFamily: "Inter, system-ui, sans-serif", fontSize: "0.9375rem", letterSpacing: "-0.02em" }}
+        >
+          {spread.narrative}
+        </p>
+        <div className="border-t border-border pt-6">
+          <p
+            className="text-muted-foreground uppercase tracking-[0.15em] mb-4"
+            style={{ fontFamily: "Inter, system-ui, sans-serif", fontSize: "0.5625rem" }}
+          >
+            Key Moments
+          </p>
+          <ul className="space-y-2.5">
+            {spread.moments.map((m, j) => (
+              <li
+                key={j}
+                className="flex items-start gap-3 text-muted-foreground"
+                style={{ fontFamily: "Inter, system-ui, sans-serif", fontSize: "0.8125rem", letterSpacing: "-0.02em", lineHeight: 1.6 }}
+              >
+                <span className="shrink-0 mt-2 w-1.5 h-1.5" style={{ backgroundColor: "#947120" }} />
+                {m}
+              </li>
+            ))}
+          </ul>
+        </div>
+        {spread.stats && (
+          <div className="flex gap-6 mt-8 pt-6 border-t border-border">
+            {spread.stats.map((s) => (
+              <div key={s.label}>
+                <p className="font-display text-lg text-foreground">{s.value}</p>
+                <p
+                  className="text-muted-foreground uppercase tracking-[0.12em]"
+                  style={{ fontFamily: "Inter, system-ui, sans-serif", fontSize: "0.5rem" }}
+                >
+                  {s.label}
+                </p>
+              </div>
+            ))}
+          </div>
+        )}
+      </motion.div>
+    </div>
+
+    {/* Bottom photos */}
+    {spread.photos.length > 1 && (
+      <div className={`grid gap-3 pt-3 ${spread.photos.length > 2 ? "grid-cols-2" : "grid-cols-1"}`}>
+        {spread.photos.slice(1).map((photo, j) => (
+          <motion.div key={j} {...fade(0.12 + j * 0.04)}>
+            <CaptionedPhoto photo={photo} className="[&>div]:h-[240px] sm:[&>div]:h-[300px]" />
+          </motion.div>
+        ))}
+      </div>
+    )}
+
+    {spread.pullQuote && <PullQuote {...spread.pullQuote} />}
+  </div>
+);
+
+/** Picks a layout based on index to create variety */
+const SpreadLayout = ({ spread, index }: { spread: DaySpread; index: number }) => {
+  const layouts = [SpreadLayoutA, SpreadLayoutB, SpreadLayoutC, SpreadLayoutB];
+  const Layout = layouts[index % layouts.length];
+  return <Layout spread={spread} index={index} />;
+};
+
+/* ═══════════════════════════════════════════════════════════════
+ * MAIN COMPONENT
+ * ═══════════════════════════════════════════════════════════════ */
+
 interface MemoriesTripDetailProps {
   memory: TripMemory;
   allMemories: TripMemory[];
@@ -124,14 +520,12 @@ interface MemoriesTripDetailProps {
 
 const MemoriesTripDetail = ({ memory, allMemories, onBack }: MemoriesTripDetailProps) => {
   const [activeTab, setActiveTab] = useState("vault");
-  const [expandedPhoto, setExpandedPhoto] = useState<string | null>(null);
   const [restorationPhase, setRestorationPhase] = useState<"restoring" | "revealed">("restoring");
 
-  // Simulate restoration on first load
-  useState(() => {
+  useEffect(() => {
     const timer = setTimeout(() => setRestorationPhase("revealed"), 2400);
     return () => clearTimeout(timer);
-  });
+  }, []);
 
   return (
     <>
@@ -166,13 +560,9 @@ const MemoriesTripDetail = ({ memory, allMemories, onBack }: MemoriesTripDetailP
       {/* ═══ REVEALED CONTENT ═══ */}
       {restorationPhase === "revealed" && (
         <>
-          {/* Hero */}
+          {/* Header */}
           <section className="max-w-6xl mx-auto px-4 sm:px-8 py-12 sm:py-16">
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 1.2, ease }}
-            >
+            <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1.2, ease }}>
               <button
                 onClick={onBack}
                 className="flex items-center gap-2 mb-8 text-muted-foreground hover:text-foreground transition-colors"
@@ -186,23 +576,17 @@ const MemoriesTripDetail = ({ memory, allMemories, onBack }: MemoriesTripDetailP
                 className="mb-3 uppercase tracking-[0.3em] text-muted-foreground"
                 style={{ fontFamily: "Inter, system-ui, sans-serif", fontSize: "0.6875rem", fontWeight: 400 }}
               >
-                {memory.date} · {memory.destination}
+                {memory.date} · {memory.destination} · {memory.photoCount} photos
               </p>
               <h1 className="font-display text-5xl sm:text-7xl text-foreground leading-[1.02] mb-4">
                 {memory.tripName}
               </h1>
-
-              <div className="flex items-center gap-4 flex-wrap">
-                {memory.highlights.map((h) => (
-                  <span
-                    key={h}
-                    className="px-3 py-1.5 border border-border bg-white text-muted-foreground"
-                    style={{ fontFamily: "Inter, system-ui, sans-serif", fontSize: "0.5625rem", letterSpacing: "0.1em", textTransform: "uppercase" }}
-                  >
-                    {h}
-                  </span>
-                ))}
-              </div>
+              <p
+                className="text-muted-foreground max-w-lg"
+                style={{ fontFamily: "Inter, system-ui, sans-serif", fontSize: "0.9375rem", letterSpacing: "-0.02em", lineHeight: 1.7 }}
+              >
+                A four-day story told in photographs, moments, and the words your family spoke when they thought nobody was listening.
+              </p>
             </motion.div>
           </section>
 
@@ -232,266 +616,150 @@ const MemoriesTripDetail = ({ memory, allMemories, onBack }: MemoriesTripDetailP
             </div>
           </div>
 
-          {/* ═══ THE VAULT TAB ═══ */}
+          {/* ═══ THE VAULT — SCRAPBOOK ═══ */}
           {activeTab === "vault" && (
-            <VaultContent
-              memory={memory}
-              expandedPhoto={expandedPhoto}
-              onExpandPhoto={setExpandedPhoto}
-            />
+            <div className="pb-24">
+              {/* Trip stats bar */}
+              <section className="max-w-6xl mx-auto px-4 sm:px-8 pt-12">
+                <motion.div {...fade()} className="grid grid-cols-3 sm:grid-cols-6 gap-3">
+                  {tripStats.map((stat) => (
+                    <div
+                      key={stat.label}
+                      className="bg-white border border-border p-4 text-center"
+                      style={{ boxShadow: "0 10px 30px rgba(26,26,27,0.05)" }}
+                    >
+                      <span className="text-lg mb-1 block">{stat.icon}</span>
+                      <p className="font-display text-xl text-foreground">{stat.value}</p>
+                      <p
+                        className="text-muted-foreground mt-0.5 uppercase tracking-[0.12em]"
+                        style={{ fontFamily: "Inter, system-ui, sans-serif", fontSize: "0.5rem" }}
+                      >
+                        {stat.label}
+                      </p>
+                    </div>
+                  ))}
+                </motion.div>
+              </section>
+
+              {/* Day spreads — the scrapbook */}
+              {spreads.map((spread, i) => (
+                <section key={spread.day} className="max-w-6xl mx-auto px-4 sm:px-8 pt-20 sm:pt-28">
+                  {/* Day divider */}
+                  <motion.div {...fade()} className="flex items-center gap-4 mb-8">
+                    <div className="h-px flex-1" style={{ backgroundColor: "#947120", opacity: 0.2 }} />
+                    <p
+                      className="text-muted-foreground uppercase tracking-[0.3em] shrink-0"
+                      style={{ fontFamily: "Inter, system-ui, sans-serif", fontSize: "0.5625rem", fontWeight: 400 }}
+                    >
+                      {spread.day}
+                    </p>
+                    <div className="h-px flex-1" style={{ backgroundColor: "#947120", opacity: 0.2 }} />
+                  </motion.div>
+
+                  <SpreadLayout spread={spread} index={i} />
+                </section>
+              ))}
+
+              {/* Family Favorites */}
+              <section className="max-w-6xl mx-auto px-4 sm:px-8 pt-24">
+                <motion.div {...fade()}>
+                  <p
+                    className="mb-2 uppercase tracking-[0.2em] text-muted-foreground"
+                    style={{ fontFamily: "Inter, system-ui, sans-serif", fontSize: "0.6875rem", fontWeight: 400 }}
+                  >
+                    In Their Own Words
+                  </p>
+                  <h2 className="font-display text-4xl sm:text-5xl text-foreground leading-[1.08] mb-12">
+                    Family Favorites
+                  </h2>
+                </motion.div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  {familyFavorites.map((fav, i) => (
+                    <motion.div
+                      key={fav.member}
+                      {...fade(0.04 + i * 0.04)}
+                      className="bg-white border border-border p-6 sm:p-8"
+                      style={{ boxShadow: "0 10px 30px rgba(26,26,27,0.05)" }}
+                    >
+                      <p
+                        className="text-muted-foreground mb-1 uppercase tracking-[0.15em]"
+                        style={{ fontFamily: "Inter, system-ui, sans-serif", fontSize: "0.5625rem" }}
+                      >
+                        {fav.member}'s Favorite
+                      </p>
+                      <h4 className="font-display text-xl text-foreground mb-3">{fav.favorite}</h4>
+                      <div className="flex items-start gap-2">
+                        <span className="shrink-0 mt-1" style={{ color: "#947120", fontSize: "1.25rem", lineHeight: 1 }}>"</span>
+                        <p
+                          className="text-muted-foreground italic"
+                          style={{ fontFamily: "Inter, system-ui, sans-serif", fontSize: "0.875rem", letterSpacing: "-0.02em", lineHeight: 1.7 }}
+                        >
+                          {fav.quote}
+                        </p>
+                      </div>
+                    </motion.div>
+                  ))}
+                </div>
+              </section>
+
+              {/* Closing editorial */}
+              <section className="max-w-4xl mx-auto px-4 sm:px-8 pt-24 pb-8 text-center">
+                <motion.div {...fade()}>
+                  <div className="w-8 h-px mx-auto mb-8" style={{ backgroundColor: "#947120" }} />
+                  <p className="font-display text-2xl sm:text-3xl text-foreground leading-[1.3] max-w-xl mx-auto mb-4">
+                    "Nobody wanted to leave. But the memories — those we get to keep."
+                  </p>
+                  <p
+                    className="text-muted-foreground mb-10"
+                    style={{ fontFamily: "Inter, system-ui, sans-serif", fontSize: "0.75rem", letterSpacing: "-0.02em" }}
+                  >
+                    — The Noelke Family, {memory.date}
+                  </p>
+
+                  {/* CTA to order print */}
+                  <motion.div {...fade(0.05)} className="inline-block">
+                    <div
+                      className="bg-white border border-border px-8 py-6 text-center"
+                      style={{ boxShadow: "0 10px 30px rgba(26,26,27,0.05)" }}
+                    >
+                      <p
+                        className="text-muted-foreground mb-2 uppercase tracking-[0.15em]"
+                        style={{ fontFamily: "Inter, system-ui, sans-serif", fontSize: "0.5625rem" }}
+                      >
+                        Make it Permanent
+                      </p>
+                      <p className="font-display text-lg text-foreground mb-4">
+                        Order a Coffee Table Book
+                      </p>
+                      <button
+                        className="px-6 text-center transition-opacity hover:opacity-90"
+                        style={{
+                          backgroundColor: "#1A1A1B",
+                          color: "#C8A84E",
+                          fontFamily: "Inter, system-ui, sans-serif",
+                          fontSize: "0.625rem",
+                          letterSpacing: "0.12em",
+                          textTransform: "uppercase",
+                          fontWeight: 500,
+                          minHeight: 44,
+                          lineHeight: "44px",
+                        }}
+                      >
+                        Design Your Book — from $49.95
+                      </button>
+                    </div>
+                  </motion.div>
+                </motion.div>
+              </section>
+            </div>
           )}
 
-          {/* ═══ ECHOES TAB ═══ */}
           {activeTab === "echoes" && <AudioEcho />}
-
-          {/* ═══ JOY REPORT TAB ═══ */}
           {activeTab === "joy" && <JoyBlueprint tripMemories={[memory]} />}
         </>
       )}
     </>
-  );
-};
-
-/* ───────────────────────────────────────────────────────────
- * THE VAULT — Full restored memory experience
- * ─────────────────────────────────────────────────────────── */
-const VaultContent = ({
-  memory,
-  expandedPhoto,
-  onExpandPhoto,
-}: {
-  memory: TripMemory;
-  expandedPhoto: string | null;
-  onExpandPhoto: (id: string | null) => void;
-}) => {
-  return (
-    <div className="pb-24">
-      {/* ── HERO IMAGE ── */}
-      <section className="max-w-6xl mx-auto px-4 sm:px-8 pt-12">
-        <motion.div {...fade()} className="relative overflow-hidden" style={{ boxShadow: "0 10px 30px rgba(26,26,27,0.05)" }}>
-          <motion.img
-            initial={{ scale: 1.05, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            transition={{ duration: 1.5, ease }}
-            src={memory.coverImage}
-            alt={memory.tripName}
-            className="w-full h-[360px] sm:h-[520px] object-cover"
-          />
-          {/* Golden seal */}
-          <motion.div
-            initial={{ scale: 0, rotate: -45 }}
-            animate={{ scale: 1, rotate: 0 }}
-            transition={{ duration: 0.8, delay: 0.6, ease }}
-            className="absolute bottom-5 right-5 w-12 h-12 flex items-center justify-center"
-            style={{ backgroundColor: "#947120" }}
-          >
-            <Award className="w-5 h-5 text-white" />
-          </motion.div>
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.8 }}
-            className="absolute top-5 left-5"
-          >
-            <span
-              className="px-3 py-1.5 bg-[#947120] text-white"
-              style={{ fontFamily: "Inter, system-ui, sans-serif", fontSize: "0.5rem", letterSpacing: "0.2em", textTransform: "uppercase" }}
-            >
-              Master
-            </span>
-          </motion.div>
-        </motion.div>
-      </section>
-
-      {/* ── TRIP STATS ── */}
-      <section className="max-w-6xl mx-auto px-4 sm:px-8 pt-12">
-        <motion.div {...fade(0.05)} className="grid grid-cols-3 sm:grid-cols-6 gap-3">
-          {tripStats.map((stat) => (
-            <div
-              key={stat.label}
-              className="bg-white border border-border p-4 text-center"
-              style={{ boxShadow: "0 10px 30px rgba(26,26,27,0.05)" }}
-            >
-              <span className="text-lg mb-1 block">{stat.icon}</span>
-              <p className="font-display text-xl text-foreground">{stat.value}</p>
-              <p
-                className="text-muted-foreground mt-0.5 uppercase tracking-[0.12em]"
-                style={{ fontFamily: "Inter, system-ui, sans-serif", fontSize: "0.5rem" }}
-              >
-                {stat.label}
-              </p>
-            </div>
-          ))}
-        </motion.div>
-      </section>
-
-      {/* ── DAY-BY-DAY JOURNAL ── */}
-      <section className="max-w-6xl mx-auto px-4 sm:px-8 pt-20">
-        <motion.div {...fade(0.1)}>
-          <p
-            className="mb-2 uppercase tracking-[0.2em] text-muted-foreground"
-            style={{ fontFamily: "Inter, system-ui, sans-serif", fontSize: "0.6875rem", fontWeight: 400 }}
-          >
-            The Chronicle
-          </p>
-          <h2 className="font-display text-4xl sm:text-5xl text-foreground leading-[1.08] mb-12">
-            Day by Day
-          </h2>
-        </motion.div>
-
-        <div className="space-y-4">
-          {mockDayByDay.map((day, i) => (
-            <motion.div
-              key={day.day}
-              {...fade(0.12 + i * 0.04)}
-              className="bg-white border border-border p-6 sm:p-8"
-              style={{ boxShadow: "0 10px 30px rgba(26,26,27,0.05)" }}
-            >
-              <div className="flex items-start justify-between mb-4">
-                <div>
-                  <p
-                    className="text-muted-foreground uppercase tracking-[0.15em] mb-1"
-                    style={{ fontFamily: "Inter, system-ui, sans-serif", fontSize: "0.5625rem" }}
-                  >
-                    {day.day}
-                  </p>
-                  <h3 className="font-display text-2xl text-foreground">{day.title}</h3>
-                </div>
-                <div className="text-center shrink-0 ml-4">
-                  <span className="text-2xl block">{day.mood}</span>
-                  <p
-                    className="text-muted-foreground mt-0.5"
-                    style={{ fontFamily: "Inter, system-ui, sans-serif", fontSize: "0.5rem", letterSpacing: "0.1em", textTransform: "uppercase" }}
-                  >
-                    {day.moodLabel}
-                  </p>
-                </div>
-              </div>
-              <ul className="space-y-2">
-                {day.moments.map((moment, j) => (
-                  <li
-                    key={j}
-                    className="flex items-start gap-3 text-muted-foreground"
-                    style={{ fontFamily: "Inter, system-ui, sans-serif", fontSize: "0.8125rem", letterSpacing: "-0.02em", lineHeight: 1.7 }}
-                  >
-                    <span className="shrink-0 mt-1.5 w-1 h-1 bg-[#947120]" />
-                    {moment}
-                  </li>
-                ))}
-              </ul>
-            </motion.div>
-          ))}
-        </div>
-      </section>
-
-      {/* ── PHOTO MOSAIC ── */}
-      <section className="max-w-6xl mx-auto px-4 sm:px-8 pt-20">
-        <motion.div {...fade(0.15)}>
-          <p
-            className="mb-2 uppercase tracking-[0.2em] text-muted-foreground"
-            style={{ fontFamily: "Inter, system-ui, sans-serif", fontSize: "0.6875rem", fontWeight: 400 }}
-          >
-            The Collection
-          </p>
-          <h2 className="font-display text-4xl sm:text-5xl text-foreground leading-[1.08] mb-4">
-            {memory.photoCount} Restored Memories
-          </h2>
-          <p
-            className="text-muted-foreground max-w-lg mb-12"
-            style={{ fontFamily: "Inter, system-ui, sans-serif", fontSize: "0.875rem", letterSpacing: "-0.02em" }}
-          >
-            Every frame verified, color-corrected, and archived. Hover to read the moment.
-          </p>
-        </motion.div>
-
-        <div className="grid grid-cols-6 gap-3 auto-rows-[180px] sm:auto-rows-[220px]">
-          {mockGalleryPhotos.map((photo, i) => (
-            <motion.div
-              key={photo.id}
-              {...fade(0.18 + i * 0.03)}
-              className={`${photo.aspect} relative group cursor-pointer overflow-hidden`}
-              style={{ boxShadow: "0 10px 30px rgba(26,26,27,0.05)" }}
-              onClick={() => onExpandPhoto(expandedPhoto === photo.id ? null : photo.id)}
-            >
-              <img
-                src={photo.src}
-                alt={photo.caption}
-                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-[1.03]"
-              />
-              {/* Hover caption */}
-              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
-              <div className="absolute bottom-0 left-0 right-0 p-4 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
-                <p
-                  className="text-white/90 leading-snug"
-                  style={{ fontFamily: "Inter, system-ui, sans-serif", fontSize: "0.75rem", letterSpacing: "-0.02em" }}
-                >
-                  {photo.caption}
-                </p>
-              </div>
-            </motion.div>
-          ))}
-        </div>
-      </section>
-
-      {/* ── FAMILY FAVORITES ── */}
-      <section className="max-w-6xl mx-auto px-4 sm:px-8 pt-20">
-        <motion.div {...fade(0.2)}>
-          <p
-            className="mb-2 uppercase tracking-[0.2em] text-muted-foreground"
-            style={{ fontFamily: "Inter, system-ui, sans-serif", fontSize: "0.6875rem", fontWeight: 400 }}
-          >
-            In Their Own Words
-          </p>
-          <h2 className="font-display text-4xl sm:text-5xl text-foreground leading-[1.08] mb-12">
-            Family Favorites
-          </h2>
-        </motion.div>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          {familyFavorites.map((fav, i) => (
-            <motion.div
-              key={fav.member}
-              {...fade(0.22 + i * 0.04)}
-              className="bg-white border border-border p-6 sm:p-8"
-              style={{ boxShadow: "0 10px 30px rgba(26,26,27,0.05)" }}
-            >
-              <p
-                className="text-muted-foreground mb-1 uppercase tracking-[0.15em]"
-                style={{ fontFamily: "Inter, system-ui, sans-serif", fontSize: "0.5625rem" }}
-              >
-                {fav.member}'s Favorite
-              </p>
-              <h4 className="font-display text-xl text-foreground mb-3">{fav.favorite}</h4>
-              <div className="flex items-start gap-2">
-                <span className="shrink-0 mt-1" style={{ color: "#947120", fontSize: "1.25rem", lineHeight: 1 }}>"</span>
-                <p
-                  className="text-muted-foreground italic"
-                  style={{ fontFamily: "Inter, system-ui, sans-serif", fontSize: "0.875rem", letterSpacing: "-0.02em", lineHeight: 1.7 }}
-                >
-                  {fav.quote}
-                </p>
-              </div>
-            </motion.div>
-          ))}
-        </div>
-      </section>
-
-      {/* ── CLOSING EDITORIAL ── */}
-      <section className="max-w-4xl mx-auto px-4 sm:px-8 pt-24 pb-8 text-center">
-        <motion.div {...fade(0.25)}>
-          <div className="w-8 h-px mx-auto mb-8" style={{ backgroundColor: "#947120" }} />
-          <p className="font-display text-2xl sm:text-3xl text-foreground leading-[1.3] max-w-xl mx-auto mb-4">
-            "Nobody wanted to leave. But the memories — those we get to keep."
-          </p>
-          <p
-            className="text-muted-foreground"
-            style={{ fontFamily: "Inter, system-ui, sans-serif", fontSize: "0.75rem", letterSpacing: "-0.02em" }}
-          >
-            — The Noelke Family, {memory.date}
-          </p>
-        </motion.div>
-      </section>
-    </div>
   );
 };
 

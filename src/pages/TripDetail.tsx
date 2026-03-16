@@ -476,7 +476,7 @@ const BookedTripDetail = ({ trip }: { trip: BookedTrip }) => {
         <SparkleField count={10} />
         <div className="absolute bottom-0 left-0 right-0 px-8 lg:px-16 pb-12">
           <motion.div {...fade()}>
-            <Link to="/adventure" className="label-text !text-white/40 mb-4 tracking-[0.3em] hover:!text-white/60 transition-colors inline-block">← All Trips</Link>
+            <Link to="/adventure" className="label-text !text-white/60 mb-4 tracking-[0.3em] hover:!text-white/80 transition-colors inline-block">← All Trips</Link>
           </motion.div>
           <motion.h1 {...fade(0.2)} className="font-display text-white text-4xl sm:text-6xl leading-[1.02] mt-4">{destination}</motion.h1>
           <motion.p {...fade(0.4)} className="font-editorial text-white/60 text-lg mt-4">{tripName} · {countdownDays} days away · Party of {trip.partySize}</motion.p>

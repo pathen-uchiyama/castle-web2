@@ -69,11 +69,54 @@ const HoursDisplay = ({ hours, label }: { hours: ParkHours; label?: string }) =>
   </div>
 );
 
+// Mock subscription state — toggle to test gating
+const useSubscription = () => {
+  const [isPaid, setIsPaid] = useState(false);
+  return { isPaid, togglePaid: () => setIsPaid((p) => !p) };
+};
+
+// Typical crowd levels by day of week (free tier data)
+const typicalCrowdsByDay: Record<string, { level: string; score: number; tip: string }> = {
+  Sunday: { level: "Moderate", score: 5, tip: "Arrives heavy mid-morning, thins after 4 PM." },
+  Monday: { level: "Low", score: 3, tip: "One of the quietest days — rope drop is golden." },
+  Tuesday: { level: "Low", score: 3, tip: "Great for character meets and walk-on rides." },
+  Wednesday: { level: "Moderate", score: 5, tip: "Mid-week bump from resort check-ins." },
+  Thursday: { level: "Moderate", score: 6, tip: "Builds toward the weekend; arrive early." },
+  Friday: { level: "High", score: 8, tip: "Weekend warriors arrive — use Lightning Lane." },
+  Saturday: { level: "High", score: 9, tip: "Peak day. Prioritize rope drop and late evening." },
+};
+
+// Generate projected crowd data for a month (paid tier)
+const generateProjections = (baseDate: Date, parkSchedule: ParkDaySchedule[]) => {
+  const start = startOfMonth(baseDate);
+  const end = endOfMonth(baseDate);
+  const days = eachDayOfInterval({ start, end });
+
+Hu  return days.map((day) => {
+    const dateStr = format(day, "yyyy-MM-dd");
+    const existing = parkSchedule.find((s) => s.date === dateStr);
+    if (existing) return { date: day, ...existing };
+    // Generate projected data based on day-of-week patterns
+    const dayName = format(day, "EEEE");
+    const typical = typicalCrowdsByDay[dayName];
+    const variance = Math.random() > 0.7 ? 1 : 0;
+    return {
+      date: day,
+      crowdLevel: typical.level,
+      crowdScore: Math.min(10, Math.max(1, typical.score + variance)),
+      weather: "Projected",
+      hours: { regular: "9:00 AM – 10:00 PM" } as ParkHours,
+    };
+  });
+};
+
 const ParkGuidePage = ({ parkGuides }: ParkGuidePageProps) => {
   const { parkId } = useParams();
   const [activeTab, setActiveTab] = useState("intel");
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
+  const { isPaid, togglePaid } = useSubscription();
+  const [calendarMonth, setCalendarMonth] = useState(new Date());
 
   const park = parkGuides.find((p) => p.parkId === parkId) || parkGuides[0];
   const sameParkGuides = parkGuides.filter((p) => p?.resort === park?.resort);

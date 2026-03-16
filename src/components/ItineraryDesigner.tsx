@@ -654,10 +654,11 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
                       }`} style={{ borderRadius: 0 }}>
                         {isMeal ? "🍽 Dining" : isExperience ? "✨ Experience" : item.type}
                       </span>
+                      <div className="flex-1" />
                       {wait > 0 && (
-                        <div className="shrink-0 px-3 py-2 bg-[hsl(var(--destructive)/0.06)] border border-[hsl(var(--destructive)/0.15)] flex items-center gap-1.5" style={{ borderRadius: 0 }}>
-                          <span className="font-display text-base text-destructive font-bold leading-none">{wait}m</span>
-                          <span className="font-display text-xs text-destructive/70">est. wait</span>
+                        <div className="shrink-0 px-4 py-2.5 bg-[hsl(var(--destructive)/0.08)] border border-[hsl(var(--destructive)/0.2)] flex items-center gap-2 ml-auto" style={{ borderRadius: 0 }}>
+                          <span className="font-display text-lg text-destructive font-bold leading-none">{wait}m</span>
+                          <span className="font-display text-sm text-destructive/80">est. wait</span>
                         </div>
                       )}
                       {!isLocked && !isBooked && (

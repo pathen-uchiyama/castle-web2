@@ -10,6 +10,21 @@ import {
 } from "@/data/resortEncyclopedia";
 import { dlrResort, dlrHotels, dlrRestaurants, dlrParks, dlrShopping } from "@/data/dlrEncyclopedia";
 import { wdwEncyclopediaAttractions, dlrEncyclopediaAttractions } from "@/data/encyclopediaAttractions";
+import headerOverview from "@/assets/header-overview.jpg";
+import headerParks from "@/assets/header-parks.jpg";
+import headerHotels from "@/assets/header-hotels.jpg";
+import headerDining from "@/assets/header-dining.jpg";
+import headerTransport from "@/assets/header-transport.jpg";
+import headerShopping from "@/assets/header-shopping.jpg";
+
+const tabHeaderImages: Record<string, string> = {
+  overview: headerOverview,
+  parks: headerParks,
+  hotels: headerHotels,
+  dining: headerDining,
+  transport: headerTransport,
+  shopping: headerShopping,
+};
 
 const ease: [number, number, number, number] = [0.19, 1, 0.22, 1];
 const fade = (delay = 0) => ({

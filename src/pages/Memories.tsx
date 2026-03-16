@@ -151,7 +151,7 @@ const Memories = ({ tripMemories }: MemoriesProps) => {
             {/* Time saved breakdown */}
             <motion.div {...fade(0.3)}>
               <p className="label-text mb-6">Time Saved Breakdown</p>
-              <div className="border border-dashed border-border py-16 text-center">
+              <div className="border border-dashed border-border rounded-lg py-16 text-center">
                 <p className="font-display text-2xl text-muted-foreground/40 mb-3">Efficiency Metrics</p>
                 <p className="font-editorial text-sm text-muted-foreground/30 max-w-md mx-auto">
                   Cumulative wait time saved, Lightning Lane efficiency, and optimal ride sequencing stats will appear here.

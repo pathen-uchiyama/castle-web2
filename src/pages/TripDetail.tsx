@@ -1091,7 +1091,7 @@ const BookedTripDetail = ({ trip }: { trip: BookedTrip }) => {
                 </motion.div>
               )}
 
-              <motion.div {...fade(0.3)} className="border border-dashed border-border py-10 text-center cursor-pointer hover:border-[hsl(var(--gold)/0.5)] transition-colors duration-500">
+              <motion.div {...fade(0.3)} className="border border-dashed border-border rounded-lg py-10 text-center cursor-pointer hover:border-[hsl(var(--gold)/0.5)] transition-colors duration-500">
                 <p className="font-display text-xl text-muted-foreground/40 mb-2">+ Add Experience</p>
                 <p className="font-editorial text-sm text-muted-foreground/30">Track a new booked experience for your trip.</p>
               </motion.div>

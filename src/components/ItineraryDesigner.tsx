@@ -706,7 +706,7 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
                     </div>
 
                     {item.notes && (
-                      <p className="font-sans text-[0.5625rem] text-[hsl(var(--ink-light))] mt-1.5 italic" style={{ letterSpacing: "-0.02em" }}>{item.notes}</p>
+                      <p className="font-sans text-xs text-[hsl(var(--ink-light))] mt-2 italic" style={{ letterSpacing: "-0.02em" }}>{item.notes}</p>
                     )}
                   </motion.div>
 

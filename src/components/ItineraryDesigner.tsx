@@ -597,7 +597,7 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
                       layout
                       className="flex items-center gap-2 py-1.5 pl-6 ml-4 border-l-2 border-dashed border-[hsl(var(--gold)/0.3)]"
                     >
-                      <span className="text-[0.4375rem] text-[hsl(var(--ink-light))] font-sans flex items-center gap-1" style={{ letterSpacing: "-0.02em" }}>
+                      <span className="text-[0.625rem] text-[hsl(var(--ink-light))] font-sans flex items-center gap-1" style={{ letterSpacing: "-0.02em" }}>
                         🚶 {walkBuffer}m walk
                         {item.zone && <span className="text-[hsl(var(--ink-light))]/50">→ {zoneLabel(item.zone)}</span>}
                         {hasStroller && <span className="text-[hsl(var(--gold-dark))]">· 🍼 ×1.35</span>}

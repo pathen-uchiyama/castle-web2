@@ -140,7 +140,7 @@ const Memories = ({ tripMemories }: MemoriesProps) => {
             {/* Sentiment placeholder */}
             <motion.div {...fade(0.2)} className="mb-16">
               <p className="label-text mb-6">Sentiment Map</p>
-              <div className="border border-dashed border-border py-16 text-center">
+               <div className="border border-dashed border-border rounded-lg py-16 text-center">
                 <p className="font-display text-2xl text-muted-foreground/40 mb-3">Happiness Timeline</p>
                 <p className="font-editorial text-sm text-muted-foreground/30 max-w-md mx-auto">
                   A visual timeline of your family's trip ratings, favorite moments, and most-loved experiences across all adventures.

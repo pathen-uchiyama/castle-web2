@@ -154,7 +154,7 @@ const Index = ({
           <div className="grid grid-cols-1 md:grid-cols-2 min-h-[70vh]">
             <div className="flex flex-col justify-center px-4 sm:px-8 lg:px-16 py-16 sm:py-20 lg:py-28">
               <motion.div {...slideLeft()}>
-                <p className="label-text !text-white/40 mb-10 tracking-[0.25em]" style={{ letterSpacing: '0.25em' }}>Your Booked Adventure 🎉</p>
+                <p className="label-text !text-white/60 mb-10 tracking-[0.25em]" style={{ letterSpacing: '0.25em' }}>Your Booked Adventure 🎉</p>
                 <h2 className="font-display text-4xl sm:text-5xl xl:text-6xl text-white leading-[1.08] mb-6">
                   {bookedTrip.destination}
                 </h2>

@@ -132,7 +132,7 @@ const Circle = ({ partyMembers }: CircleProps) => {
                 <motion.div
                   key={member.memberId}
                   {...slideRight(i * 0.1)}
-                  className="border border-border bg-card shadow-[var(--shadow-soft)] hover:shadow-[var(--shadow-hover)] transition-shadow duration-500 overflow-hidden"
+                  className="border border-border bg-card rounded-lg shadow-[var(--shadow-soft)] hover:shadow-[var(--shadow-hover)] transition-shadow duration-500 overflow-hidden"
                 >
                   {/* Header row */}
                   <button

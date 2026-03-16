@@ -742,7 +742,7 @@ const BookedTripDetail = ({ trip }: { trip: BookedTrip }) => {
                     </div>
                   );
                 })}
-                <div className="flex items-center gap-2 px-4 py-2 border border-border bg-card ml-auto">
+                 <div className="flex items-center gap-2 px-4 py-2 rounded-md border border-border bg-card ml-auto">
                   <span className="label-text">Dietary Flags</span>
                   <span className="font-display text-xl text-foreground">{new Set(allDiningReservations.flatMap(d => d.dietaryFlags ?? [])).size}</span>
                 </div>

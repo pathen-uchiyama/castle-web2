@@ -383,7 +383,7 @@ const ResortHub = () => {
                         <p className="label-text mb-4">Attractions at {park.name}</p>
                         <div className="space-y-3">
                           {parkAttractions.map(a => (
-                            <div key={a.attractionId} className="border border-border bg-card p-4 shadow-[var(--shadow-soft)]">
+                            <div key={a.attractionId} className="border border-border bg-card rounded-lg p-4 shadow-[var(--shadow-soft)]">
                               <div className="flex items-start justify-between mb-2">
                                 <div>
                                   <div className="flex items-center gap-2 mb-1">

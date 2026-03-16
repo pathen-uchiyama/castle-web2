@@ -337,7 +337,7 @@ const ParkGuidePage = ({ parkGuides }: ParkGuidePageProps) => {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Search attractions, shows, dining..."
-                className="w-full px-5 py-3 text-sm bg-card border border-border text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:border-[hsl(var(--gold))] transition-colors"
+                className="w-full px-5 py-3 rounded-lg text-sm bg-card border border-border text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:border-[hsl(var(--gold))] transition-colors"
                 style={{ fontFamily: "Inter, system-ui, sans-serif" }}
               />
             </motion.div>

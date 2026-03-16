@@ -631,6 +631,7 @@ export const mockData: AppData = {
       age: 6, birthday: "September 12", heightInches: 44, dietaryRestrictions: [],
       favoriteCharacter: "Buzz Lightyear", favoriteRide: "Slinky Dog Dash",
       thrillTolerance: "low", magicStatus: [],
+      accessibilityNeeds: ["avoid-dark", "avoid-loud", "avoid-drops", "avoid-strobes"],
       sensoryNotes: "Does not like dark enclosed spaces. Scared by loud effects.",
       notes: "Height limit may restrict some rides. Loves snack stands.",
       lastUpdated: "2025-06-01",

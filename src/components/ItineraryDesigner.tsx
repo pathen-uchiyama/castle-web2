@@ -110,6 +110,8 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
 
   const [itinerary, setItinerary] = useState<ItineraryItem[]>(seededBookings);
   const [isLocked, setIsLocked] = useState(false);
+  const [dragIdx, setDragIdx] = useState<number | null>(null);
+  const [dragOverIdx, setDragOverIdx] = useState<number | null>(null);
 
   /* ── Derived ────────────────────────────────────────────────────── */
 

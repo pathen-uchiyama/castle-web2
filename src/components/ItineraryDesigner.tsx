@@ -526,12 +526,31 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
     const displayH = hour > 12 ? hour - 12 : hour === 0 ? 12 : hour;
     const timeStr = `${displayH}:${roundedMin.toString().padStart(2, "0")} ${ampm}`;
 
-    // Case 1: Repositioning an existing itinerary item (via state or dataTransfer)
+    // Case 1: Repositioning an existing itinerary item
     const timelineItemId = draggingItemId || e.dataTransfer.getData("timelineItemId");
     if (timelineItemId) {
-      setItinerary(prev => prev.map(item =>
-        item.id === timelineItemId ? { ...item, startTime: timeStr } : item
-      ));
+      // Check if we're dropping onto another scheduled item — swap their times
+      const dropTarget = scheduledItems.find(s => {
+        if (s.item.id === timelineItemId) return false;
+        return totalMin >= s.startMin && totalMin < s.startMin + s.blockMin;
+      });
+
+      if (dropTarget) {
+        // Swap start times between dragged item and drop target
+        setItinerary(prev => prev.map(item => {
+          if (item.id === timelineItemId) return { ...item, startTime: dropTarget.item.startTime };
+          if (item.id === dropTarget.item.id) {
+            const draggedItem = prev.find(i => i.id === timelineItemId);
+            return { ...item, startTime: draggedItem?.startTime || timeStr };
+          }
+          return item;
+        }));
+      } else {
+        // Drop onto empty space — just reposition
+        setItinerary(prev => prev.map(item =>
+          item.id === timelineItemId ? { ...item, startTime: timeStr } : item
+        ));
+      }
       setTimelineDropHour(null);
       setDraggingItemId(null);
       setDragIdx(null);
@@ -564,7 +583,7 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
     setTimelineDropHour(null);
     setDraggingAttractionId(null);
     setDraggingItemId(null);
-  }, [selectedParks, isLocked, draggingItemId]);
+  }, [selectedParks, isLocked, draggingItemId, scheduledItems]);
 
   const toggleGroupMember = (id: string) => {
     setGroupMembers(prev => prev.includes(id) ? prev.filter(m => m !== id) : [...prev, id]);

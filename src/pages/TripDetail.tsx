@@ -773,7 +773,7 @@ const BookedTripDetail = ({ trip }: { trip: BookedTrip }) => {
                           <span className="font-editorial text-muted-foreground/60">#{res.confirmationNumber}</span>
                         </div>
                         {res.dietaryFlags && res.dietaryFlags.length > 0 && (
-                          <div className="flex flex-wrap gap-1.5 mt-2">{res.dietaryFlags.map((flag) => (<span key={flag} className="text-[0.5rem] uppercase tracking-[0.1em] px-2 py-0.5 bg-[hsl(var(--warm))] text-muted-foreground border border-border">⚠ {flag}</span>))}</div>
+                          <div className="flex flex-wrap gap-1.5 mt-2">{res.dietaryFlags.map((flag) => (<span key={flag} className="text-[0.5rem] uppercase tracking-[0.1em] px-2 py-0.5 rounded-md bg-[hsl(var(--warm))] text-muted-foreground border border-border">⚠ {flag}</span>))}</div>
                         )}
                         {res.notes && <p className="font-editorial text-xs text-muted-foreground/60 italic mt-2">{res.notes}</p>}
                         {overlapMap[res.reservationId] && (

@@ -512,7 +512,7 @@ const ResortHub = () => {
 
                     <div className="flex flex-wrap gap-1.5 mb-3">
                       {hotel.bestFor.map(b => (
-                        <span key={b} className="text-[0.4375rem] uppercase tracking-[0.08em] px-2 py-0.5 bg-[hsl(var(--gold)/0.08)] text-[hsl(var(--gold-dark))] border border-[hsl(var(--gold)/0.15)]">✦ {b}</span>
+                        <span key={b} className="text-[0.4375rem] uppercase tracking-[0.08em] px-2 py-0.5 rounded-md bg-[hsl(var(--gold)/0.08)] text-[hsl(var(--gold-dark))] border border-[hsl(var(--gold)/0.15)]">✦ {b}</span>
                       ))}
                     </div>
                     <div className="flex flex-wrap gap-1">

@@ -35,11 +35,11 @@ const resorts = [
 const GuidesLanding = () => (
   <main className="min-h-screen bg-background">
     {/* Hero */}
-    <section className="relative bg-foreground text-background px-8 lg:px-16 pt-32 pb-20">
+    <section className="relative bg-background px-8 lg:px-16 pt-32 pb-20">
       <motion.div {...fade()}>
-        <p className="text-[0.625rem] uppercase tracking-[0.3em] text-background/70 mb-4">Resort Encyclopedia 🗺️</p>
-        <h1 className="font-display text-5xl sm:text-6xl lg:text-7xl leading-[1.05] mb-4">Park Guides</h1>
-        <p className="font-editorial text-lg text-background/70 max-w-2xl">
+        <p className="text-[0.625rem] uppercase tracking-[0.3em] text-muted-foreground mb-4">Resort Encyclopedia 🗺️</p>
+        <h1 className="font-display text-5xl sm:text-6xl lg:text-7xl leading-[1.05] text-foreground mb-4">Park Guides</h1>
+        <p className="font-editorial text-lg text-muted-foreground max-w-2xl">
           Everything your family needs — parks, hotels, dining, and insider tips for the most magical vacation ever.
         </p>
       </motion.div>

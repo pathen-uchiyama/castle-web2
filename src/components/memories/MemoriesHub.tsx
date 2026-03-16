@@ -8,8 +8,6 @@ const ease: [number, number, number, number] = [0.19, 1, 0.22, 1];
 
 interface MemoriesHubProps {
   tripMemories: TripMemory[];
-  captureConsented: boolean;
-  onConsent: (agreed: boolean) => void;
   creditsRemaining: number;
   totalCredits: number;
   onSelectTrip: (tripId: string) => void;

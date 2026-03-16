@@ -1191,13 +1191,32 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
                       <span className="px-1.5 py-0.5 text-[0.375rem] uppercase tracking-[0.08em] bg-foreground/5 text-muted-foreground">
                         🎢 {attraction.duration}
                       </span>
-                      {/* Show estimated wait + total block time */}
-                      <span className="px-1.5 py-0.5 text-[0.375rem] uppercase tracking-[0.08em] bg-[hsl(var(--destructive)/0.06)] text-destructive">
-                        ⏱ ~{estWait}m wait
-                      </span>
                       <span className="px-1.5 py-0.5 text-[0.375rem] uppercase tracking-[0.08em] bg-foreground/8 text-foreground font-medium">
                         📅 {totalBlockEst}m block
                       </span>
+
+                    {/* Separated wait time visual */}
+                    <div className="w-full mt-2 flex items-center gap-2">
+                      <div className="flex-1 flex h-2 overflow-hidden bg-muted/20 border border-border/30">
+                        <div
+                          className="bg-destructive/25 border-r border-destructive/30 flex items-center justify-center"
+                          style={{ width: `${(estWait / totalBlockEst) * 100}%` }}
+                        />
+                        <div
+                          className={`${
+                            attraction.type === "show" || attraction.type === "character" || attraction.type === "parade"
+                              ? "bg-[hsl(280,30%,55%,0.25)]"
+                              : "bg-foreground/10"
+                          }`}
+                          style={{ width: `${(rideDur / totalBlockEst) * 100}%` }}
+                        />
+                      </div>
+                      <div className="flex items-center gap-1.5 shrink-0">
+                        <span className="text-[0.375rem] text-destructive font-medium">⏱ {estWait}m</span>
+                        <span className="text-muted-foreground/30 text-[0.375rem]">·</span>
+                        <span className="text-[0.375rem] text-foreground font-medium">🎢 {rideDur}m</span>
+                      </div>
+                    </div>
                       <span className="px-1.5 py-0.5 text-[0.375rem] uppercase tracking-[0.08em] bg-foreground/5 text-muted-foreground">
                         {attraction.environment}
                       </span>

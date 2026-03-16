@@ -119,6 +119,7 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
   /* ── State ──────────────────────────────────────────────────────── */
   const [pacing, setPacing] = useState("Moderate");
   const [focus, setFocus] = useState("Classic Magic");
+  const [minimizeWalking, setMinimizeWalking] = useState(false);
 
   const availableParks = Object.keys(allParkAttractions);
   const [selectedParks, setSelectedParks] = useState<string[]>(["mk"]);

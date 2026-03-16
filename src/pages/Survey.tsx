@@ -47,6 +47,7 @@ const Survey = () => {
   const [categoryFilter, setCategoryFilter] = useState<string>("all");
   const [rankings, setRankings] = useState<Record<string, SurveyRanking>>({});
   const [openToAnything, setOpenToAnything] = useState(false);
+  const [minimizeWalking, setMinimizeWalking] = useState(false);
   const [topFive, setTopFive] = useState<string[]>([]);
   const [submitted, setSubmitted] = useState(false);
 

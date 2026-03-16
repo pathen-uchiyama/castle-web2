@@ -324,10 +324,10 @@ const ParkGuidePage = ({ parkGuides }: ParkGuidePageProps) => {
           {/* Searchable Attractions */}
           <section className="px-8 lg:px-16 py-16 lg:py-24 bg-[hsl(var(--warm))]">
             <motion.div {...fade()}>
-              <p className="label-text mb-6">Park Wonders</p>
-              <h2 className="font-display text-3xl text-foreground leading-[1.1] mb-4">Boutique Intel</h2>
+              <p className="label-text mb-6">Park Wonders 🎢</p>
+              <h2 className="font-display text-3xl text-foreground leading-[1.1] mb-4">Insider Tips</h2>
               <p className="font-editorial text-muted-foreground mb-8 max-w-lg">
-                Searchable tips, secrets, and strategies for every experience at {park.parkName}.
+                Searchable tips, secrets, and family-friendly strategies for every experience at {park.parkName}.
               </p>
             </motion.div>
 

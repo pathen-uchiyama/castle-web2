@@ -262,7 +262,7 @@ const Index = ({
                   <div className="bg-[hsl(var(--gold-dark))]/10 backdrop-blur-md rounded-lg p-5 h-full border border-[hsl(var(--gold))]/10 overflow-hidden">
                     <p className="label-text !text-[hsl(var(--gold-light))]/50 mb-3" style={{ fontSize: '0.625rem' }}>Time Reclaimed</p>
                     <p className="font-display text-3xl text-[hsl(var(--gold-light))] mb-1">{bookedTrip.timeReclaimed}</p>
-                    <p className="font-editorial text-xs text-white/35 mb-4 italic">Given back to your family.</p>
+                    <p className="font-editorial text-xs text-white/35 mb-4 italic">Given back to your family. 💛</p>
                     <div className="space-y-2">
                       {bookedTrip.ridesSaved.slice(0, 3).map((s) => (
                         <div key={s.rideName} className="flex items-center gap-2 overflow-hidden">

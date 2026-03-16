@@ -329,7 +329,7 @@ const ResortHub = () => {
                         <p className="label-text mb-3">Themed Lands</p>
                         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
                           {park.lands.map(land => (
-                            <div key={land.name} className="border border-border bg-[hsl(var(--warm))] p-3">
+                            <div key={land.name} className="border border-border bg-[hsl(var(--warm))] rounded-lg p-3">
                               <p className="font-display text-sm text-foreground mb-0.5">{land.name}</p>
                               <p className="font-editorial text-[0.625rem] text-muted-foreground">{land.description}</p>
                               {land.iconicAttraction && (

@@ -13,6 +13,7 @@ import Memories from "./pages/Memories";
 import Circle from "./pages/Circle";
 import Account from "./pages/Account";
 import ParkGuidePage from "./pages/ParkGuide";
+import GuidesLanding from "./pages/GuidesLanding";
 import ResortHub from "./pages/ResortHub";
 import NotFound from "./pages/NotFound";
 import { mockData } from "./data/mockData";
@@ -49,6 +50,7 @@ const App = () => (
           <Route path="/memories/:tripId" element={<Memories tripMemories={mockData.tripMemories} />} />
           <Route path="/circle" element={<Circle partyMembers={mockData.partyMembers} />} />
           <Route path="/account" element={<Account account={mockData.account} />} />
+          <Route path="/guides" element={<GuidesLanding />} />
           <Route path="/parks/:parkId" element={<ParkGuidePage parkGuides={mockData.parkGuides} />} />
           <Route path="/resort/:resortId" element={<ResortHub />} />
           <Route path="*" element={<NotFound />} />

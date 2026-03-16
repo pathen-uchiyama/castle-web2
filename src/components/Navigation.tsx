@@ -4,7 +4,7 @@ import { Link, useLocation } from "react-router-dom";
 
 const navItems = [
   { label: "Plan Your Trip", path: "/adventure" },
-  { label: "Park Guides", path: "/parks/mk" },
+  { label: "Park Guides", path: "/guides" },
   { label: "Memories", path: "/memories" },
   { label: "The Circle", path: "/circle" },
   { label: "Account", path: "/account" },
@@ -16,6 +16,14 @@ const Navigation = () => {
   const location = useLocation();
   const isHome = location.pathname === "/";
   const [mobileOpen, setMobileOpen] = useState(false);
+
+  // Match /guides, /resort/*, and /parks/* for Park Guides active state
+  const isGuideActive = (path: string) => {
+    if (path === "/guides") {
+      return location.pathname.startsWith("/guides") || location.pathname.startsWith("/resort") || location.pathname.startsWith("/parks");
+    }
+    return location.pathname.startsWith(path);
+  };
 
   return (
     <>
@@ -39,7 +47,7 @@ const Navigation = () => {
         </Link>
         <div className="relative z-10 hidden md:flex items-center gap-7 lg:gap-9">
           {navItems.map((item) => {
-            const isActive = location.pathname.startsWith(item.path);
+            const isActive = isGuideActive(item.path);
             return (
               <Link key={item.path} to={item.path}>
                 <span className={`label-text transition-all duration-500 cursor-pointer ${isHome ? (isActive ? "!text-white" : "!text-white/40 hover:!text-white/70") : (isActive ? "!text-foreground" : "!text-muted-foreground hover:!text-foreground")}`}>
@@ -71,7 +79,7 @@ const Navigation = () => {
           >
             <nav className="flex flex-col gap-6">
               {navItems.map((item, i) => {
-                const isActive = location.pathname.startsWith(item.path);
+                const isActive = isGuideActive(item.path);
                 return (
                   <motion.div
                     key={item.path}

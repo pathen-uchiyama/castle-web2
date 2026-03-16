@@ -756,32 +756,34 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
                   {/* Gap analysis between items */}
                   {(() => {
                     const nextRi = ribbon[idx + 1];
-                    const gapMin = nextRi ? nextRi.startMin - endMin - (nextRi.walkBuffer || 0) : (leaveMin - endMin);
-                    const isLastItem = idx === ribbon.length - 1;
-                    const showGap = gapMin >= 15 && !isLastItem;
+                    const gapMin = nextRi ? nextRi.startMin - endMin - (nextRi.walkBuffer || 0) : 0;
                     const currentZone = item.zone;
-                    const nextZone = nextRi?.item?.zone;
-                    const sameZone = currentZone && nextZone && currentZone === nextZone;
                     
-                    return showGap ? (
-                      <div className="my-1 mx-2 border-2 border-dashed border-[hsl(var(--gold)/0.4)] bg-[hsl(var(--gold)/0.04)] p-3 flex items-center justify-between"
-                        style={{ borderRadius: 0 }}
+                    // Proportional height: minimum 48px, scales with gap size
+                    const gapHeight = gapMin >= 10 ? Math.max(48, Math.min(gapMin * 1.5, 180)) : 0;
+                    
+                    return gapMin >= 10 ? (
+                      <div
+                        className={`my-1 border-2 border-dashed flex flex-col items-center justify-center transition-colors duration-200 ${
+                          dropTargetIdx === idx + 1
+                            ? "border-[hsl(var(--gold))] bg-[hsl(var(--gold)/0.12)]"
+                            : "border-[hsl(var(--gold)/0.35)] bg-[hsl(var(--gold)/0.04)]"
+                        }`}
+                        style={{ borderRadius: 0, minHeight: `${gapHeight}px` }}
                         onDragOver={(e) => { e.preventDefault(); setDropTargetIdx(idx + 1); }}
                         onDragLeave={() => setDropTargetIdx(null)}
                         onDrop={(e) => handleDropOnZone(e, idx + 1)}
                       >
-                        <div className="flex items-center gap-2">
-                          <span className="text-lg">⏳</span>
-                          <div>
-                            <span className="font-display text-sm text-[hsl(var(--gold-dark))] font-bold">{gapMin}m open</span>
-                            <span className="text-[0.625rem] text-[hsl(var(--ink-light))] ml-2">
-                              ~{Math.floor(gapMin / 25)} rides could fit
-                            </span>
-                          </div>
+                        <div className="flex items-center gap-2 mb-1">
+                          <span className="text-xl">⏳</span>
+                          <span className="font-display text-lg text-[hsl(var(--gold-dark))] font-bold">{gapMin}m open</span>
                         </div>
+                        <p className="text-xs text-[hsl(var(--ink-light))]">
+                          ~{Math.floor(gapMin / 25)} rides could fit · {formatMin(endMin)} → {formatMin(nextRi ? nextRi.startMin : endMin + gapMin)}
+                        </p>
                         {currentZone && (
-                          <span className="text-[0.5625rem] uppercase tracking-[0.1em] px-2 py-1 bg-[hsl(var(--gold)/0.1)] text-[hsl(var(--gold-dark))]" style={{ borderRadius: 0 }}>
-                            📍 Near {zoneLabel(currentZone)}
+                          <span className="mt-1.5 text-[0.5625rem] uppercase tracking-[0.1em] px-2.5 py-1 bg-[hsl(var(--gold)/0.12)] text-[hsl(var(--gold-dark))]" style={{ borderRadius: 0 }}>
+                            📍 Near {zoneLabel(currentZone)} · Drag here to fill
                           </span>
                         )}
                       </div>

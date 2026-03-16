@@ -468,7 +468,7 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
     }
 
     const rect = timelineRef.current.getBoundingClientRect();
-    const y = e.clientY - rect.top + timelineRef.current.scrollTop;
+    const y = e.clientY - rect.top;
     const min = Math.round(y / PX_PER_MIN) + DAY_START_MIN;
     const hour = Math.floor(min / 60);
     const roundedMin = Math.round((min % 60) / 5) * 5;

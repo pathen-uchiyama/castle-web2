@@ -870,7 +870,7 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
                         <h4 className="font-display text-base text-[hsl(var(--ink))] truncate">{attraction.name}</h4>
                       </div>
                       <div className="flex items-center gap-2 shrink-0 ml-2">
-                        <span className="font-display text-[0.6875rem] text-[hsl(var(--ink))]">{attraction.rating.toFixed(1)}</span>
+                        <span className="font-display text-sm text-[hsl(var(--ink))]">{attraction.rating.toFixed(1)}</span>
                         <span className="text-[hsl(var(--gold))] text-xs">★</span>
                         <ChevronDown className={`w-3 h-3 text-[hsl(var(--ink-light))] transition-transform duration-300 ${isExpanded ? "rotate-180" : ""}`} />
                       </div>

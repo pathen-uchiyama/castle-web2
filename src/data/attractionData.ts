@@ -5,25 +5,61 @@ export type ThrillLevel = "mild" | "moderate" | "high";
 export type LLType = "ll-multi-1" | "ll-multi-2" | "ll-single" | "standby-only" | "none";
 export type WaitCategory = "walk-on" | "walk-on-am" | "fast-walk-on" | "hard-to-get" | "ill-required";
 
+/** Lifecycle status that affects crowd levels and demand */
+export type AttractionStatus =
+  | "operating"            // Normal operations
+  | "new"                  // Brand new attraction (< 1 year), expect extreme demand
+  | "recently-opened"      // Reopened after refurb or just opened (< 6 months), high demand
+  | "closing-permanently"  // Will close permanently / be replaced — last-chance demand spike
+  | "being-reimagined"     // Currently undergoing major transformation (e.g. Splash → Tiana's)
+  | "refurbishment"        // Temporarily closed for scheduled maintenance
+  | "seasonal";            // Only operates during certain seasons/events
+
+export interface AttractionStatusMeta {
+  status: AttractionStatus;
+  label: string;
+  note?: string;          // e.g. "Opens Summer 2025" or "Final day: Jan 22, 2025"
+  crowdImpact?: "extreme" | "high" | "moderate" | "none";
+}
+
 export interface ParkAttraction {
   id: string;
   name: string;
   parkId: string;
   type: AttractionType;
   rating: number;
-  duration: string; // e.g. "3 MIN"
-  heightRequirement?: string; // e.g. "48 IN" or "ANY"
+  duration: string;
+  heightRequirement?: string;
   thrillLevel: ThrillLevel;
-  environment: string; // e.g. "INDOOR, DARK"
+  environment: string;
   llType: LLType;
   waitCategory: WaitCategory;
   description: string;
   notableInsight: string;
-  rules: string[]; // e.g. ["DAS", "SINGLE RIDER", "CHILD SWITCH"]
-  warnings: string[]; // e.g. ["LOUD NOISES", "STROBES"]
+  rules: string[];
+  warnings: string[];
   isClosed?: boolean;
   tags?: string[];
+  /** Lifecycle status — affects demand and crowd levels */
+  attractionStatus?: AttractionStatusMeta;
 }
+
+export const attractionStatusLabels: Record<AttractionStatus, string> = {
+  "operating": "Operating",
+  "new": "Brand New",
+  "recently-opened": "Recently Opened",
+  "closing-permanently": "Closing Soon",
+  "being-reimagined": "Being Reimagined",
+  "refurbishment": "Refurbishment",
+  "seasonal": "Seasonal",
+};
+
+export const crowdImpactLabels: Record<string, { label: string; color: string }> = {
+  "extreme": { label: "Extreme Demand", color: "destructive" },
+  "high": { label: "High Demand", color: "destructive" },
+  "moderate": { label: "Elevated Crowds", color: "gold-dark" },
+  "none": { label: "Normal", color: "muted-foreground" },
+};
 
 export interface ItineraryItem {
   id: string;

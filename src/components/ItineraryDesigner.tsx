@@ -835,9 +835,13 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
                   {/* ── Activity block ───────────────────────────── */}
                   <div
                     draggable={!isLocked && !isBooked}
-                    onDragStart={(e) => { e.stopPropagation(); handleDragStart(globalIdx, item.id); }}
-                    onDragOver={(e) => handleDragOver(e, globalIdx)}
-                    onDrop={() => handleDrop(globalIdx)}
+                    onDragStart={(e) => {
+                      if (isLocked || isBooked) return;
+                      e.dataTransfer.setData("timelineItemId", item.id);
+                      e.dataTransfer.effectAllowed = "move";
+                      setDraggingItemId(item.id);
+                      setDragIdx(globalIdx);
+                    }}
                     onDragEnd={handleDragEnd}
                     style={{ minHeight: `${activityHeight}px` }}
                     className={`group border-l-[3px] border px-3 py-2 transition-all duration-200 shadow-soft overflow-hidden ${

@@ -83,6 +83,21 @@ const Circle = ({ partyMembers }: CircleProps) => {
     );
   };
 
+  const handleAccessibilityChange = (memberId: string, needId: string, checked: boolean) => {
+    setMembers((prev) =>
+      prev.map((m) => {
+        if (m.memberId !== memberId) return m;
+        const current = m.accessibilityNeeds || [];
+        return {
+          ...m,
+          accessibilityNeeds: checked
+            ? [...current, needId]
+            : current.filter((n) => n !== needId),
+        };
+      })
+    );
+  };
+
   const handleDietaryChange = (memberId: string, restriction: string, checked: boolean) => {
     setMembers((prev) =>
       prev.map((m) => {

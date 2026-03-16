@@ -730,7 +730,7 @@ const ResortHub = () => {
                             <p className="text-[0.4375rem] uppercase tracking-[0.12em] text-muted-foreground mb-1">Serves</p>
                             <div className="flex flex-wrap gap-1">
                               {t.servesAreas.map(a => (
-                                <span key={a} className="text-[0.5rem] px-2 py-0.5 bg-muted text-muted-foreground border border-border">{a}</span>
+                                <span key={a} className="text-[0.5rem] px-2 py-0.5 rounded-md bg-muted text-muted-foreground border border-border">{a}</span>
                               ))}
                             </div>
                           </div>

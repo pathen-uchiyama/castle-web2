@@ -316,30 +316,39 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
   const TOTAL_DAY_MIN = (DAY_END_HOUR - DAY_START_HOUR) * 60;
   const TOTAL_HEIGHT = TOTAL_DAY_MIN * PX_PER_MIN;
 
+  /** Stroller parking time for rides when party has stroller-age kids */
+  const getStrollerTime = (item: ItineraryItem) => {
+    if (!hasStrollerAge) return 0;
+    // Rides and some experiences require parking stroller
+    if (["ride", "show", "character"].includes(item.type)) return 5;
+    return 0;
+  };
+
   const getCheckinTime = (item: ItineraryItem) => {
     if (["show", "parade", "seasonal"].includes(item.type)) return 15;
     if (item.type === "character") return 10;
     return 0;
   };
 
-  /** Total block time = checkin + wait + duration (travel is separate, shown after) */
+  /** Total block time = stroller + checkin + wait + duration */
   const totalBlockTime = (item: ItineraryItem) => {
-    return getCheckinTime(item) + (item.waitTime || 0) + item.duration;
+    return getStrollerTime(item) + getCheckinTime(item) + (item.waitTime || 0) + item.duration;
   };
 
   const ropeDropMin = toMinutes(ropeDrop);
   const leaveMin = toMinutes(leavePark);
 
-  /** Scheduled items with overlap detection and dynamic walk/gap calculation */
+  /** Scheduled items with overlap detection, stroller time, and dynamic walk/gap calculation */
   const scheduledItems = useMemo(() => {
     const items = itinerary
       .filter(i => i.startTime && toMinutes(i.startTime) >= 0)
       .map(item => {
         const startMin = toMinutes(item.startTime);
+        const stroller = getStrollerTime(item);
         const checkin = getCheckinTime(item);
-        const blockMin = checkin + (item.waitTime || 0) + item.duration;
+        const blockMin = stroller + checkin + (item.waitTime || 0) + item.duration;
         const endMin = startMin + blockMin;
-        return { item, startMin, checkin, blockMin, travelMin: 0, endMin, overlaps: false, gapAfter: 0, gapFitsCount: 0 };
+        return { item, startMin, stroller, checkin, blockMin, travelMin: 0, endMin, overlaps: false, gapAfter: 0, gapFitsCount: 0 };
       })
       .sort((a, b) => a.startMin - b.startMin);
 
@@ -354,12 +363,10 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
       // Dynamic gap: time between this item's end and next item's start
       if (i < items.length - 1) {
         const rawGap = items[i + 1].startMin - items[i].endMin;
-        items[i].travelMin = Math.min(walkTimeEstimate, Math.max(0, rawGap)); // walk time capped by actual gap
-        items[i].gapAfter = Math.max(0, rawGap - walkTimeEstimate); // free time after walking
-        // Estimate how many avg rides (~25 min block) fit in the gap
+        items[i].travelMin = Math.min(walkTimeEstimate, Math.max(0, rawGap));
+        items[i].gapAfter = Math.max(0, rawGap - walkTimeEstimate);
         items[i].gapFitsCount = items[i].gapAfter >= 15 ? Math.floor(items[i].gapAfter / 25) : 0;
       } else {
-        // Last item: gap until leave park
         const rawGap = leaveMin - items[i].endMin;
         items[i].travelMin = Math.min(walkTimeEstimate, Math.max(0, rawGap));
         items[i].gapAfter = Math.max(0, rawGap - walkTimeEstimate);
@@ -368,7 +375,26 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
     }
 
     return items;
-  }, [itinerary, walkTimeEstimate, leaveMin]);
+  }, [itinerary, walkTimeEstimate, leaveMin, hasStrollerAge]);
+
+  /** Day summary stats */
+  const daySummary = useMemo(() => {
+    let totalRideTime = 0, totalWaitTime = 0, totalWalkTime = 0, totalBreakTime = 0, totalStrollerTime = 0, totalCheckinTime = 0;
+    scheduledItems.forEach(({ item, stroller, checkin, travelMin }) => {
+      if (["ride"].includes(item.type)) totalRideTime += item.duration;
+      if (["show", "character", "parade", "seasonal"].includes(item.type)) totalRideTime += item.duration;
+      if (["break", "pool", "hotel", "walk", "snack"].includes(item.type)) totalBreakTime += item.duration;
+      if (item.type === "meal") totalBreakTime += item.duration;
+      totalWaitTime += item.waitTime || 0;
+      totalWalkTime += travelMin;
+      totalStrollerTime += stroller;
+      totalCheckinTime += checkin;
+    });
+    const totalPlanned = totalRideTime + totalWaitTime + totalWalkTime + totalBreakTime + totalStrollerTime + totalCheckinTime;
+    const dayLength = Math.max(0, leaveMin - ropeDropMin);
+    const freeTime = Math.max(0, dayLength - totalPlanned);
+    return { totalRideTime, totalWaitTime, totalWalkTime, totalBreakTime, totalStrollerTime, totalCheckinTime, totalPlanned, dayLength, freeTime };
+  }, [scheduledItems, leaveMin, ropeDropMin]);
 
   const unscheduledItems = useMemo(() => itinerary.filter(i => !i.startTime), [itinerary]);
 

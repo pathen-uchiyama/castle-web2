@@ -19,8 +19,6 @@ interface MemoriesHubProps {
  */
 const MemoriesHub = ({
   tripMemories,
-  captureConsented,
-  onConsent,
   creditsRemaining,
   totalCredits,
   onSelectTrip,

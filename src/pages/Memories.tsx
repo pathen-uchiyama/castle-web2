@@ -12,14 +12,6 @@ interface MemoriesProps {
 const Memories = ({ tripMemories }: MemoriesProps) => {
   const { tripId } = useParams();
   const navigate = useNavigate();
-  const [captureConsented, setCaptureConsented] = useState(() => {
-    return localStorage.getItem("castle-capture-consent") === "true";
-  });
-
-  const handleConsent = (agreed: boolean) => {
-    setCaptureConsented(agreed);
-    localStorage.setItem("castle-capture-consent", String(agreed));
-  };
 
   const selectedTrip = tripId ? tripMemories.find((m) => m.tripId === tripId) : null;
 
@@ -38,8 +30,6 @@ const Memories = ({ tripMemories }: MemoriesProps) => {
       ) : (
         <MemoriesHub
           tripMemories={tripMemories}
-          captureConsented={captureConsented}
-          onConsent={handleConsent}
           creditsRemaining={creditsRemaining}
           totalCredits={totalCredits}
           onSelectTrip={(id) => navigate(`/memories/${id}`)}

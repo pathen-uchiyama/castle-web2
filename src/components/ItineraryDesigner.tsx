@@ -768,7 +768,7 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
         <div className="border-r border-border/60 px-4 lg:px-6 py-6 lg:overflow-y-auto lg:max-h-[calc(100vh-80px)] bg-card">
 
           {/* Park hours */}
-          <div className="flex items-center gap-3 mb-4 flex-wrap">
+          <div className="flex items-center gap-3 mb-3 flex-wrap">
             <p className="label-text">Your Day</p>
             <div className="gold-rule" />
             {parkSchedules.map(park => (
@@ -783,6 +783,48 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
               </div>
             ))}
           </div>
+
+          {/* ── Day Summary Stats ──────────────────────────────────── */}
+          {scheduledItems.length > 0 && (
+            <div className="mb-4 p-3 bg-[hsl(var(--warm))] border border-border/40 shadow-soft">
+              <p className="text-[0.4375rem] uppercase tracking-[0.12em] text-muted-foreground mb-2">Day Breakdown · {ropeDrop} → {leavePark} · {Math.floor(daySummary.dayLength / 60)}h {daySummary.dayLength % 60}m total</p>
+              <div className="grid grid-cols-4 gap-2 mb-2">
+                <div>
+                  <span className="font-display text-sm text-foreground">{daySummary.totalRideTime}m</span>
+                  <span className="text-[0.375rem] text-muted-foreground block uppercase tracking-[0.1em]">🎢 Rides & Shows</span>
+                </div>
+                <div>
+                  <span className="font-display text-sm text-destructive">{daySummary.totalWaitTime}m</span>
+                  <span className="text-[0.375rem] text-muted-foreground block uppercase tracking-[0.1em]">⏱ In Line</span>
+                </div>
+                <div>
+                  <span className="font-display text-sm text-foreground">{daySummary.totalWalkTime + daySummary.totalStrollerTime}m</span>
+                  <span className="text-[0.375rem] text-muted-foreground block uppercase tracking-[0.1em]">🚶 Walk{hasStrollerAge ? " + 🍼 Stroller" : ""}</span>
+                </div>
+                <div>
+                  <span className="font-display text-sm text-foreground">{daySummary.totalBreakTime}m</span>
+                  <span className="text-[0.375rem] text-muted-foreground block uppercase tracking-[0.1em]">⏸ Breaks & Meals</span>
+                </div>
+              </div>
+              {/* Utilization bar */}
+              <div className="flex h-2 overflow-hidden bg-muted/30 border border-border/20">
+                <div className="bg-foreground/30" style={{ width: `${(daySummary.totalRideTime / daySummary.dayLength) * 100}%` }} title="Rides & Shows" />
+                <div className="bg-destructive/30" style={{ width: `${(daySummary.totalWaitTime / daySummary.dayLength) * 100}%` }} title="Wait Time" />
+                <div className="bg-[hsl(var(--gold)/0.3)]" style={{ width: `${((daySummary.totalWalkTime + daySummary.totalStrollerTime + daySummary.totalCheckinTime) / daySummary.dayLength) * 100}%` }} title="Walking" />
+                <div className="bg-muted" style={{ width: `${(daySummary.totalBreakTime / daySummary.dayLength) * 100}%` }} title="Breaks" />
+              </div>
+              <div className="flex items-center justify-between mt-1.5">
+                <span className="text-[0.375rem] text-muted-foreground">
+                  {Math.round((daySummary.totalPlanned / daySummary.dayLength) * 100)}% planned
+                </span>
+                {daySummary.freeTime > 0 && (
+                  <span className="text-[0.375rem] text-[hsl(var(--gold-dark))] font-medium">
+                    ⏳ {daySummary.freeTime}m unplanned — room for {Math.floor(daySummary.freeTime / 25)} more rides
+                  </span>
+                )}
+              </div>
+            </div>
+          )}
 
           {/* ── Proportional Time Ruler + Items ─────────────────────── */}
           <div

@@ -367,21 +367,22 @@ const PhotoCollage = ({ photos, totalPhotos }: { photos: SpreadPhoto[]; totalPho
 };
 
 /* ═══════════════════════════════════════════════════════════════
- * DAY SPREAD — complete editorial layout per day
+ * DAY SPREAD — scrollable content for a single day
  * ═══════════════════════════════════════════════════════════════ */
-const DaySpreadLayout = ({ spread, index }: { spread: DaySpread; index: number }) => {
+const DaySpreadContent = ({ spread, index }: { spread: DaySpread; index: number }) => {
   const isEven = index % 2 === 0;
 
   return (
-    <div className="space-y-0">
+    <div className="space-y-3">
       {/* Hero */}
       <SpreadHero photo={spread.hero} {...spread} />
 
-      {/* Featured photos + narrative — alternating layout */}
-      <div className={`grid grid-cols-1 lg:grid-cols-5 gap-3 pt-3`}>
-        {/* Narrative card */}
+      {/* Featured + narrative */}
+      <div className={`grid grid-cols-1 lg:grid-cols-5 gap-3`}>
         <motion.div
-          {...fade(0.05)}
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.1, ease }}
           className={`${isEven ? "lg:col-span-3" : "lg:col-span-3 lg:order-2"} bg-white border border-border p-8 sm:p-10`}
           style={{ boxShadow: "0 10px 30px rgba(26,26,27,0.05)" }}
         >
@@ -413,28 +414,269 @@ const DaySpreadLayout = ({ spread, index }: { spread: DaySpread; index: number }
           )}
         </motion.div>
 
-        {/* Featured photos column */}
         <div className={`${isEven ? "lg:col-span-2" : "lg:col-span-2 lg:order-1"} flex flex-col gap-3`}>
           {spread.featured.map((photo, j) => (
-            <motion.div key={j} {...fade(0.08 + j * 0.04)} className="flex-1">
+            <motion.div
+              key={j}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.15 + j * 0.05, ease }}
+              className="flex-1"
+            >
               <CaptionedPhoto photo={photo} className="h-full [&>div]:h-[220px] sm:[&>div]:h-[260px]" />
             </motion.div>
           ))}
         </div>
       </div>
 
-      {/* Photo collage — the dense mosaic */}
-      <div className="pt-6">
-        <motion.div {...fade(0.08)} className="flex items-center justify-between mb-3">
+      {/* Photo collage */}
+      <div className="pt-3">
+        <div className="flex items-center justify-between mb-3">
           <p className="text-muted-foreground uppercase tracking-[0.15em]" style={{ fontFamily: "Inter, system-ui, sans-serif", fontSize: "0.5625rem" }}>
             From this day — {spread.totalPhotos} photos
           </p>
-        </motion.div>
+        </div>
         <PhotoCollage photos={spread.collage} totalPhotos={spread.totalPhotos} />
       </div>
 
       {/* Pull quote */}
       {spread.pullQuote && <PullQuote {...spread.pullQuote} />}
+    </div>
+  );
+};
+
+/* ═══════════════════════════════════════════════════════════════
+ * DAY CAROUSEL — horizontal page-flip between days
+ * ═══════════════════════════════════════════════════════════════ */
+const slideVariants = {
+  enter: (direction: number) => ({
+    x: direction > 0 ? 600 : -600,
+    opacity: 0,
+    scale: 0.96,
+  }),
+  center: {
+    x: 0,
+    opacity: 1,
+    scale: 1,
+  },
+  exit: (direction: number) => ({
+    x: direction > 0 ? -600 : 600,
+    opacity: 0,
+    scale: 0.96,
+  }),
+};
+
+const DayCarousel = ({ memory }: { memory: TripMemory }) => {
+  const [[activeDay, direction], setActiveDay] = useState([0, 0]);
+
+  const paginate = useCallback((newIndex: number) => {
+    if (newIndex < 0 || newIndex >= spreads.length) return;
+    setActiveDay([newIndex, newIndex > activeDay ? 1 : -1]);
+  }, [activeDay]);
+
+  const goNext = useCallback(() => paginate(activeDay + 1), [activeDay, paginate]);
+  const goPrev = useCallback(() => paginate(activeDay - 1), [activeDay, paginate]);
+
+  // Keyboard navigation
+  useEffect(() => {
+    const handleKey = (e: KeyboardEvent) => {
+      if (e.key === "ArrowRight") goNext();
+      if (e.key === "ArrowLeft") goPrev();
+    };
+    window.addEventListener("keydown", handleKey);
+    return () => window.removeEventListener("keydown", handleKey);
+  }, [goNext, goPrev]);
+
+  const spread = spreads[activeDay];
+
+  return (
+    <div className="pb-24">
+      {/* Trip stats */}
+      <section className="max-w-6xl mx-auto px-4 sm:px-8 pt-12">
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, ease }} className="grid grid-cols-3 sm:grid-cols-6 gap-3">
+          {tripStats.map((stat) => (
+            <div key={stat.label} className="bg-white border border-border p-4 text-center" style={{ boxShadow: "0 10px 30px rgba(26,26,27,0.05)" }}>
+              <span className="text-lg mb-1 block">{stat.icon}</span>
+              <p className="font-display text-xl text-foreground">{stat.value}</p>
+              <p className="text-muted-foreground mt-0.5 uppercase tracking-[0.12em]" style={{ fontFamily: "Inter, system-ui, sans-serif", fontSize: "0.5rem" }}>{stat.label}</p>
+            </div>
+          ))}
+        </motion.div>
+      </section>
+
+      {/* Day selector + navigation */}
+      <section className="max-w-6xl mx-auto px-4 sm:px-8 pt-12">
+        <div className="flex items-center justify-between mb-8">
+          {/* Day tabs */}
+          <div className="flex items-center gap-1">
+            {spreads.map((s, i) => (
+              <button
+                key={s.day}
+                onClick={() => paginate(i)}
+                className="relative px-4 py-3 transition-all duration-500"
+              >
+                <span
+                  className="uppercase tracking-[0.15em] transition-colors duration-300"
+                  style={{
+                    fontFamily: "Inter, system-ui, sans-serif",
+                    fontSize: "0.625rem",
+                    fontWeight: 400,
+                    color: i === activeDay ? "hsl(var(--foreground))" : "hsl(var(--muted-foreground))",
+                  }}
+                >
+                  {s.day}
+                </span>
+                <span
+                  className="block mt-0.5 transition-colors duration-300"
+                  style={{
+                    fontFamily: "Inter, system-ui, sans-serif",
+                    fontSize: "0.5rem",
+                    color: i === activeDay ? "#947120" : "transparent",
+                    letterSpacing: "0.05em",
+                  }}
+                >
+                  {s.mood} {s.moodLabel}
+                </span>
+                {/* Active indicator */}
+                <motion.div
+                  className="absolute bottom-0 left-4 right-4 h-px"
+                  initial={false}
+                  animate={{
+                    opacity: i === activeDay ? 1 : 0,
+                    scaleX: i === activeDay ? 1 : 0,
+                  }}
+                  transition={{ duration: 0.4 }}
+                  style={{ backgroundColor: "#947120", transformOrigin: "center" }}
+                />
+              </button>
+            ))}
+          </div>
+
+          {/* Arrow navigation */}
+          <div className="flex items-center gap-2">
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={goPrev}
+              disabled={activeDay === 0}
+              className="w-10 h-10 flex items-center justify-center border border-border bg-white transition-all disabled:opacity-30"
+              style={{ boxShadow: "0 10px 30px rgba(26,26,27,0.05)" }}
+            >
+              <ChevronLeft className="w-4 h-4 text-foreground" />
+            </motion.button>
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={goNext}
+              disabled={activeDay === spreads.length - 1}
+              className="w-10 h-10 flex items-center justify-center border border-border bg-white transition-all disabled:opacity-30"
+              style={{ boxShadow: "0 10px 30px rgba(26,26,27,0.05)" }}
+            >
+              <ChevronRight className="w-4 h-4 text-foreground" />
+            </motion.button>
+          </div>
+        </div>
+
+        {/* Day spread — animated page flip */}
+        <div className="overflow-hidden">
+          <AnimatePresence mode="wait" custom={direction}>
+            <motion.div
+              key={activeDay}
+              custom={direction}
+              variants={slideVariants}
+              initial="enter"
+              animate="center"
+              exit="exit"
+              transition={{ duration: 0.5, ease: [0.19, 1, 0.22, 1] }}
+              drag="x"
+              dragConstraints={{ left: 0, right: 0 }}
+              dragElastic={0.12}
+              onDragEnd={(_, info) => {
+                if (info.offset.x < -80) goNext();
+                else if (info.offset.x > 80) goPrev();
+              }}
+            >
+              <DaySpreadContent spread={spread} index={activeDay} />
+            </motion.div>
+          </AnimatePresence>
+        </div>
+
+        {/* Page dots */}
+        <div className="flex items-center justify-center gap-2 pt-10">
+          {spreads.map((_, i) => (
+            <button key={i} onClick={() => paginate(i)} className="p-1">
+              <motion.div
+                animate={{
+                  width: i === activeDay ? 24 : 6,
+                  backgroundColor: i === activeDay ? "#947120" : "hsl(var(--border))",
+                }}
+                transition={{ duration: 0.4 }}
+                className="h-1.5"
+              />
+            </button>
+          ))}
+          <p className="ml-3 text-muted-foreground" style={{ fontFamily: "Inter, system-ui, sans-serif", fontSize: "0.625rem", letterSpacing: "-0.02em" }}>
+            {activeDay + 1} of {spreads.length} days
+          </p>
+        </div>
+      </section>
+
+      {/* Family Favorites — below the carousel */}
+      <section className="max-w-6xl mx-auto px-4 sm:px-8 pt-24">
+        <motion.div {...fade()}>
+          <p className="mb-2 uppercase tracking-[0.2em] text-muted-foreground" style={{ fontFamily: "Inter, system-ui, sans-serif", fontSize: "0.6875rem", fontWeight: 400 }}>
+            In Their Own Words
+          </p>
+          <h2 className="font-display text-4xl sm:text-5xl text-foreground leading-[1.08] mb-12">Family Favorites</h2>
+        </motion.div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          {familyFavorites.map((fav, i) => (
+            <motion.div key={fav.member} {...fade(0.04 + i * 0.04)} className="bg-white border border-border p-6 sm:p-8" style={{ boxShadow: "0 10px 30px rgba(26,26,27,0.05)" }}>
+              <p className="text-muted-foreground mb-1 uppercase tracking-[0.15em]" style={{ fontFamily: "Inter, system-ui, sans-serif", fontSize: "0.5625rem" }}>
+                {fav.member}'s Favorite
+              </p>
+              <h4 className="font-display text-xl text-foreground mb-3">{fav.favorite}</h4>
+              <div className="flex items-start gap-2">
+                <span className="shrink-0 mt-1" style={{ color: "#947120", fontSize: "1.25rem", lineHeight: 1 }}>"</span>
+                <p className="text-muted-foreground italic" style={{ fontFamily: "Inter, system-ui, sans-serif", fontSize: "0.875rem", letterSpacing: "-0.02em", lineHeight: 1.7 }}>
+                  {fav.quote}
+                </p>
+              </div>
+            </motion.div>
+          ))}
+        </div>
+      </section>
+
+      {/* Closing */}
+      <section className="max-w-4xl mx-auto px-4 sm:px-8 pt-24 pb-8 text-center">
+        <motion.div {...fade()}>
+          <div className="w-8 h-px mx-auto mb-8" style={{ backgroundColor: "#947120" }} />
+          <p className="font-display text-2xl sm:text-3xl text-foreground leading-[1.3] max-w-xl mx-auto mb-4">
+            "Nobody wanted to leave. But the memories — those we get to keep."
+          </p>
+          <p className="text-muted-foreground mb-10" style={{ fontFamily: "Inter, system-ui, sans-serif", fontSize: "0.75rem", letterSpacing: "-0.02em" }}>
+            — The Noelke Family, {memory.date}
+          </p>
+          <motion.div {...fade(0.05)} className="inline-block">
+            <div className="bg-white border border-border px-8 py-6 text-center" style={{ boxShadow: "0 10px 30px rgba(26,26,27,0.05)" }}>
+              <p className="text-muted-foreground mb-2 uppercase tracking-[0.15em]" style={{ fontFamily: "Inter, system-ui, sans-serif", fontSize: "0.5625rem" }}>
+                Make it Permanent
+              </p>
+              <p className="font-display text-lg text-foreground mb-4">Order a Coffee Table Book</p>
+              <button
+                className="px-6 text-center transition-opacity hover:opacity-90"
+                style={{
+                  backgroundColor: "#1A1A1B", color: "#C8A84E", fontFamily: "Inter, system-ui, sans-serif",
+                  fontSize: "0.625rem", letterSpacing: "0.12em", textTransform: "uppercase", fontWeight: 500,
+                  minHeight: 44, lineHeight: "44px",
+                }}
+              >
+                Design Your Book — from $49.95
+              </button>
+            </div>
+          </motion.div>
+        </motion.div>
+      </section>
     </div>
   );
 };

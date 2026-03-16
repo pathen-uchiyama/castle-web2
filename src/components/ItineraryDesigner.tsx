@@ -867,7 +867,7 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
                     <div className="flex items-center justify-between mb-1.5">
                       <div className="flex items-center gap-2 min-w-0">
                         {isTopFive && <Star className="w-3.5 h-3.5 text-[hsl(var(--gold))] shrink-0 fill-[hsl(var(--gold))]" />}
-                        <h4 className="font-display text-sm text-[hsl(var(--ink))] truncate">{attraction.name}</h4>
+                        <h4 className="font-display text-base text-[hsl(var(--ink))] truncate">{attraction.name}</h4>
                       </div>
                       <div className="flex items-center gap-2 shrink-0 ml-2">
                         <span className="font-display text-[0.6875rem] text-[hsl(var(--ink))]">{attraction.rating.toFixed(1)}</span>

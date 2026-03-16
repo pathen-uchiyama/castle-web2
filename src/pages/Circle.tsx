@@ -93,7 +93,7 @@ const Circle = ({ partyMembers }: CircleProps) => {
           </motion.div>
         </div>
         <div className="relative min-h-[40vh] lg:min-h-0">
-          <img src={familyMainstreet} alt="Family on Main Street" className="w-full h-full object-cover" />
+          <img src={familyMainstreet} alt="Family on Main Street" className="w-full h-full object-cover rounded-lg" />
         </div>
       </section>
 
@@ -132,7 +132,7 @@ const Circle = ({ partyMembers }: CircleProps) => {
                 <motion.div
                   key={member.memberId}
                   {...slideRight(i * 0.1)}
-                  className="border border-border bg-card shadow-[var(--shadow-soft)] hover:shadow-[var(--shadow-hover)] transition-shadow duration-500 overflow-hidden"
+                  className="border border-border bg-card rounded-lg shadow-[var(--shadow-soft)] hover:shadow-[var(--shadow-hover)] transition-shadow duration-500 overflow-hidden"
                 >
                   {/* Header row */}
                   <button
@@ -146,7 +146,7 @@ const Circle = ({ partyMembers }: CircleProps) => {
                       <motion.div
                         whileHover={{ scale: 1.1, rotate: 5 }}
                         transition={{ type: "spring", stiffness: 300, damping: 20 }}
-                        className="w-14 h-14 bg-foreground flex items-center justify-center shrink-0"
+                        className="w-14 h-14 rounded-lg bg-foreground flex items-center justify-center shrink-0"
                       >
                         <span className="font-display text-xl text-background">{member.initial}</span>
                       </motion.div>
@@ -218,7 +218,7 @@ const Circle = ({ partyMembers }: CircleProps) => {
                                 <input
                                   value={member.name}
                                   onChange={(e) => handleFieldChange(member.memberId, "name", e.target.value)}
-                                  className="w-full px-4 py-2.5 text-sm bg-background border border-border text-foreground focus:outline-none focus:border-[hsl(var(--gold))] transition-colors"
+                                   className="w-full px-4 py-2.5 rounded-md text-sm bg-background border border-border text-foreground focus:outline-none focus:border-[hsl(var(--gold))] transition-colors"
                                 />
                               </div>
                               <div>
@@ -226,7 +226,7 @@ const Circle = ({ partyMembers }: CircleProps) => {
                                 <input
                                   value={member.role}
                                   onChange={(e) => handleFieldChange(member.memberId, "role", e.target.value)}
-                                  className="w-full px-4 py-2.5 text-sm bg-background border border-border text-foreground focus:outline-none focus:border-[hsl(var(--gold))] transition-colors"
+                                   className="w-full px-4 py-2.5 rounded-md text-sm bg-background border border-border text-foreground focus:outline-none focus:border-[hsl(var(--gold))] transition-colors"
                                 />
                               </div>
                               <div>
@@ -235,7 +235,7 @@ const Circle = ({ partyMembers }: CircleProps) => {
                                   type="number"
                                   value={member.age ?? ""}
                                   onChange={(e) => handleFieldChange(member.memberId, "age", e.target.value ? Number(e.target.value) : undefined)}
-                                  className="w-full px-4 py-2.5 text-sm bg-background border border-border text-foreground focus:outline-none focus:border-[hsl(var(--gold))] transition-colors"
+                                   className="w-full px-4 py-2.5 rounded-md text-sm bg-background border border-border text-foreground focus:outline-none focus:border-[hsl(var(--gold))] transition-colors"
                                 />
                               </div>
                               <div>
@@ -244,7 +244,7 @@ const Circle = ({ partyMembers }: CircleProps) => {
                                   value={member.birthday ?? ""}
                                   onChange={(e) => handleFieldChange(member.memberId, "birthday", e.target.value)}
                                   placeholder="e.g. June 15"
-                                  className="w-full px-4 py-2.5 text-sm bg-background border border-border text-foreground placeholder:text-muted-foreground/40 focus:outline-none focus:border-[hsl(var(--gold))] transition-colors"
+                                  className="w-full px-4 py-2.5 rounded-md text-sm bg-background border border-border text-foreground placeholder:text-muted-foreground/40 focus:outline-none focus:border-[hsl(var(--gold))] transition-colors"
                                 />
                               </div>
                               <div>
@@ -253,7 +253,7 @@ const Circle = ({ partyMembers }: CircleProps) => {
                                   type="number"
                                   value={member.heightInches ?? ""}
                                   onChange={(e) => handleFieldChange(member.memberId, "heightInches", e.target.value ? Number(e.target.value) : undefined)}
-                                  className="w-full px-4 py-2.5 text-sm bg-background border border-border text-foreground focus:outline-none focus:border-[hsl(var(--gold))] transition-colors"
+                                   className="w-full px-4 py-2.5 rounded-md text-sm bg-background border border-border text-foreground focus:outline-none focus:border-[hsl(var(--gold))] transition-colors"
                                 />
                               </div>
                               <div>
@@ -263,7 +263,7 @@ const Circle = ({ partyMembers }: CircleProps) => {
                                     <button
                                       key={level}
                                       onClick={() => handleFieldChange(member.memberId, "thrillTolerance", level)}
-                                      className="px-4 py-2 text-xs uppercase tracking-[0.1em] transition-all duration-300"
+                                      className="px-4 py-2 rounded-md text-xs uppercase tracking-[0.1em] transition-all duration-300"
                                       style={{
                                         background: member.thrillTolerance === level ? "hsl(var(--foreground))" : "transparent",
                                         color: member.thrillTolerance === level ? "hsl(var(--background))" : "hsl(var(--muted-foreground))",
@@ -280,7 +280,7 @@ const Circle = ({ partyMembers }: CircleProps) => {
                                 <input
                                   value={member.favoriteCharacter ?? ""}
                                   onChange={(e) => handleFieldChange(member.memberId, "favoriteCharacter", e.target.value)}
-                                  className="w-full px-4 py-2.5 text-sm bg-background border border-border text-foreground focus:outline-none focus:border-[hsl(var(--gold))] transition-colors"
+                                   className="w-full px-4 py-2.5 rounded-md text-sm bg-background border border-border text-foreground focus:outline-none focus:border-[hsl(var(--gold))] transition-colors"
                                 />
                               </div>
                               <div>
@@ -288,7 +288,7 @@ const Circle = ({ partyMembers }: CircleProps) => {
                                 <input
                                   value={member.favoriteRide ?? ""}
                                   onChange={(e) => handleFieldChange(member.memberId, "favoriteRide", e.target.value)}
-                                  className="w-full px-4 py-2.5 text-sm bg-background border border-border text-foreground focus:outline-none focus:border-[hsl(var(--gold))] transition-colors"
+                                  className="w-full px-4 py-2.5 rounded-md text-sm bg-background border border-border text-foreground focus:outline-none focus:border-[hsl(var(--gold))] transition-colors"
                                 />
                               </div>
                               <div className="sm:col-span-2">

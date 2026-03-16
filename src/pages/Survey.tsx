@@ -121,9 +121,9 @@ const Survey = () => {
         <motion.div {...fade(0.1)} className="mt-8 flex items-center gap-6">
           {[1, 2, 3].map((s) => (
             <div key={s} className="flex items-center gap-2">
-              <div className={`w-7 h-7 flex items-center justify-center text-xs font-medium transition-all duration-500 ${
-                step === s ? "bg-foreground text-background" : step > s ? "bg-[hsl(var(--gold))] text-background" : "bg-secondary text-muted-foreground"
-              }`}>
+               <div className={`w-7 h-7 rounded-md flex items-center justify-center text-xs font-medium transition-all duration-500 ${
+                 step === s ? "bg-foreground text-background" : step > s ? "bg-[hsl(var(--gold))] text-background" : "bg-secondary text-muted-foreground"
+               }`}>
                 {step > s ? "✓" : s}
               </div>
               <span className="label-text hidden sm:inline">
@@ -157,7 +157,7 @@ const Survey = () => {
                       <motion.div
                         key={attraction.attractionId}
                         {...fade(i * 0.03)}
-                        className="border border-border p-6 bg-card hover:shadow-[var(--shadow-soft)] transition-shadow duration-500"
+                        className="border border-border rounded-lg p-6 bg-card hover:shadow-[var(--shadow-soft)] transition-shadow duration-500"
                       >
                         <div className="flex flex-col sm:flex-row sm:items-start gap-4">
                           <div className="flex-1 min-w-0">
@@ -173,7 +173,7 @@ const Survey = () => {
                             {attraction.sensoryTags && (
                               <div className="flex gap-2 mt-2 flex-wrap">
                                 {attraction.sensoryTags.map((tag) => (
-                                  <span key={tag} className="text-[0.625rem] uppercase tracking-[0.15em] px-2 py-0.5 bg-secondary text-muted-foreground">{tag}</span>
+                                  <span key={tag} className="text-[0.625rem] uppercase tracking-[0.15em] px-2 py-0.5 rounded-md bg-secondary text-muted-foreground">{tag}</span>
                                 ))}
                               </div>
                             )}
@@ -183,9 +183,9 @@ const Survey = () => {
                               <button
                                 key={r.value}
                                 onClick={() => handleRank(attraction.attractionId, r.value)}
-                                className={`px-4 py-2 text-xs tracking-[0.1em] uppercase font-medium border transition-all duration-300 ${
-                                  currentRank === r.value ? r.activeColor : r.color
-                                }`}
+                                 className={`px-4 py-2 rounded-md text-xs tracking-[0.1em] uppercase font-medium border transition-all duration-300 ${
+                                   currentRank === r.value ? r.activeColor : r.color
+                                 }`}
                               >
                                 {r.label}
                               </button>
@@ -202,7 +202,7 @@ const Survey = () => {
             <div className="flex justify-end pt-8">
               <button
                 onClick={() => setStep(2)}
-                className="px-10 py-4 text-sm tracking-[0.15em] uppercase font-medium bg-foreground text-background border border-[hsl(var(--gold-dark))] transition-opacity duration-500 hover:opacity-90"
+                 className="px-10 py-4 rounded-lg text-sm tracking-[0.15em] uppercase font-medium bg-foreground text-background border border-[hsl(var(--gold-dark))] transition-opacity duration-500 hover:opacity-90"
               >
                 Continue
               </button>
@@ -221,7 +221,7 @@ const Survey = () => {
             className="px-8 lg:px-16 pb-16"
           >
             <div className="max-w-lg mx-auto py-12">
-              <motion.div {...fade()} className="border border-border p-10 bg-card text-center">
+              <motion.div {...fade()} className="border border-border rounded-lg p-10 bg-card text-center">
                 <span className="text-5xl mb-6 block">🌊</span>
                 <h2 className="font-display text-3xl text-foreground mb-4">Go With the Flow?</h2>
                 <p className="font-editorial text-muted-foreground mb-8 leading-relaxed">
@@ -230,11 +230,11 @@ const Survey = () => {
                 </p>
                 <button
                   onClick={() => setOpenToAnything(!openToAnything)}
-                  className={`px-8 py-4 text-sm tracking-[0.15em] uppercase font-medium border transition-all duration-500 ${
-                    openToAnything
-                      ? "border-[hsl(var(--gold))] bg-[hsl(var(--gold)/0.12)] text-foreground"
-                      : "border-border text-muted-foreground hover:border-foreground/30"
-                  }`}
+                   className={`px-8 py-4 rounded-lg text-sm tracking-[0.15em] uppercase font-medium border transition-all duration-500 ${
+                     openToAnything
+                       ? "border-[hsl(var(--gold))] bg-[hsl(var(--gold)/0.12)] text-foreground"
+                       : "border-border text-muted-foreground hover:border-foreground/30"
+                   }`}
                 >
                   {openToAnything ? "✓ I'm Flexible" : "I'm Open to Anything"}
                 </button>
@@ -243,13 +243,13 @@ const Survey = () => {
               <div className="flex justify-between pt-10">
                 <button
                   onClick={() => setStep(1)}
-                  className="px-8 py-4 text-sm tracking-[0.15em] uppercase font-medium text-muted-foreground border border-border transition-opacity duration-500 hover:opacity-70"
+                   className="px-8 py-4 rounded-lg text-sm tracking-[0.15em] uppercase font-medium text-muted-foreground border border-border transition-opacity duration-500 hover:opacity-70"
                 >
                   Back
                 </button>
                 <button
                   onClick={() => setStep(3)}
-                  className="px-10 py-4 text-sm tracking-[0.15em] uppercase font-medium bg-foreground text-background border border-[hsl(var(--gold-dark))] transition-opacity duration-500 hover:opacity-90"
+                   className="px-10 py-4 rounded-lg text-sm tracking-[0.15em] uppercase font-medium bg-foreground text-background border border-[hsl(var(--gold-dark))] transition-opacity duration-500 hover:opacity-90"
                 >
                   Continue
                 </button>
@@ -291,7 +291,7 @@ const Survey = () => {
                         <motion.div
                           key={id}
                           layout
-                          className="flex items-center gap-4 border border-[hsl(var(--gold))] bg-[hsl(var(--gold)/0.06)] p-4"
+                          className="flex items-center gap-4 border border-[hsl(var(--gold))] bg-[hsl(var(--gold)/0.06)] rounded-lg p-4"
                         >
                           <span className="font-display text-2xl text-[hsl(var(--gold-dark))] w-8 text-center">{idx + 1}</span>
                           <div className="flex-1 min-w-0">
@@ -338,7 +338,7 @@ const Survey = () => {
                       {...fade(i * 0.03)}
                       onClick={() => toggleTopFive(a.attractionId)}
                       disabled={topFive.length >= 5}
-                      className="w-full text-left flex items-center gap-4 border border-border p-4 hover:border-[hsl(var(--gold)/0.5)] disabled:opacity-40 transition-all duration-300"
+                      className="w-full text-left flex items-center gap-4 border border-border rounded-lg p-4 hover:border-[hsl(var(--gold)/0.5)] disabled:opacity-40 transition-all duration-300"
                     >
                       <span className="text-base">{categoryIcons[a.category]}</span>
                       <span className="font-display text-lg text-foreground">{a.name}</span>
@@ -350,13 +350,13 @@ const Survey = () => {
               <div className="flex justify-between pt-12">
                 <button
                   onClick={() => setStep(2)}
-                  className="px-8 py-4 text-sm tracking-[0.15em] uppercase font-medium text-muted-foreground border border-border transition-opacity duration-500 hover:opacity-70"
+                  className="px-8 py-4 rounded-lg text-sm tracking-[0.15em] uppercase font-medium text-muted-foreground border border-border transition-opacity duration-500 hover:opacity-70"
                 >
                   Back
                 </button>
                 <button
                   onClick={handleSubmit}
-                  className="px-10 py-4 text-sm tracking-[0.15em] uppercase font-medium bg-foreground text-background border border-[hsl(var(--gold-dark))] transition-opacity duration-500 hover:opacity-90"
+                  className="px-10 py-4 rounded-lg text-sm tracking-[0.15em] uppercase font-medium bg-foreground text-background border border-[hsl(var(--gold-dark))] transition-opacity duration-500 hover:opacity-90"
                 >
                   Submit Preferences
                 </button>

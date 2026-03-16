@@ -97,7 +97,7 @@ const Memories = ({ tripMemories }: MemoriesProps) => {
                     {/* Highlights */}
                     <div className="mt-4 flex flex-wrap gap-2">
                       {memory.highlights.map((h) => (
-                        <span key={h} className="text-[0.625rem] uppercase tracking-[0.15em] px-3 py-1 bg-[hsl(var(--warm))] text-muted-foreground border border-border">
+                        <span key={h} className="text-[0.625rem] uppercase tracking-[0.15em] px-3 py-1 rounded-md bg-[hsl(var(--warm))] text-muted-foreground border border-border">
                           {h}
                         </span>
                       ))}

@@ -112,9 +112,9 @@ const Account = ({ account }: AccountProps) => {
                     <p className="font-display text-base text-foreground">{item.label}</p>
                     <p className="font-editorial text-xs text-muted-foreground mt-1">{item.desc}</p>
                   </div>
-                  <div className="w-10 h-5 bg-[hsl(var(--gold))] flex items-center px-0.5 cursor-pointer">
-                    <div className="w-4 h-4 bg-background shadow translate-x-5 transition-transform" />
-                  </div>
+                   <div className="w-10 h-5 rounded-full bg-[hsl(var(--gold))] flex items-center px-0.5 cursor-pointer">
+                     <div className="w-4 h-4 rounded-full bg-background shadow translate-x-5 transition-transform" />
+                   </div>
                 </div>
               ))}
             </div>
@@ -152,7 +152,7 @@ const Account = ({ account }: AccountProps) => {
             <p className="font-editorial text-sm text-muted-foreground mb-8 max-w-md">
               Sign out of your Castle Companion account. Your plans, memories, and party data will be here when you return.
             </p>
-            <button className="px-8 py-3 text-sm tracking-[0.15em] uppercase font-medium text-muted-foreground border border-border hover:border-destructive hover:text-destructive transition-all duration-500">
+            <button className="px-8 py-3 rounded-lg text-sm tracking-[0.15em] uppercase font-medium text-muted-foreground border border-border hover:border-destructive hover:text-destructive transition-all duration-500">
               Sign Out
             </button>
           </motion.div>

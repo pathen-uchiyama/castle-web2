@@ -97,7 +97,7 @@ const DayZeroIndex = () => {
           >
             <button
               onClick={() => setWizardOpen(true)}
-              className="group relative inline-flex items-center justify-center px-10 py-4 text-sm tracking-[0.15em] uppercase transition-all duration-500 focus:outline-none focus:ring-2 focus:ring-offset-2"
+              className="group relative inline-flex items-center justify-center px-10 py-4 rounded-lg text-sm tracking-[0.15em] uppercase transition-all duration-500 focus:outline-none focus:ring-2 focus:ring-offset-2"
               style={{
                 background: "hsl(222, 47%, 21%)",
                 color: "hsl(30, 33%, 96%)",
@@ -153,14 +153,14 @@ const DayZeroIndex = () => {
                 transition={{ duration: 1, delay: 0.15 * i, ease }}
                 className="relative"
               >
-                <div
-                  className="relative p-8 sm:p-10 opacity-60 hover:opacity-75 transition-opacity duration-700"
-                  style={{
-                    background: "hsl(0, 0%, 100%)",
-                    border: "1px solid hsl(0, 0%, 90%)",
-                    boxShadow: "0 8px 32px -4px hsla(222, 47%, 21%, 0.06)",
-                  }}
-                >
+                 <div
+                   className="relative p-8 sm:p-10 rounded-lg opacity-60 hover:opacity-75 transition-opacity duration-700"
+                   style={{
+                     background: "hsl(0, 0%, 100%)",
+                     border: "1px solid hsl(0, 0%, 90%)",
+                     boxShadow: "0 8px 32px -4px hsla(222, 47%, 21%, 0.06)",
+                   }}
+                 >
                   {/* Lock badge */}
                   <div className="absolute top-5 right-5 flex items-center gap-1.5">
                     <Lock size={11} style={{ color: "hsl(222, 20%, 45%, 0.4)" }} />

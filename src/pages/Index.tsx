@@ -192,10 +192,10 @@ const Index = ({
                 whileInView={{ opacity: 1, scale: 1, rotate: -3 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.8, delay: 0.6, ease }}
-                className="bg-white/95 backdrop-blur-sm px-8 py-6 shadow-soft"
+                className="bg-white/95 backdrop-blur-sm rounded-lg px-8 py-6 shadow-soft"
               >
                 <p className="label-text tracking-[0.15em] mb-1 !text-foreground/50">Magic starts in</p>
-                <p className="font-display-bold text-4xl text-foreground">{bookedTrip.countdownDays} days</p>
+               <p className="font-display-bold text-4xl text-foreground">{bookedTrip.countdownDays} days</p>
               </motion.div>
             </div>
           </div>
@@ -219,7 +219,7 @@ const Index = ({
                     transition={{ duration: 0.8, delay: i * 0.1, ease }}
                     className="flex-shrink-0 w-[260px] sm:w-[300px] group cursor-pointer"
                   >
-                    <div className="bg-white/10 backdrop-blur-md p-5 h-full hover:bg-white/15 transition-colors duration-500 overflow-hidden">
+                     <div className="bg-white/10 backdrop-blur-md rounded-lg p-5 h-full hover:bg-white/15 transition-colors duration-500 overflow-hidden">
                       <p className="label-text !text-white/35 mb-3" style={{ fontSize: '0.625rem' }}>{leg.date}</p>
                       <p className="font-display text-lg text-white mb-1 truncate">{leg.legName}</p>
                       <p className="font-editorial text-sm text-white/40 mb-5" style={{ fontSize: '0.75rem', letterSpacing: '-0.02em' }}>{leg.time}</p>
@@ -236,7 +236,7 @@ const Index = ({
                   className="flex-shrink-0 w-[260px] sm:w-[300px] group cursor-pointer"
                 >
                   <Link to={`/trip/${bookedTrip.tripId}`}>
-                    <div className="bg-white/10 backdrop-blur-md p-5 h-full hover:bg-white/15 transition-colors duration-500 overflow-hidden">
+                    <div className="bg-white/10 backdrop-blur-md rounded-lg p-5 h-full hover:bg-white/15 transition-colors duration-500 overflow-hidden">
                       <p className="label-text !text-white/35 mb-3" style={{ fontSize: '0.625rem' }}>Preparations</p>
                       <p className="font-display text-lg text-white mb-3">Packing</p>
                       <div className="space-y-2 mb-5">
@@ -259,7 +259,7 @@ const Index = ({
                   transition={{ duration: 0.8, delay: 0.4, ease }}
                   className="flex-shrink-0 w-[260px] sm:w-[300px]"
                 >
-                  <div className="bg-[hsl(var(--gold-dark))]/10 backdrop-blur-md p-5 h-full border border-[hsl(var(--gold))]/10 overflow-hidden">
+                  <div className="bg-[hsl(var(--gold-dark))]/10 backdrop-blur-md rounded-lg p-5 h-full border border-[hsl(var(--gold))]/10 overflow-hidden">
                     <p className="label-text !text-[hsl(var(--gold-light))]/50 mb-3" style={{ fontSize: '0.625rem' }}>Time Reclaimed</p>
                     <p className="font-display text-3xl text-[hsl(var(--gold-light))] mb-1">{bookedTrip.timeReclaimed}</p>
                     <p className="font-editorial text-xs text-white/35 mb-4 italic">Given back to your family.</p>
@@ -386,7 +386,7 @@ const Index = ({
       {/* ═══ TWO COLUMN — Plan Next Trip + Inner Circle ═══ */}
       <section className="grid grid-cols-1 md:grid-cols-2 gap-4 px-4 py-8 bg-[hsl(var(--warm))]">
         {/* Plan Your Next Trip — left */}
-        <div className="relative overflow-hidden shadow-soft hover:shadow-soft-hover transition-shadow duration-500">
+        <div className="relative overflow-hidden rounded-lg shadow-soft hover:shadow-soft-hover transition-shadow duration-500">
           <Link to="/adventure" className="group block">
             <div className="relative h-[500px] overflow-hidden">
               <ParallaxImage src={editorialCalendar} alt="Plan your next trip" className="absolute inset-0 h-full" />
@@ -414,7 +414,7 @@ const Index = ({
         </div>
 
         {/* Inner Circle — right */}
-        <div className="bg-[hsl(var(--warm))] border border-[hsl(var(--border))] shadow-soft hover:shadow-soft-hover transition-shadow duration-500 flex flex-col px-4 sm:px-6 lg:px-8 py-7 sm:py-8 h-auto md:h-[500px] overflow-hidden">
+        <div className="bg-[hsl(var(--warm))] border border-[hsl(var(--border))] rounded-lg shadow-soft hover:shadow-soft-hover transition-shadow duration-500 flex flex-col px-4 sm:px-6 lg:px-8 py-7 sm:py-8 h-auto md:h-[500px] overflow-hidden">
           <div className="shrink-0">
             <motion.div {...slideRight()}>
               <p className="label-text mb-2 tracking-[0.3em]">The Inner Circle</p>

@@ -171,7 +171,7 @@ const BookingModal = ({ type, venueName, venueLocation, onClose, onBook }: Booki
       <motion.div
         initial={{ opacity: 0, y: 20, scale: 0.97 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: 20, scale: 0.97 }}
         transition={{ duration: 0.3 }}
-        className="w-full max-w-md bg-card border border-border shadow-lg"
+        className="w-full max-w-md bg-card border border-border rounded-lg shadow-lg"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="p-6 border-b border-border">
@@ -187,30 +187,30 @@ const BookingModal = ({ type, venueName, venueLocation, onClose, onBook }: Booki
         <div className="p-6 space-y-4">
           <div>
             <label className="label-text mb-2 block">Date</label>
-            <input type="date" value={date} onChange={(e) => setDate(e.target.value)} className="w-full border border-border bg-background px-3 py-2 font-editorial text-sm text-foreground focus:outline-none focus:border-[hsl(var(--gold))] transition-colors" />
+            <input type="date" value={date} onChange={(e) => setDate(e.target.value)} className="w-full border border-border bg-background rounded-md px-3 py-2 font-editorial text-sm text-foreground focus:outline-none focus:border-[hsl(var(--gold))] transition-colors" />
           </div>
           <div>
             <label className="label-text mb-2 block">Time</label>
-            <input type="time" value={time} onChange={(e) => setTime(e.target.value)} className="w-full border border-border bg-background px-3 py-2 font-editorial text-sm text-foreground focus:outline-none focus:border-[hsl(var(--gold))] transition-colors" />
+            <input type="time" value={time} onChange={(e) => setTime(e.target.value)} className="w-full border border-border bg-background rounded-md px-3 py-2 font-editorial text-sm text-foreground focus:outline-none focus:border-[hsl(var(--gold))] transition-colors" />
           </div>
           <div>
             <label className="label-text mb-2 block">Party Size</label>
             <div className="flex gap-2">
               {[1,2,3,4,5,6].map(n => (
-                <button key={n} onClick={() => setPartySize(n)} className={`w-10 h-10 border text-sm font-display transition-all duration-200 ${partySize === n ? "bg-foreground text-background border-foreground" : "border-border text-muted-foreground hover:border-foreground/30"}`}>{n}</button>
+                <button key={n} onClick={() => setPartySize(n)} className={`w-10 h-10 rounded-md border text-sm font-display transition-all duration-200 ${partySize === n ? "bg-foreground text-background border-foreground" : "border-border text-muted-foreground hover:border-foreground/30"}`}>{n}</button>
               ))}
             </div>
           </div>
           <div>
             <label className="label-text mb-2 block">Notes (optional)</label>
-            <textarea value={notes} onChange={(e) => setNotes(e.target.value)} placeholder="Special requests, dietary needs..." rows={2} className="w-full border border-border bg-background px-3 py-2 font-editorial text-sm text-foreground focus:outline-none focus:border-[hsl(var(--gold))] transition-colors resize-none" />
+            <textarea value={notes} onChange={(e) => setNotes(e.target.value)} placeholder="Special requests, dietary needs..." rows={2} className="w-full border border-border bg-background rounded-md px-3 py-2 font-editorial text-sm text-foreground focus:outline-none focus:border-[hsl(var(--gold))] transition-colors resize-none" />
           </div>
         </div>
         <div className="p-6 border-t border-border flex gap-3">
-          <button onClick={() => { if (date && time) onBook({ date, time, partySize, notes }); }} className="flex-1 px-6 py-3 text-[0.625rem] tracking-[0.15em] uppercase font-medium bg-foreground text-background transition-opacity duration-300 hover:opacity-90 disabled:opacity-40" disabled={!date || !time}>
+          <button onClick={() => { if (date && time) onBook({ date, time, partySize, notes }); }} className="flex-1 px-6 py-3 rounded-lg text-[0.625rem] tracking-[0.15em] uppercase font-medium bg-foreground text-background transition-opacity duration-300 hover:opacity-90 disabled:opacity-40" disabled={!date || !time}>
             Add as Pending
           </button>
-          <button onClick={onClose} className="px-6 py-3 text-[0.625rem] tracking-[0.15em] uppercase font-medium text-muted-foreground border border-border hover:border-foreground/30 transition-all duration-300">
+          <button onClick={onClose} className="px-6 py-3 rounded-lg text-[0.625rem] tracking-[0.15em] uppercase font-medium text-muted-foreground border border-border hover:border-foreground/30 transition-all duration-300">
             Cancel
           </button>
         </div>
@@ -240,7 +240,7 @@ const AlertModal = ({ venueName, opensDate, onClose, onSetAlert }: AlertModalPro
       <motion.div
         initial={{ opacity: 0, y: 20, scale: 0.97 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: 20, scale: 0.97 }}
         transition={{ duration: 0.3 }}
-        className="w-full max-w-sm bg-card border border-border shadow-lg"
+        className="w-full max-w-sm bg-card border border-border rounded-lg shadow-lg"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="p-6 border-b border-border">
@@ -253,18 +253,18 @@ const AlertModal = ({ venueName, opensDate, onClose, onSetAlert }: AlertModalPro
           </div>
         </div>
         <div className="p-6 space-y-4">
-          <div className="border border-[hsl(var(--gold)/0.3)] bg-[hsl(var(--gold)/0.04)] p-4">
+          <div className="border border-[hsl(var(--gold)/0.3)] bg-[hsl(var(--gold)/0.04)] rounded-lg p-4">
             <p className="font-editorial text-sm text-foreground mb-1">Booking window opens:</p>
             <p className="font-display text-xl text-foreground">{opensDate || "TBD"}</p>
             <p className="font-editorial text-xs text-muted-foreground mt-2">We'll remind you to book at 6 AM ET on this date.</p>
           </div>
           <div>
             <label className="label-text mb-2 block">Reminder Note (optional)</label>
-            <input type="text" value={alertNote} onChange={(e) => setAlertNote(e.target.value)} placeholder="e.g., Request West Wing" className="w-full border border-border bg-background px-3 py-2 font-editorial text-sm text-foreground focus:outline-none focus:border-[hsl(var(--gold))] transition-colors" />
+            <input type="text" value={alertNote} onChange={(e) => setAlertNote(e.target.value)} placeholder="e.g., Request West Wing" className="w-full border border-border bg-background rounded-md px-3 py-2 font-editorial text-sm text-foreground focus:outline-none focus:border-[hsl(var(--gold))] transition-colors" />
           </div>
         </div>
         <div className="p-6 border-t border-border">
-          <button onClick={() => onSetAlert(alertNote)} className="w-full px-6 py-3 text-[0.625rem] tracking-[0.15em] uppercase font-medium bg-[hsl(var(--gold))] text-background transition-opacity duration-300 hover:opacity-90">
+          <button onClick={() => onSetAlert(alertNote)} className="w-full px-6 py-3 rounded-lg text-[0.625rem] tracking-[0.15em] uppercase font-medium bg-[hsl(var(--gold))] text-background transition-opacity duration-300 hover:opacity-90">
             Set Alert
           </button>
         </div>
@@ -501,8 +501,8 @@ const BookedTripDetail = ({ trip }: { trip: BookedTrip }) => {
 
           <motion.div {...fade(0.1)} className="flex flex-wrap gap-3 mb-12">
             {partySurvey.responses.map((resp) => (
-              <div key={resp.memberId} className="flex items-center gap-2 border border-border bg-card px-4 py-2 shadow-[var(--shadow-soft)]">
-                <div className="w-7 h-7 flex items-center justify-center bg-foreground text-background text-xs font-medium">{resp.memberId}</div>
+              <div key={resp.memberId} className="flex items-center gap-2 border border-border bg-card rounded-lg px-4 py-2 shadow-[var(--shadow-soft)]">
+                <div className="w-7 h-7 rounded-md flex items-center justify-center bg-foreground text-background text-xs font-medium">{resp.memberId}</div>
                 <span className="font-display text-sm text-foreground">{resp.memberName}</span>
                 {resp.status === "completed" ? (
                   <>
@@ -527,21 +527,21 @@ const BookedTripDetail = ({ trip }: { trip: BookedTrip }) => {
                 <button
                   key={member.memberId}
                   onClick={() => setMdeConnected((prev) => ({ ...prev, [member.memberId]: !prev[member.memberId] }))}
-                  className={`flex items-center gap-3 border p-4 transition-all duration-300 ${
-                    mdeConnected[member.memberId]
-                      ? "border-[hsl(var(--gold)/0.4)] bg-[hsl(var(--gold)/0.06)]"
-                      : "border-border bg-card hover:border-foreground/20"
-                  }`}
+                   className={`flex items-center gap-3 border rounded-lg p-4 transition-all duration-300 ${
+                     mdeConnected[member.memberId]
+                       ? "border-[hsl(var(--gold)/0.4)] bg-[hsl(var(--gold)/0.06)]"
+                       : "border-border bg-card hover:border-foreground/20"
+                   }`}
                 >
-                  <div className={`w-5 h-5 flex items-center justify-center border transition-all duration-300 ${
-                    mdeConnected[member.memberId]
-                      ? "bg-[hsl(var(--gold))] border-[hsl(var(--gold))] text-background"
-                      : "border-muted-foreground/30"
-                  }`}>
+                   <div className={`w-5 h-5 rounded-sm flex items-center justify-center border transition-all duration-300 ${
+                     mdeConnected[member.memberId]
+                       ? "bg-[hsl(var(--gold))] border-[hsl(var(--gold))] text-background"
+                       : "border-muted-foreground/30"
+                   }`}>
                     {mdeConnected[member.memberId] && <span className="text-[0.5rem]">✓</span>}
                   </div>
                   <div className="flex items-center gap-2">
-                    <div className="w-7 h-7 flex items-center justify-center bg-foreground text-background text-xs font-medium">{member.initial}</div>
+                    <div className="w-7 h-7 rounded-md flex items-center justify-center bg-foreground text-background text-xs font-medium">{member.initial}</div>
                     <span className="font-display text-sm text-foreground">{member.name}</span>
                   </div>
                   <span className="ml-auto label-text">{mdeConnected[member.memberId] ? "Connected" : "Not Yet"}</span>
@@ -710,7 +710,7 @@ const BookedTripDetail = ({ trip }: { trip: BookedTrip }) => {
             <>
               {/* Overlap warning banner */}
               {hasAnyOverlaps && allDiningReservations.some(d => overlapMap[d.reservationId]) && (
-                <motion.div {...fade(0.02)} className="mb-6 border border-[hsl(var(--destructive)/0.25)] bg-[hsl(var(--destructive)/0.04)] p-4">
+                 <motion.div {...fade(0.02)} className="mb-6 border border-[hsl(var(--destructive)/0.25)] bg-[hsl(var(--destructive)/0.04)] rounded-lg p-4">
                   <div className="flex items-start gap-3">
                     <span className="text-lg shrink-0">⚠️</span>
                     <div>
@@ -736,13 +736,13 @@ const BookedTripDetail = ({ trip }: { trip: BookedTrip }) => {
                   if (count === 0 && status === "cancelled") return null;
                   const colors = statusColors[status];
                   return (
-                    <div key={status} className="flex items-center gap-2 px-4 py-2 border" style={{ background: colors.bg, borderColor: colors.border }}>
+                     <div key={status} className="flex items-center gap-2 px-4 py-2 rounded-md border" style={{ background: colors.bg, borderColor: colors.border }}>
                       <span className="font-display text-xl" style={{ color: colors.text }}>{count}</span>
                       <span className="text-[0.625rem] uppercase tracking-[0.15em] font-medium" style={{ color: colors.text }}>{status}</span>
                     </div>
                   );
                 })}
-                <div className="flex items-center gap-2 px-4 py-2 border border-border bg-card ml-auto">
+                 <div className="flex items-center gap-2 px-4 py-2 rounded-md border border-border bg-card ml-auto">
                   <span className="label-text">Dietary Flags</span>
                   <span className="font-display text-xl text-foreground">{new Set(allDiningReservations.flatMap(d => d.dietaryFlags ?? [])).size}</span>
                 </div>
@@ -758,13 +758,13 @@ const BookedTripDetail = ({ trip }: { trip: BookedTrip }) => {
                   </p>
                   <div className="space-y-3">
                     {allDiningReservations.filter(d => d.status === "confirmed").map((res) => (
-                      <div key={res.reservationId} className="border border-[hsl(var(--gold)/0.3)] bg-[hsl(var(--gold)/0.04)] p-4 transition-shadow duration-500 hover:shadow-[var(--shadow-hover)]">
+                      <div key={res.reservationId} className="border border-[hsl(var(--gold)/0.3)] bg-[hsl(var(--gold)/0.04)] rounded-lg p-4 transition-shadow duration-500 hover:shadow-[var(--shadow-hover)]">
                         <div className="flex items-start justify-between mb-2">
                           <div className="flex items-center gap-2">
                             <span className="text-lg">{mealIcons[res.mealType]}</span>
                             <h4 className="font-display text-foreground">{res.restaurantName}</h4>
                           </div>
-                          <span className="px-2 py-0.5 text-[0.5625rem] uppercase tracking-[0.12em] font-medium border" style={{ background: statusColors.confirmed.bg, color: statusColors.confirmed.text, borderColor: statusColors.confirmed.border }}>✓ Confirmed</span>
+                           <span className="px-2 py-0.5 rounded-md text-[0.5625rem] uppercase tracking-[0.12em] font-medium border" style={{ background: statusColors.confirmed.bg, color: statusColors.confirmed.text, borderColor: statusColors.confirmed.border }}>✓ Confirmed</span>
                         </div>
                         <p className="font-editorial text-xs text-muted-foreground mb-2">{res.parkOrResort} · {res.cuisine}</p>
                         <div className="flex flex-wrap gap-4 text-xs">
@@ -773,12 +773,12 @@ const BookedTripDetail = ({ trip }: { trip: BookedTrip }) => {
                           <span className="font-editorial text-muted-foreground/60">#{res.confirmationNumber}</span>
                         </div>
                         {res.dietaryFlags && res.dietaryFlags.length > 0 && (
-                          <div className="flex flex-wrap gap-1.5 mt-2">{res.dietaryFlags.map((flag) => (<span key={flag} className="text-[0.5rem] uppercase tracking-[0.1em] px-2 py-0.5 bg-[hsl(var(--warm))] text-muted-foreground border border-border">⚠ {flag}</span>))}</div>
+                          <div className="flex flex-wrap gap-1.5 mt-2">{res.dietaryFlags.map((flag) => (<span key={flag} className="text-[0.5rem] uppercase tracking-[0.1em] px-2 py-0.5 rounded-md bg-[hsl(var(--warm))] text-muted-foreground border border-border">⚠ {flag}</span>))}</div>
                         )}
                         {res.notes && <p className="font-editorial text-xs text-muted-foreground/60 italic mt-2">{res.notes}</p>}
                         {overlapMap[res.reservationId] && (
                           <div className="mt-3 pt-2 border-t border-[hsl(var(--destructive)/0.15)]">
-                            <div className="flex items-start gap-2 px-2 py-1.5 bg-[hsl(var(--destructive)/0.04)]">
+                            <div className="flex items-start gap-2 px-2 py-1.5 rounded-md bg-[hsl(var(--destructive)/0.04)]">
                               <span className="text-xs shrink-0">⚠️</span>
                               <div>
                                 <p className="font-display text-[0.5625rem] text-destructive mb-0.5">Time Conflict</p>
@@ -805,13 +805,13 @@ const BookedTripDetail = ({ trip }: { trip: BookedTrip }) => {
                   </p>
                   <div className="space-y-3">
                     {allDiningReservations.filter(d => d.status === "pending").map((res) => (
-                      <div key={res.reservationId} className="border border-dashed border-border bg-card p-4 transition-shadow duration-500 hover:shadow-[var(--shadow-hover)]">
+                      <div key={res.reservationId} className="border border-dashed border-border bg-card rounded-lg p-4 transition-shadow duration-500 hover:shadow-[var(--shadow-hover)]">
                         <div className="flex items-start justify-between mb-2">
                           <div className="flex items-center gap-2">
                             <span className="text-lg">{mealIcons[res.mealType]}</span>
                             <h4 className="font-display text-foreground">{res.restaurantName}</h4>
                           </div>
-                          <span className="px-2 py-0.5 text-[0.5625rem] uppercase tracking-[0.12em] font-medium border" style={{ background: statusColors.pending.bg, color: statusColors.pending.text, borderColor: statusColors.pending.border }}>Pending</span>
+                           <span className="px-2 py-0.5 rounded-md text-[0.5625rem] uppercase tracking-[0.12em] font-medium border" style={{ background: statusColors.pending.bg, color: statusColors.pending.text, borderColor: statusColors.pending.border }}>Pending</span>
                         </div>
                         <p className="font-editorial text-xs text-muted-foreground mb-2">{res.parkOrResort} · {res.cuisine}</p>
                         <div className="flex flex-wrap gap-4 text-xs">
@@ -820,7 +820,7 @@ const BookedTripDetail = ({ trip }: { trip: BookedTrip }) => {
                         </div>
                         {res.notes && <p className="font-editorial text-xs text-muted-foreground/60 italic mt-2">{res.notes}</p>}
                         {overlapMap[res.reservationId] && (
-                          <div className="mt-2 flex items-start gap-2 px-2 py-1.5 bg-[hsl(var(--destructive)/0.04)] border border-[hsl(var(--destructive)/0.15)]">
+                           <div className="mt-2 flex items-start gap-2 px-2 py-1.5 rounded-md bg-[hsl(var(--destructive)/0.04)] border border-[hsl(var(--destructive)/0.15)]">
                             <span className="text-xs shrink-0">⚠️</span>
                             <p className="font-editorial text-[0.625rem] text-muted-foreground">
                               Overlaps with <strong className="text-foreground">{overlapMap[res.reservationId].map(o => o.name).join(", ")}</strong>. Cancel at least <strong className="text-foreground">2 hrs before</strong> to avoid a <strong className="text-foreground">$10/person</strong> no-show fee.
@@ -892,7 +892,7 @@ const BookedTripDetail = ({ trip }: { trip: BookedTrip }) => {
 
           {experienceSubTab === "discover" && (
             <>
-              <motion.div {...fade(0.05)} className="mb-10 border border-[hsl(var(--gold)/0.3)] bg-[hsl(var(--gold)/0.04)] p-4 flex items-center gap-3">
+               <motion.div {...fade(0.05)} className="mb-10 border border-[hsl(var(--gold)/0.3)] bg-[hsl(var(--gold)/0.04)] rounded-lg p-4 flex items-center gap-3">
                 <span className="text-lg">⏰</span>
                 <p className="font-editorial text-sm text-muted-foreground">
                   <span className="text-foreground font-medium">Booking windows vary by experience</span> — most open 60 days before arrival. Premium experiences like Savi's Workshop sell out immediately.

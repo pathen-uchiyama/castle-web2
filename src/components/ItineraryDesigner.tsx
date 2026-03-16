@@ -1,6 +1,6 @@
 import { motion, AnimatePresence } from "framer-motion";
-import { useState, useMemo, useCallback } from "react";
-import { ChevronDown, Plus, X, Search, Star, Lock, Unlock, Sparkles, AlertTriangle, Clock, Ruler, Zap, Shield, Info, GripVertical, Utensils, Ticket } from "lucide-react";
+import { useState, useMemo, useCallback, useRef } from "react";
+import { ChevronDown, Plus, X, Search, Star, Lock, Unlock, Sparkles, AlertTriangle, Clock, Ruler, Zap, Shield, Info, GripVertical, Utensils, Ticket, Flag, LogOut, Users } from "lucide-react";
 import type { BookedTrip, PartyMember, DiningReservation, BookedExperience } from "@/data/types";
 import {
   allParkAttractions, parkLabels, typeLabels, llLabels, waitLabels,
@@ -44,6 +44,15 @@ const quickAdds = [
 /* ─── Thrill icons ───────────────────────────────────────────────── */
 const thrillEmoji: Record<string, string> = { mild: "🟢", moderate: "🟡", high: "🔴" };
 
+/* ─── Default wait time estimates by category ────────────────────── */
+const defaultWaitByCategory: Record<string, number> = {
+  "walk-on": 5,
+  "walk-on-am": 10,
+  "fast-walk-on": 10,
+  "hard-to-get": 45,
+  "ill-required": 60,
+};
+
 /* ═══════════════════════════════════════════════════════════════════
    COMPONENT
    ═══════════════════════════════════════════════════════════════════ */
@@ -65,10 +74,13 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
 
   const [expandedCardId, setExpandedCardId] = useState<string | null>(null);
 
+  // Rope drop & leave park times
+  const [ropeDrop, setRopeDrop] = useState("7:30 AM");
+  const [leavePark, setLeavePark] = useState("10:00 PM");
+
   // Seed itinerary with confirmed bookings
   const seededBookings = useMemo((): ItineraryItem[] => {
     const items: ItineraryItem[] = [];
-    // Add dining
     diningReservations.forEach(d => {
       items.push({
         id: `booked-${d.reservationId}`,
@@ -81,7 +93,6 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
         notes: d.status === "confirmed" ? `✓ CONFIRMED · ${d.confirmationNumber}` : "PENDING",
       });
     });
-    // Add experiences
     bookedExperiences.forEach(e => {
       items.push({
         id: `booked-${e.experienceId}`,
@@ -94,24 +105,17 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
         notes: e.status === "confirmed" ? `✓ CONFIRMED · ${e.confirmationNumber}` : "PENDING",
       });
     });
-    return items.sort((a, b) => {
-      const toMin = (t: string) => {
-        const m = t.match(/(\d+):(\d+)\s*(AM|PM)/i);
-        if (!m) return 0;
-        let h = parseInt(m[1]);
-        const min = parseInt(m[2]);
-        if (m[3].toUpperCase() === "PM" && h !== 12) h += 12;
-        if (m[3].toUpperCase() === "AM" && h === 12) h = 0;
-        return h * 60 + min;
-      };
-      return toMin(a.startTime) - toMin(b.startTime);
-    });
+    return items.sort((a, b) => toMinutes(a.startTime) - toMinutes(b.startTime));
   }, [diningReservations, bookedExperiences]);
 
   const [itinerary, setItinerary] = useState<ItineraryItem[]>(seededBookings);
   const [isLocked, setIsLocked] = useState(false);
   const [dragIdx, setDragIdx] = useState<number | null>(null);
   const [dragOverIdx, setDragOverIdx] = useState<number | null>(null);
+
+  // Drop zone hover for timeline
+  const [timelineDropHour, setTimelineDropHour] = useState<number | null>(null);
+  const timelineRef = useRef<HTMLDivElement>(null);
 
   /* ── Derived ────────────────────────────────────────────────────── */
 
@@ -132,6 +136,31 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
           map[id].push(r.memberName);
         });
       }
+    });
+    return map;
+  }, [surveyResponses]);
+
+  // Build a map of attraction ID → which party members want it (from survey rankings too)
+  const attractionSatisfies = useMemo(() => {
+    const map: Record<string, { name: string; memberId: string; reason: string }[]> = {};
+    surveyResponses.forEach(r => {
+      if (r.status !== "completed") return;
+      // Top 5
+      r.topFiveMustDos.forEach(id => {
+        if (!map[id]) map[id] = [];
+        if (!map[id].some(m => m.memberId === r.memberId)) {
+          map[id].push({ name: r.memberName, memberId: r.memberId, reason: "Top 5 Must-Do" });
+        }
+      });
+      // Rankings
+      Object.entries(r.rankings).forEach(([id, ranking]) => {
+        if (ranking === "must-do" || ranking === "want-to-do") {
+          if (!map[id]) map[id] = [];
+          if (!map[id].some(m => m.memberId === r.memberId)) {
+            map[id].push({ name: r.memberName, memberId: r.memberId, reason: ranking === "must-do" ? "Must-Do" : "Want to Do" });
+          }
+        }
+      });
     });
     return map;
   }, [surveyResponses]);
@@ -159,13 +188,76 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
     return s;
   }, [selectedParks]);
 
-  // Overbooking warning
   const rideCount = itinerary.filter(i => i.type === "ride").length;
   const showOverbookingWarning = pacing !== "Intense" && rideCount > 8;
 
+  /* ── Time helpers ───────────────────────────────────────────────── */
+
+  const timeRulerHours = useMemo(() => {
+    const hours: string[] = [];
+    for (let h = 7; h <= 23; h++) {
+      const ampm = h >= 12 ? "PM" : "AM";
+      const display = h > 12 ? h - 12 : h;
+      hours.push(`${display} ${ampm}`);
+    }
+    return hours;
+  }, []);
+
+  const PX_PER_MIN = 2;
+  const DAY_START_HOUR = 7;
+  const DAY_END_HOUR = 23;
+  const DAY_START_MIN = DAY_START_HOUR * 60;
+  const TOTAL_DAY_MIN = (DAY_END_HOUR - DAY_START_HOUR) * 60;
+  const TOTAL_HEIGHT = TOTAL_DAY_MIN * PX_PER_MIN;
+
+  const getCheckinTime = (item: ItineraryItem) => {
+    if (["show", "parade", "seasonal"].includes(item.type)) return 15;
+    if (item.type === "character") return 10;
+    return 0;
+  };
+
+  /** Total block time = checkin + wait + duration (travel is separate, shown after) */
+  const totalBlockTime = (item: ItineraryItem) => {
+    return getCheckinTime(item) + (item.waitTime || 0) + item.duration;
+  };
+
+  const ropeDropMin = toMinutes(ropeDrop);
+  const leaveMin = toMinutes(leavePark);
+
+  /** Scheduled items with overlap detection */
+  const scheduledItems = useMemo(() => {
+    const items = itinerary
+      .filter(i => i.startTime && toMinutes(i.startTime) >= 0)
+      .map(item => {
+        const startMin = toMinutes(item.startTime);
+        const checkin = getCheckinTime(item);
+        const blockMin = checkin + (item.waitTime || 0) + item.duration;
+        const travelMin = item.walkTime || 0;
+        const endMin = startMin + blockMin;
+        return { item, startMin, checkin, blockMin, travelMin, endMin, overlaps: false };
+      })
+      .sort((a, b) => a.startMin - b.startMin);
+
+    // Detect overlaps
+    for (let i = 0; i < items.length; i++) {
+      for (let j = i + 1; j < items.length; j++) {
+        if (items[j].startMin < items[i].endMin) {
+          items[i].overlaps = true;
+          items[j].overlaps = true;
+        }
+      }
+    }
+
+    return items;
+  }, [itinerary]);
+
+  const unscheduledItems = useMemo(() => itinerary.filter(i => !i.startTime), [itinerary]);
+
   /* ── Handlers ───────────────────────────────────────────────────── */
+
   const addToItinerary = (attraction: ParkAttraction) => {
     if (isLocked) return;
+    const estWait = attraction.waitCategory ? (defaultWaitByCategory[attraction.waitCategory] || 15) : 15;
     setItinerary(prev => [...prev, {
       id: `it-${Date.now()}`,
       attractionId: attraction.id,
@@ -173,7 +265,27 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
       type: attraction.type,
       startTime: "",
       duration: parseInt(attraction.duration) || 15,
-      waitTime: 15,
+      waitTime: estWait,
+      walkTime: 8,
+      llType: attraction.llType,
+      waitCategory: attraction.waitCategory,
+    }]);
+  };
+
+  const addToItineraryAtTime = (attraction: ParkAttraction, hour: number) => {
+    if (isLocked) return;
+    const estWait = attraction.waitCategory ? (defaultWaitByCategory[attraction.waitCategory] || 15) : 15;
+    const ampm = hour >= 12 ? "PM" : "AM";
+    const displayH = hour > 12 ? hour - 12 : hour;
+    const timeStr = `${displayH}:00 ${ampm}`;
+    setItinerary(prev => [...prev, {
+      id: `it-${Date.now()}`,
+      attractionId: attraction.id,
+      name: attraction.name,
+      type: attraction.type,
+      startTime: timeStr,
+      duration: parseInt(attraction.duration) || 15,
+      waitTime: estWait,
       walkTime: 8,
       llType: attraction.llType,
       waitCategory: attraction.waitCategory,
@@ -197,7 +309,7 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
     setItinerary(prev => prev.filter(i => i.id !== id));
   };
 
-  /* ── Drag and drop ─────────────────────────────────────────────── */
+  /* ── Internal drag and drop (reorder) ──────────────────────────── */
   const handleDragStart = useCallback((idx: number) => {
     if (isLocked) return;
     setDragIdx(idx);
@@ -223,68 +335,66 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
   const handleDragEnd = useCallback(() => {
     setDragIdx(null);
     setDragOverIdx(null);
+    setTimelineDropHour(null);
   }, []);
 
-  /* ── Time ruler helpers ────────────────────────────────────────── */
-  const timeRulerHours = useMemo(() => {
-    const hours: string[] = [];
-    for (let h = 7; h <= 23; h++) {
-      const ampm = h >= 12 ? "PM" : "AM";
-      const display = h > 12 ? h - 12 : h;
-      hours.push(`${display} ${ampm}`);
+  /* ── Cross-panel drag (research → timeline) ────────────────────── */
+  const [draggingAttractionId, setDraggingAttractionId] = useState<string | null>(null);
+
+  const handleResearchDragStart = useCallback((e: React.DragEvent, attraction: ParkAttraction) => {
+    if (isLocked) return;
+    e.dataTransfer.setData("attractionId", attraction.id);
+    setDraggingAttractionId(attraction.id);
+  }, [isLocked]);
+
+  const handleTimelineDragOver = useCallback((e: React.DragEvent) => {
+    e.preventDefault();
+    if (!timelineRef.current) return;
+    const rect = timelineRef.current.getBoundingClientRect();
+    const y = e.clientY - rect.top;
+    const min = Math.floor(y / PX_PER_MIN) + DAY_START_MIN;
+    const hour = Math.floor(min / 60);
+    setTimelineDropHour(hour);
+  }, []);
+
+  const handleTimelineDrop = useCallback((e: React.DragEvent) => {
+    e.preventDefault();
+    const attractionId = e.dataTransfer.getData("attractionId");
+    if (!attractionId || !timelineRef.current) {
+      setTimelineDropHour(null);
+      setDraggingAttractionId(null);
+      return;
     }
-    return hours;
-  }, []);
+    const rect = timelineRef.current.getBoundingClientRect();
+    const y = e.clientY - rect.top;
+    const min = Math.round(y / PX_PER_MIN) + DAY_START_MIN;
+    const hour = Math.floor(min / 60);
+    const roundedMin = Math.round((min % 60) / 5) * 5;
 
-  // Convert time string to minutes from midnight
-  const toMinutes = (t: string) => {
-    const m = t.match(/(\d+):(\d+)\s*(AM|PM)/i);
-    if (!m) return -1;
-    let h = parseInt(m[1]);
-    const min = parseInt(m[2]);
-    if (m[3].toUpperCase() === "PM" && h !== 12) h += 12;
-    if (m[3].toUpperCase() === "AM" && h === 12) h = 0;
-    return h * 60 + min;
-  };
-
-  /* ── Proportional timeline constants ─────────────────────────── */
-  const PX_PER_MIN = 2; // 1 minute = 2px → 1 hour = 120px
-  const DAY_START_HOUR = 7; // 7 AM
-  const DAY_END_HOUR = 23; // 11 PM
-  const DAY_START_MIN = DAY_START_HOUR * 60;
-  const TOTAL_DAY_MIN = (DAY_END_HOUR - DAY_START_HOUR) * 60; // 960 min
-  const TOTAL_HEIGHT = TOTAL_DAY_MIN * PX_PER_MIN; // 1920px
-
-  /** Check-in time for experiences (shows, characters, parades) */
-  const getCheckinTime = (item: ItineraryItem) => {
-    const isExperience = ["show", "character", "parade", "seasonal"].includes(item.type);
-    if (!isExperience) return 0;
-    // Shows/parades need 15 min check-in, characters 10
-    return item.type === "character" ? 10 : 15;
-  };
-
-  /** Total time an item consumes: check-in + wait + experience (travel is separate, shown after) */
-  const totalItemTime = (item: ItineraryItem) => {
-    const checkin = getCheckinTime(item);
-    return checkin + (item.waitTime || 0) + item.duration;
-  };
-
-  /** Scheduled items sorted by start time with computed positions */
-  const scheduledItems = useMemo(() => {
-    return itinerary
-      .filter(i => i.startTime && toMinutes(i.startTime) >= 0)
-      .map(item => {
-        const startMin = toMinutes(item.startTime);
-        const checkin = getCheckinTime(item);
-        const activityMin = checkin + (item.waitTime || 0) + item.duration;
-        const travelMin = item.walkTime || 0;
-        return { item, startMin, checkin, activityMin, travelMin };
-      })
-      .sort((a, b) => a.startMin - b.startMin);
-  }, [itinerary]);
-
-  // Unscheduled items (no start time)
-  const unscheduledItems = useMemo(() => itinerary.filter(i => !i.startTime), [itinerary]);
+    // Find the attraction
+    const allAttractions = selectedParks.flatMap(p => allParkAttractions[p] || []);
+    const attraction = allAttractions.find(a => a.id === attractionId);
+    if (attraction) {
+      const ampm = hour >= 12 ? "PM" : "AM";
+      const displayH = hour > 12 ? hour - 12 : hour;
+      const timeStr = `${displayH}:${roundedMin.toString().padStart(2, "0")} ${ampm}`;
+      const estWait = attraction.waitCategory ? (defaultWaitByCategory[attraction.waitCategory] || 15) : 15;
+      setItinerary(prev => [...prev, {
+        id: `it-${Date.now()}`,
+        attractionId: attraction.id,
+        name: attraction.name,
+        type: attraction.type,
+        startTime: timeStr,
+        duration: parseInt(attraction.duration) || 15,
+        waitTime: estWait,
+        walkTime: 8,
+        llType: attraction.llType,
+        waitCategory: attraction.waitCategory,
+      }]);
+    }
+    setTimelineDropHour(null);
+    setDraggingAttractionId(null);
+  }, [selectedParks, isLocked]);
 
   const toggleGroupMember = (id: string) => {
     setGroupMembers(prev => prev.includes(id) ? prev.filter(m => m !== id) : [...prev, id]);
@@ -294,6 +404,15 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
     setSelectedParks(prev =>
       prev.includes(parkId) ? (prev.length > 1 ? prev.filter(p => p !== parkId) : prev) : [...prev, parkId]
     );
+  };
+
+  /* ── Format minutes to time string ─────────────────────────────── */
+  const formatMin = (min: number) => {
+    const h = Math.floor(min / 60);
+    const m = min % 60;
+    const ampm = h >= 12 ? "PM" : "AM";
+    const displayH = h > 12 ? h - 12 : h === 0 ? 12 : h;
+    return `${displayH}:${m.toString().padStart(2, "0")} ${ampm}`;
   };
 
   return (
@@ -332,8 +451,6 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
 
         {/* 3 widget cards */}
         <div className="grid grid-cols-3 gap-3">
-
-          {/* Forecast — compact */}
           <div className="bg-card border border-border p-3 shadow-soft flex items-center gap-3">
             <span className="text-xl">⛅</span>
             <div>
@@ -341,15 +458,11 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
               <p className="text-[0.5rem] text-muted-foreground uppercase tracking-[0.1em]">Pack ponchos</p>
             </div>
           </div>
-
-          {/* Resort */}
           <div className="bg-card border border-[hsl(var(--gold)/0.25)] p-3 shadow-soft">
             <p className="text-[0.5rem] uppercase tracking-[0.12em] text-[hsl(var(--gold-dark))] mb-0.5">On-Site Resort</p>
             <p className="font-display text-sm text-foreground">Polynesian Village</p>
             <p className="text-[0.5rem] text-muted-foreground mt-0.5">Early Entry · Extended Hours</p>
           </div>
-
-          {/* Preferences — inline */}
           <div className="bg-card border border-border p-3 shadow-soft">
             <div className="grid grid-cols-3 gap-2">
               <div>
@@ -407,7 +520,7 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
               <div className="flex items-center gap-2 px-4 py-2.5 bg-[hsl(var(--destructive)/0.06)] border border-[hsl(var(--destructive)/0.2)]">
                 <AlertTriangle className="w-3.5 h-3.5 text-destructive shrink-0" />
                 <p className="font-editorial text-[0.6875rem] text-destructive">
-                  <strong>{rideCount} rides</strong> is ambitious for a <strong>{pacing.toLowerCase()}</strong> pace. Consider swapping some for shows or rest. Unless your goal is to conquer everything — in which case, godspeed. ✨
+                  <strong>{rideCount} rides</strong> is ambitious for a <strong>{pacing.toLowerCase()}</strong> pace. Consider swapping some for shows or rest. ✨
                 </p>
               </div>
             </motion.div>
@@ -474,7 +587,7 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
         {/* ─── LEFT: Daily Itinerary ─────────────────────────────────── */}
         <div className="border-r border-border/60 px-4 lg:px-6 py-6 lg:overflow-y-auto lg:max-h-[calc(100vh-80px)] bg-card">
 
-          {/* Park hours — compact */}
+          {/* Park hours */}
           <div className="flex items-center gap-3 mb-4 flex-wrap">
             <p className="label-text">Your Day</p>
             <div className="gold-rule" />
@@ -492,25 +605,39 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
           </div>
 
           {/* ── Proportional Time Ruler + Items ─────────────────────── */}
-          <div className="relative" style={{ height: `${TOTAL_HEIGHT}px` }}>
+          <div
+            ref={timelineRef}
+            className="relative"
+            style={{ height: `${TOTAL_HEIGHT}px` }}
+            onDragOver={handleTimelineDragOver}
+            onDrop={handleTimelineDrop}
+            onDragLeave={() => setTimelineDropHour(null)}
+          >
             {/* Hour grid lines */}
             {timeRulerHours.map((hourLabel, hIdx) => {
               const hourValue = hIdx + DAY_START_HOUR;
               const topPx = (hourValue * 60 - DAY_START_MIN) * PX_PER_MIN;
               const hasItems = scheduledItems.some(s => Math.floor(s.startMin / 60) === hourValue);
+              const isDropTarget = timelineDropHour === hourValue;
 
               return (
                 <div key={hourLabel} className="absolute left-0 right-0" style={{ top: `${topPx}px` }}>
                   <div className="flex items-start">
-                    {/* Hour label */}
                     <div className="w-[52px] shrink-0">
                       <span className={`font-display text-[0.5625rem] ${hasItems ? "text-foreground" : "text-muted-foreground/30"}`}>
                         {hourLabel}
                       </span>
                     </div>
-                    {/* Tick + gridline */}
                     <div className="flex-1 relative">
-                      <div className={`absolute top-[6px] left-0 right-0 border-t ${hasItems ? "border-border/40" : "border-border/15"} border-dashed`} />
+                      <div className={`absolute top-[6px] left-0 right-0 border-t ${
+                        isDropTarget ? "border-[hsl(var(--gold))] border-solid border-2" :
+                        hasItems ? "border-border/40" : "border-border/15"
+                      } ${!isDropTarget ? "border-dashed" : ""}`} />
+                      {isDropTarget && (
+                        <div className="absolute top-[10px] left-2 text-[0.5rem] text-[hsl(var(--gold-dark))] font-medium animate-pulse">
+                          Drop here to schedule at {hourLabel}
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -520,8 +647,44 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
             {/* Vertical timeline spine */}
             <div className="absolute left-[52px] top-0 bottom-0 w-px bg-border/20" />
 
+            {/* ── ROPE DROP MARKER ──────────────────────────────────── */}
+            {ropeDropMin >= DAY_START_MIN && (
+              <div
+                className="absolute left-0 right-2"
+                style={{ top: `${(ropeDropMin - DAY_START_MIN) * PX_PER_MIN}px` }}
+              >
+                <div className="flex items-center gap-2 ml-[52px]">
+                  <div className="w-3 h-3 bg-[hsl(var(--gold))] flex items-center justify-center shrink-0">
+                    <Flag className="w-2 h-2 text-background" />
+                  </div>
+                  <div className="flex-1 border-t-2 border-[hsl(var(--gold))] border-solid" />
+                  <span className="px-2 py-0.5 bg-[hsl(var(--gold))] text-background text-[0.5rem] uppercase tracking-[0.12em] font-medium shrink-0">
+                    🏰 Rope Drop · {ropeDrop}
+                  </span>
+                </div>
+              </div>
+            )}
+
+            {/* ── LEAVE PARK MARKER ────────────────────────────────── */}
+            {leaveMin >= DAY_START_MIN && leaveMin <= DAY_END_HOUR * 60 && (
+              <div
+                className="absolute left-0 right-2"
+                style={{ top: `${(leaveMin - DAY_START_MIN) * PX_PER_MIN}px` }}
+              >
+                <div className="flex items-center gap-2 ml-[52px]">
+                  <div className="w-3 h-3 bg-foreground flex items-center justify-center shrink-0">
+                    <LogOut className="w-2 h-2 text-background" />
+                  </div>
+                  <div className="flex-1 border-t-2 border-foreground border-solid" />
+                  <span className="px-2 py-0.5 bg-foreground text-background text-[0.5rem] uppercase tracking-[0.12em] font-medium shrink-0">
+                    🚗 Leave Park · {leavePark}
+                  </span>
+                </div>
+              </div>
+            )}
+
             {/* Scheduled activity blocks — proportionally positioned */}
-            {scheduledItems.map(({ item, startMin, checkin, activityMin, travelMin }) => {
+            {scheduledItems.map(({ item, startMin, checkin, blockMin, travelMin, overlaps }) => {
               const globalIdx = itinerary.indexOf(item);
               const isBooked = item.id.startsWith("booked-");
               const isMeal = item.type === "meal" || item.type === "snack";
@@ -531,7 +694,7 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
               const isDragOver = dragOverIdx === globalIdx;
 
               const topPx = (startMin - DAY_START_MIN) * PX_PER_MIN;
-              const activityHeight = Math.max(activityMin * PX_PER_MIN, 40); // min 40px for readability
+              const activityHeight = Math.max(blockMin * PX_PER_MIN, 40);
               const travelHeight = travelMin > 0 ? Math.max(travelMin * PX_PER_MIN, 16) : 0;
 
               const wait = item.waitTime || 0;
@@ -551,6 +714,8 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
                     className={`group border-l-[3px] border px-3 py-2 transition-all duration-200 shadow-soft overflow-hidden ${
                       isDragging ? "opacity-40 scale-95" : ""
                     } ${isDragOver ? "ring-1 ring-[hsl(var(--gold))]" : ""} ${
+                      overlaps ? "ring-2 ring-destructive/60 border-destructive/40" : ""
+                    } ${
                       isMeal
                         ? "bg-[hsl(42,64%,35%,0.06)] border-[hsl(var(--gold)/0.3)] border-l-[hsl(var(--gold))]"
                         : isExperience
@@ -562,6 +727,16 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
                         : "bg-background border-border border-l-foreground/40"
                     } ${!isLocked && !isBooked ? "hover:shadow-soft-hover cursor-grab" : ""}`}
                   >
+                    {/* Overlap warning banner */}
+                    {overlaps && (
+                      <div className="flex items-center gap-1.5 px-2 py-1 mb-1.5 -mx-3 -mt-2 bg-[hsl(var(--destructive)/0.08)] border-b border-destructive/20">
+                        <AlertTriangle className="w-3 h-3 text-destructive shrink-0" />
+                        <span className="text-[0.4375rem] text-destructive font-medium uppercase tracking-[0.08em]">
+                          Time Conflict — Overlaps with another item
+                        </span>
+                      </div>
+                    )}
+
                     {/* Header row */}
                     <div className="flex items-center gap-2">
                       {!isLocked && !isBooked && (
@@ -578,7 +753,7 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
                       </span>
                       <div className="text-right shrink-0">
                         <span className="text-[0.6875rem] text-foreground font-display">{totalBlock}m</span>
-                        <span className="text-[0.35rem] text-muted-foreground uppercase block">Total</span>
+                        <span className="text-[0.35rem] text-muted-foreground uppercase block">Total Block</span>
                       </div>
                       {!isLocked && !isBooked && (
                         <button onClick={() => removeFromItinerary(item.id)}
@@ -609,6 +784,23 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
                         {isBreak ? "⏸" : isMeal ? "🍽" : isExperience ? "🎭" : "🎢"} {isBreak ? "Rest" : isMeal ? "Meal" : "Duration"} {dur}m
                       </span>
                     </div>
+
+                    {/* Visual time bar — shows proportion of wait vs ride */}
+                    {(wait > 0 || checkin > 0) && (
+                      <div className="mt-1.5 flex h-1.5 overflow-hidden bg-muted/30">
+                        {checkin > 0 && (
+                          <div className="bg-[hsl(280,30%,55%,0.3)]" style={{ width: `${(checkin / blockMin) * 100}%` }} />
+                        )}
+                        {wait > 0 && (
+                          <div className="bg-destructive/20" style={{ width: `${(wait / blockMin) * 100}%` }} />
+                        )}
+                        <div className={`${
+                          isMeal ? "bg-[hsl(var(--gold)/0.4)]" :
+                          isExperience ? "bg-[hsl(280,30%,55%,0.4)]" :
+                          "bg-foreground/20"
+                        }`} style={{ width: `${(dur / blockMin) * 100}%` }} />
+                      </div>
+                    )}
 
                     {/* LL badge */}
                     {item.llType && item.llType !== "none" && (
@@ -641,12 +833,12 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
             })}
           </div>
 
-          {/* Unscheduled items (added from research but no time yet) */}
+          {/* Unscheduled items */}
           {unscheduledItems.length > 0 && (
             <div className="mt-6 ml-[64px]">
               <p className="label-text mb-2">Unscheduled</p>
               <p className="font-editorial text-[0.625rem] text-muted-foreground/50 mb-3 italic">
-                Drag to reorder · Assign times when you're ready
+                Drag to the timeline above to assign a time
               </p>
               <div className="space-y-1.5">
                 {unscheduledItems.map(item => {
@@ -655,6 +847,8 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
                   const isExperience = item.type === "show" || item.type === "character";
                   const isDragging = dragIdx === globalIdx;
                   const isDragOver = dragOverIdx === globalIdx;
+                  const wait = item.waitTime || 0;
+                  const totalTime = wait + item.duration;
 
                   return (
                     <div
@@ -680,8 +874,10 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
                       }`} />
                       <span className="font-display text-[0.75rem] text-foreground flex-1 truncate">{item.name}</span>
                       <div className="text-right shrink-0">
-                        <span className="text-[0.5rem] text-foreground font-medium">{item.duration} min</span>
-                        <span className="text-[0.375rem] text-muted-foreground block">Duration</span>
+                        {wait > 0 && (
+                          <span className="text-[0.4375rem] text-destructive block">⏱ {wait}m wait</span>
+                        )}
+                        <span className="text-[0.5rem] text-foreground font-medium">{totalTime}m block</span>
                       </div>
                       {!isLocked && (
                         <button onClick={() => removeFromItinerary(item.id)}
@@ -710,7 +906,7 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
           )}
 
           {/* Color legend */}
-          <div className="flex items-center gap-4 mt-6 ml-[64px]">
+          <div className="flex items-center gap-4 mt-6 ml-[64px] flex-wrap">
             <div className="flex items-center gap-1.5">
               <div className="w-2.5 h-2.5 bg-[hsl(var(--gold))]" />
               <span className="text-[0.5rem] text-muted-foreground">Dining</span>
@@ -727,6 +923,10 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
               <div className="w-2.5 h-2.5 bg-muted-foreground/20" />
               <span className="text-[0.5rem] text-muted-foreground">Break</span>
             </div>
+            <div className="flex items-center gap-1.5">
+              <div className="w-2.5 h-2.5 bg-destructive/30" />
+              <span className="text-[0.5rem] text-muted-foreground">Wait Time</span>
+            </div>
           </div>
         </div>
 
@@ -737,7 +937,7 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
             <div>
               <p className="label-text mb-1">Research Assistant</p>
               <p className="font-editorial text-xs text-muted-foreground">
-                Tap a card to reveal details · Top 5 picks float up ✦
+                Drag a card onto the timeline to schedule it · Top 5 picks float up ✦
               </p>
             </div>
           </div>
@@ -786,18 +986,28 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
             {filteredAttractions.map(attraction => {
               const isTopFive = topFiveIds.has(attraction.id);
               const voters = topFiveVoters[attraction.id];
+              const satisfies = attractionSatisfies[attraction.id];
               const alreadyAdded = itinerary.some(i => i.attractionId === attraction.id);
               const isExpanded = expandedCardId === attraction.id;
+              const isDraggingThis = draggingAttractionId === attraction.id;
+              const estWait = attraction.waitCategory ? (defaultWaitByCategory[attraction.waitCategory] || 15) : 15;
+              const rideDur = parseInt(attraction.duration) || 15;
+              const totalBlockEst = estWait + rideDur;
 
               return (
                 <motion.div
                   key={attraction.id}
                   layout
+                  draggable={!attraction.isClosed && !alreadyAdded && !isLocked}
+                  onDragStart={(e: any) => handleResearchDragStart(e, attraction)}
+                  onDragEnd={() => setDraggingAttractionId(null)}
                   className={`border transition-all duration-300 shadow-soft hover:shadow-soft-hover ${
+                    isDraggingThis ? "opacity-40 scale-95" : ""
+                  } ${
                     attraction.isClosed ? "opacity-30 pointer-events-none" :
                     isTopFive ? "border-[hsl(var(--gold)/0.35)] bg-card" :
                     "border-border bg-card"
-                  }`}
+                  } ${!attraction.isClosed && !alreadyAdded && !isLocked ? "cursor-grab" : ""}`}
                 >
                   {/* Header — always visible */}
                   <button
@@ -823,7 +1033,14 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
                         {typeLabels[attraction.type]}
                       </span>
                       <span className="px-1.5 py-0.5 text-[0.375rem] uppercase tracking-[0.08em] bg-foreground/5 text-muted-foreground">
-                        {attraction.duration}
+                        🎢 {attraction.duration}
+                      </span>
+                      {/* Show estimated wait + total block time */}
+                      <span className="px-1.5 py-0.5 text-[0.375rem] uppercase tracking-[0.08em] bg-[hsl(var(--destructive)/0.06)] text-destructive">
+                        ⏱ ~{estWait}m wait
+                      </span>
+                      <span className="px-1.5 py-0.5 text-[0.375rem] uppercase tracking-[0.08em] bg-foreground/8 text-foreground font-medium">
+                        📅 {totalBlockEst}m block
                       </span>
                       <span className="px-1.5 py-0.5 text-[0.375rem] uppercase tracking-[0.08em] bg-foreground/5 text-muted-foreground">
                         {attraction.environment}
@@ -873,8 +1090,22 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
                       </div>
                     )}
 
-                    {/* Top-5 voters */}
-                    {isTopFive && voters && (
+                    {/* ── WHO THIS SATISFIES ────────────────────────── */}
+                    {satisfies && satisfies.length > 0 && (
+                      <div className="flex items-center gap-1.5 mt-2 px-2 py-1.5 bg-[hsl(var(--gold)/0.04)] border border-[hsl(var(--gold)/0.15)]">
+                        <Users className="w-3 h-3 text-[hsl(var(--gold-dark))] shrink-0" />
+                        <div className="flex items-center gap-1 flex-wrap">
+                          {satisfies.map(s => (
+                            <span key={s.memberId} className="inline-flex items-center gap-1 px-1.5 py-0.5 bg-[hsl(var(--gold)/0.1)] text-[0.4375rem] text-[hsl(var(--gold-dark))]">
+                              {s.name} · <span className="italic">{s.reason}</span>
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Top-5 voters (fallback if no satisfies data) */}
+                    {isTopFive && voters && (!satisfies || satisfies.length === 0) && (
                       <div className="flex items-center gap-1 mt-2">
                         <Star className="w-2.5 h-2.5 text-[hsl(var(--gold))]" />
                         <span className="font-editorial text-[0.5rem] text-[hsl(var(--gold-dark))] italic">
@@ -895,18 +1126,16 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
                         className="overflow-hidden"
                       >
                         <div className="px-4 pb-4 border-t border-border/50 pt-3">
-                          {/* Description */}
                           <p className="font-editorial text-[0.75rem] text-foreground leading-relaxed mb-3">
                             {attraction.description}
                           </p>
 
-                          {/* Notable insight */}
                           <div className="flex items-start gap-2 mb-3 px-3 py-2 bg-[hsl(var(--warm))] border border-border/40">
                             <Info className="w-3 h-3 text-[hsl(var(--gold-dark))] shrink-0 mt-0.5" />
                             <p className="font-editorial text-[0.6875rem] text-foreground italic">{attraction.notableInsight}</p>
                           </div>
 
-                          {/* Crowd impact callout */}
+                          {/* Crowd impact */}
                           {attraction.attractionStatus && attraction.attractionStatus.crowdImpact && attraction.attractionStatus.crowdImpact !== "none" && (
                             <div className={`flex items-start gap-2 mb-3 px-3 py-2 border ${
                               attraction.attractionStatus.crowdImpact === "extreme" ? "bg-[hsl(var(--destructive)/0.04)] border-[hsl(var(--destructive)/0.15)]" :
@@ -927,6 +1156,27 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
                               </div>
                             </div>
                           )}
+
+                          {/* Time breakdown detail */}
+                          <div className="mb-3 px-3 py-2 bg-muted/30 border border-border/30">
+                            <p className="text-[0.4375rem] uppercase tracking-[0.12em] text-muted-foreground mb-1.5">Schedule Impact</p>
+                            <div className="flex items-center gap-3">
+                              <div>
+                                <span className="text-[0.6875rem] font-display text-destructive">~{estWait}m</span>
+                                <span className="text-[0.375rem] text-muted-foreground block">Est. Wait</span>
+                              </div>
+                              <span className="text-muted-foreground/30">+</span>
+                              <div>
+                                <span className="text-[0.6875rem] font-display text-foreground">{rideDur}m</span>
+                                <span className="text-[0.375rem] text-muted-foreground block">Duration</span>
+                              </div>
+                              <span className="text-muted-foreground/30">=</span>
+                              <div>
+                                <span className="text-[0.6875rem] font-display text-foreground font-bold">{totalBlockEst}m</span>
+                                <span className="text-[0.375rem] text-muted-foreground block">Calendar Block</span>
+                              </div>
+                            </div>
+                          </div>
 
                           <div className="grid grid-cols-2 gap-2 mb-3">
                             <div className="flex items-center gap-1.5">
@@ -951,7 +1201,6 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
                             )}
                           </div>
 
-                          {/* Rules */}
                           {attraction.rules.length > 0 && (
                             <div className="mb-3">
                               <p className="text-[0.4375rem] uppercase tracking-[0.12em] text-muted-foreground mb-1">Available Options</p>
@@ -965,7 +1214,6 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
                             </div>
                           )}
 
-                          {/* Warnings */}
                           {attraction.warnings.length > 0 && (
                             <div className="mb-3">
                               <p className="text-[0.4375rem] uppercase tracking-[0.12em] text-muted-foreground mb-1">Warnings</p>
@@ -979,7 +1227,6 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
                             </div>
                           )}
 
-                          {/* Tags */}
                           {attraction.tags && attraction.tags.length > 0 && (
                             <div className="flex flex-wrap gap-1 mb-3">
                               {attraction.tags.map(tag => (
@@ -1031,5 +1278,16 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
     </section>
   );
 };
+
+/* ── Utility (module-level) ──────────────────────────────────────── */
+function toMinutes(t: string) {
+  const m = t.match(/(\d+):(\d+)\s*(AM|PM)/i);
+  if (!m) return -1;
+  let h = parseInt(m[1]);
+  const min = parseInt(m[2]);
+  if (m[3].toUpperCase() === "PM" && h !== 12) h += 12;
+  if (m[3].toUpperCase() === "AM" && h === 12) h = 0;
+  return h * 60 + min;
+}
 
 export default ItineraryDesigner;

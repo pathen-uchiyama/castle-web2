@@ -418,9 +418,9 @@ const Index = ({
         <div className="bg-[hsl(var(--warm))] border border-[hsl(var(--border))] rounded-lg shadow-soft hover:shadow-soft-hover transition-shadow duration-500 flex flex-col px-4 sm:px-6 lg:px-8 py-7 sm:py-8 h-auto md:h-[500px] overflow-hidden">
           <div className="shrink-0">
             <motion.div {...slideRight()}>
-              <p className="label-text mb-2 tracking-[0.3em]">The Inner Circle</p>
+              <p className="label-text mb-2 tracking-[0.3em]">The Inner Circle 👨‍👩‍👧‍👦</p>
               <h3 className="font-display text-2xl sm:text-3xl text-foreground leading-[1.1] mb-1">Your party</h3>
-              <p className="font-editorial text-sm text-muted-foreground mb-4">The crew that makes the magic happen.</p>
+              <p className="font-editorial text-sm text-muted-foreground mb-4">The crew that makes every trip unforgettable.</p>
             </motion.div>
           </div>
 

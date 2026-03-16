@@ -158,7 +158,7 @@ const Index = ({
                 <h2 className="font-display text-4xl sm:text-5xl xl:text-6xl text-white leading-[1.08] mb-6">
                   {bookedTrip.destination}
                 </h2>
-                <p className="font-display text-2xl sm:text-3xl text-white/50 leading-[1.2] mb-8">
+                <p className="font-display text-2xl sm:text-3xl text-white/60 leading-[1.2] mb-8">
                   {bookedTrip.tripName}
                 </p>
                 <p className="font-editorial text-base text-white/45 max-w-md leading-relaxed">

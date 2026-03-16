@@ -338,7 +338,7 @@ const Survey = () => {
                       {...fade(i * 0.03)}
                       onClick={() => toggleTopFive(a.attractionId)}
                       disabled={topFive.length >= 5}
-                      className="w-full text-left flex items-center gap-4 border border-border p-4 hover:border-[hsl(var(--gold)/0.5)] disabled:opacity-40 transition-all duration-300"
+                      className="w-full text-left flex items-center gap-4 border border-border rounded-lg p-4 hover:border-[hsl(var(--gold)/0.5)] disabled:opacity-40 transition-all duration-300"
                     >
                       <span className="text-base">{categoryIcons[a.category]}</span>
                       <span className="font-display text-lg text-foreground">{a.name}</span>

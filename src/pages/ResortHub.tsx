@@ -406,9 +406,9 @@ const ResortHub = () => {
                                 <div>
                                   <p className="text-[0.375rem] uppercase tracking-[0.1em] text-muted-foreground mb-0.5">Avg Wait</p>
                                   <div className="flex gap-1.5">
-                                    <span className="text-[0.5rem] px-1.5 py-0.5 bg-[hsl(142,60%,45%,0.1)] text-[hsl(142,60%,35%)] border border-[hsl(142,60%,45%,0.2)]">{a.avgWaitMinutes.low}m</span>
-                                    <span className="text-[0.5rem] px-1.5 py-0.5 bg-[hsl(var(--gold)/0.1)] text-[hsl(var(--gold-dark))] border border-[hsl(var(--gold)/0.2)]">{a.avgWaitMinutes.typical}m</span>
-                                    <span className="text-[0.5rem] px-1.5 py-0.5 bg-[hsl(var(--destructive)/0.08)] text-destructive border border-[hsl(var(--destructive)/0.15)]">{a.avgWaitMinutes.peak}m</span>
+                                     <span className="text-[0.5rem] px-1.5 py-0.5 rounded-md bg-[hsl(142,60%,45%,0.1)] text-[hsl(142,60%,35%)] border border-[hsl(142,60%,45%,0.2)]">{a.avgWaitMinutes.low}m</span>
+                                     <span className="text-[0.5rem] px-1.5 py-0.5 rounded-md bg-[hsl(var(--gold)/0.1)] text-[hsl(var(--gold-dark))] border border-[hsl(var(--gold)/0.2)]">{a.avgWaitMinutes.typical}m</span>
+                                     <span className="text-[0.5rem] px-1.5 py-0.5 rounded-md bg-[hsl(var(--destructive)/0.08)] text-destructive border border-[hsl(var(--destructive)/0.15)]">{a.avgWaitMinutes.peak}m</span>
                                   </div>
                                 </div>
                                 <div className="flex flex-wrap gap-1.5 items-end">

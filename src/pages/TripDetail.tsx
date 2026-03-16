@@ -559,7 +559,7 @@ const BookedTripDetail = ({ trip }: { trip: BookedTrip }) => {
               { label: "MDE Connected", value: `${Object.values(mdeConnected).filter(Boolean).length}/${Object.values(mdeConnected).length}` },
               { label: "Conflicts", value: String(consensusData.filter((c) => c.hasConflict).length) },
             ].map((stat) => (
-              <div key={stat.label} className="border border-border bg-card p-5 shadow-[var(--shadow-soft)]">
+              <div key={stat.label} className="border border-border bg-card rounded-lg p-5 shadow-[var(--shadow-soft)]">
                 <p className="label-text mb-2">{stat.label}</p>
                 <p className="font-display text-3xl text-foreground">{stat.value}</p>
               </div>
@@ -848,7 +848,7 @@ const BookedTripDetail = ({ trip }: { trip: BookedTrip }) => {
                   </p>
                   <div className="space-y-3 opacity-50">
                     {allDiningReservations.filter(d => d.status === "cancelled").map((res) => (
-                      <div key={res.reservationId} className="border border-border bg-card p-4 line-through">
+                      <div key={res.reservationId} className="border border-border bg-card rounded-lg p-4 line-through">
                         <div className="flex items-center gap-2">
                           <span className="text-lg">{mealIcons[res.mealType]}</span>
                           <span className="font-display text-foreground">{res.restaurantName}</span>
@@ -860,7 +860,7 @@ const BookedTripDetail = ({ trip }: { trip: BookedTrip }) => {
                 </motion.div>
               )}
 
-              <motion.div {...fade(0.3)} className="border border-dashed border-border py-10 text-center cursor-pointer hover:border-[hsl(var(--gold)/0.5)] transition-colors duration-500">
+               <motion.div {...fade(0.3)} className="border border-dashed border-border rounded-lg py-10 text-center cursor-pointer hover:border-[hsl(var(--gold)/0.5)] transition-colors duration-500">
                 <p className="font-display text-xl text-muted-foreground/40 mb-2">+ Add Reservation</p>
                 <p className="font-editorial text-sm text-muted-foreground/30">Track a new dining booking for your trip.</p>
               </motion.div>
@@ -1079,7 +1079,7 @@ const BookedTripDetail = ({ trip }: { trip: BookedTrip }) => {
                   </p>
                   <div className="space-y-3 opacity-50">
                     {allBookedExperiences.filter(e => e.status === "cancelled").map((exp) => (
-                      <div key={exp.experienceId} className="border border-border bg-card p-4 line-through">
+                      <div key={exp.experienceId} className="border border-border bg-card rounded-lg p-4 line-through">
                         <div className="flex items-center gap-2">
                           <span className="text-lg">{experienceIcons[exp.category]}</span>
                           <span className="font-display text-foreground">{exp.experienceName}</span>
@@ -1091,7 +1091,7 @@ const BookedTripDetail = ({ trip }: { trip: BookedTrip }) => {
                 </motion.div>
               )}
 
-              <motion.div {...fade(0.3)} className="border border-dashed border-border py-10 text-center cursor-pointer hover:border-[hsl(var(--gold)/0.5)] transition-colors duration-500">
+              <motion.div {...fade(0.3)} className="border border-dashed border-border rounded-lg py-10 text-center cursor-pointer hover:border-[hsl(var(--gold)/0.5)] transition-colors duration-500">
                 <p className="font-display text-xl text-muted-foreground/40 mb-2">+ Add Experience</p>
                 <p className="font-editorial text-sm text-muted-foreground/30">Track a new booked experience for your trip.</p>
               </motion.div>
@@ -1188,7 +1188,7 @@ const BookedTripDetail = ({ trip }: { trip: BookedTrip }) => {
                 { icon: "🌧", title: "Rain & Storms", temp: "40% chance", tip: "Afternoon thunderstorms are common. Pack ponchos — they beat umbrellas in crowds." },
                 { icon: "❄️", title: "Cool Evenings", temp: "62–68°F", tip: "Temps drop after sunset. A lightweight layer keeps fireworks comfortable." },
               ].map((w) => (
-                <div key={w.title} className="border border-border bg-card p-5 shadow-[var(--shadow-soft)]">
+                <div key={w.title} className="border border-border bg-card rounded-lg p-5 shadow-[var(--shadow-soft)]">
                   <div className="flex items-center gap-2 mb-3">
                     <span className="text-2xl">{w.icon}</span>
                     <h4 className="font-display text-lg text-foreground">{w.title}</h4>

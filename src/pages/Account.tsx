@@ -127,7 +127,7 @@ const Account = ({ account }: AccountProps) => {
         <section className="max-w-3xl mx-auto px-4 sm:px-8 py-16">
           <motion.div {...fade()}>
             <p className="label-text mb-8 tracking-[0.25em]">Subscription</p>
-            <div className="border border-border bg-card p-8 shadow-[var(--shadow-soft)] mb-8">
+            <div className="border border-border bg-card rounded-lg p-8 shadow-[var(--shadow-soft)] mb-8">
               <div className="flex items-baseline justify-between mb-4">
                 <p className="font-display text-2xl text-foreground">{subscription.planName}</p>
                 <span className="label-text !text-[hsl(var(--gold))] capitalize">{subscription.status}</span>

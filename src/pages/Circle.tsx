@@ -115,7 +115,7 @@ const Circle = ({ partyMembers }: CircleProps) => {
               { label: "Active Trips", value: "1" },
               { label: "Pending Surveys", value: "2" },
             ].map((stat) => (
-              <div key={stat.label} className="border border-border bg-card p-5 shadow-[var(--shadow-soft)]">
+              <div key={stat.label} className="border border-border bg-card rounded-lg p-5 shadow-[var(--shadow-soft)]">
                 <p className="label-text mb-2">{stat.label}</p>
                 <p className="font-display text-3xl text-foreground">{stat.value}</p>
               </div>
@@ -434,7 +434,7 @@ const Circle = ({ partyMembers }: CircleProps) => {
             {members.map((member, i) => {
               const isComplete = i < 2;
               return (
-                <div key={member.memberId} className="flex items-center justify-between border border-border bg-card p-5 shadow-[var(--shadow-soft)]">
+                <div key={member.memberId} className="flex items-center justify-between border border-border bg-card rounded-lg p-5 shadow-[var(--shadow-soft)]">
                   <div className="flex items-center gap-4">
                     <div className="w-10 h-10 bg-foreground flex items-center justify-center shrink-0">
                       <span className="font-display text-sm text-background">{member.initial}</span>

@@ -181,7 +181,7 @@ const ParkGuidePage = ({ parkGuides }: ParkGuidePageProps) => {
                     <PopoverTrigger asChild>
                       <button
                         className={cn(
-                          "inline-flex items-center gap-3 px-5 py-3 text-sm bg-card border border-border transition-colors duration-300 hover:border-[hsl(var(--gold))]",
+                          "inline-flex items-center gap-3 px-5 py-3 rounded-lg text-sm bg-card border border-border transition-colors duration-300 hover:border-[hsl(var(--gold))]",
                           !selectedDate && "text-muted-foreground"
                         )}
                         style={{ fontFamily: "Inter, system-ui, sans-serif" }}
@@ -233,12 +233,12 @@ const ParkGuidePage = ({ parkGuides }: ParkGuidePageProps) => {
             {/* Stats Grid */}
             <motion.div {...fade(0.05)} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
               {/* Weather */}
-              <div className="border border-border bg-card p-5 shadow-[var(--shadow-soft)]">
+               <div className="border border-border bg-card rounded-lg p-5 shadow-[var(--shadow-soft)]">
                 <p className="label-text mb-2">{selectedDate ? format(selectedDate, "MMM d") + " Weather" : "Today's Weather"}</p>
                 <p className="font-display text-lg text-foreground">{displayWeather}</p>
               </div>
               {/* Crowd Level */}
-              <div className="border border-border bg-card p-5 shadow-[var(--shadow-soft)]">
+              <div className="border border-border bg-card rounded-lg p-5 shadow-[var(--shadow-soft)]">
                 <p className="label-text mb-2">Crowd Level</p>
                 <div className="flex items-center gap-3">
                   <p className="font-display text-lg text-foreground">{displayCrowd}</p>
@@ -260,7 +260,7 @@ const ParkGuidePage = ({ parkGuides }: ParkGuidePageProps) => {
                 </div>
               </div>
               {/* Hours */}
-              <div className="border border-border bg-card p-5 shadow-[var(--shadow-soft)] sm:col-span-2">
+              <div className="border border-border bg-card rounded-lg p-5 shadow-[var(--shadow-soft)] sm:col-span-2">
                 <HoursDisplay hours={displayHours} label={selectedDate ? format(selectedDate, "MMM d") + " Hours" : "Operating Hours"} />
               </div>
             </motion.div>
@@ -278,7 +278,7 @@ const ParkGuidePage = ({ parkGuides }: ParkGuidePageProps) => {
                       <button
                         key={day.date}
                         onClick={() => setSelectedDate(d)}
-                        className="shrink-0 w-[140px] border border-border bg-card p-4 text-left hover:border-[hsl(var(--gold))] transition-colors duration-300 shadow-[var(--shadow-soft)]"
+                        className="shrink-0 w-[140px] border border-border bg-card rounded-lg p-4 text-left hover:border-[hsl(var(--gold))] transition-colors duration-300 shadow-[var(--shadow-soft)]"
                       >
                         <p className="label-text mb-1">{format(d, "EEE")}</p>
                         <p className="font-display text-sm text-foreground mb-2">{format(d, "MMM d")}</p>
@@ -337,7 +337,7 @@ const ParkGuidePage = ({ parkGuides }: ParkGuidePageProps) => {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Search attractions, shows, dining..."
-                className="w-full px-5 py-3 text-sm bg-card border border-border text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:border-[hsl(var(--gold))] transition-colors"
+                className="w-full px-5 py-3 rounded-lg text-sm bg-card border border-border text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:border-[hsl(var(--gold))] transition-colors"
                 style={{ fontFamily: "Inter, system-ui, sans-serif" }}
               />
             </motion.div>
@@ -352,7 +352,7 @@ const ParkGuidePage = ({ parkGuides }: ParkGuidePageProps) => {
                   <motion.div
                     key={a.attractionId}
                     {...fade(i * 0.03)}
-                    className="border border-border bg-card p-5 shadow-[var(--shadow-soft)] hover:shadow-[var(--shadow-hover)] transition-shadow duration-500 cursor-pointer group"
+                    className="border border-border bg-card rounded-lg p-5 shadow-[var(--shadow-soft)] hover:shadow-[var(--shadow-hover)] transition-shadow duration-500 cursor-pointer group"
                   >
                     <div className="flex items-start gap-4">
                       <span className="text-lg mt-0.5">{categoryIcons[a.category]}</span>
@@ -379,7 +379,7 @@ const ParkGuidePage = ({ parkGuides }: ParkGuidePageProps) => {
             </div>
 
             {attractions.length === 0 && (
-              <div className="border border-dashed border-border py-16 text-center">
+               <div className="border border-dashed border-border rounded-lg py-16 text-center">
                 <p className="font-display text-xl text-muted-foreground/40 mb-2">Attraction database expanding</p>
                 <p className="font-editorial text-sm text-muted-foreground/30">
                   Full attraction details for {park.parkName} will be populated as the database grows.
@@ -403,23 +403,23 @@ const ParkGuidePage = ({ parkGuides }: ParkGuidePageProps) => {
 
           {/* Current conditions */}
           <motion.div {...fade(0.1)} className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-16">
-            <div className="border border-border bg-card p-6 shadow-[var(--shadow-soft)]">
+             <div className="border border-border bg-card rounded-lg p-6 shadow-[var(--shadow-soft)]">
               <p className="label-text mb-3">Current Crowd Level</p>
               <p className="font-display text-4xl text-foreground mb-2">{park.todayCrowdLevel}</p>
               <p className="font-editorial text-xs text-muted-foreground">Based on real-time wait data</p>
             </div>
-            <div className="border border-border bg-card p-6 shadow-[var(--shadow-soft)]">
+             <div className="border border-border bg-card rounded-lg p-6 shadow-[var(--shadow-soft)]">
               <p className="label-text mb-3">Weather Now</p>
               <p className="font-display text-2xl text-foreground mb-2">{park.todayWeather}</p>
               <p className="font-editorial text-xs text-muted-foreground">Updated every 30 minutes</p>
             </div>
-            <div className="border border-border bg-card p-6 shadow-[var(--shadow-soft)]">
+            <div className="border border-border bg-card rounded-lg p-6 shadow-[var(--shadow-soft)]">
               <HoursDisplay hours={park.operatingHours} label="Park Hours" />
             </div>
           </motion.div>
 
           {/* Wait times placeholder */}
-          <motion.div {...fade(0.2)} className="border border-dashed border-border py-20 text-center mb-16">
+          <motion.div {...fade(0.2)} className="border border-dashed border-border rounded-lg py-20 text-center mb-16">
             <p className="font-display text-2xl text-muted-foreground/40 mb-3">Live Wait Times</p>
             <p className="font-editorial text-sm text-muted-foreground/30 max-w-md mx-auto">
               Real-time attraction wait times with historical trending, crowd predictions, and optimal ride sequencing will appear here.
@@ -429,7 +429,7 @@ const ParkGuidePage = ({ parkGuides }: ParkGuidePageProps) => {
           {/* Crowd flow placeholder */}
           <motion.div {...fade(0.3)}>
             <p className="label-text mb-6">Crowd Flow Map</p>
-            <div className="border border-dashed border-border py-16 text-center">
+            <div className="border border-dashed border-border rounded-lg py-16 text-center">
               <p className="font-display text-xl text-muted-foreground/40 mb-2">Heat Map Coming Soon</p>
               <p className="font-editorial text-sm text-muted-foreground/30">
                 Visual crowd density by park area with movement predictions.

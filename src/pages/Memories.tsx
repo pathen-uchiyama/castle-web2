@@ -130,7 +130,7 @@ const Memories = ({ tripMemories }: MemoriesProps) => {
                 { label: "Time Saved", value: "18h 42m" },
                 { label: "Parks Visited", value: "6" },
               ].map((stat) => (
-                <div key={stat.label} className="border border-border bg-card p-5 shadow-[var(--shadow-soft)]">
+                <div key={stat.label} className="border border-border bg-card rounded-lg p-5 shadow-[var(--shadow-soft)]">
                   <p className="label-text mb-2">{stat.label}</p>
                   <p className="font-display text-3xl text-foreground">{stat.value}</p>
                 </div>
@@ -140,7 +140,7 @@ const Memories = ({ tripMemories }: MemoriesProps) => {
             {/* Sentiment placeholder */}
             <motion.div {...fade(0.2)} className="mb-16">
               <p className="label-text mb-6">Sentiment Map</p>
-              <div className="border border-dashed border-border py-16 text-center">
+               <div className="border border-dashed border-border rounded-lg py-16 text-center">
                 <p className="font-display text-2xl text-muted-foreground/40 mb-3">Happiness Timeline</p>
                 <p className="font-editorial text-sm text-muted-foreground/30 max-w-md mx-auto">
                   A visual timeline of your family's trip ratings, favorite moments, and most-loved experiences across all adventures.
@@ -151,7 +151,7 @@ const Memories = ({ tripMemories }: MemoriesProps) => {
             {/* Time saved breakdown */}
             <motion.div {...fade(0.3)}>
               <p className="label-text mb-6">Time Saved Breakdown</p>
-              <div className="border border-dashed border-border py-16 text-center">
+              <div className="border border-dashed border-border rounded-lg py-16 text-center">
                 <p className="font-display text-2xl text-muted-foreground/40 mb-3">Efficiency Metrics</p>
                 <p className="font-editorial text-sm text-muted-foreground/30 max-w-md mx-auto">
                   Cumulative wait time saved, Lightning Lane efficiency, and optimal ride sequencing stats will appear here.

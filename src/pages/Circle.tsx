@@ -263,7 +263,7 @@ const Circle = ({ partyMembers }: CircleProps) => {
                                     <button
                                       key={level}
                                       onClick={() => handleFieldChange(member.memberId, "thrillTolerance", level)}
-                                      className="px-4 py-2 text-xs uppercase tracking-[0.1em] transition-all duration-300"
+                                      className="px-4 py-2 rounded-md text-xs uppercase tracking-[0.1em] transition-all duration-300"
                                       style={{
                                         background: member.thrillTolerance === level ? "hsl(var(--foreground))" : "transparent",
                                         color: member.thrillTolerance === level ? "hsl(var(--background))" : "hsl(var(--muted-foreground))",

@@ -547,12 +547,12 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
                 <div className="bg-[hsl(var(--gold)/0.3)]" style={{ width: `${(daySummary.totalWalkTime / daySummary.dayLength) * 100}%` }} />
                 <div className="bg-[hsl(var(--muted))]" style={{ width: `${(daySummary.totalBreakTime / daySummary.dayLength) * 100}%` }} />
               </div>
-              <div className="flex items-center justify-between mt-1.5">
-                <span className="text-[0.375rem] text-[hsl(var(--ink-light))]" style={{ letterSpacing: "-0.02em" }}>
+              <div className="flex items-center justify-between mt-2">
+                <span className="text-[0.625rem] text-[hsl(var(--ink-light))]" style={{ letterSpacing: "-0.02em" }}>
                   {Math.round((daySummary.totalPlanned / daySummary.dayLength) * 100)}% of day planned
                 </span>
                 {daySummary.freeTime > 0 && (
-                  <span className="text-[0.375rem] text-[hsl(var(--gold-dark))] font-medium">
+                  <span className="text-[0.625rem] text-[hsl(var(--gold-dark))] font-medium">
                     ⏳ {daySummary.freeTime}m unplanned — room for {Math.floor(daySummary.freeTime / 25)} more rides
                   </span>
                 )}

@@ -491,7 +491,7 @@ const ResortHub = () => {
                       <p className="text-[0.4375rem] uppercase tracking-[0.12em] text-muted-foreground mb-2">Transport to Parks</p>
                       <div className="flex flex-wrap gap-1.5">
                         {hotel.transportTo.map(t => (
-                          <span key={`${t.parkName}-${t.mode}`} className="px-2 py-1 text-[0.5rem] bg-muted border border-border text-muted-foreground">
+                          <span key={`${t.parkName}-${t.mode}`} className="px-2 py-1 rounded-md text-[0.5rem] bg-muted border border-border text-muted-foreground">
                             {t.parkName} · {t.mode} · ~{t.estimatedMinutes}min
                           </span>
                         ))}

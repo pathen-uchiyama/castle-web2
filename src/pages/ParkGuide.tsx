@@ -403,7 +403,7 @@ const ParkGuidePage = ({ parkGuides }: ParkGuidePageProps) => {
 
           {/* Current conditions */}
           <motion.div {...fade(0.1)} className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-16">
-            <div className="border border-border bg-card p-6 shadow-[var(--shadow-soft)]">
+             <div className="border border-border bg-card rounded-lg p-6 shadow-[var(--shadow-soft)]">
               <p className="label-text mb-3">Current Crowd Level</p>
               <p className="font-display text-4xl text-foreground mb-2">{park.todayCrowdLevel}</p>
               <p className="font-editorial text-xs text-muted-foreground">Based on real-time wait data</p>

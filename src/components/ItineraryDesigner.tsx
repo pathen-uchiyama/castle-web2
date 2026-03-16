@@ -53,6 +53,13 @@ const defaultWaitByCategory: Record<string, number> = {
   "ill-required": 60,
 };
 
+/* ─── Walk-time presets by pacing ─────────────────────────────────── */
+const baseWalkByPacing: Record<string, number> = {
+  "Intense": 5,
+  "Moderate": 8,
+  "Relaxed": 12,
+};
+
 /* ═══════════════════════════════════════════════════════════════════
    COMPONENT
    ═══════════════════════════════════════════════════════════════════ */
@@ -78,6 +85,32 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
   const [ropeDrop, setRopeDrop] = useState("7:30 AM");
   const [leavePark, setLeavePark] = useState("10:00 PM");
 
+  /* ── Stroller / young-kids detection ───────────────────────────── */
+  const activeMembers = useMemo(
+    () => partyMembers.filter(m => groupMembers.includes(m.memberId)),
+    [partyMembers, groupMembers]
+  );
+
+  const hasYoungKids = useMemo(
+    () => activeMembers.some(m => m.age !== undefined && m.age <= 5),
+    [activeMembers]
+  );
+
+  const hasStrollerAge = useMemo(
+    () => activeMembers.some(m => m.age !== undefined && m.age <= 7),
+    [activeMembers]
+  );
+
+  /** Walk time derived from pacing + party composition */
+  const getEstWalkTime = useCallback(() => {
+    let base = baseWalkByPacing[pacing] || 8;
+    if (hasStrollerAge) base += 3; // stroller adds ~3 min
+    if (hasYoungKids) base += 2;   // extra potty/snack stops
+    return base;
+  }, [pacing, hasStrollerAge, hasYoungKids]);
+
+  const walkTimeEstimate = getEstWalkTime();
+
   // Seed itinerary with confirmed bookings
   const seededBookings = useMemo((): ItineraryItem[] => {
     const items: ItineraryItem[] = [];
@@ -88,7 +121,7 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
         type: "meal",
         startTime: d.time,
         duration: 75,
-        walkTime: 10,
+        walkTime: walkTimeEstimate,
         isConfirmed: d.status === "confirmed",
         notes: d.status === "confirmed" ? `✓ CONFIRMED · ${d.confirmationNumber}` : "PENDING",
       });
@@ -100,13 +133,13 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
         type: "show",
         startTime: e.time,
         duration: parseInt(e.duration) || 30,
-        walkTime: 10,
+        walkTime: walkTimeEstimate,
         isConfirmed: e.status === "confirmed",
         notes: e.status === "confirmed" ? `✓ CONFIRMED · ${e.confirmationNumber}` : "PENDING",
       });
     });
     return items.sort((a, b) => toMinutes(a.startTime) - toMinutes(b.startTime));
-  }, [diningReservations, bookedExperiences]);
+  }, [diningReservations, bookedExperiences, walkTimeEstimate]);
 
   const [itinerary, setItinerary] = useState<ItineraryItem[]>(seededBookings);
   const [isLocked, setIsLocked] = useState(false);
@@ -116,6 +149,36 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
   // Drop zone hover for timeline
   const [timelineDropHour, setTimelineDropHour] = useState<number | null>(null);
   const timelineRef = useRef<HTMLDivElement>(null);
+
+  /* ── Auto-insert planned break when midDayBreak changes ────────── */
+  const [lastBreakType, setLastBreakType] = useState(midDayBreak);
+
+  const insertPlannedBreak = useCallback((breakType: string) => {
+    // Remove any previously auto-inserted mid-day break
+    setItinerary(prev => {
+      const filtered = prev.filter(i => i.id !== "auto-midday-break");
+      if (breakType === "Power Through") return filtered;
+
+      const breakItem: ItineraryItem = {
+        id: "auto-midday-break",
+        name: breakType === "Pool Break" ? "Pool Break" : "Hotel Break",
+        type: breakType === "Pool Break" ? "pool" : "hotel",
+        startTime: pacing === "Intense" ? "1:00 PM" : "12:30 PM",
+        duration: breakType === "Pool Break" ? 90 : 60,
+        walkTime: walkTimeEstimate,
+        notes: breakType === "Pool Break"
+          ? "🏊 Recharge at the resort pool — built into your pace"
+          : "😴 Head back for naps & recharge — built into your pace",
+      };
+      return [...filtered, breakItem];
+    });
+  }, [pacing, walkTimeEstimate]);
+
+  // Trigger when midDayBreak changes
+  if (midDayBreak !== lastBreakType) {
+    setLastBreakType(midDayBreak);
+    insertPlannedBreak(midDayBreak);
+  }
 
   /* ── Derived ────────────────────────────────────────────────────── */
 
@@ -171,15 +234,47 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
       .filter(a => {
         if (researchCategory !== "all" && a.type !== researchCategory) return false;
         if (searchQuery && !a.name.toLowerCase().includes(searchQuery.toLowerCase())) return false;
+
+        // Focus-based filtering
+        if (focus === "Thrill Seekers") {
+          // Hide mild rides that aren't in anyone's top-5
+          if (a.thrillLevel === "mild" && a.type === "ride" && !topFiveIds.has(a.id)) return false;
+        }
+        if (focus === "Toddler Friendly") {
+          // Hide rides with height requirements the group can't meet, and high-thrill rides
+          if (a.thrillLevel === "high") return false;
+          if (a.heightRequirement && a.heightRequirement !== "ANY") {
+            const reqInches = parseInt(a.heightRequirement);
+            if (reqInches >= 44) return false; // toddlers won't meet 44"+
+          }
+        }
+        if (focus === "Shows & Characters") {
+          // Prioritize shows/characters/parades — hide rides unless top-5
+          if (a.type === "ride" && !topFiveIds.has(a.id) && a.rating < 4.5) return false;
+        }
+
         return true;
       })
       .sort((a, b) => {
         const aTop = topFiveIds.has(a.id) ? 1 : 0;
         const bTop = topFiveIds.has(b.id) ? 1 : 0;
         if (aTop !== bTop) return bTop - aTop;
+
+        // Focus-based sorting boosts
+        if (focus === "Thrill Seekers") {
+          const thrillOrder = { high: 3, moderate: 2, mild: 1 };
+          const diff = thrillOrder[b.thrillLevel] - thrillOrder[a.thrillLevel];
+          if (diff !== 0) return diff;
+        }
+        if (focus === "Shows & Characters") {
+          const typeBoost = (t: AttractionType) => (["show", "character", "parade"].includes(t) ? 1 : 0);
+          const diff = typeBoost(b.type) - typeBoost(a.type);
+          if (diff !== 0) return diff;
+        }
+
         return b.rating - a.rating;
       });
-  }, [selectedParks, researchCategory, searchQuery, topFiveIds]);
+  }, [selectedParks, researchCategory, searchQuery, topFiveIds, focus]);
 
   const parkSchedules = useMemo(() => {
     const s: { parkId: string; name: string; hours: string; earlyEntry?: string }[] = [];
@@ -266,7 +361,7 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
       startTime: "",
       duration: parseInt(attraction.duration) || 15,
       waitTime: estWait,
-      walkTime: 8,
+      walkTime: walkTimeEstimate,
       llType: attraction.llType,
       waitCategory: attraction.waitCategory,
     }]);
@@ -286,7 +381,7 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
       startTime: timeStr,
       duration: parseInt(attraction.duration) || 15,
       waitTime: estWait,
-      walkTime: 8,
+      walkTime: walkTimeEstimate,
       llType: attraction.llType,
       waitCategory: attraction.waitCategory,
     }]);
@@ -300,7 +395,7 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
       type,
       startTime: "",
       duration: dur,
-      walkTime: 8,
+      walkTime: walkTimeEstimate,
     }]);
   };
 
@@ -407,7 +502,7 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
           startTime: timeStr,
           duration: parseInt(attraction.duration) || 15,
           waitTime: estWait,
-          walkTime: 8,
+          walkTime: walkTimeEstimate,
           llType: attraction.llType,
           waitCategory: attraction.waitCategory,
         }]);
@@ -527,6 +622,16 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
                   </SelectContent>
                 </Select>
               </div>
+            </div>
+            {/* Walk time indicator */}
+            <div className="mt-2 flex items-center gap-2 px-2 py-1.5 bg-muted/30 border border-border/30">
+              <span className="text-[0.5rem]">🚶</span>
+              <span className="text-[0.4375rem] text-muted-foreground">
+                Est. walk time: <strong className="text-foreground">{walkTimeEstimate} min</strong>
+                <span className="text-muted-foreground/60 ml-1">
+                  ({pacing} pace{hasStrollerAge ? " · 🍼 Stroller" : ""}{hasYoungKids ? " · 👶 Young kids" : ""})
+                </span>
+              </span>
             </div>
           </div>
         </div>
@@ -962,6 +1067,14 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
               <p className="font-editorial text-xs text-muted-foreground">
                 Drag a card onto the timeline to schedule it · Top 5 picks float up ✦
               </p>
+              {focus !== "Classic Magic" && (
+                <p className="text-[0.4375rem] uppercase tracking-[0.1em] text-[hsl(var(--gold-dark))] mt-1.5">
+                  🎯 Filtered for: <strong>{focus}</strong>
+                  {focus === "Toddler Friendly" && " · Hiding high-thrill & tall height requirements"}
+                  {focus === "Thrill Seekers" && " · Hiding mild rides"}
+                  {focus === "Shows & Characters" && " · Prioritizing entertainment"}
+                </p>
+              )}
             </div>
           </div>
 

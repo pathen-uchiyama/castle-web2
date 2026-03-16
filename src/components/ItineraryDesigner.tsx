@@ -37,8 +37,12 @@ interface DesignerProps {
 const quickAdds = [
   { type: "snack" as const, label: "Snack Stop", emoji: "☕", dur: 15 },
   { type: "break" as const, label: "Rest", emoji: "😴", dur: 30 },
+  { type: "break" as const, label: "Bathroom", emoji: "🚻", dur: 10 },
   { type: "pool" as const, label: "Pool Time", emoji: "🏊", dur: 90 },
   { type: "walk" as const, label: "Walk / Explore", emoji: "🚶", dur: 20 },
+  { type: "break" as const, label: "Photo Stop", emoji: "📸", dur: 10 },
+  { type: "snack" as const, label: "Water / Refill", emoji: "💧", dur: 5 },
+  { type: "meal" as const, label: "Meal", emoji: "🍽", dur: 60 },
 ];
 
 /* ─── Thrill icons ───────────────────────────────────────────────── */

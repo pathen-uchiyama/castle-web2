@@ -191,7 +191,7 @@ const BookingModal = ({ type, venueName, venueLocation, onClose, onBook }: Booki
           </div>
           <div>
             <label className="label-text mb-2 block">Time</label>
-            <input type="time" value={time} onChange={(e) => setTime(e.target.value)} className="w-full border border-border bg-background px-3 py-2 font-editorial text-sm text-foreground focus:outline-none focus:border-[hsl(var(--gold))] transition-colors" />
+            <input type="time" value={time} onChange={(e) => setTime(e.target.value)} className="w-full border border-border bg-background rounded-md px-3 py-2 font-editorial text-sm text-foreground focus:outline-none focus:border-[hsl(var(--gold))] transition-colors" />
           </div>
           <div>
             <label className="label-text mb-2 block">Party Size</label>

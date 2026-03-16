@@ -344,7 +344,7 @@ const Index = ({
                           <p className="font-editorial text-sm text-white/90">{park.todayWeather}</p>
                         </div>
                         <div className="flex justify-between items-center">
-                          <p className="label-text !text-white/50">Crowds</p>
+                          <p className="label-text !text-white/60">Crowds</p>
                           <p className="font-editorial text-sm text-white/90">{park.todayCrowdLevel}</p>
                         </div>
                         <div className="flex justify-between items-center">

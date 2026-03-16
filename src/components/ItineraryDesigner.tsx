@@ -890,7 +890,7 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
                       {!isLocked && !isBooked && (
                         <GripVertical className="w-3 h-3 text-muted-foreground/30 shrink-0 cursor-grab" />
                       )}
-                      <span className="font-display text-[0.8125rem] text-foreground truncate flex-1">{item.name}</span>
+                      <span className="font-display text-[0.875rem] text-foreground truncate flex-1">{item.name}</span>
                       <span className={`px-1.5 py-0.5 text-[0.35rem] uppercase tracking-[0.1em] shrink-0 ${
                         item.type === "ride" ? "bg-foreground text-background" :
                         isMeal ? "bg-[hsl(var(--gold)/0.15)] text-[hsl(var(--gold-dark))]" :
@@ -899,10 +899,17 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
                       }`}>
                         {isMeal ? "🍽 Dining" : isExperience ? "✨ Experience" : item.type === "rope-drop" ? "Arrive" : item.type}
                       </span>
-                      <div className="text-right shrink-0">
-                        <span className="text-[0.6875rem] text-foreground font-display">{totalBlock}m</span>
-                        <span className="text-[0.35rem] text-muted-foreground uppercase block">Total Block</span>
-                      </div>
+                      {wait > 0 ? (
+                        <div className="text-right shrink-0 px-2 py-1 bg-[hsl(var(--destructive)/0.08)] border border-[hsl(var(--destructive)/0.15)]">
+                          <span className="text-[0.875rem] text-destructive font-display font-bold leading-none">{wait}m</span>
+                          <span className="text-[0.35rem] text-destructive/70 uppercase block tracking-[0.1em]">Est. Wait</span>
+                        </div>
+                      ) : (
+                        <div className="text-right shrink-0">
+                          <span className="text-[0.625rem] text-muted-foreground font-display">{dur}m</span>
+                          <span className="text-[0.35rem] text-muted-foreground/60 uppercase block">Duration</span>
+                        </div>
+                      )}
                       {!isLocked && !isBooked && (
                         <button onClick={() => removeFromItinerary(item.id)}
                           className="opacity-0 group-hover:opacity-100 w-4 h-4 flex items-center justify-center text-muted-foreground hover:text-destructive transition-all duration-200">

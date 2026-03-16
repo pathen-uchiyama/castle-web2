@@ -77,19 +77,11 @@ const GuidesLanding = () => (
               <p className="font-editorial text-sm text-foreground/80 leading-relaxed mb-6">{resort.description}</p>
 
               <div className="flex flex-wrap gap-2 mb-6">
-                {resort.stats.map((stat, si) => {
-                  const colors = [
-                    "bg-[hsl(var(--coral)/0.1)] text-[hsl(var(--coral))] border-[hsl(var(--coral)/0.25)]",
-                    "bg-[hsl(var(--sky)/0.1)] text-[hsl(var(--sky))] border-[hsl(var(--sky)/0.25)]",
-                    "bg-[hsl(var(--mint)/0.1)] text-[hsl(var(--mint))] border-[hsl(var(--mint)/0.25)]",
-                    "bg-[hsl(var(--lavender)/0.1)] text-[hsl(var(--lavender))] border-[hsl(var(--lavender)/0.25)]",
-                  ];
-                  return (
-                    <span key={stat} className={`px-3 py-1.5 rounded-md text-[0.5625rem] uppercase tracking-[0.1em] border ${colors[si % colors.length]}`}>
-                      {stat}
-                    </span>
-                  );
-                })}
+                {resort.stats.map((stat) => (
+                  <span key={stat} className="px-3 py-1.5 rounded-md text-[0.5625rem] uppercase tracking-[0.1em] border border-border bg-secondary text-muted-foreground">
+                    {stat}
+                  </span>
+                ))}
               </div>
 
               <div className="flex items-center gap-6 text-muted-foreground">

@@ -56,6 +56,7 @@ export interface PartyMember {
   thrillTolerance?: "low" | "moderate" | "high";
   magicStatus?: string[];
   notes?: string;
+  lastUpdated?: string;
 }
 
 export interface RideTimeSaved {

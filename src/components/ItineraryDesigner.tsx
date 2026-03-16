@@ -309,10 +309,13 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
     setItinerary(prev => prev.filter(i => i.id !== id));
   };
 
-  /* ── Internal drag and drop (reorder) ──────────────────────────── */
-  const handleDragStart = useCallback((idx: number) => {
+  /* ── Internal drag and drop (reorder + timeline repositioning) ── */
+  const [draggingItemId, setDraggingItemId] = useState<string | null>(null);
+
+  const handleDragStart = useCallback((idx: number, itemId?: string) => {
     if (isLocked) return;
     setDragIdx(idx);
+    if (itemId) setDraggingItemId(itemId);
   }, [isLocked]);
 
   const handleDragOver = useCallback((e: React.DragEvent, idx: number) => {
@@ -335,6 +338,7 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
   const handleDragEnd = useCallback(() => {
     setDragIdx(null);
     setDragOverIdx(null);
+    setDraggingItemId(null);
     setTimelineDropHour(null);
   }, []);
 

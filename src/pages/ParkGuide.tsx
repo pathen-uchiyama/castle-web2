@@ -379,7 +379,7 @@ const ParkGuidePage = ({ parkGuides }: ParkGuidePageProps) => {
             </div>
 
             {attractions.length === 0 && (
-              <div className="border border-dashed border-border py-16 text-center">
+               <div className="border border-dashed border-border rounded-lg py-16 text-center">
                 <p className="font-display text-xl text-muted-foreground/40 mb-2">Attraction database expanding</p>
                 <p className="font-editorial text-sm text-muted-foreground/30">
                   Full attraction details for {park.parkName} will be populated as the database grows.

@@ -692,7 +692,28 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
                             <p className="font-editorial text-[0.6875rem] text-foreground italic">{attraction.notableInsight}</p>
                           </div>
 
-                          {/* Stats grid */}
+                          {/* Crowd impact callout */}
+                          {attraction.attractionStatus && attraction.attractionStatus.crowdImpact && attraction.attractionStatus.crowdImpact !== "none" && (
+                            <div className={`flex items-start gap-2 mb-3 px-3 py-2 border ${
+                              attraction.attractionStatus.crowdImpact === "extreme" ? "bg-[hsl(var(--destructive)/0.04)] border-[hsl(var(--destructive)/0.15)]" :
+                              "bg-[hsl(var(--gold)/0.04)] border-[hsl(var(--gold)/0.15)]"
+                            }`}>
+                              <AlertTriangle className={`w-3 h-3 shrink-0 mt-0.5 ${
+                                attraction.attractionStatus.crowdImpact === "extreme" ? "text-destructive" : "text-[hsl(var(--gold-dark))]"
+                              }`} />
+                              <div>
+                                <p className={`font-display text-[0.5625rem] mb-0.5 ${
+                                  attraction.attractionStatus.crowdImpact === "extreme" ? "text-destructive" : "text-[hsl(var(--gold-dark))]"
+                                }`}>
+                                  {crowdImpactLabels[attraction.attractionStatus.crowdImpact].label} — Expect Longer Waits
+                                </p>
+                                {attraction.attractionStatus.note && (
+                                  <p className="font-editorial text-[0.5625rem] text-muted-foreground italic">{attraction.attractionStatus.note}</p>
+                                )}
+                              </div>
+                            </div>
+                          )}
+
                           <div className="grid grid-cols-2 gap-2 mb-3">
                             <div className="flex items-center gap-1.5">
                               <Clock className="w-3 h-3 text-muted-foreground" />

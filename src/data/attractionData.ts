@@ -156,6 +156,7 @@ export const magicKingdomAttractions: ParkAttraction[] = [
     rules: ["DAS", "EARLY MORNING ACCESS", "SINGLE RIDER", "CHILD SWITCH"],
     warnings: ["LOUD NOISES", "STROBES"],
     attractionStatus: { status: "recently-opened", label: "Recently Opened", note: "Opened April 2023 — still drawing massive crowds", crowdImpact: "high" },
+    zone: "tomorrowland",
   },
   {
     id: "mk-space", name: "Space Mountain", parkId: "mk", type: "ride", rating: 4.6,
@@ -165,6 +166,7 @@ export const magicKingdomAttractions: ParkAttraction[] = [
     notableInsight: "Classic Coaster",
     rules: ["DAS", "EARLY MORNING ACCESS", "SINGLE RIDER", "CHILD SWITCH"],
     warnings: ["LOUD NOISES", "STROBES"],
+    zone: "tomorrowland",
   },
   {
     id: "mk-sdmt", name: "Seven Dwarfs Mine Train", parkId: "mk", type: "ride", rating: 4.7,

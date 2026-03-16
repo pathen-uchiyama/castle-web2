@@ -778,7 +778,7 @@ const BookedTripDetail = ({ trip }: { trip: BookedTrip }) => {
                         {res.notes && <p className="font-editorial text-xs text-muted-foreground/60 italic mt-2">{res.notes}</p>}
                         {overlapMap[res.reservationId] && (
                           <div className="mt-3 pt-2 border-t border-[hsl(var(--destructive)/0.15)]">
-                            <div className="flex items-start gap-2 px-2 py-1.5 bg-[hsl(var(--destructive)/0.04)]">
+                            <div className="flex items-start gap-2 px-2 py-1.5 rounded-md bg-[hsl(var(--destructive)/0.04)]">
                               <span className="text-xs shrink-0">⚠️</span>
                               <div>
                                 <p className="font-display text-[0.5625rem] text-destructive mb-0.5">Time Conflict</p>

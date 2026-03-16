@@ -146,7 +146,7 @@ const Circle = ({ partyMembers }: CircleProps) => {
                       <motion.div
                         whileHover={{ scale: 1.1, rotate: 5 }}
                         transition={{ type: "spring", stiffness: 300, damping: 20 }}
-                        className="w-14 h-14 bg-foreground flex items-center justify-center shrink-0"
+                        className="w-14 h-14 rounded-lg bg-foreground flex items-center justify-center shrink-0"
                       >
                         <span className="font-display text-xl text-background">{member.initial}</span>
                       </motion.div>

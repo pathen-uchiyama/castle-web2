@@ -72,7 +72,7 @@ const GuidesLanding = () => (
 
               <div className="flex flex-wrap gap-2 mb-6">
                 {resort.stats.map(stat => (
-                  <span key={stat} className="px-3 py-1.5 text-[0.5625rem] uppercase tracking-[0.1em] bg-[hsl(var(--gold)/0.08)] text-[hsl(var(--gold-dark))] border border-[hsl(var(--gold)/0.2)]">
+                  <span key={stat} className="px-3 py-1.5 rounded-md text-[0.5625rem] uppercase tracking-[0.1em] bg-[hsl(var(--gold)/0.08)] text-[hsl(var(--gold-dark))] border border-[hsl(var(--gold)/0.2)]">
                     {stat}
                   </span>
                 ))}

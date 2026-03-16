@@ -162,7 +162,7 @@ const Index = ({
                   {bookedTrip.tripName}
                 </p>
                 <p className="font-editorial text-base text-white/45 max-w-md leading-relaxed">
-                  Your {bookedTrip.countdownDays}-day countdown to {bookedTrip.destination} continues — a party of {bookedTrip.partySize}, {bookedTrip.todaysPark?.weather?.toLowerCase() || 'clear skies'} ahead.
+                  {bookedTrip.countdownDays} days until the fun begins! A party of {bookedTrip.partySize} — {bookedTrip.todaysPark?.weather?.toLowerCase() || 'clear skies'} ahead. 🌤️
                 </p>
               </motion.div>
               <motion.div {...slideLeft(0.2)} className="mt-14 flex gap-10 sm:gap-16 flex-wrap">

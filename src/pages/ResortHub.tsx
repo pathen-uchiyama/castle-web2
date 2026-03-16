@@ -192,9 +192,18 @@ const ResortHub = () => {
               <p className="label-text mb-4">About the Resort ☀️</p>
               <p className="font-editorial text-lg text-foreground/80 leading-relaxed max-w-3xl mb-8">{resort.description}</p>
               <div className="flex flex-wrap gap-2 mb-12">
-                {resort.knownFor.map(item => (
-                  <span key={item} className="px-3 py-1.5 rounded-md text-[0.5625rem] uppercase tracking-[0.1em] bg-[hsl(var(--gold)/0.08)] text-[hsl(var(--gold-dark))] border border-[hsl(var(--gold)/0.2)]">{item}</span>
-                ))}
+                {resort.knownFor.map((item, ki) => {
+                  const colors = [
+                    "bg-[hsl(var(--coral)/0.1)] text-[hsl(var(--coral))] border-[hsl(var(--coral)/0.25)]",
+                    "bg-[hsl(var(--sky)/0.1)] text-[hsl(var(--sky))] border-[hsl(var(--sky)/0.25)]",
+                    "bg-[hsl(var(--mint)/0.1)] text-[hsl(var(--mint))] border-[hsl(var(--mint)/0.25)]",
+                    "bg-[hsl(var(--lavender)/0.1)] text-[hsl(var(--lavender))] border-[hsl(var(--lavender)/0.25)]",
+                    "bg-[hsl(var(--sunshine)/0.12)] text-[hsl(var(--gold-dark))] border-[hsl(var(--sunshine)/0.3)]",
+                  ];
+                  return (
+                    <span key={item} className={`px-3 py-1.5 rounded-md text-[0.5625rem] uppercase tracking-[0.1em] border ${colors[ki % colors.length]}`}>{item}</span>
+                  );
+                })}
               </div>
             </motion.div>
 

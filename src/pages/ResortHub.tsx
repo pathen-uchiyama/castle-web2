@@ -414,7 +414,7 @@ const ResortHub = () => {
                                 <div className="flex flex-wrap gap-1.5 items-end">
                                   {a.lightningLane && (
                                     <span className="text-[0.4375rem] uppercase tracking-[0.08em] px-2 py-0.5 bg-[hsl(var(--gold)/0.1)] text-[hsl(var(--gold-dark))] border border-[hsl(var(--gold)/0.2)]">
-                                      ⚡ {a.lightningLaneType === "individual" ? "Individual LL" : "Multi Pass"}
+                                       ⚡ {a.lightningLaneType === "individual" ? "Individual LL" : "Multi Pass"}
                                     </span>
                                   )}
                                   {a.singleRider && <span className="text-[0.4375rem] uppercase tracking-[0.08em] px-2 py-0.5 bg-muted text-muted-foreground border border-border">🧍 Single Rider</span>}

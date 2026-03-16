@@ -183,9 +183,9 @@ const Survey = () => {
                               <button
                                 key={r.value}
                                 onClick={() => handleRank(attraction.attractionId, r.value)}
-                                className={`px-4 py-2 text-xs tracking-[0.1em] uppercase font-medium border transition-all duration-300 ${
-                                  currentRank === r.value ? r.activeColor : r.color
-                                }`}
+                                 className={`px-4 py-2 rounded-md text-xs tracking-[0.1em] uppercase font-medium border transition-all duration-300 ${
+                                   currentRank === r.value ? r.activeColor : r.color
+                                 }`}
                               >
                                 {r.label}
                               </button>

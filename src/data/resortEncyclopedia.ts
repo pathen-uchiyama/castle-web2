@@ -16,6 +16,8 @@ export type HotelCategory = "value" | "moderate" | "deluxe" | "deluxe-villa" | "
 export type TransportMode = "bus" | "monorail" | "skyliner" | "boat" | "walking" | "minnie-van" | "car";
 export type CrowdLevel = "low" | "moderate" | "high" | "very-high" | "extreme";
 export type LandArea = { name: string; description: string; iconicAttraction?: string };
+export type ThrillLevel = "gentle" | "moderate" | "thrilling" | "intense";
+export type AttractionType = "ride" | "show" | "meet-and-greet" | "experience" | "parade" | "fireworks" | "play-area" | "water-ride";
 
 /* ── Resort (top-level: WDW or DLR) ──────────────────────────────── */
 export interface ResortDestination {
@@ -112,6 +114,28 @@ export interface ParkOverview {
   mustDo: string[];
   tips: string[];
   knownFor: string[];
+  tags: string[];
+}
+
+/* ── Attractions ────────────────────────────────────────────────── */
+export interface ParkAttraction {
+  attractionId: string;
+  parkId: string;
+  name: string;
+  land: string;
+  type: AttractionType;
+  thrillLevel: ThrillLevel;
+  heightRequirement?: string;
+  duration: string;
+  description: string;
+  avgWaitMinutes: { low: number; typical: number; peak: number };
+  lightningLane: boolean;
+  lightningLaneType?: "individual" | "multi-pass";
+  riderSwitch: boolean;
+  singleRider: boolean;
+  virtualQueue: boolean;
+  mustDo: boolean;
+  tip: string;
   tags: string[];
 }
 

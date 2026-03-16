@@ -356,7 +356,7 @@ const Survey = () => {
                 </button>
                 <button
                   onClick={handleSubmit}
-                  className="px-10 py-4 text-sm tracking-[0.15em] uppercase font-medium bg-foreground text-background border border-[hsl(var(--gold-dark))] transition-opacity duration-500 hover:opacity-90"
+                  className="px-10 py-4 rounded-lg text-sm tracking-[0.15em] uppercase font-medium bg-foreground text-background border border-[hsl(var(--gold-dark))] transition-opacity duration-500 hover:opacity-90"
                 >
                   Submit Preferences
                 </button>

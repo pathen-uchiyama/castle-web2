@@ -621,6 +621,7 @@ export const mockData: AppData = {
       age: 9, birthday: "March 28", heightInches: 52, dietaryRestrictions: ["Nut allergy"],
       favoriteCharacter: "Elsa", favoriteRide: "Frozen Ever After",
       thrillTolerance: "moderate", magicStatus: [],
+      accessibilityNeeds: ["avoid-drops", "avoid-loud"],
       sensoryNotes: "Can handle dark rides but not big drops.",
       notes: "Loves princess meet-and-greets. Tall enough for most rides.",
       lastUpdated: "2025-08-15",

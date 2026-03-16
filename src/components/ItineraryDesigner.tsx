@@ -1580,14 +1580,10 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
                           {!attraction.isClosed && (
                             <button
                               onClick={(e) => { e.stopPropagation(); addToItinerary(attraction); }}
-                              disabled={alreadyAdded || isLocked}
-                              className={`w-full py-2 text-[0.5625rem] tracking-[0.15em] uppercase font-medium transition-all duration-300 ${
-                                alreadyAdded
-                                  ? "bg-muted text-muted-foreground border border-border cursor-default"
-                                  : "bg-foreground text-background hover:opacity-90 shadow-soft"
-                              }`}
+                              disabled={isLocked}
+                              className="w-full py-2 text-[0.5625rem] tracking-[0.15em] uppercase font-medium transition-all duration-300 bg-foreground text-background hover:opacity-90 shadow-soft"
                             >
-                              {alreadyAdded ? "✓ Added to Itinerary" : "+ Add to Itinerary"}
+                              + Add to Itinerary
                             </button>
                           )}
                         </div>

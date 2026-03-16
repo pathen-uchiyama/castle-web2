@@ -1318,7 +1318,7 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
                 <motion.div
                   key={attraction.id}
                   layout
-                  draggable={!attraction.isClosed && !alreadyAdded && !isLocked}
+                  draggable={!attraction.isClosed && !isLocked}
                   onDragStart={(e: any) => handleResearchDragStart(e, attraction)}
                   onDragEnd={() => setDraggingAttractionId(null)}
                   className={`border transition-all duration-300 shadow-soft hover:shadow-soft-hover ${
@@ -1327,7 +1327,7 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
                     attraction.isClosed ? "opacity-30 pointer-events-none" :
                     isTopFive ? "border-[hsl(var(--gold)/0.35)] bg-card" :
                     "border-border bg-card"
-                  } ${!attraction.isClosed && !alreadyAdded && !isLocked ? "cursor-grab" : ""}`}
+                  } ${!attraction.isClosed && !isLocked ? "cursor-grab" : ""}`}
                 >
                   {/* Header — always visible */}
                   <button

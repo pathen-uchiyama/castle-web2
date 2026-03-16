@@ -540,13 +540,6 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
                   <span className="text-[0.5625rem] text-[hsl(var(--ink-light))] block uppercase tracking-[0.1em]">⏸ Breaks & Meals</span>
                 </div>
               </div>
-              {/* Utilization bar */}
-              <div className="flex h-2 overflow-hidden bg-[#F9F7F2]">
-                <div className="bg-[hsl(var(--ink))]/20" style={{ width: `${(daySummary.totalRideTime / daySummary.dayLength) * 100}%` }} />
-                <div className="bg-destructive/30" style={{ width: `${(daySummary.totalWaitTime / daySummary.dayLength) * 100}%` }} />
-                <div className="bg-[hsl(var(--gold)/0.3)]" style={{ width: `${(daySummary.totalWalkTime / daySummary.dayLength) * 100}%` }} />
-                <div className="bg-[hsl(var(--muted))]" style={{ width: `${(daySummary.totalBreakTime / daySummary.dayLength) * 100}%` }} />
-              </div>
               <div className="flex items-center justify-between mt-2">
                 <span className="text-[0.625rem] text-[hsl(var(--ink-light))]" style={{ letterSpacing: "-0.02em" }}>
                   {Math.round((daySummary.totalPlanned / daySummary.dayLength) * 100)}% of day planned

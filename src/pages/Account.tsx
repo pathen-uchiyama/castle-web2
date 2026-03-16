@@ -2,6 +2,8 @@ import { motion } from "framer-motion";
 import { useState } from "react";
 import Footer from "@/components/Footer";
 import SectionNav from "@/components/SectionNav";
+import SparkleField from "@/components/SparkleField";
+import headerAccount from "@/assets/header-account.jpg";
 import type { AccountProfile } from "@/data/types";
 
 const ease: [number, number, number, number] = [0.19, 1, 0.22, 1];

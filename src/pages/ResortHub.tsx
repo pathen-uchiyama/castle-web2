@@ -252,9 +252,9 @@ const ResortHub = () => {
               <div className="flex gap-2 mb-8">
                 {(["all", "theme-park", "water-park"] as const).map(t => (
                   <button key={t} onClick={() => setParkType(t)}
-                    className={`px-4 py-2 text-[0.5625rem] uppercase tracking-[0.12em] border transition-all duration-300 ${
-                      parkType === t ? "bg-foreground text-background border-foreground" : "text-muted-foreground border-border hover:border-foreground/30"
-                    }`}>
+                     className={`px-4 py-2 rounded-md text-[0.5625rem] uppercase tracking-[0.12em] border transition-all duration-300 ${
+                       parkType === t ? "bg-foreground text-background border-foreground" : "text-muted-foreground border-border hover:border-foreground/30"
+                     }`}>
                     {t === "all" ? "All Parks" : t === "theme-park" ? "🏰 Theme Parks" : "🌊 Water Parks"}
                   </button>
                 ))}

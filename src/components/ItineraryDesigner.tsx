@@ -913,7 +913,7 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
                     {/* Zone badge */}
                     {attraction.zone && (
                       <div className="mt-1.5">
-                        <span className="text-[0.375rem] text-[hsl(var(--ink-light))]/60 uppercase tracking-[0.08em]">📍 {zoneLabel(attraction.zone)}</span>
+                        <span className="text-[0.5625rem] text-[hsl(var(--ink-light))]/60 uppercase tracking-[0.08em]">📍 {zoneLabel(attraction.zone)}</span>
                       </div>
                     )}
 

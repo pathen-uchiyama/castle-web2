@@ -483,11 +483,22 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
 
                         {/* Walk connector */}
                         {item.walkTime && idx < itinerary.length - 1 && (
-                          <div className="flex items-center gap-1 pl-1.5 py-0.5">
-                            <div className="h-px w-2 bg-border" />
-                            <span className="text-[0.375rem] text-muted-foreground/40 uppercase tracking-[0.08em]">
-                              {item.walkTime}m walk{item.waitTime ? ` · ${item.waitTime}m wait` : ""}
-                            </span>
+                          <div className="flex items-center gap-2 pl-2 py-1.5">
+                            <div className="w-4 h-px bg-muted-foreground/20" />
+                            <div className="flex items-center gap-1.5 px-2 py-0.5 bg-muted/80 border border-border/50">
+                              <span className="text-[0.5rem]">🚶</span>
+                              <span className="text-[0.5625rem] text-muted-foreground font-medium tracking-wide">
+                                {item.walkTime} min walk
+                              </span>
+                              {item.waitTime && (
+                                <>
+                                  <span className="text-muted-foreground/30">·</span>
+                                  <span className="text-[0.5625rem] text-foreground font-medium tracking-wide">
+                                    {item.waitTime} min wait
+                                  </span>
+                                </>
+                              )}
+                            </div>
                           </div>
                         )}
                       </div>

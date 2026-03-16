@@ -199,7 +199,18 @@ const ResortHub = () => {
         </div>
       </div>
 
-      <div className="px-8 lg:px-16 py-12 lg:py-20">
+      <div>
+        {/* Tab Header Image */}
+        <div className="relative h-[200px] overflow-hidden">
+          <img
+            src={tabHeaderImages[activeTab]}
+            alt={activeTab}
+            className="w-full h-full object-cover"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-background via-background/40 to-transparent" />
+        </div>
+
+        <div className="px-8 lg:px-16 py-12 lg:py-20">
         {/* ═══ OVERVIEW ═══ */}
         {activeTab === "overview" && (
           <div className="space-y-16">
@@ -208,7 +219,7 @@ const ResortHub = () => {
               <p className="font-editorial text-lg text-foreground/80 leading-relaxed max-w-3xl mb-8">{resort.description}</p>
               <div className="flex flex-wrap gap-2 mb-12">
                 {resort.knownFor.map((item) => (
-                  <span key={item} className="px-3 py-1.5 rounded-md text-[0.5625rem] uppercase tracking-[0.1em] border border-border bg-secondary text-muted-foreground">{item}</span>
+                  <span key={item} className="px-3 py-1.5 rounded-lg text-[0.5625rem] uppercase tracking-[0.1em] border border-border bg-secondary text-muted-foreground">{item}</span>
                 ))}
               </div>
             </motion.div>

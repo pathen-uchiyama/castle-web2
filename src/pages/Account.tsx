@@ -112,9 +112,9 @@ const Account = ({ account }: AccountProps) => {
                     <p className="font-display text-base text-foreground">{item.label}</p>
                     <p className="font-editorial text-xs text-muted-foreground mt-1">{item.desc}</p>
                   </div>
-                  <div className="w-10 h-5 bg-[hsl(var(--gold))] flex items-center px-0.5 cursor-pointer">
-                    <div className="w-4 h-4 bg-background shadow translate-x-5 transition-transform" />
-                  </div>
+                   <div className="w-10 h-5 rounded-full bg-[hsl(var(--gold))] flex items-center px-0.5 cursor-pointer">
+                     <div className="w-4 h-4 rounded-full bg-background shadow translate-x-5 transition-transform" />
+                   </div>
                 </div>
               ))}
             </div>

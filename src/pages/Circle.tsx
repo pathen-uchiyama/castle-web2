@@ -306,11 +306,15 @@ const Circle = ({ partyMembers }: CircleProps) => {
                               </div>
                               <div>
                                 <label className="label-text mb-2 block">Role</label>
-                                <input
+                                <select
                                   value={member.role}
                                   onChange={(e) => handleFieldChange(member.memberId, "role", e.target.value)}
-                                   className="w-full px-4 py-2.5 rounded-md text-sm bg-background border border-border text-foreground focus:outline-none focus:border-[hsl(var(--gold))] transition-colors"
-                                />
+                                  className="w-full px-4 py-2.5 rounded-md text-sm bg-background border border-border text-foreground focus:outline-none focus:border-[hsl(var(--gold))] transition-colors appearance-none cursor-pointer"
+                                >
+                                  {["Lead Adventurer", "Co-Adventurer", "Young Explorer", "Tiny Traveler", "Grandparent", "Family Friend", "Guardian", "Guest"].map((r) => (
+                                    <option key={r} value={r}>{r}</option>
+                                  ))}
+                                </select>
                               </div>
                               <div>
                                 <label className="label-text mb-2 block">Age</label>

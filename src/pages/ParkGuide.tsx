@@ -238,7 +238,7 @@ const ParkGuidePage = ({ parkGuides }: ParkGuidePageProps) => {
                 <p className="font-display text-lg text-foreground">{displayWeather}</p>
               </div>
               {/* Crowd Level */}
-              <div className="border border-border bg-card p-5 shadow-[var(--shadow-soft)]">
+              <div className="border border-border bg-card rounded-lg p-5 shadow-[var(--shadow-soft)]">
                 <p className="label-text mb-2">Crowd Level</p>
                 <div className="flex items-center gap-3">
                   <p className="font-display text-lg text-foreground">{displayCrowd}</p>

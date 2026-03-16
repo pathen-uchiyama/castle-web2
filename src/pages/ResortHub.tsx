@@ -795,7 +795,7 @@ const ResortHub = () => {
                       <p className="label-text mb-3">Entertainment</p>
                       <div className="space-y-1">
                         {area.entertainment.map(e => (
-                          <div key={e} className="px-3 py-2 border border-border bg-card text-sm font-editorial text-foreground">🎭 {e}</div>
+                          <div key={e} className="px-3 py-2 rounded-md border border-border bg-card text-sm font-editorial text-foreground">🎭 {e}</div>
                         ))}
                       </div>
                     </div>

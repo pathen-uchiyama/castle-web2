@@ -192,7 +192,7 @@ const Index = ({
                 whileInView={{ opacity: 1, scale: 1, rotate: -3 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.8, delay: 0.6, ease }}
-                className="bg-white/95 backdrop-blur-sm px-8 py-6 shadow-soft"
+                className="bg-white/95 backdrop-blur-sm rounded-lg px-8 py-6 shadow-soft"
               >
                 <p className="label-text tracking-[0.15em] mb-1 !text-foreground/50">Magic starts in</p>
                <p className="font-display-bold text-4xl text-foreground">{bookedTrip.countdownDays} days</p>

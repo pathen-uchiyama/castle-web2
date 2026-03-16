@@ -466,6 +466,19 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
                 <span className={`absolute top-0.5 w-3 h-3 bg-white transition-transform duration-200 ${hasStroller ? "translate-x-4" : "translate-x-0.5"}`} style={{ borderRadius: 0 }} />
               </button>
             </div>
+            {/* Minimize Walking toggle */}
+            <div className="mt-1 flex items-center justify-between px-2 py-1.5 bg-[#F9F7F2]">
+              <span className="text-[0.5625rem] text-[hsl(var(--ink-light))] flex items-center gap-1">
+                🚶 Min. Walking
+              </span>
+              <button
+                onClick={() => setMinimizeWalking(!minimizeWalking)}
+                className={`relative w-8 h-4 transition-colors duration-200 ${minimizeWalking ? "bg-[hsl(var(--gold))]" : "bg-[hsl(var(--border))]"}`}
+                style={{ borderRadius: 0 }}
+              >
+                <span className={`absolute top-0.5 w-3 h-3 bg-white transition-transform duration-200 ${minimizeWalking ? "translate-x-4" : "translate-x-0.5"}`} style={{ borderRadius: 0 }} />
+              </button>
+            </div>
           </div>
         </div>
       </div>

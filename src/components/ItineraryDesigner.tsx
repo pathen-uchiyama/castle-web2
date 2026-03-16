@@ -247,30 +247,41 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
     return h * 60 + min;
   };
 
-  /** Total time an item actually consumes (wait + experience + travel) */
-  const totalItemTime = (item: ItineraryItem) =>
-    (item.waitTime || 0) + item.duration + (item.walkTime || 0);
+  /* ── Proportional timeline constants ─────────────────────────── */
+  const PX_PER_MIN = 2; // 1 minute = 2px → 1 hour = 120px
+  const DAY_START_HOUR = 7; // 7 AM
+  const DAY_END_HOUR = 23; // 11 PM
+  const DAY_START_MIN = DAY_START_HOUR * 60;
+  const TOTAL_DAY_MIN = (DAY_END_HOUR - DAY_START_HOUR) * 60; // 960 min
+  const TOTAL_HEIGHT = TOTAL_DAY_MIN * PX_PER_MIN; // 1920px
 
-  // Build scheduled items map (hour → items) with total time per hour
-  const scheduledByHour = useMemo(() => {
-    const map: Record<number, ItineraryItem[]> = {};
-    itinerary.forEach(item => {
-      if (!item.startTime) return;
-      const mins = toMinutes(item.startTime);
-      if (mins < 0) return;
-      const hour = Math.floor(mins / 60);
-      if (!map[hour]) map[hour] = [];
-      map[hour].push(item);
-    });
-    return map;
-  }, [itinerary]);
-
-  /** Compute the total minutes consumed in an hour slot */
-  const hourSlotMinutes = (hourValue: number) => {
-    const items = scheduledByHour[hourValue] || [];
-    if (items.length === 0) return 0;
-    return items.reduce((sum, item) => sum + totalItemTime(item), 0);
+  /** Check-in time for experiences (shows, characters, parades) */
+  const getCheckinTime = (item: ItineraryItem) => {
+    const isExperience = ["show", "character", "parade", "seasonal"].includes(item.type);
+    if (!isExperience) return 0;
+    // Shows/parades need 15 min check-in, characters 10
+    return item.type === "character" ? 10 : 15;
   };
+
+  /** Total time an item consumes: check-in + wait + experience (travel is separate, shown after) */
+  const totalItemTime = (item: ItineraryItem) => {
+    const checkin = getCheckinTime(item);
+    return checkin + (item.waitTime || 0) + item.duration;
+  };
+
+  /** Scheduled items sorted by start time with computed positions */
+  const scheduledItems = useMemo(() => {
+    return itinerary
+      .filter(i => i.startTime && toMinutes(i.startTime) >= 0)
+      .map(item => {
+        const startMin = toMinutes(item.startTime);
+        const checkin = getCheckinTime(item);
+        const activityMin = checkin + (item.waitTime || 0) + item.duration;
+        const travelMin = item.walkTime || 0;
+        return { item, startMin, checkin, activityMin, travelMin };
+      })
+      .sort((a, b) => a.startMin - b.startMin);
+  }, [itinerary]);
 
   // Unscheduled items (no start time)
   const unscheduledItems = useMemo(() => itinerary.filter(i => !i.startTime), [itinerary]);
@@ -480,198 +491,151 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
             ))}
           </div>
 
-          {/* ── Fixed Time Ruler + Items ──────────────────────────────── */}
-          <div className="relative">
+          {/* ── Proportional Time Ruler + Items ─────────────────────── */}
+          <div className="relative" style={{ height: `${TOTAL_HEIGHT}px` }}>
+            {/* Hour grid lines */}
             {timeRulerHours.map((hourLabel, hIdx) => {
-              const hourValue = hIdx + 7;
-              const hourItems = scheduledByHour[hourValue] || [];
-              const hasItems = hourItems.length > 0;
-              const slotMins = hourSlotMinutes(hourValue);
-              // Proportional height: empty = 20px, filled = based on total minutes (min 52px)
-              const slotHeight = hasItems ? Math.max(52, slotMins * 1.2) : 20;
+              const hourValue = hIdx + DAY_START_HOUR;
+              const topPx = (hourValue * 60 - DAY_START_MIN) * PX_PER_MIN;
+              const hasItems = scheduledItems.some(s => Math.floor(s.startMin / 60) === hourValue);
 
               return (
-                <div key={hourLabel} className="relative flex" style={{ minHeight: `${slotHeight}px` }}>
-                  {/* Hour label — fixed left gutter */}
-                  <div className="w-[52px] shrink-0 relative">
-                    <span className={`font-display text-[0.5625rem] absolute top-0 right-3 ${hasItems ? "text-foreground" : "text-muted-foreground/30"}`}>
-                      {hourLabel}
-                    </span>
+                <div key={hourLabel} className="absolute left-0 right-0" style={{ top: `${topPx}px` }}>
+                  <div className="flex items-start">
+                    {/* Hour label */}
+                    <div className="w-[52px] shrink-0">
+                      <span className={`font-display text-[0.5625rem] ${hasItems ? "text-foreground" : "text-muted-foreground/30"}`}>
+                        {hourLabel}
+                      </span>
+                    </div>
+                    {/* Tick + gridline */}
+                    <div className="flex-1 relative">
+                      <div className={`absolute top-[6px] left-0 right-0 border-t ${hasItems ? "border-border/40" : "border-border/15"} border-dashed`} />
+                    </div>
                   </div>
+                </div>
+              );
+            })}
 
-                  {/* Timeline line */}
-                  <div className="relative w-px shrink-0 mr-3">
-                    <div className={`absolute inset-0 ${hasItems ? "bg-foreground/20" : "bg-border/30"}`} />
-                    <div className={`absolute top-0 w-2 h-px -left-[3px] ${hasItems ? "bg-foreground/30" : "bg-border/40"}`} />
-                  </div>
+            {/* Vertical timeline spine */}
+            <div className="absolute left-[52px] top-0 bottom-0 w-px bg-border/20" />
 
-                  {/* Items or empty gap */}
-                  <div className="flex-1 pb-1">
-                    {hasItems ? (
-                      <div className="space-y-1.5">
-                        {hourItems.map(item => {
-                          const globalIdx = itinerary.indexOf(item);
-                          const isBooked = item.id.startsWith("booked-");
-                          const isMeal = item.type === "meal" || item.type === "snack";
-                          const isExperience = item.type === "show" || item.type === "character" || item.type === "parade" || item.type === "seasonal";
-                          const isBreak = ["break", "pool", "hotel", "walk"].includes(item.type);
-                          const isDragging = dragIdx === globalIdx;
-                          const isDragOver = dragOverIdx === globalIdx;
+            {/* Scheduled activity blocks — proportionally positioned */}
+            {scheduledItems.map(({ item, startMin, checkin, activityMin, travelMin }) => {
+              const globalIdx = itinerary.indexOf(item);
+              const isBooked = item.id.startsWith("booked-");
+              const isMeal = item.type === "meal" || item.type === "snack";
+              const isExperience = ["show", "character", "parade", "seasonal"].includes(item.type);
+              const isBreak = ["break", "pool", "hotel", "walk"].includes(item.type);
+              const isDragging = dragIdx === globalIdx;
+              const isDragOver = dragOverIdx === globalIdx;
 
-                          const wait = item.waitTime || 0;
-                          const dur = item.duration;
-                          const travel = item.walkTime || 0;
-                          const total = wait + dur + travel;
+              const topPx = (startMin - DAY_START_MIN) * PX_PER_MIN;
+              const activityHeight = Math.max(activityMin * PX_PER_MIN, 40); // min 40px for readability
+              const travelHeight = travelMin > 0 ? Math.max(travelMin * PX_PER_MIN, 16) : 0;
 
-                          return (
-                            <div
-                              key={item.id}
-                              draggable={!isLocked && !isBooked}
-                              onDragStart={() => handleDragStart(globalIdx)}
-                              onDragOver={(e) => handleDragOver(e, globalIdx)}
-                              onDrop={() => handleDrop(globalIdx)}
-                              onDragEnd={handleDragEnd}
-                              className={`group border px-3 py-2.5 transition-all duration-200 shadow-soft ${
-                                isDragging ? "opacity-40 scale-95" : ""
-                              } ${isDragOver ? "border-[hsl(var(--gold))] shadow-soft-hover" : ""} ${
-                                isMeal
-                                  ? "bg-[hsl(42,64%,35%,0.06)] border-[hsl(var(--gold)/0.3)]"
-                                  : isExperience
-                                  ? "bg-[hsl(280,30%,55%,0.04)] border-[hsl(280,30%,55%,0.2)]"
-                                  : isBreak
-                                  ? "bg-[hsl(var(--warm))] border-dashed border-border"
-                                  : item.isConfirmed
-                                  ? "bg-[hsl(var(--gold)/0.04)] border-[hsl(var(--gold)/0.3)]"
-                                  : "bg-background border-border"
-                              } ${!isLocked && !isBooked ? "hover:shadow-soft-hover cursor-grab" : ""}`}
-                            >
-                              {/* Top row: drag handle + name + type + total */}
-                              <div className="flex items-center gap-2">
-                                {!isLocked && !isBooked && (
-                                  <GripVertical className="w-3 h-3 text-muted-foreground/30 shrink-0 cursor-grab" />
-                                )}
-                                <div className={`w-2 h-2 shrink-0 ${
-                                  isMeal ? "bg-[hsl(var(--gold))]" :
-                                  isExperience ? "bg-[hsl(280,30%,55%)]" :
-                                  isBreak ? "bg-muted-foreground/20" :
-                                  item.type === "rope-drop" ? "bg-foreground" :
-                                  "bg-foreground/50"
-                                }`} />
-                                <div className="flex items-center gap-1.5 min-w-0 flex-1">
-                                  <span className="font-display text-[0.8125rem] text-foreground truncate">{item.name}</span>
-                                  <span className={`px-1.5 py-0.5 text-[0.35rem] uppercase tracking-[0.1em] shrink-0 ${
-                                    item.type === "ride" ? "bg-foreground text-background" :
-                                    isMeal ? "bg-[hsl(var(--gold)/0.15)] text-[hsl(var(--gold-dark))]" :
-                                    isExperience ? "bg-[hsl(280,30%,55%,0.1)] text-[hsl(280,30%,45%)]" :
-                                    "bg-muted text-muted-foreground"
-                                  }`}>
-                                    {isMeal ? "🍽 Dining" :
-                                     isExperience ? "✨ Experience" :
-                                     item.type === "rope-drop" ? "Arrive" : item.type}
-                                  </span>
-                                </div>
+              const wait = item.waitTime || 0;
+              const dur = item.duration;
+              const totalBlock = checkin + wait + dur + travelMin;
 
-                                {/* Total time + remove */}
-                                <div className="flex items-center gap-2 shrink-0">
-                                  <div className="text-right">
-                                    <span className="text-[0.6875rem] text-foreground font-display leading-tight">{total} min</span>
-                                    <span className="text-[0.375rem] text-muted-foreground uppercase tracking-wide block">Total Block</span>
-                                  </div>
-                                  {!isLocked && !isBooked && (
-                                    <button onClick={() => removeFromItinerary(item.id)}
-                                      className="opacity-0 group-hover:opacity-100 w-4 h-4 flex items-center justify-center text-muted-foreground hover:text-destructive transition-all duration-200">
-                                      <X className="w-3 h-3" />
-                                    </button>
-                                  )}
-                                </div>
-                              </div>
-
-                              {/* ── Segmented time bar ──────────────────────── */}
-                              {total > 0 && (
-                                <div className="mt-2 ml-[calc(0.75rem+8px+0.5rem)]">
-                                  <div className="flex h-[6px] w-full overflow-hidden rounded-sm">
-                                    {wait > 0 && (
-                                      <div
-                                        className="bg-[hsl(var(--destructive)/0.45)]"
-                                        style={{ width: `${(wait / total) * 100}%` }}
-                                        title={`Standby Wait: ${wait} min`}
-                                      />
-                                    )}
-                                    <div
-                                      className={`${
-                                        isMeal ? "bg-[hsl(var(--gold))]" :
-                                        isExperience ? "bg-[hsl(280,30%,55%)]" :
-                                        isBreak ? "bg-muted-foreground/30" :
-                                        "bg-foreground/60"
-                                      }`}
-                                      style={{ width: `${(dur / total) * 100}%` }}
-                                      title={`Experience: ${dur} min`}
-                                    />
-                                    {travel > 0 && (
-                                      <div
-                                        className="bg-[hsl(var(--accent-foreground)/0.15)]"
-                                        style={{ width: `${(travel / total) * 100}%` }}
-                                        title={`Travel/Stroller: ${travel} min`}
-                                      />
-                                    )}
-                                  </div>
-                                  {/* Segment labels */}
-                                  <div className="flex items-center gap-3 mt-1">
-                                    {wait > 0 && (
-                                      <div className="flex items-center gap-1">
-                                        <div className="w-1.5 h-1.5 bg-[hsl(var(--destructive)/0.45)]" />
-                                        <span className="text-[0.4375rem] text-muted-foreground font-medium uppercase tracking-wide">
-                                          ⏱ Wait {wait}m
-                                        </span>
-                                      </div>
-                                    )}
-                                    <div className="flex items-center gap-1">
-                                      <div className={`w-1.5 h-1.5 ${
-                                        isMeal ? "bg-[hsl(var(--gold))]" :
-                                        isExperience ? "bg-[hsl(280,30%,55%)]" :
-                                        isBreak ? "bg-muted-foreground/30" :
-                                        "bg-foreground/60"
-                                      }`} />
-                                      <span className="text-[0.4375rem] text-muted-foreground font-medium uppercase tracking-wide">
-                                        {isBreak ? "⏸ Rest" : isMeal ? "🍽 Meal" : "🎢 Ride"} {dur}m
-                                      </span>
-                                    </div>
-                                    {travel > 0 && (
-                                      <div className="flex items-center gap-1">
-                                        <div className="w-1.5 h-1.5 bg-[hsl(var(--accent-foreground)/0.15)]" />
-                                        <span className="text-[0.4375rem] text-muted-foreground font-medium uppercase tracking-wide">
-                                          🚶 Travel {travel}m
-                                        </span>
-                                      </div>
-                                    )}
-                                  </div>
-                                </div>
-                              )}
-
-                              {/* LL badge */}
-                              {item.llType && item.llType !== "none" && (
-                                <div className="mt-1.5 ml-[calc(0.75rem+8px+0.5rem)]">
-                                  <span className="px-1.5 py-0.5 text-[0.35rem] uppercase tracking-[0.08em] bg-accent text-accent-foreground border border-border">
-                                    {llLabels[item.llType]}
-                                  </span>
-                                </div>
-                              )}
-
-                              {/* Notes */}
-                              {item.notes && (
-                                <p className="font-editorial text-[0.5625rem] text-muted-foreground mt-1.5 ml-[calc(0.75rem+8px+0.5rem)] italic">{item.notes}</p>
-                              )}
-                            </div>
-                          );
-                        })}
+              return (
+                <div key={item.id} className="absolute left-[60px] right-2" style={{ top: `${topPx}px` }}>
+                  {/* ── Activity block ───────────────────────────── */}
+                  <div
+                    draggable={!isLocked && !isBooked}
+                    onDragStart={() => handleDragStart(globalIdx)}
+                    onDragOver={(e) => handleDragOver(e, globalIdx)}
+                    onDrop={() => handleDrop(globalIdx)}
+                    onDragEnd={handleDragEnd}
+                    style={{ minHeight: `${activityHeight}px` }}
+                    className={`group border-l-[3px] border px-3 py-2 transition-all duration-200 shadow-soft overflow-hidden ${
+                      isDragging ? "opacity-40 scale-95" : ""
+                    } ${isDragOver ? "ring-1 ring-[hsl(var(--gold))]" : ""} ${
+                      isMeal
+                        ? "bg-[hsl(42,64%,35%,0.06)] border-[hsl(var(--gold)/0.3)] border-l-[hsl(var(--gold))]"
+                        : isExperience
+                        ? "bg-[hsl(280,30%,55%,0.04)] border-[hsl(280,30%,55%,0.2)] border-l-[hsl(280,30%,55%)]"
+                        : isBreak
+                        ? "bg-[hsl(var(--warm))] border-dashed border-border border-l-muted-foreground/30"
+                        : item.isConfirmed
+                        ? "bg-[hsl(var(--gold)/0.04)] border-[hsl(var(--gold)/0.3)] border-l-[hsl(var(--gold))]"
+                        : "bg-background border-border border-l-foreground/40"
+                    } ${!isLocked && !isBooked ? "hover:shadow-soft-hover cursor-grab" : ""}`}
+                  >
+                    {/* Header row */}
+                    <div className="flex items-center gap-2">
+                      {!isLocked && !isBooked && (
+                        <GripVertical className="w-3 h-3 text-muted-foreground/30 shrink-0 cursor-grab" />
+                      )}
+                      <span className="font-display text-[0.8125rem] text-foreground truncate flex-1">{item.name}</span>
+                      <span className={`px-1.5 py-0.5 text-[0.35rem] uppercase tracking-[0.1em] shrink-0 ${
+                        item.type === "ride" ? "bg-foreground text-background" :
+                        isMeal ? "bg-[hsl(var(--gold)/0.15)] text-[hsl(var(--gold-dark))]" :
+                        isExperience ? "bg-[hsl(280,30%,55%,0.1)] text-[hsl(280,30%,45%)]" :
+                        "bg-muted text-muted-foreground"
+                      }`}>
+                        {isMeal ? "🍽 Dining" : isExperience ? "✨ Experience" : item.type === "rope-drop" ? "Arrive" : item.type}
+                      </span>
+                      <div className="text-right shrink-0">
+                        <span className="text-[0.6875rem] text-foreground font-display">{totalBlock}m</span>
+                        <span className="text-[0.35rem] text-muted-foreground uppercase block">Total</span>
                       </div>
-                    ) : (
-                      /* Empty hour — compact */
-                      <div className="h-full flex items-center">
-                        <div className="w-full border-b border-dashed border-border/15" />
+                      {!isLocked && !isBooked && (
+                        <button onClick={() => removeFromItinerary(item.id)}
+                          className="opacity-0 group-hover:opacity-100 w-4 h-4 flex items-center justify-center text-muted-foreground hover:text-destructive transition-all duration-200">
+                          <X className="w-3 h-3" />
+                        </button>
+                      )}
+                    </div>
+
+                    {/* Segmented time breakdown */}
+                    <div className="mt-1.5 flex items-center gap-2 flex-wrap">
+                      {checkin > 0 && (
+                        <span className="flex items-center gap-1 px-1.5 py-0.5 bg-[hsl(280,30%,55%,0.08)] text-[0.4375rem] text-[hsl(280,30%,45%)] font-medium">
+                          📋 Check-in {checkin}m
+                        </span>
+                      )}
+                      {wait > 0 && (
+                        <span className="flex items-center gap-1 px-1.5 py-0.5 bg-[hsl(var(--destructive)/0.06)] text-[0.4375rem] text-destructive font-medium">
+                          ⏱ Est. Wait {wait}m
+                        </span>
+                      )}
+                      <span className={`flex items-center gap-1 px-1.5 py-0.5 text-[0.4375rem] font-medium ${
+                        isMeal ? "bg-[hsl(var(--gold)/0.1)] text-[hsl(var(--gold-dark))]" :
+                        isExperience ? "bg-[hsl(280,30%,55%,0.08)] text-[hsl(280,30%,45%)]" :
+                        isBreak ? "bg-muted text-muted-foreground" :
+                        "bg-foreground/5 text-foreground"
+                      }`}>
+                        {isBreak ? "⏸" : isMeal ? "🍽" : isExperience ? "🎭" : "🎢"} {isBreak ? "Rest" : isMeal ? "Meal" : "Duration"} {dur}m
+                      </span>
+                    </div>
+
+                    {/* LL badge */}
+                    {item.llType && item.llType !== "none" && (
+                      <div className="mt-1.5">
+                        <span className="px-1.5 py-0.5 text-[0.35rem] uppercase tracking-[0.08em] bg-accent text-accent-foreground border border-border">
+                          {llLabels[item.llType]}
+                        </span>
                       </div>
                     )}
+
+                    {/* Notes */}
+                    {item.notes && (
+                      <p className="font-editorial text-[0.5625rem] text-muted-foreground mt-1.5 italic">{item.notes}</p>
+                    )}
                   </div>
+
+                  {/* ── Travel block (separate, after activity) ────── */}
+                  {travelMin > 0 && (
+                    <div
+                      style={{ height: `${travelHeight}px` }}
+                      className="flex items-center gap-2 pl-4 border-l border-dashed border-muted-foreground/20 ml-1"
+                    >
+                      <span className="text-[0.4375rem] text-muted-foreground font-medium flex items-center gap-1">
+                        🚶 Travel / Stroller time — {travelMin} min
+                      </span>
+                    </div>
+                  )}
                 </div>
               );
             })}

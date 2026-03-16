@@ -288,7 +288,7 @@ const ResortHub = () => {
 
                       {/* Hours */}
                       <div className="flex flex-wrap gap-3 mb-6">
-                        <div className="flex items-center gap-1.5 px-3 py-1.5 bg-muted border border-border">
+                        <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-muted border border-border">
                           <Clock className="w-3 h-3 text-muted-foreground" />
                           <span className="text-[0.5625rem] text-foreground font-medium">{park.operatingHours.regular}</span>
                         </div>

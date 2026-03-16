@@ -8,6 +8,7 @@ import editorialCalendar from "@/assets/editorial-calendar.jpg";
 import editorialDining from "@/assets/editorial-dining.jpg";
 import SparkleField from "@/components/SparkleField";
 import type { BookedTrip, FutureTrip, PackingItem, PreparationItem, ExperienceCategory, BookingDifficulty, CostTier, DiningReservation, BookedExperience, DiningVenue, ExperienceVenue } from "@/data/types";
+import ItineraryDesigner from "@/components/ItineraryDesigner";
 import { mockData } from "@/data/mockData";
 import { toast } from "@/hooks/use-toast";
 

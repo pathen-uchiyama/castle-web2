@@ -229,7 +229,7 @@ const ResortHub = () => {
                     <p className="font-editorial text-xs text-muted-foreground mb-3">{park.tagline}</p>
                     <div className="flex flex-wrap gap-1.5">
                       {park.knownFor.slice(0, 3).map(k => (
-                        <span key={k} className="text-[0.4375rem] uppercase tracking-[0.08em] px-2 py-0.5 bg-muted text-muted-foreground">{k}</span>
+                        <span key={k} className="text-[0.4375rem] uppercase tracking-[0.08em] px-2 py-0.5 rounded-md bg-muted text-muted-foreground">{k}</span>
                       ))}
                     </div>
                   </button>

@@ -261,8 +261,14 @@ const Circle = ({ partyMembers }: CircleProps) => {
                           {/* Actions bar */}
                           <div className="flex items-center gap-4 mb-8">
                             <button
-                              onClick={() => setEditingMember(isEditing ? null : member.memberId)}
-                              className="px-5 py-2 text-xs tracking-[0.15em] uppercase font-medium transition-all duration-300 rounded-lg"
+                              onClick={() => {
+                                if (isEditing) {
+                                  handleMarkRefreshed(member.memberId);
+                                  setEditingMember(null);
+                                } else {
+                                  setEditingMember(member.memberId);
+                                }
+                              }}
                               style={{
                                 background: isEditing ? "hsl(var(--foreground))" : "transparent",
                                 color: isEditing ? "hsl(var(--background))" : "hsl(var(--foreground))",

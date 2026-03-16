@@ -559,7 +559,7 @@ const BookedTripDetail = ({ trip }: { trip: BookedTrip }) => {
               { label: "MDE Connected", value: `${Object.values(mdeConnected).filter(Boolean).length}/${Object.values(mdeConnected).length}` },
               { label: "Conflicts", value: String(consensusData.filter((c) => c.hasConflict).length) },
             ].map((stat) => (
-              <div key={stat.label} className="border border-border bg-card p-5 shadow-[var(--shadow-soft)]">
+              <div key={stat.label} className="border border-border bg-card rounded-lg p-5 shadow-[var(--shadow-soft)]">
                 <p className="label-text mb-2">{stat.label}</p>
                 <p className="font-display text-3xl text-foreground">{stat.value}</p>
               </div>

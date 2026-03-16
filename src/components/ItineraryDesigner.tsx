@@ -640,7 +640,7 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
                       {!isLocked && !isBooked && (
                         <GripVertical className="w-3 h-3 text-[hsl(var(--ink-light))]/30 shrink-0 cursor-grab" />
                       )}
-                      <span className="font-display text-base text-[hsl(var(--ink))] truncate flex-1">{item.name}</span>
+                      <span className="font-display text-base text-[hsl(var(--ink))] truncate flex-1 font-bold">{item.name}</span>
                       <span className={`px-2 py-0.5 text-[0.5625rem] uppercase tracking-[0.1em] shrink-0 ${
                         item.type === "ride" ? "bg-[hsl(var(--ink))] text-[#F9F7F2]" :
                         isMeal ? "bg-[hsl(var(--gold)/0.15)] text-[hsl(var(--gold-dark))]" :
@@ -650,9 +650,9 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
                         {isMeal ? "🍽 Dining" : isExperience ? "✨ Experience" : item.type}
                       </span>
                       {wait > 0 && (
-                        <div className="text-right shrink-0 px-2.5 py-1.5 bg-[hsl(var(--destructive)/0.06)] border border-[hsl(var(--destructive)/0.15)]" style={{ borderRadius: 0 }}>
-                          <span className="text-base text-destructive font-display font-bold leading-none">{wait}m</span>
-                          <span className="text-[0.5625rem] text-destructive/70 uppercase block tracking-[0.1em]">Wait</span>
+                        <div className="shrink-0 px-3 py-2 bg-[hsl(var(--destructive)/0.06)] border border-[hsl(var(--destructive)/0.15)] flex items-center gap-1.5" style={{ borderRadius: 0 }}>
+                          <span className="font-display text-base text-destructive font-bold leading-none">{wait}m</span>
+                          <span className="font-display text-xs text-destructive/70">est. wait</span>
                         </div>
                       )}
                       {!isLocked && !isBooked && (

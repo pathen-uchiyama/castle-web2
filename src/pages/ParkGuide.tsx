@@ -233,7 +233,7 @@ const ParkGuidePage = ({ parkGuides }: ParkGuidePageProps) => {
             {/* Stats Grid */}
             <motion.div {...fade(0.05)} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
               {/* Weather */}
-              <div className="border border-border bg-card p-5 shadow-[var(--shadow-soft)]">
+               <div className="border border-border bg-card rounded-lg p-5 shadow-[var(--shadow-soft)]">
                 <p className="label-text mb-2">{selectedDate ? format(selectedDate, "MMM d") + " Weather" : "Today's Weather"}</p>
                 <p className="font-display text-lg text-foreground">{displayWeather}</p>
               </div>

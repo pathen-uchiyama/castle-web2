@@ -271,9 +271,18 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
         const aMustDo = topFiveIds.has(a.id) || attractionSatisfies[a.id]?.some(s => s.reason === "Must-Do" || s.reason === "Top 5 Must-Do") ? 1 : 0;
         const bMustDo = topFiveIds.has(b.id) || attractionSatisfies[b.id]?.some(s => s.reason === "Must-Do" || s.reason === "Top 5 Must-Do") ? 1 : 0;
         if (aMustDo !== bMustDo) return bMustDo - aMustDo;
+        // Zone-aware: prioritize attractions in the same zone as last itinerary item
+        if (minimizeWalking && itinerary.length > 0) {
+          const lastZone = itinerary[itinerary.length - 1].zone;
+          if (lastZone) {
+            const aInZone = a.zone === lastZone ? 1 : 0;
+            const bInZone = b.zone === lastZone ? 1 : 0;
+            if (aInZone !== bInZone) return bInZone - aInZone;
+          }
+        }
         return b.rating - a.rating;
       });
-  }, [selectedParks, researchCategory, searchQuery, topFiveIds, focus, attractionSatisfies]);
+  }, [selectedParks, researchCategory, searchQuery, topFiveIds, focus, attractionSatisfies, minimizeWalking, itinerary]);
 
   /* ── Handlers ───────────────────────────────────────────────────── */
 

@@ -2,7 +2,8 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useState } from "react";
 import Footer from "@/components/Footer";
 import SectionNav from "@/components/SectionNav";
-import familyMainstreet from "@/assets/family-mainstreet.jpg";
+import SparkleField from "@/components/SparkleField";
+import headerCircle from "@/assets/header-circle.jpg";
 import type { PartyMember } from "@/data/types";
 
 const ease: [number, number, number, number] = [0.19, 1, 0.22, 1];

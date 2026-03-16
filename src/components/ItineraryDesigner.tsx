@@ -977,22 +977,22 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
                           <div className="grid grid-cols-2 gap-2 mb-3">
                             <div className="flex items-center gap-1.5">
                               <Clock className="w-3 h-3 text-[hsl(var(--ink-light))]" />
-                              <span className="text-[0.5625rem] text-[hsl(var(--ink-light))]">Duration: <strong className="text-[hsl(var(--ink))]">{attraction.duration}</strong></span>
+                              <span className="text-xs text-[hsl(var(--ink-light))]">Duration: <strong className="text-[hsl(var(--ink))]">{attraction.duration}</strong></span>
                             </div>
                             <div className="flex items-center gap-1.5">
-                              <Zap className="w-3 h-3 text-[hsl(var(--ink-light))]" />
-                              <span className="text-[0.5625rem] text-[hsl(var(--ink-light))]">Thrill: <strong className="text-[hsl(var(--ink))] capitalize">{attraction.thrillLevel}</strong></span>
+                              <Zap className="w-3.5 h-3.5 text-[hsl(var(--ink-light))]" />
+                              <span className="text-xs text-[hsl(var(--ink-light))]">Thrill: <strong className="text-[hsl(var(--ink))] capitalize">{attraction.thrillLevel}</strong></span>
                             </div>
                             {attraction.heightRequirement && (
                               <div className="flex items-center gap-1.5">
-                                <Ruler className="w-3 h-3 text-[hsl(var(--ink-light))]" />
-                                <span className="text-[0.5625rem] text-[hsl(var(--ink-light))]">Height: <strong className="text-[hsl(var(--ink))]">{attraction.heightRequirement === "ANY" ? "Any" : attraction.heightRequirement}</strong></span>
+                                <Ruler className="w-3.5 h-3.5 text-[hsl(var(--ink-light))]" />
+                                <span className="text-xs text-[hsl(var(--ink-light))]">Height: <strong className="text-[hsl(var(--ink))]">{attraction.heightRequirement === "ANY" ? "Any" : attraction.heightRequirement}</strong></span>
                               </div>
                             )}
                             {attraction.llType !== "none" && (
                               <div className="flex items-center gap-1.5">
-                                <Shield className="w-3 h-3 text-[hsl(var(--ink-light))]" />
-                                <span className="text-[0.5625rem] text-[hsl(var(--ink-light))]">{llLabels[attraction.llType]}</span>
+                                <Shield className="w-3.5 h-3.5 text-[hsl(var(--ink-light))]" />
+                                <span className="text-xs text-[hsl(var(--ink-light))]">{llLabels[attraction.llType]}</span>
                               </div>
                             )}
                           </div>

@@ -197,7 +197,7 @@ const BookingModal = ({ type, venueName, venueLocation, onClose, onBook }: Booki
             <label className="label-text mb-2 block">Party Size</label>
             <div className="flex gap-2">
               {[1,2,3,4,5,6].map(n => (
-                <button key={n} onClick={() => setPartySize(n)} className={`w-10 h-10 border text-sm font-display transition-all duration-200 ${partySize === n ? "bg-foreground text-background border-foreground" : "border-border text-muted-foreground hover:border-foreground/30"}`}>{n}</button>
+                <button key={n} onClick={() => setPartySize(n)} className={`w-10 h-10 rounded-md border text-sm font-display transition-all duration-200 ${partySize === n ? "bg-foreground text-background border-foreground" : "border-border text-muted-foreground hover:border-foreground/30"}`}>{n}</button>
               ))}
             </div>
           </div>

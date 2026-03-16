@@ -394,7 +394,7 @@ const ResortHub = () => {
                                 </div>
                                 <div className="flex items-center gap-2 shrink-0">
                                   {a.heightRequirement && (
-                                    <span className="px-2 py-0.5 text-[0.4375rem] uppercase tracking-[0.08em] bg-muted text-muted-foreground border border-border">↕ {a.heightRequirement}</span>
+                                    <span className="px-2 py-0.5 rounded-md text-[0.4375rem] uppercase tracking-[0.08em] bg-muted text-muted-foreground border border-border">↕ {a.heightRequirement}</span>
                                   )}
                                   <span className="px-2 py-0.5 text-[0.4375rem] uppercase tracking-[0.08em] border" style={{ background: thrillColors[a.thrillLevel]?.bg, color: thrillColors[a.thrillLevel]?.text, borderColor: `${thrillColors[a.thrillLevel]?.text}30` }}>
                                     {a.thrillLevel}

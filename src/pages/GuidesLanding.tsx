@@ -39,7 +39,7 @@ const GuidesLanding = () => (
       <motion.div {...fade()}>
         <p className="text-[0.625rem] uppercase tracking-[0.3em] text-background/70 mb-4">Resort Encyclopedia 🗺️</p>
         <h1 className="font-display text-5xl sm:text-6xl lg:text-7xl leading-[1.05] mb-4">Park Guides</h1>
-        <p className="font-editorial text-lg text-background/60 max-w-2xl">
+        <p className="font-editorial text-lg text-background/70 max-w-2xl">
           Everything your family needs — parks, hotels, dining, and insider tips for the most magical vacation ever.
         </p>
       </motion.div>

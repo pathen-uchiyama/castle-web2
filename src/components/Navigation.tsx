@@ -62,7 +62,7 @@ const Navigation = () => {
           onClick={() => setMobileOpen(!mobileOpen)}
           aria-label="Toggle menu"
         >
-          <span className={`label-text ${isHome ? "!text-white/50" : "!text-muted-foreground"}`}>
+          <span className={`label-text ${isHome ? "!text-white/60" : "!text-muted-foreground"}`}>
             {mobileOpen ? "Close" : "Menu"}
           </span>
         </button>

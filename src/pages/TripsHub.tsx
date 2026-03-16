@@ -42,7 +42,7 @@ const TripsHub = ({ bookedTrip, futureTrips }: TripsHubProps) => {
         <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-black/10" />
         <SparkleField count={6} />
         <div className="absolute bottom-0 left-0 right-0 px-8 lg:px-16 pb-8">
-          <motion.p {...fade()} className="label-text !text-white/40 mb-2 tracking-[0.3em]">Your Adventures ✨</motion.p>
+          <motion.p {...fade()} className="label-text !text-white/60 mb-2 tracking-[0.3em]">Your Adventures ✨</motion.p>
           <motion.h1 {...fade(0.2)} className="font-display text-white text-3xl sm:text-5xl leading-[1.02]">Plan Your Trip</motion.h1>
         </div>
       </section>

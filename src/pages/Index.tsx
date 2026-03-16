@@ -395,15 +395,15 @@ const Index = ({
               <div className="absolute bottom-0 left-0 right-0 px-6 sm:px-8 lg:px-12 pb-10 sm:pb-12">
                 <motion.div {...fade(0.1)}>
                   <p className="label-text !text-white/60 mb-4 tracking-[0.3em]">
-                    {futureTrips.length > 0 ? "Plan Your Next Trip" : "Plan Your First Trip"}
+                    {futureTrips.length > 0 ? "Plan Your Next Trip ✈️" : "Plan Your First Trip 🌟"}
                   </p>
                   <h3 className="font-display text-2xl sm:text-3xl lg:text-4xl text-white leading-[1.1] mb-3">
-                    {futureTrips.length > 0 ? "Where will the magic take you?" : "Your adventure starts here."}
+                    {futureTrips.length > 0 ? "Where will the magic take you next?" : "Your family adventure starts here."}
                   </h3>
                   <p className="font-editorial text-sm text-white/80 mb-6 max-w-sm">
                     {futureTrips.length > 0
                       ? `${futureTrips.length} trip${futureTrips.length > 1 ? "s" : ""} in the works — tap to explore dates, parks, and strategies.`
-                      : "Choose a destination and let us handle the rest."}
+                      : "Choose a destination and we'll help you plan every magical moment."}
                   </p>
                   <span className="inline-flex items-center gap-2 font-editorial text-sm text-white border-b border-white/50 pb-1 group-hover:border-white transition-all duration-500">
                     Start planning →

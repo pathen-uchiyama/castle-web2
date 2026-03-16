@@ -945,7 +945,7 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
                         <Users className="w-3 h-3 text-[hsl(var(--gold-dark))] shrink-0" />
                         <div className="flex items-center gap-1 flex-wrap">
                           {satisfies.map(s => (
-                            <span key={s.memberId} className="inline-flex items-center gap-1 px-1.5 py-0.5 bg-[hsl(var(--gold)/0.1)] text-[0.4375rem] text-[hsl(var(--gold-dark))]" style={{ borderRadius: 0 }}>
+                            <span key={s.memberId} className="inline-flex items-center gap-1 px-2 py-0.5 bg-[hsl(var(--gold)/0.1)] text-[0.625rem] text-[hsl(var(--gold-dark))]" style={{ borderRadius: 0 }}>
                               {s.name} · <span className="italic">{s.reason}</span>
                             </span>
                           ))}

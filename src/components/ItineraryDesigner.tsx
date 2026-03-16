@@ -257,9 +257,15 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
         return true;
       })
       .sort((a, b) => {
-        const aTop = topFiveIds.has(a.id) ? 1 : 0;
-        const bTop = topFiveIds.has(b.id) ? 1 : 0;
-        if (aTop !== bTop) return bTop - aTop;
+        // Must-do items (top-5 or survey must-do) always float to top
+        const aMustDo = topFiveIds.has(a.id) || attractionSatisfies[a.id]?.some(s => s.reason === "Must-Do" || s.reason === "Top 5 Must-Do") ? 1 : 0;
+        const bMustDo = topFiveIds.has(b.id) || attractionSatisfies[b.id]?.some(s => s.reason === "Must-Do" || s.reason === "Top 5 Must-Do") ? 1 : 0;
+        if (aMustDo !== bMustDo) return bMustDo - aMustDo;
+
+        // Then want-to-do items
+        const aWant = attractionSatisfies[a.id]?.some(s => s.reason === "Want to Do") ? 1 : 0;
+        const bWant = attractionSatisfies[b.id]?.some(s => s.reason === "Want to Do") ? 1 : 0;
+        if (aWant !== bWant) return bWant - aWant;
 
         // Focus-based sorting boosts
         if (focus === "Thrill Seekers") {

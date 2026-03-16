@@ -247,30 +247,41 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
     return h * 60 + min;
   };
 
-  /** Total time an item actually consumes (wait + experience + travel) */
-  const totalItemTime = (item: ItineraryItem) =>
-    (item.waitTime || 0) + item.duration + (item.walkTime || 0);
+  /* ── Proportional timeline constants ─────────────────────────── */
+  const PX_PER_MIN = 2; // 1 minute = 2px → 1 hour = 120px
+  const DAY_START_HOUR = 7; // 7 AM
+  const DAY_END_HOUR = 23; // 11 PM
+  const DAY_START_MIN = DAY_START_HOUR * 60;
+  const TOTAL_DAY_MIN = (DAY_END_HOUR - DAY_START_HOUR) * 60; // 960 min
+  const TOTAL_HEIGHT = TOTAL_DAY_MIN * PX_PER_MIN; // 1920px
 
-  // Build scheduled items map (hour → items) with total time per hour
-  const scheduledByHour = useMemo(() => {
-    const map: Record<number, ItineraryItem[]> = {};
-    itinerary.forEach(item => {
-      if (!item.startTime) return;
-      const mins = toMinutes(item.startTime);
-      if (mins < 0) return;
-      const hour = Math.floor(mins / 60);
-      if (!map[hour]) map[hour] = [];
-      map[hour].push(item);
-    });
-    return map;
-  }, [itinerary]);
-
-  /** Compute the total minutes consumed in an hour slot */
-  const hourSlotMinutes = (hourValue: number) => {
-    const items = scheduledByHour[hourValue] || [];
-    if (items.length === 0) return 0;
-    return items.reduce((sum, item) => sum + totalItemTime(item), 0);
+  /** Check-in time for experiences (shows, characters, parades) */
+  const getCheckinTime = (item: ItineraryItem) => {
+    const isExperience = ["show", "character", "parade", "seasonal"].includes(item.type);
+    if (!isExperience) return 0;
+    // Shows/parades need 15 min check-in, characters 10
+    return item.type === "character" ? 10 : 15;
   };
+
+  /** Total time an item consumes: check-in + wait + experience (travel is separate, shown after) */
+  const totalItemTime = (item: ItineraryItem) => {
+    const checkin = getCheckinTime(item);
+    return checkin + (item.waitTime || 0) + item.duration;
+  };
+
+  /** Scheduled items sorted by start time with computed positions */
+  const scheduledItems = useMemo(() => {
+    return itinerary
+      .filter(i => i.startTime && toMinutes(i.startTime) >= 0)
+      .map(item => {
+        const startMin = toMinutes(item.startTime);
+        const checkin = getCheckinTime(item);
+        const activityMin = checkin + (item.waitTime || 0) + item.duration;
+        const travelMin = item.walkTime || 0;
+        return { item, startMin, checkin, activityMin, travelMin };
+      })
+      .sort((a, b) => a.startMin - b.startMin);
+  }, [itinerary]);
 
   // Unscheduled items (no start time)
   const unscheduledItems = useMemo(() => itinerary.filter(i => !i.startTime), [itinerary]);

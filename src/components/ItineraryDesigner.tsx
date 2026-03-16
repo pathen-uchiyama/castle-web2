@@ -799,7 +799,7 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
         </div>
 
         {/* ─── RIGHT: Research Assistant ──────────────────────────────── */}
-        <div className="px-6 lg:px-8 py-8 lg:overflow-y-auto lg:max-h-[calc(100vh-80px)] bg-[#F9F7F2]">
+        <div className="px-6 lg:px-8 py-8 lg:overflow-y-auto lg:sticky lg:top-0 lg:max-h-screen bg-[#F9F7F2]">
 
           <div className="flex items-end justify-between mb-4">
             <div>

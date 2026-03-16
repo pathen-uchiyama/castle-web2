@@ -40,6 +40,7 @@ export interface ParkAttraction {
   warnings: string[];
   isClosed?: boolean;
   tags?: string[];
+  zone?: ParkZone;
   /** Lifecycle status — affects demand and crowd levels */
   attractionStatus?: AttractionStatusMeta;
 }
@@ -61,19 +62,89 @@ export const crowdImpactLabels: Record<string, { label: string; color: string }>
   "none": { label: "Normal", color: "muted-foreground" },
 };
 
+export type ParkZone =
+  | "main-street" | "adventureland" | "frontierland" | "liberty-square" | "fantasyland" | "tomorrowland"
+  | "future-world-east" | "future-world-west" | "world-showcase"
+  | "resort" | "unknown";
+
+/** Walking time in minutes between zones. Keys are sorted alphabetically: `${zoneA}::${zoneB}` */
+const _walkMatrix: Record<string, number> = {
+  // Magic Kingdom
+  "adventureland::main-street": 8,
+  "adventureland::frontierland": 5,
+  "adventureland::liberty-square": 7,
+  "adventureland::fantasyland": 10,
+  "adventureland::tomorrowland": 12,
+  "frontierland::main-street": 10,
+  "frontierland::liberty-square": 4,
+  "frontierland::fantasyland": 8,
+  "frontierland::tomorrowland": 14,
+  "liberty-square::main-street": 9,
+  "fantasyland::liberty-square": 5,
+  "liberty-square::tomorrowland": 12,
+  "fantasyland::main-street": 8,
+  "fantasyland::tomorrowland": 8,
+  "main-street::tomorrowland": 6,
+  // EPCOT
+  "future-world-east::future-world-west": 8,
+  "future-world-east::world-showcase": 12,
+  "future-world-west::world-showcase": 10,
+};
+
+const DEFAULT_WALK_MIN = 8;
+const STROLLER_MULTIPLIER = 1.35;
+
+/** Get walking buffer in minutes between two zones, with optional stroller multiplier */
+export function getWalkBuffer(from: ParkZone | undefined, to: ParkZone | undefined, hasStroller: boolean): number {
+  if (!from || !to || from === to) {
+    return Math.round((hasStroller ? DEFAULT_WALK_MIN * STROLLER_MULTIPLIER : DEFAULT_WALK_MIN));
+  }
+  const key1 = `${from}::${to}`;
+  const key2 = `${to}::${from}`;
+  const base = _walkMatrix[key1] ?? _walkMatrix[key2] ?? DEFAULT_WALK_MIN;
+  return Math.round(hasStroller ? base * STROLLER_MULTIPLIER : base);
+}
+
+/** Duration defaults when no data available */
+export const DURATION_DEFAULTS: Record<string, number> = {
+  ride: 20,
+  meal: 60,
+  break: 30,
+  show: 45,
+  snack: 15,
+  pool: 90,
+  hotel: 60,
+  walk: 20,
+  character: 20,
+  parade: 30,
+  seasonal: 60,
+  dining: 60,
+  "rope-drop": 30,
+};
+
 export interface ItineraryItem {
   id: string;
   attractionId?: string;
   name: string;
   type: "ride" | "show" | "parade" | "character" | "dining" | "seasonal" | "break" | "snack" | "pool" | "hotel" | "meal" | "rope-drop" | "walk";
-  startTime: string; // "07:00 AM"
   duration: number; // minutes
-  walkTime?: number; // minutes to next
   waitTime?: number; // minutes
+  zone?: ParkZone;
   llType?: LLType;
   waitCategory?: WaitCategory;
   notes?: string;
   isConfirmed?: boolean;
+}
+
+/** Computed ribbon item — produced by the ribbon engine */
+export interface RibbonItem {
+  item: ItineraryItem;
+  startMin: number;
+  endMin: number;
+  walkBuffer: number;
+  checkinTime: number;
+  strollerTime: number;
+  totalBlockMin: number;
 }
 
 export const magicKingdomAttractions: ParkAttraction[] = [
@@ -86,6 +157,7 @@ export const magicKingdomAttractions: ParkAttraction[] = [
     rules: ["DAS", "EARLY MORNING ACCESS", "SINGLE RIDER", "CHILD SWITCH"],
     warnings: ["LOUD NOISES", "STROBES"],
     attractionStatus: { status: "recently-opened", label: "Recently Opened", note: "Opened April 2023 — still drawing massive crowds", crowdImpact: "high" },
+    zone: "tomorrowland",
   },
   {
     id: "mk-space", name: "Space Mountain", parkId: "mk", type: "ride", rating: 4.6,
@@ -95,6 +167,7 @@ export const magicKingdomAttractions: ParkAttraction[] = [
     notableInsight: "Classic Coaster",
     rules: ["DAS", "EARLY MORNING ACCESS", "SINGLE RIDER", "CHILD SWITCH"],
     warnings: ["LOUD NOISES", "STROBES"],
+    zone: "tomorrowland",
   },
   {
     id: "mk-sdmt", name: "Seven Dwarfs Mine Train", parkId: "mk", type: "ride", rating: 4.7,
@@ -104,6 +177,7 @@ export const magicKingdomAttractions: ParkAttraction[] = [
     notableInsight: "Best for Families",
     rules: ["DAS", "EARLY MORNING ACCESS", "CHILD SWITCH"],
     warnings: [],
+    zone: "fantasyland",
   },
   {
     id: "mk-peter", name: "Peter Pan's Flight", parkId: "mk", type: "ride", rating: 4.5,
@@ -113,6 +187,7 @@ export const magicKingdomAttractions: ParkAttraction[] = [
     notableInsight: "Classic Magic",
     rules: ["DAS", "EARLY MORNING ACCESS"],
     warnings: [],
+    zone: "fantasyland",
   },
   {
     id: "mk-haunted", name: "Haunted Mansion", parkId: "mk", type: "ride", rating: 4.8,
@@ -122,6 +197,7 @@ export const magicKingdomAttractions: ParkAttraction[] = [
     notableInsight: "All-Ages Classic",
     rules: ["DAS"],
     warnings: ["LOUD NOISES", "STROBES"],
+    zone: "liberty-square",
   },
   {
     id: "mk-btmr", name: "Big Thunder Mountain Railroad", parkId: "mk", type: "ride", rating: 4.6,
@@ -131,6 +207,7 @@ export const magicKingdomAttractions: ParkAttraction[] = [
     notableInsight: "Good AM Ride",
     rules: ["DAS", "SINGLE RIDER", "CHILD SWITCH"],
     warnings: [],
+    zone: "frontierland",
   },
   {
     id: "mk-tianas", name: "Tiana's Bayou Adventure", parkId: "mk", type: "ride", rating: 4.4,
@@ -141,6 +218,7 @@ export const magicKingdomAttractions: ParkAttraction[] = [
     rules: ["DAS", "CHILD SWITCH"],
     warnings: [],
     attractionStatus: { status: "new", label: "Brand New", note: "Opened June 2024 — replaced Splash Mountain. Expect extreme waits.", crowdImpact: "extreme" },
+    zone: "frontierland",
   },
   {
     id: "mk-pirates", name: "Pirates of the Caribbean", parkId: "mk", type: "ride", rating: 4.7,
@@ -150,6 +228,7 @@ export const magicKingdomAttractions: ParkAttraction[] = [
     notableInsight: "Long Length",
     rules: ["DAS"],
     warnings: ["LOUD NOISES"],
+    zone: "adventureland",
   },
   {
     id: "mk-jungle", name: "Jungle Cruise", parkId: "mk", type: "ride", rating: 4.5,
@@ -159,6 +238,7 @@ export const magicKingdomAttractions: ParkAttraction[] = [
     notableInsight: "Great for Kids",
     rules: ["DAS"],
     warnings: [],
+    zone: "adventureland",
   },
   {
     id: "mk-undersea", name: "Under the Sea", parkId: "mk", type: "ride", rating: 4.2,
@@ -168,6 +248,7 @@ export const magicKingdomAttractions: ParkAttraction[] = [
     notableInsight: "Omnimover",
     rules: ["DAS"],
     warnings: ["LOUD NOISES"],
+    zone: "fantasyland",
   },
   {
     id: "mk-buzz", name: "Buzz Lightyear Space Ranger Spin", parkId: "mk", type: "ride", rating: 4.3,
@@ -177,6 +258,7 @@ export const magicKingdomAttractions: ParkAttraction[] = [
     notableInsight: "Interactive",
     rules: ["DAS"],
     warnings: ["STROBES"],
+    zone: "tomorrowland",
   },
   {
     id: "mk-railroad", name: "Walt Disney World Railroad", parkId: "mk", type: "ride", rating: 4.1,
@@ -188,6 +270,7 @@ export const magicKingdomAttractions: ParkAttraction[] = [
     warnings: [],
     isClosed: true,
     attractionStatus: { status: "refurbishment", label: "Refurbishment", note: "Closed for track maintenance. Expected return: TBD.", crowdImpact: "none" },
+    zone: "main-street",
   },
   {
     id: "mk-small-world", name: "It's a Small World", parkId: "mk", type: "ride", rating: 4.0,
@@ -197,6 +280,7 @@ export const magicKingdomAttractions: ParkAttraction[] = [
     notableInsight: "Holiday Version Dec",
     rules: ["DAS"],
     warnings: ["LOUD NOISES"],
+    zone: "fantasyland",
   },
   {
     id: "mk-pooh", name: "The Many Adventures of Winnie the Pooh", parkId: "mk", type: "ride", rating: 4.2,
@@ -206,6 +290,7 @@ export const magicKingdomAttractions: ParkAttraction[] = [
     notableInsight: "Toddler Fave",
     rules: ["DAS"],
     warnings: [],
+    zone: "fantasyland",
   },
   {
     id: "mk-teacups", name: "Mad Tea Party", parkId: "mk", type: "ride", rating: 3.8,
@@ -215,6 +300,7 @@ export const magicKingdomAttractions: ParkAttraction[] = [
     notableInsight: "Spinning",
     rules: ["DAS"],
     warnings: ["LOUD NOISES"],
+    zone: "fantasyland",
   },
   {
     id: "mk-dumbo", name: "Dumbo the Flying Elephant", parkId: "mk", type: "ride", rating: 4.1,
@@ -224,6 +310,7 @@ export const magicKingdomAttractions: ParkAttraction[] = [
     notableInsight: "Toddler Must-Do",
     rules: ["DAS"],
     warnings: [],
+    zone: "fantasyland",
   },
   // Shows
   {
@@ -234,6 +321,7 @@ export const magicKingdomAttractions: ParkAttraction[] = [
     notableInsight: "Stake Out a Spot 20 Min Early",
     rules: [],
     warnings: [],
+    zone: "main-street",
   },
   {
     id: "mk-hea", name: "Happily Ever After", parkId: "mk", type: "show", rating: 4.9,
@@ -243,6 +331,7 @@ export const magicKingdomAttractions: ParkAttraction[] = [
     notableInsight: "Dessert Party Available",
     rules: [],
     warnings: ["LOUD NOISES"],
+    zone: "main-street",
   },
   {
     id: "mk-laugh-floor", name: "Monsters Inc. Laugh Floor", parkId: "mk", type: "show", rating: 4.3,
@@ -252,6 +341,7 @@ export const magicKingdomAttractions: ParkAttraction[] = [
     notableInsight: "Audience Participation",
     rules: ["DAS"],
     warnings: [],
+    zone: "tomorrowland",
   },
   // Characters
   {
@@ -262,6 +352,7 @@ export const magicKingdomAttractions: ParkAttraction[] = [
     notableInsight: "Photo + Autograph",
     rules: [],
     warnings: [],
+    zone: "main-street",
   },
   {
     id: "mk-princess-meet", name: "Princess Fairytale Hall", parkId: "mk", type: "character", rating: 4.5,
@@ -271,6 +362,7 @@ export const magicKingdomAttractions: ParkAttraction[] = [
     notableInsight: "Rotating Princesses",
     rules: [],
     warnings: [],
+    zone: "fantasyland",
   },
   {
     id: "mk-belle-tales", name: "Enchanted Tales with Belle", parkId: "mk", type: "character", rating: 4.6,
@@ -280,6 +372,7 @@ export const magicKingdomAttractions: ParkAttraction[] = [
     notableInsight: "Kids Get Roles",
     rules: [],
     warnings: [],
+    zone: "fantasyland",
   },
   // Seasonal
   {
@@ -291,6 +384,7 @@ export const magicKingdomAttractions: ParkAttraction[] = [
     rules: [],
     warnings: [],
     tags: ["TICKETED", "LIMITED"],
+    zone: "main-street",
   },
 ];
 
@@ -304,6 +398,7 @@ export const epcotAttractions: ParkAttraction[] = [
     rules: ["DAS", "CHILD SWITCH"],
     warnings: ["LOUD NOISES", "STROBES"],
     attractionStatus: { status: "recently-opened", label: "Recently Opened", note: "Still one of the hardest-to-ride attractions at WDW", crowdImpact: "high" },
+    zone: "future-world-east",
   },
   {
     id: "ep-frozen", name: "Frozen Ever After", parkId: "epcot", type: "ride", rating: 4.5,
@@ -313,6 +408,7 @@ export const epcotAttractions: ParkAttraction[] = [
     notableInsight: "Best for Elsa Fans",
     rules: ["DAS"],
     warnings: [],
+    zone: "world-showcase",
   },
   {
     id: "ep-test-track", name: "Test Track", parkId: "epcot", type: "ride", rating: 4.5,
@@ -322,6 +418,7 @@ export const epcotAttractions: ParkAttraction[] = [
     notableInsight: "Design Phase is Fun",
     rules: ["DAS", "SINGLE RIDER", "CHILD SWITCH"],
     warnings: [],
+    zone: "future-world-east",
   },
   {
     id: "ep-remy", name: "Remy's Ratatouille Adventure", parkId: "epcot", type: "ride", rating: 4.4,
@@ -331,6 +428,7 @@ export const epcotAttractions: ParkAttraction[] = [
     notableInsight: "No Height Req",
     rules: ["DAS"],
     warnings: [],
+    zone: "world-showcase",
   },
   {
     id: "ep-soarin", name: "Soarin' Around the World", parkId: "epcot", type: "ride", rating: 4.6,
@@ -340,6 +438,7 @@ export const epcotAttractions: ParkAttraction[] = [
     notableInsight: "Request Row 1",
     rules: ["DAS"],
     warnings: [],
+    zone: "future-world-west",
   },
   {
     id: "ep-spaceship-earth", name: "Spaceship Earth", parkId: "epcot", type: "ride", rating: 4.3,
@@ -349,6 +448,7 @@ export const epcotAttractions: ParkAttraction[] = [
     notableInsight: "Rainy Day Classic",
     rules: ["DAS"],
     warnings: [],
+    zone: "future-world-east",
   },
   {
     id: "ep-living-seas", name: "The Seas with Nemo & Friends", parkId: "epcot", type: "ride", rating: 4.0,
@@ -358,6 +458,7 @@ export const epcotAttractions: ParkAttraction[] = [
     notableInsight: "Aquarium Worth Lingering",
     rules: ["DAS"],
     warnings: [],
+    zone: "future-world-west",
   },
   // Shows
   {
@@ -368,6 +469,7 @@ export const epcotAttractions: ParkAttraction[] = [
     notableInsight: "Best View from Japan/Italy",
     rules: [],
     warnings: ["LOUD NOISES"],
+    zone: "world-showcase",
   },
   // Characters
   {
@@ -378,6 +480,7 @@ export const epcotAttractions: ParkAttraction[] = [
     notableInsight: "Long Waits — Go Early",
     rules: [],
     warnings: [],
+    zone: "world-showcase",
   },
   // Seasonal
   {
@@ -389,6 +492,7 @@ export const epcotAttractions: ParkAttraction[] = [
     rules: [],
     warnings: [],
     tags: ["FESTIVAL", "FOOD"],
+    zone: "world-showcase",
   },
 ];
 
@@ -429,14 +533,15 @@ export const waitLabels: Record<WaitCategory, string> = {
   "ill-required": "ILL Required",
 };
 
-// Default sample itinerary for Magic Kingdom
+// Default sample itinerary for Magic Kingdom (ribbon model — no startTime)
 export const sampleItinerary: ItineraryItem[] = [
-  { id: "it-1", name: "Rope Drop Arrival", type: "rope-drop", startTime: "07:00 AM", duration: 30, walkTime: 8, notes: "ARRIVE 45 MINS EARLY" },
-  { id: "it-2", attractionId: "mk-space", name: "Space Mountain", type: "ride", startTime: "07:38 AM", duration: 3, waitTime: 10, walkTime: 8, llType: "ll-multi-1", waitCategory: "hard-to-get" },
-  { id: "it-3", attractionId: "mk-sdmt", name: "Seven Dwarfs Mine Train", type: "ride", startTime: "07:59 AM", duration: 3, waitTime: 5, walkTime: 8, llType: "ll-single", waitCategory: "ill-required" },
-  { id: "it-4", name: "Lunch at Be Our Guest", type: "meal", startTime: "08:15 AM", duration: 75, walkTime: 8, isConfirmed: true, notes: "RESERVATION CONFIRMED · ±15M WINDOW" },
-  { id: "it-5", attractionId: "mk-fof", name: "Festival of Fantasy Parade", type: "parade", startTime: "09:38 AM", duration: 12, waitTime: 20, walkTime: 8, notes: "STAKE OUT A SPOT 20 MIN EARLY" },
-  { id: "it-6", name: "Hotel Nap / Pool Time", type: "break", startTime: "10:18 AM", duration: 90, walkTime: 8, notes: "1–2 HRS" },
-  { id: "it-7", attractionId: "mk-haunted", name: "Haunted Mansion", type: "ride", startTime: "11:56 AM", duration: 9, waitTime: 20, walkTime: 7, waitCategory: "walk-on" },
-  { id: "it-8", name: "Happily Ever After", type: "show", startTime: "12:32 PM", duration: 18, waitTime: 30, notes: "DESSERT PARTY" },
+  { id: "it-1", name: "Rope Drop Arrival", type: "rope-drop", duration: 30, zone: "main-street", notes: "ARRIVE 45 MINS EARLY" },
+  { id: "it-2", attractionId: "mk-tron", name: "TRON Lightcycle / Run", type: "ride", duration: 2, waitTime: 60, zone: "tomorrowland", llType: "ll-single", waitCategory: "ill-required" },
+  { id: "it-3", attractionId: "mk-space", name: "Space Mountain", type: "ride", duration: 3, waitTime: 10, zone: "tomorrowland", llType: "ll-multi-1", waitCategory: "hard-to-get" },
+  { id: "it-4", attractionId: "mk-sdmt", name: "Seven Dwarfs Mine Train", type: "ride", duration: 3, waitTime: 5, zone: "fantasyland", llType: "ll-single", waitCategory: "ill-required" },
+  { id: "it-5", name: "Lunch at Be Our Guest", type: "meal", duration: 60, zone: "fantasyland", isConfirmed: true, notes: "RESERVATION CONFIRMED" },
+  { id: "it-6", attractionId: "mk-haunted", name: "Haunted Mansion", type: "ride", duration: 9, waitTime: 20, zone: "liberty-square", waitCategory: "walk-on" },
+  { id: "it-7", name: "Hotel Nap / Pool Time", type: "break", duration: 90, zone: "resort", notes: "Recharge at the resort" },
+  { id: "it-8", attractionId: "mk-btmr", name: "Big Thunder Mountain", type: "ride", duration: 4, waitTime: 15, zone: "frontierland", llType: "ll-multi-1", waitCategory: "walk-on-am" },
+  { id: "it-9", name: "Happily Ever After", type: "show", duration: 18, waitTime: 30, zone: "main-street", notes: "DESSERT PARTY" },
 ];

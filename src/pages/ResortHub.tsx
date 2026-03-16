@@ -765,9 +765,9 @@ const ResortHub = () => {
                   <p className="font-editorial text-sm text-foreground/80 leading-relaxed mb-6">{area.description}</p>
 
                   <div className="flex flex-wrap gap-3 mb-6">
-                    <span className="px-3 py-1.5 text-[0.5625rem] bg-muted border border-border text-muted-foreground">📍 {area.location}</span>
-                    <span className="px-3 py-1.5 text-[0.5625rem] bg-muted border border-border text-muted-foreground">🕐 {area.hours}</span>
-                    <span className="px-3 py-1.5 text-[0.5625rem] bg-[hsl(142,60%,45%,0.08)] border border-[hsl(142,60%,45%,0.15)] text-[hsl(142,60%,35%)]">🅿️ {area.parking}</span>
+                     <span className="px-3 py-1.5 rounded-md text-[0.5625rem] bg-muted border border-border text-muted-foreground">📍 {area.location}</span>
+                     <span className="px-3 py-1.5 rounded-md text-[0.5625rem] bg-muted border border-border text-muted-foreground">🕐 {area.hours}</span>
+                     <span className="px-3 py-1.5 rounded-md text-[0.5625rem] bg-[hsl(142,60%,45%,0.08)] border border-[hsl(142,60%,45%,0.15)] text-[hsl(142,60%,35%)]">🅿️ {area.parking}</span>
                   </div>
 
                   <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">

@@ -195,7 +195,7 @@ const Index = ({
                 className="bg-white/95 backdrop-blur-sm px-8 py-6 shadow-soft"
               >
                 <p className="label-text tracking-[0.15em] mb-1 !text-foreground/50">Magic starts in</p>
-                <p className="font-display-bold text-4xl text-foreground">{bookedTrip.countdownDays} days</p>
+               <p className="font-display-bold text-4xl text-foreground">{bookedTrip.countdownDays} days</p>
               </motion.div>
             </div>
           </div>

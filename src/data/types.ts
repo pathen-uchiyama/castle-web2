@@ -51,6 +51,7 @@ export interface PartyMember {
   heightInches?: number;
   dietaryRestrictions?: string[];
   sensoryNotes?: string;
+  accessibilityNeeds?: string[];
   favoriteCharacter?: string;
   favoriteRide?: string;
   thrillTolerance?: "low" | "moderate" | "high";

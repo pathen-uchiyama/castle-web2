@@ -37,6 +37,24 @@ const thrillLabels: Record<string, string> = {
   high: "Fearless — bring on the drops",
 };
 
+const accessibilityOptions = [
+  { id: "das", label: "DAS (Disability Access Service)", category: "Accommodation" },
+  { id: "wheelchair", label: "Wheelchair / ECV needed", category: "Accommodation" },
+  { id: "avoid-strobes", label: "Avoid strobe lights / flashing", category: "Sensory" },
+  { id: "avoid-loud", label: "Avoid prolonged loud environments", category: "Sensory" },
+  { id: "avoid-dark", label: "Avoid dark enclosed spaces", category: "Sensory" },
+  { id: "avoid-drops", label: "Avoid sudden drops", category: "Physical" },
+  { id: "avoid-spinning", label: "Avoid spinning rides", category: "Physical" },
+  { id: "avoid-motion-sim", label: "Avoid motion simulators", category: "Physical" },
+  { id: "avoid-heights", label: "Avoid extreme heights", category: "Physical" },
+  { id: "avoid-water", label: "Avoid water rides (getting wet)", category: "Physical" },
+  { id: "seizure-risk", label: "Seizure precautions", category: "Medical" },
+  { id: "heat-sensitive", label: "Heat sensitivity — needs frequent breaks", category: "Medical" },
+  { id: "mobility-limited", label: "Limited mobility / stamina", category: "Medical" },
+  { id: "anxiety-crowds", label: "Anxiety in large crowds", category: "Medical" },
+  { id: "service-animal", label: "Traveling with service animal", category: "Accommodation" },
+];
+
 const formatHeight = (inches: number) => {
   const ft = Math.floor(inches / 12);
   const rem = inches % 12;

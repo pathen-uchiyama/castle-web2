@@ -340,7 +340,7 @@ const Index = ({
                       <h3 className="font-display text-2xl text-white mb-4 group-hover:text-[hsl(var(--gold-light))] transition-colors duration-500">{park.parkName}</h3>
                       <div className="space-y-2 mb-4">
                         <div className="flex justify-between items-center">
-                          <p className="label-text !text-white/50">Weather</p>
+                          <p className="label-text !text-white/60">Weather</p>
                           <p className="font-editorial text-sm text-white/90">{park.todayWeather}</p>
                         </div>
                         <div className="flex justify-between items-center">

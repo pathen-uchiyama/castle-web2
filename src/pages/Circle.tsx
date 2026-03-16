@@ -37,6 +37,24 @@ const thrillLabels: Record<string, string> = {
   high: "Fearless — bring on the drops",
 };
 
+const accessibilityOptions = [
+  { id: "das", label: "DAS (Disability Access Service)", category: "Accommodation" },
+  { id: "wheelchair", label: "Wheelchair / ECV needed", category: "Accommodation" },
+  { id: "avoid-strobes", label: "Avoid strobe lights / flashing", category: "Sensory" },
+  { id: "avoid-loud", label: "Avoid prolonged loud environments", category: "Sensory" },
+  { id: "avoid-dark", label: "Avoid dark enclosed spaces", category: "Sensory" },
+  { id: "avoid-drops", label: "Avoid sudden drops", category: "Physical" },
+  { id: "avoid-spinning", label: "Avoid spinning rides", category: "Physical" },
+  { id: "avoid-motion-sim", label: "Avoid motion simulators", category: "Physical" },
+  { id: "avoid-heights", label: "Avoid extreme heights", category: "Physical" },
+  { id: "avoid-water", label: "Avoid water rides (getting wet)", category: "Physical" },
+  { id: "seizure-risk", label: "Seizure precautions", category: "Medical" },
+  { id: "heat-sensitive", label: "Heat sensitivity — needs frequent breaks", category: "Medical" },
+  { id: "mobility-limited", label: "Limited mobility / stamina", category: "Medical" },
+  { id: "anxiety-crowds", label: "Anxiety in large crowds", category: "Medical" },
+  { id: "service-animal", label: "Traveling with service animal", category: "Accommodation" },
+];
+
 const formatHeight = (inches: number) => {
   const ft = Math.floor(inches / 12);
   const rem = inches % 12;
@@ -62,6 +80,21 @@ const Circle = ({ partyMembers }: CircleProps) => {
   const handleFieldChange = (memberId: string, field: keyof PartyMember, value: unknown) => {
     setMembers((prev) =>
       prev.map((m) => (m.memberId === memberId ? { ...m, [field]: value } : m))
+    );
+  };
+
+  const handleAccessibilityChange = (memberId: string, needId: string, checked: boolean) => {
+    setMembers((prev) =>
+      prev.map((m) => {
+        if (m.memberId !== memberId) return m;
+        const current = m.accessibilityNeeds || [];
+        return {
+          ...m,
+          accessibilityNeeds: checked
+            ? [...current, needId]
+            : current.filter((n) => n !== needId),
+        };
+      })
     );
   };
 
@@ -400,12 +433,45 @@ const Circle = ({ partyMembers }: CircleProps) => {
                                   })}
                                 </div>
                               </div>
+                              {/* ── Accessibility & Safety Needs ── */}
+                              <div className="sm:col-span-2">
+                                <label className="label-text mb-3 block tracking-[0.2em]">Accessibility & Safety Needs</label>
+                                <p className="font-editorial text-xs text-muted-foreground mb-4 leading-relaxed">
+                                  Select anything that applies so we can flag rides and experiences accordingly.
+                                </p>
+                                {["Accommodation", "Sensory", "Physical", "Medical"].map((category) => (
+                                  <div key={category} className="mb-4">
+                                    <p className="text-[0.5625rem] uppercase tracking-[0.15em] text-muted-foreground mb-2 font-medium">{category}</p>
+                                    <div className="flex flex-wrap gap-2">
+                                      {accessibilityOptions
+                                        .filter((opt) => opt.category === category)
+                                        .map((opt) => {
+                                          const checked = member.accessibilityNeeds?.includes(opt.id) ?? false;
+                                          return (
+                                            <button
+                                              key={opt.id}
+                                              onClick={() => handleAccessibilityChange(member.memberId, opt.id, !checked)}
+                                              className="px-4 py-2 text-xs tracking-[0.05em] rounded-md transition-all duration-300"
+                                              style={{
+                                                background: checked ? "hsl(var(--destructive) / 0.1)" : "transparent",
+                                                color: checked ? "hsl(var(--destructive))" : "hsl(var(--muted-foreground))",
+                                                border: `1px solid ${checked ? "hsl(var(--destructive) / 0.35)" : "hsl(var(--border))"}`,
+                                              }}
+                                            >
+                                              {checked ? "✓ " : ""}{opt.label}
+                                            </button>
+                                          );
+                                        })}
+                                    </div>
+                                  </div>
+                                ))}
+                              </div>
                               <div className="sm:col-span-2">
                                 <label className="label-text mb-2 block">Sensory Notes</label>
                                 <textarea
                                   value={member.sensoryNotes ?? ""}
                                   onChange={(e) => handleFieldChange(member.memberId, "sensoryNotes", e.target.value)}
-                                  placeholder="Any sensory sensitivities for planning..."
+                                  placeholder="Any additional sensory details for planning..."
                                   rows={2}
                                   className="w-full px-4 py-2.5 text-sm bg-background border border-border text-foreground placeholder:text-muted-foreground/40 focus:outline-none focus:border-[hsl(var(--gold))] transition-colors resize-none"
                                 />
@@ -471,6 +537,31 @@ const Circle = ({ partyMembers }: CircleProps) => {
                                   </div>
                                 )}
                               </div>
+
+                              {/* Full-width: Accessibility Needs */}
+                              {member.accessibilityNeeds && member.accessibilityNeeds.length > 0 && (
+                                <div className="sm:col-span-2 border-t border-border pt-5">
+                                  <p className="label-text mb-3 tracking-[0.2em]">Accessibility & Safety Needs</p>
+                                  <div className="flex flex-wrap gap-2">
+                                    {member.accessibilityNeeds.map((needId) => {
+                                      const opt = accessibilityOptions.find((o) => o.id === needId);
+                                      return (
+                                        <span
+                                          key={needId}
+                                          className="px-3 py-1 text-[0.625rem] uppercase tracking-[0.1em] rounded-md"
+                                          style={{
+                                            background: "hsl(var(--destructive) / 0.08)",
+                                            color: "hsl(var(--destructive))",
+                                            border: "1px solid hsl(var(--destructive) / 0.2)",
+                                          }}
+                                        >
+                                          {opt?.label ?? needId}
+                                        </span>
+                                      );
+                                    })}
+                                  </div>
+                                </div>
+                              )}
 
                               {/* Full-width: Sensory & Notes */}
                               {member.sensoryNotes && (

@@ -666,7 +666,7 @@ const ResortHub = () => {
                           )}
                         </div>
                         {(r.noShowFee || r.cancelPolicy) && (
-                          <div className="mb-4 px-3 py-2 bg-[hsl(var(--destructive)/0.04)] border border-[hsl(var(--destructive)/0.15)]">
+                          <div className="mb-4 px-3 py-2 rounded-md bg-[hsl(var(--destructive)/0.04)] border border-[hsl(var(--destructive)/0.15)]">
                             <p className="text-[0.4375rem] uppercase tracking-[0.1em] text-destructive mb-1">⚠ Cancellation Policy</p>
                             {r.noShowFee && <p className="font-editorial text-[0.625rem] text-muted-foreground">No-show fee: <strong className="text-foreground">{r.noShowFee}</strong></p>}
                             {r.cancelPolicy && <p className="font-editorial text-[0.625rem] text-muted-foreground">{r.cancelPolicy}</p>}

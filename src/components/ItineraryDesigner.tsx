@@ -832,7 +832,10 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
               const totalBlock = checkin + wait + dur + travelMin;
 
               return (
-                <div key={item.id} className="absolute left-[60px] right-2" style={{ top: `${topPx}px` }}>
+                <div key={item.id} className="absolute left-[60px] right-2" style={{ top: `${topPx}px`, zIndex: isDragging ? 50 : 10 }}
+                  onDragOver={(e) => { e.preventDefault(); e.stopPropagation(); handleTimelineDragOver(e); }}
+                  onDrop={(e) => { e.stopPropagation(); handleTimelineDrop(e); }}
+                >
                   {/* ── Activity block ───────────────────────────── */}
                   <div
                     draggable={!isLocked && !isBooked}

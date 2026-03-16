@@ -156,9 +156,9 @@ const ResortHub = () => {
           <div className="mt-6 flex gap-2">
             {["wdw", "dlr"].map(rid => (
               <Link key={rid} to={`/resort/${rid}`}
-                className={`px-4 py-2 text-[0.5625rem] uppercase tracking-[0.12em] border transition-all ${
-                  resortId === rid ? "bg-background text-foreground border-background" : "text-background/40 border-background/20 hover:text-background/70 hover:border-background/40"
-                }`}>
+                className={`px-4 py-2 rounded-md text-[0.5625rem] uppercase tracking-[0.12em] border transition-all ${
+160:                   resortId === rid ? "bg-background text-foreground border-background" : "text-background/40 border-background/20 hover:text-background/70 hover:border-background/40"
+161:                 }`}>
                 {rid === "wdw" ? "Walt Disney World" : "Disneyland Resort"}
               </Link>
             ))}

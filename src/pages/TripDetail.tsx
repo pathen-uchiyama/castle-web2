@@ -848,7 +848,7 @@ const BookedTripDetail = ({ trip }: { trip: BookedTrip }) => {
                   </p>
                   <div className="space-y-3 opacity-50">
                     {allDiningReservations.filter(d => d.status === "cancelled").map((res) => (
-                      <div key={res.reservationId} className="border border-border bg-card p-4 line-through">
+                      <div key={res.reservationId} className="border border-border bg-card rounded-lg p-4 line-through">
                         <div className="flex items-center gap-2">
                           <span className="text-lg">{mealIcons[res.mealType]}</span>
                           <span className="font-display text-foreground">{res.restaurantName}</span>

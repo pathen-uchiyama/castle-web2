@@ -4,6 +4,7 @@ import { ChevronDown, Plus, X, Search, Star, Lock, Unlock, Sparkles, AlertTriang
 import type { BookedTrip, PartyMember, DiningReservation, BookedExperience } from "@/data/types";
 import {
   allParkAttractions, parkLabels, typeLabels, llLabels, waitLabels,
+  crowdImpactLabels, attractionStatusLabels,
   type ParkAttraction, type AttractionType, type ItineraryItem,
 } from "@/data/attractionData";
 import {

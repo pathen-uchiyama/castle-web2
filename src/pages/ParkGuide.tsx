@@ -260,7 +260,7 @@ const ParkGuidePage = ({ parkGuides }: ParkGuidePageProps) => {
                 </div>
               </div>
               {/* Hours */}
-              <div className="border border-border bg-card p-5 shadow-[var(--shadow-soft)] sm:col-span-2">
+              <div className="border border-border bg-card rounded-lg p-5 shadow-[var(--shadow-soft)] sm:col-span-2">
                 <HoursDisplay hours={displayHours} label={selectedDate ? format(selectedDate, "MMM d") + " Hours" : "Operating Hours"} />
               </div>
             </motion.div>

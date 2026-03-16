@@ -805,7 +805,7 @@ const BookedTripDetail = ({ trip }: { trip: BookedTrip }) => {
                   </p>
                   <div className="space-y-3">
                     {allDiningReservations.filter(d => d.status === "pending").map((res) => (
-                      <div key={res.reservationId} className="border border-dashed border-border bg-card p-4 transition-shadow duration-500 hover:shadow-[var(--shadow-hover)]">
+                      <div key={res.reservationId} className="border border-dashed border-border bg-card rounded-lg p-4 transition-shadow duration-500 hover:shadow-[var(--shadow-hover)]">
                         <div className="flex items-start justify-between mb-2">
                           <div className="flex items-center gap-2">
                             <span className="text-lg">{mealIcons[res.mealType]}</span>

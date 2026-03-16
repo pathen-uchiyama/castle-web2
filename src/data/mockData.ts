@@ -605,6 +605,7 @@ export const mockData: AppData = {
       favoriteCharacter: "Goofy", favoriteRide: "Rise of the Resistance",
       thrillTolerance: "high", magicStatus: ["Annual Passholder", "DVC Member"],
       notes: "Prefers rope drop strategy. Comfortable with all thrill rides.",
+      lastUpdated: "2026-01-10",
     },
     {
       memberId: "S", name: "Sarah", role: "Co-planner", initial: "S", adventureCount: 12,
@@ -613,6 +614,7 @@ export const mockData: AppData = {
       thrillTolerance: "moderate", magicStatus: ["Annual Passholder", "DVC Member"],
       sensoryNotes: "Sensitive to loud sudden noises (Tower of Terror drop sirens).",
       notes: "Loves character dining. Needs shade breaks in summer.",
+      lastUpdated: "2026-02-20",
     },
     {
       memberId: "E", name: "Emma", role: "Little Explorer", initial: "E", adventureCount: 8,
@@ -621,6 +623,7 @@ export const mockData: AppData = {
       thrillTolerance: "moderate", magicStatus: [],
       sensoryNotes: "Can handle dark rides but not big drops.",
       notes: "Loves princess meet-and-greets. Tall enough for most rides.",
+      lastUpdated: "2025-08-15",
     },
     {
       memberId: "J", name: "Jack", role: "Snack Scout", initial: "J", adventureCount: 8,
@@ -629,6 +632,7 @@ export const mockData: AppData = {
       thrillTolerance: "low", magicStatus: [],
       sensoryNotes: "Does not like dark enclosed spaces. Scared by loud effects.",
       notes: "Height limit may restrict some rides. Loves snack stands.",
+      lastUpdated: "2025-06-01",
     },
   ],
 

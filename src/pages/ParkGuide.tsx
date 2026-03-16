@@ -413,7 +413,7 @@ const ParkGuidePage = ({ parkGuides }: ParkGuidePageProps) => {
               <p className="font-display text-2xl text-foreground mb-2">{park.todayWeather}</p>
               <p className="font-editorial text-xs text-muted-foreground">Updated every 30 minutes</p>
             </div>
-            <div className="border border-border bg-card p-6 shadow-[var(--shadow-soft)]">
+            <div className="border border-border bg-card rounded-lg p-6 shadow-[var(--shadow-soft)]">
               <HoursDisplay hours={park.operatingHours} label="Park Hours" />
             </div>
           </motion.div>

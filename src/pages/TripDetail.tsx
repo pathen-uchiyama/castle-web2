@@ -820,7 +820,7 @@ const BookedTripDetail = ({ trip }: { trip: BookedTrip }) => {
                         </div>
                         {res.notes && <p className="font-editorial text-xs text-muted-foreground/60 italic mt-2">{res.notes}</p>}
                         {overlapMap[res.reservationId] && (
-                          <div className="mt-2 flex items-start gap-2 px-2 py-1.5 bg-[hsl(var(--destructive)/0.04)] border border-[hsl(var(--destructive)/0.15)]">
+                           <div className="mt-2 flex items-start gap-2 px-2 py-1.5 rounded-md bg-[hsl(var(--destructive)/0.04)] border border-[hsl(var(--destructive)/0.15)]">
                             <span className="text-xs shrink-0">⚠️</span>
                             <p className="font-editorial text-[0.625rem] text-muted-foreground">
                               Overlaps with <strong className="text-foreground">{overlapMap[res.reservationId].map(o => o.name).join(", ")}</strong>. Cancel at least <strong className="text-foreground">2 hrs before</strong> to avoid a <strong className="text-foreground">$10/person</strong> no-show fee.

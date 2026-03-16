@@ -1,8 +1,8 @@
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { useState, useMemo } from "react";
 import { Link, useParams } from "react-router-dom";
-import { format, parseISO } from "date-fns";
-import { CalendarIcon } from "lucide-react";
+import { format, parseISO, addDays, startOfMonth, endOfMonth, eachDayOfInterval, getDay } from "date-fns";
+import { CalendarIcon, Lock, Crown, ChevronLeft, ChevronRight } from "lucide-react";
 import Footer from "@/components/Footer";
 import SectionNav from "@/components/SectionNav";
 import { Calendar } from "@/components/ui/calendar";

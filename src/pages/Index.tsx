@@ -354,7 +354,7 @@ const Index = ({
                       </div>
                       <div className="flex gap-3 flex-wrap">
                         {park.categories.slice(0, 3).map((c) => (
-                          <span key={c.label} className="label-text !text-white/40 text-[0.6rem]">{c.label} · {c.itemCount}</span>
+                          <span key={c.label} className="label-text !text-white/50 text-[0.6rem]">{c.label} · {c.itemCount}</span>
                         ))}
                       </div>
                     </div>

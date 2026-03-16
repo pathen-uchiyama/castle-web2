@@ -651,7 +651,7 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
                     </div>
 
                     {/* Computed time span */}
-                    <div className="mt-1 flex items-center gap-1 text-[0.4375rem] text-[hsl(var(--ink-light))]" style={{ letterSpacing: "-0.02em" }}>
+                    <div className="mt-1.5 flex items-center gap-1.5 text-[0.625rem] text-[hsl(var(--ink-light))]" style={{ letterSpacing: "-0.02em" }}>
                       <Clock className="w-2.5 h-2.5" />
                       <span className="font-medium text-[hsl(var(--ink))]">{formatMin(startMin)}</span>
                       <span>→</span>

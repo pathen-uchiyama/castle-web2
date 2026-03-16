@@ -33,7 +33,7 @@ const SovereignBridge = ({ creditsRemaining, totalCredits }: SovereignBridgeProp
             className="text-muted-foreground mb-4 uppercase tracking-[0.2em]"
             style={{ fontFamily: "Inter, system-ui, sans-serif", fontSize: "0.5625rem" }}
           >
-            {totalCredits} of {totalCredits} Signature Restorations Used
+            Free Tier · {totalCredits} of {totalCredits} Restorations Used
           </p>
 
           <h3 className="font-display text-3xl sm:text-4xl text-foreground leading-[1.12] mb-3">
@@ -41,11 +41,41 @@ const SovereignBridge = ({ creditsRemaining, totalCredits }: SovereignBridgeProp
           </h3>
 
           <p
-            className="text-muted-foreground max-w-sm mx-auto mb-8"
+            className="text-muted-foreground max-w-sm mx-auto mb-6"
             style={{ fontFamily: "Inter, system-ui, sans-serif", fontSize: "0.8125rem", letterSpacing: "-0.02em", lineHeight: 1.7 }}
           >
-            Unlock unlimited restorations, priority processing, and permanent archival storage for every memory your family creates.
+            Free accounts include {totalCredits} complimentary memory restorations to experience the Vault. You've used all of yours.
           </p>
+
+          {/* What's included */}
+          <div
+            className="border border-border bg-[#FAFAF7] p-5 mb-8 max-w-xs mx-auto text-left"
+          >
+            <p
+              className="text-foreground mb-3 uppercase tracking-[0.15em]"
+              style={{ fontFamily: "Inter, system-ui, sans-serif", fontSize: "0.5625rem", fontWeight: 500 }}
+            >
+              Included with Sovereign
+            </p>
+            <ul className="space-y-2">
+              {[
+                "Unlimited memory restorations",
+                "Priority processing & archival storage",
+                "Full Audio Echoes library",
+                "Joy Report & AI-curated highlights",
+                "Secure sharing via Guest Viewer links",
+              ].map((item) => (
+                <li
+                  key={item}
+                  className="flex items-start gap-2 text-muted-foreground"
+                  style={{ fontFamily: "Inter, system-ui, sans-serif", fontSize: "0.6875rem", letterSpacing: "-0.02em", lineHeight: 1.5 }}
+                >
+                  <span className="shrink-0 mt-0.5" style={{ color: "#947120" }}>✦</span>
+                  {item}
+                </li>
+              ))}
+            </ul>
+          </div>
 
           {/* CTA — Deep Obsidian (#1A1A1B) with Gold text, min 44px height */}
           <motion.button

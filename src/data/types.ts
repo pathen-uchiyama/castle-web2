@@ -236,7 +236,7 @@ export interface AccountProfile {
   preferences: Preference[];
 }
 
-export type AttractionCategory = "ride" | "show" | "character" | "dining";
+export type AttractionCategory = "ride" | "show" | "character" | "dining" | "parade" | "experience";
 
 export interface SurveyAttraction {
   attractionId: string;

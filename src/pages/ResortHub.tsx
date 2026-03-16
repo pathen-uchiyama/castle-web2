@@ -203,7 +203,7 @@ const ResortHub = () => {
               <p className="font-editorial text-sm text-muted-foreground mb-6 max-w-2xl">{resort.weatherSummary}</p>
               <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
                 {resort.weatherByMonth.map(w => (
-                  <div key={w.month} className="border border-border bg-card p-4 shadow-[var(--shadow-soft)]">
+                  <div key={w.month} className="border border-border bg-card rounded-lg p-4 shadow-[var(--shadow-soft)]">
                     <p className="font-display text-sm text-foreground mb-1">{w.month}</p>
                     <div className="flex items-baseline gap-1 mb-1">
                       <span className="font-display text-xl text-foreground">{w.avgHigh}°</span>

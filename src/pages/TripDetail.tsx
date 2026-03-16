@@ -264,7 +264,7 @@ const AlertModal = ({ venueName, opensDate, onClose, onSetAlert }: AlertModalPro
           </div>
         </div>
         <div className="p-6 border-t border-border">
-          <button onClick={() => onSetAlert(alertNote)} className="w-full px-6 py-3 text-[0.625rem] tracking-[0.15em] uppercase font-medium bg-[hsl(var(--gold))] text-background transition-opacity duration-300 hover:opacity-90">
+          <button onClick={() => onSetAlert(alertNote)} className="w-full px-6 py-3 rounded-lg text-[0.625rem] tracking-[0.15em] uppercase font-medium bg-[hsl(var(--gold))] text-background transition-opacity duration-300 hover:opacity-90">
             Set Alert
           </button>
         </div>

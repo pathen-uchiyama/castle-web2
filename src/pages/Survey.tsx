@@ -171,6 +171,30 @@ const Survey = () => {
             transition={{ duration: 0.5, ease }}
             className="px-8 lg:px-16 pb-16"
           >
+            {/* Category filter tabs */}
+            <div className="flex flex-wrap gap-2 mb-10 pb-6 border-b border-border">
+              {availableCategories.map((cat) => {
+                const count = cat === "all" ? attractions.length : attractions.filter((a) => a.category === cat).length;
+                const isActive = categoryFilter === cat;
+                return (
+                  <button
+                    key={cat}
+                    onClick={() => setCategoryFilter(cat)}
+                    className="px-4 py-2 rounded-lg text-xs tracking-[0.1em] uppercase font-medium transition-all duration-300 flex items-center gap-2"
+                    style={{
+                      background: isActive ? "hsl(var(--foreground))" : "transparent",
+                      color: isActive ? "hsl(var(--background))" : "hsl(var(--muted-foreground))",
+                      border: `1px solid ${isActive ? "hsl(var(--foreground))" : "hsl(var(--border))"}`,
+                    }}
+                  >
+                    {cat !== "all" && <span>{categoryIcons[cat]}</span>}
+                    {categoryLabels[cat] ?? cat}
+                    <span className="opacity-60">({count})</span>
+                  </button>
+                );
+              })}
+            </div>
+
             {Object.entries(parkGroups).map(([parkName, parkAttractions]) => (
               <div key={parkName} className="mb-16">
                 <h2 className="font-display text-2xl text-foreground mb-8">{parkName}</h2>

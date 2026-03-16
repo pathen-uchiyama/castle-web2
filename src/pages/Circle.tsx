@@ -1,5 +1,7 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { useState } from "react";
+import { toast } from "sonner";
+import { Pencil, RefreshCw } from "lucide-react";
 import Footer from "@/components/Footer";
 import SectionNav from "@/components/SectionNav";
 import SparkleField from "@/components/SparkleField";
@@ -78,6 +80,21 @@ const Circle = ({ partyMembers }: CircleProps) => {
     );
   };
 
+  const handleMarkRefreshed = (memberId: string) => {
+    setMembers((prev) =>
+      prev.map((m) => (m.memberId === memberId ? { ...m, lastUpdated: new Date().toISOString().split("T")[0] } : m))
+    );
+    toast.success("Profile marked as up to date.");
+  };
+
+  const getFreshness = (lastUpdated?: string) => {
+    if (!lastUpdated) return { label: "Never updated", color: "hsl(var(--destructive))", stale: true, days: Infinity };
+    const days = Math.floor((Date.now() - new Date(lastUpdated).getTime()) / 86400000);
+    if (days <= 30) return { label: `Updated ${days}d ago`, color: "hsl(var(--gold))", stale: false, days };
+    if (days <= 90) return { label: `Updated ${days}d ago`, color: "hsl(var(--muted-foreground))", stale: false, days };
+    return { label: `${days}d since update`, color: "hsl(var(--destructive))", stale: true, days };
+  };
+
   return (
     <div className="min-h-screen bg-background pt-16">
       {/* Hero */}
@@ -121,22 +138,25 @@ const Circle = ({ partyMembers }: CircleProps) => {
             {members.map((member, i) => {
               const isExpanded = expandedMember === member.memberId;
               const isEditing = editingMember === member.memberId;
+              const freshness = getFreshness(member.lastUpdated);
 
               return (
                 <motion.div
                   key={member.memberId}
                   {...slideRight(i * 0.1)}
-                  className="border border-border bg-card rounded-lg shadow-[var(--shadow-soft)] hover:shadow-[var(--shadow-hover)] transition-shadow duration-500 overflow-hidden"
+                  className={`border bg-card rounded-lg shadow-[var(--shadow-soft)] hover:shadow-[var(--shadow-hover)] transition-all duration-500 overflow-hidden ${
+                    freshness.stale ? "border-destructive/30" : "border-border"
+                  }`}
                 >
                   {/* Header row */}
-                  <button
-                    onClick={() => {
-                      setExpandedMember(isExpanded ? null : member.memberId);
-                      if (isExpanded) setEditingMember(null);
-                    }}
-                    className="w-full p-6 flex items-center justify-between text-left"
-                  >
-                    <div className="flex items-center gap-5">
+                  <div className="w-full p-6 flex items-center justify-between text-left">
+                    <button
+                      onClick={() => {
+                        setExpandedMember(isExpanded ? null : member.memberId);
+                        if (isExpanded) setEditingMember(null);
+                      }}
+                      className="flex items-center gap-5 flex-1 min-w-0"
+                    >
                       <motion.div
                         whileHover={{ scale: 1.1, rotate: 5 }}
                         transition={{ type: "spring", stiffness: 300, damping: 20 }}
@@ -144,12 +164,24 @@ const Circle = ({ partyMembers }: CircleProps) => {
                       >
                         <span className="font-display text-xl text-background">{member.initial}</span>
                       </motion.div>
-                      <div>
+                      <div className="min-w-0">
                         <p className="font-display text-xl text-foreground">{member.name}</p>
-                        <p className="label-text mt-1">{member.role}</p>
+                        <div className="flex items-center gap-3 mt-1">
+                          <p className="label-text">{member.role}</p>
+                          <span className="text-muted-foreground/30">·</span>
+                          <span
+                            className="text-[0.5625rem] uppercase tracking-[0.1em] font-medium flex items-center gap-1"
+                            style={{ color: freshness.color }}
+                          >
+                            {freshness.stale && (
+                              <span className="inline-block w-1.5 h-1.5 rounded-full animate-pulse" style={{ backgroundColor: freshness.color }} />
+                            )}
+                            {freshness.label}
+                          </span>
+                        </div>
                       </div>
-                    </div>
-                    <div className="flex items-center gap-6">
+                    </button>
+                    <div className="flex items-center gap-3 sm:gap-6">
                       <div className="hidden sm:flex gap-6">
                         {member.age && (
                           <div className="text-right">
@@ -168,15 +200,52 @@ const Circle = ({ partyMembers }: CircleProps) => {
                           <p className="font-display text-sm text-foreground">{member.adventureCount}</p>
                         </div>
                       </div>
-                      <motion.span
-                        animate={{ rotate: isExpanded ? 180 : 0 }}
-                        transition={{ duration: 0.3 }}
-                        className="text-muted-foreground text-sm"
+                      {/* Quick action buttons */}
+                      <div className="flex items-center gap-2">
+                        <motion.button
+                          whileHover={{ scale: 1.1 }}
+                          whileTap={{ scale: 0.95 }}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setExpandedMember(member.memberId);
+                            setEditingMember(member.memberId);
+                          }}
+                          className="w-8 h-8 rounded-lg border border-border flex items-center justify-center text-muted-foreground hover:text-foreground hover:border-[hsl(var(--gold))] transition-all duration-300"
+                          title="Edit profile"
+                        >
+                          <Pencil className="w-3.5 h-3.5" />
+                        </motion.button>
+                        {freshness.stale && (
+                          <motion.button
+                            whileHover={{ scale: 1.1, rotate: 180 }}
+                            whileTap={{ scale: 0.95 }}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleMarkRefreshed(member.memberId);
+                            }}
+                            className="w-8 h-8 rounded-lg border border-destructive/30 flex items-center justify-center text-destructive/70 hover:text-destructive hover:border-destructive transition-all duration-300"
+                            title="Mark as refreshed"
+                          >
+                            <RefreshCw className="w-3.5 h-3.5" />
+                          </motion.button>
+                        )}
+                      </div>
+                      <button
+                        onClick={() => {
+                          setExpandedMember(isExpanded ? null : member.memberId);
+                          if (isExpanded) setEditingMember(null);
+                        }}
                       >
-                        ▾
-                      </motion.span>
+                        <motion.span
+                          animate={{ rotate: isExpanded ? 180 : 0 }}
+                          transition={{ duration: 0.3 }}
+                          className="text-muted-foreground text-sm"
+                        >
+                          ▾
+                        </motion.span>
+                      </button>
                     </div>
-                  </button>
+                  </div>
 
                   {/* Expanded Profile */}
                   <AnimatePresence>
@@ -190,10 +259,16 @@ const Circle = ({ partyMembers }: CircleProps) => {
                       >
                         <div className="border-t border-border px-6 py-8">
                           {/* Actions bar */}
-                          <div className="flex gap-4 mb-8">
+                          <div className="flex items-center gap-4 mb-8">
                             <button
-                              onClick={() => setEditingMember(isEditing ? null : member.memberId)}
-                              className="px-5 py-2 text-xs tracking-[0.15em] uppercase font-medium transition-all duration-300"
+                              onClick={() => {
+                                if (isEditing) {
+                                  handleMarkRefreshed(member.memberId);
+                                  setEditingMember(null);
+                                } else {
+                                  setEditingMember(member.memberId);
+                                }
+                              }}
                               style={{
                                 background: isEditing ? "hsl(var(--foreground))" : "transparent",
                                 color: isEditing ? "hsl(var(--background))" : "hsl(var(--foreground))",
@@ -202,6 +277,20 @@ const Circle = ({ partyMembers }: CircleProps) => {
                             >
                               {isEditing ? "Done Editing" : "Edit Profile"}
                             </button>
+                            {!isEditing && freshness.stale && (
+                              <button
+                                onClick={() => handleMarkRefreshed(member.memberId)}
+                                className="px-5 py-2 text-xs tracking-[0.15em] uppercase font-medium rounded-lg border border-destructive/30 text-destructive/70 hover:text-destructive hover:border-destructive transition-all duration-300 flex items-center gap-2"
+                              >
+                                <RefreshCw className="w-3 h-3" />
+                                Confirm Up to Date
+                              </button>
+                            )}
+                            {!isEditing && !freshness.stale && (
+                              <span className="label-text !text-[hsl(var(--gold))] flex items-center gap-1.5">
+                                ✓ Profile is current
+                              </span>
+                            )}
                           </div>
 
                           {isEditing ? (

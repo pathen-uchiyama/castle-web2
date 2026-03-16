@@ -736,7 +736,7 @@ const BookedTripDetail = ({ trip }: { trip: BookedTrip }) => {
                   if (count === 0 && status === "cancelled") return null;
                   const colors = statusColors[status];
                   return (
-                    <div key={status} className="flex items-center gap-2 px-4 py-2 border" style={{ background: colors.bg, borderColor: colors.border }}>
+                     <div key={status} className="flex items-center gap-2 px-4 py-2 rounded-md border" style={{ background: colors.bg, borderColor: colors.border }}>
                       <span className="font-display text-xl" style={{ color: colors.text }}>{count}</span>
                       <span className="text-[0.625rem] uppercase tracking-[0.15em] font-medium" style={{ color: colors.text }}>{status}</span>
                     </div>

@@ -80,6 +80,21 @@ const Circle = ({ partyMembers }: CircleProps) => {
     );
   };
 
+  const handleMarkRefreshed = (memberId: string) => {
+    setMembers((prev) =>
+      prev.map((m) => (m.memberId === memberId ? { ...m, lastUpdated: new Date().toISOString().split("T")[0] } : m))
+    );
+    toast.success("Profile marked as up to date.");
+  };
+
+  const getFreshness = (lastUpdated?: string) => {
+    if (!lastUpdated) return { label: "Never updated", color: "hsl(var(--destructive))", stale: true, days: Infinity };
+    const days = Math.floor((Date.now() - new Date(lastUpdated).getTime()) / 86400000);
+    if (days <= 30) return { label: `Updated ${days}d ago`, color: "hsl(var(--gold))", stale: false, days };
+    if (days <= 90) return { label: `Updated ${days}d ago`, color: "hsl(var(--muted-foreground))", stale: false, days };
+    return { label: `${days}d since update`, color: "hsl(var(--destructive))", stale: true, days };
+  };
+
   return (
     <div className="min-h-screen bg-background pt-16">
       {/* Hero */}

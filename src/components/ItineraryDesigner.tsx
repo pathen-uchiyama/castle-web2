@@ -965,7 +965,7 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
                         className="overflow-hidden"
                       >
                         <div className="px-4 pb-4 border-t border-[hsl(var(--border))]/50 pt-3">
-                          <p className="font-sans text-[0.75rem] text-[hsl(var(--ink))] leading-relaxed mb-3" style={{ letterSpacing: "-0.02em" }}>
+                          <p className="font-sans text-sm text-[hsl(var(--ink))] leading-relaxed mb-3" style={{ letterSpacing: "-0.02em" }}>
                             {attraction.description}
                           </p>
 

@@ -978,6 +978,7 @@ const BookedTripDetail = ({ trip }: { trip: BookedTrip }) => {
           partyMembers={mockData.partyMembers}
           diningReservations={allDiningReservations}
           bookedExperiences={allBookedExperiences}
+          surveyResponses={mockData.partySurvey.responses}
         />
       )}
 

@@ -118,15 +118,15 @@ const ParkGuidePage = ({ parkGuides }: ParkGuidePageProps) => {
   const { isPaid, togglePaid } = useSubscription();
   const [calendarMonth, setCalendarMonth] = useState(new Date());
 
+  const park = parkGuides.find((p) => p.parkId === parkId) || parkGuides[0];
+  const sameParkGuides = parkGuides.filter((p) => p?.resort === park?.resort);
+  const attractions = mockData.partySurvey.attractions.filter((a) => a.parkId === park?.parkId);
+
   // Projected crowd data for the calendar month (paid)
   const projections = useMemo(() => {
     if (!park) return [];
     return generateProjections(calendarMonth, park.schedule);
   }, [calendarMonth, park]);
-
-  const park = parkGuides.find((p) => p.parkId === parkId) || parkGuides[0];
-  const sameParkGuides = parkGuides.filter((p) => p?.resort === park?.resort);
-  const attractions = mockData.partySurvey.attractions.filter((a) => a.parkId === park?.parkId);
 
   // Find schedule for selected date
   const selectedSchedule: ParkDaySchedule | undefined = useMemo(() => {

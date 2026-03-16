@@ -1,5 +1,4 @@
 import { useParams, useNavigate } from "react-router-dom";
-import { useState } from "react";
 import Footer from "@/components/Footer";
 import MemoriesHub from "@/components/memories/MemoriesHub";
 import MemoriesTripDetail from "@/components/memories/MemoriesTripDetail";
@@ -12,14 +11,6 @@ interface MemoriesProps {
 const Memories = ({ tripMemories }: MemoriesProps) => {
   const { tripId } = useParams();
   const navigate = useNavigate();
-  const [captureConsented, setCaptureConsented] = useState(() => {
-    return localStorage.getItem("castle-capture-consent") === "true";
-  });
-
-  const handleConsent = (agreed: boolean) => {
-    setCaptureConsented(agreed);
-    localStorage.setItem("castle-capture-consent", String(agreed));
-  };
 
   const selectedTrip = tripId ? tripMemories.find((m) => m.tripId === tripId) : null;
 
@@ -38,8 +29,6 @@ const Memories = ({ tripMemories }: MemoriesProps) => {
       ) : (
         <MemoriesHub
           tripMemories={tripMemories}
-          captureConsented={captureConsented}
-          onConsent={handleConsent}
           creditsRemaining={creditsRemaining}
           totalCredits={totalCredits}
           onSelectTrip={(id) => navigate(`/memories/${id}`)}

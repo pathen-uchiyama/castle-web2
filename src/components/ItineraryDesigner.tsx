@@ -864,6 +864,11 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
               <p className="font-sans text-xs text-[hsl(var(--ink-light))]" style={{ letterSpacing: "-0.02em" }}>
                 Drag cards into the ribbon to schedule · Top 5 picks float up ✦
               </p>
+              {minimizeWalking && itinerary.length > 0 && itinerary[itinerary.length - 1].zone && (
+                <p className="font-sans text-xs text-[hsl(var(--gold-dark))] mt-1 flex items-center gap-1">
+                  📍 Prioritizing near <strong>{zoneLabel(itinerary[itinerary.length - 1].zone)}</strong>
+                </p>
+              )}
             </div>
           </div>
 

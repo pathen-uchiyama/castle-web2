@@ -452,9 +452,9 @@ const ResortHub = () => {
             <div className="flex gap-2 mb-8 flex-wrap">
               {hotelCategories.map(cat => (
                 <button key={cat} onClick={() => setHotelCategoryFilter(cat)}
-                  className={`px-4 py-2 text-[0.5625rem] uppercase tracking-[0.12em] border transition-all duration-300 ${
-                    hotelCategoryFilter === cat ? "bg-foreground text-background border-foreground" : "text-muted-foreground border-border hover:border-foreground/30"
-                  }`}>
+                   className={`px-4 py-2 rounded-md text-[0.5625rem] uppercase tracking-[0.12em] border transition-all duration-300 ${
+                     hotelCategoryFilter === cat ? "bg-foreground text-background border-foreground" : "text-muted-foreground border-border hover:border-foreground/30"
+                   }`}>
                   {cat === "all" ? "All" : categoryLabels[cat]}
                 </button>
               ))}

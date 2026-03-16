@@ -759,7 +759,7 @@ const ResortHub = () => {
             </motion.div>
 
             {shopping.map(area => (
-              <motion.div key={area.areaId} {...fade(0.05)} className="border border-border bg-card shadow-[var(--shadow-soft)]">
+              <motion.div key={area.areaId} {...fade(0.05)} className="border border-border bg-card rounded-lg shadow-[var(--shadow-soft)]">
                 <div className="p-6 lg:p-8">
                   <h3 className="font-display text-2xl text-foreground mb-2">{area.name}</h3>
                   <p className="font-editorial text-sm text-foreground/80 leading-relaxed mb-6">{area.description}</p>

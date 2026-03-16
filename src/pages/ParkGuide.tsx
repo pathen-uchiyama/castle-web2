@@ -278,7 +278,7 @@ const ParkGuidePage = ({ parkGuides }: ParkGuidePageProps) => {
                       <button
                         key={day.date}
                         onClick={() => setSelectedDate(d)}
-                        className="shrink-0 w-[140px] border border-border bg-card p-4 text-left hover:border-[hsl(var(--gold))] transition-colors duration-300 shadow-[var(--shadow-soft)]"
+                        className="shrink-0 w-[140px] border border-border bg-card rounded-lg p-4 text-left hover:border-[hsl(var(--gold))] transition-colors duration-300 shadow-[var(--shadow-soft)]"
                       >
                         <p className="label-text mb-1">{format(d, "EEE")}</p>
                         <p className="font-display text-sm text-foreground mb-2">{format(d, "MMM d")}</p>

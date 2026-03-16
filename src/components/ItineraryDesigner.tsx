@@ -878,35 +878,35 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
 
                     {/* Quick summary — wait time + LL class prominent */}
                     <div className="flex flex-wrap gap-1.5 items-center">
-                      <span className="text-[0.5rem]">{thrillEmoji[attraction.thrillLevel]}</span>
-                      <span className="px-1.5 py-0.5 text-[0.375rem] uppercase tracking-[0.08em] bg-[hsl(var(--ink))]/5 text-[hsl(var(--ink-light))]" style={{ borderRadius: 0 }}>
+                      <span className="text-sm">{thrillEmoji[attraction.thrillLevel]}</span>
+                      <span className="px-2 py-0.5 text-[0.5625rem] uppercase tracking-[0.08em] bg-[hsl(var(--ink))]/5 text-[hsl(var(--ink-light))]" style={{ borderRadius: 0 }}>
                         {typeLabels[attraction.type]}
                       </span>
                       {/* Prominent wait time */}
-                      <span className="px-1.5 py-0.5 text-[0.375rem] uppercase tracking-[0.08em] bg-[hsl(var(--destructive)/0.08)] text-destructive font-bold" style={{ borderRadius: 0 }}>
+                      <span className="px-2 py-0.5 text-[0.5625rem] uppercase tracking-[0.08em] bg-[hsl(var(--destructive)/0.08)] text-destructive font-bold" style={{ borderRadius: 0 }}>
                         ⏱ {estWait}m wait
                       </span>
                       {/* Prominent LL class */}
                       {attraction.llType && attraction.llType !== "none" && (
-                        <span className="px-1.5 py-0.5 text-[0.375rem] uppercase tracking-[0.08em] bg-[hsl(var(--accent))] text-[hsl(var(--accent-foreground))] border border-[hsl(var(--border))] font-medium" style={{ borderRadius: 0 }}>
+                        <span className="px-2 py-0.5 text-[0.5625rem] uppercase tracking-[0.08em] bg-[hsl(var(--accent))] text-[hsl(var(--accent-foreground))] border border-[hsl(var(--border))] font-medium" style={{ borderRadius: 0 }}>
                           🎟 {llLabels[attraction.llType]}
                         </span>
                       )}
-                      <span className="px-1.5 py-0.5 text-[0.375rem] uppercase tracking-[0.08em] bg-[hsl(var(--ink))]/8 text-[hsl(var(--ink))] font-medium" style={{ borderRadius: 0 }}>
+                      <span className="px-2 py-0.5 text-[0.5625rem] uppercase tracking-[0.08em] bg-[hsl(var(--ink))]/8 text-[hsl(var(--ink))] font-medium" style={{ borderRadius: 0 }}>
                         📅 {totalBlockEst}m block
                       </span>
                     </div>
 
                     {/* Time breakdown bar */}
                     <div className="w-full mt-2 flex items-center gap-2">
-                      <div className="flex-1 flex h-2 overflow-hidden bg-[#F9F7F2]">
+                      <div className="flex-1 flex h-2.5 overflow-hidden bg-[#F9F7F2]">
                         <div className="bg-destructive/25" style={{ width: `${(estWait / totalBlockEst) * 100}%` }} />
                         <div className="bg-[hsl(var(--ink))]/10" style={{ width: `${(rideDur / totalBlockEst) * 100}%` }} />
                       </div>
                       <div className="flex items-center gap-1.5 shrink-0">
-                        <span className="text-[0.375rem] text-destructive font-medium">⏱ {estWait}m</span>
-                        <span className="text-[hsl(var(--ink-light))]/30 text-[0.375rem]">·</span>
-                        <span className="text-[0.375rem] text-[hsl(var(--ink))] font-medium">🎢 {rideDur}m</span>
+                        <span className="text-[0.5625rem] text-destructive font-medium">⏱ {estWait}m</span>
+                        <span className="text-[hsl(var(--ink-light))]/30 text-[0.5625rem]">·</span>
+                        <span className="text-[0.5625rem] text-[hsl(var(--ink))] font-medium">🎢 {rideDur}m</span>
                       </div>
                     </div>
 

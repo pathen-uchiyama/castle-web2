@@ -44,9 +44,6 @@ const ResortHub = () => {
   const resort = wdwResort;
   const [activeTab, setActiveTab] = useState<Tab>("overview");
 
-  const resort = wdwResort;
-  const [activeTab, setActiveTab] = useState<Tab>("overview");
-
   // Hotel filters
   const [hotelCategoryFilter, setHotelCategoryFilter] = useState<HotelCategory | "all">("all");
   const filteredHotels = useMemo(() =>

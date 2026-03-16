@@ -197,6 +197,73 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
     setItinerary(prev => prev.filter(i => i.id !== id));
   };
 
+  /* ── Drag and drop ─────────────────────────────────────────────── */
+  const handleDragStart = useCallback((idx: number) => {
+    if (isLocked) return;
+    setDragIdx(idx);
+  }, [isLocked]);
+
+  const handleDragOver = useCallback((e: React.DragEvent, idx: number) => {
+    e.preventDefault();
+    setDragOverIdx(idx);
+  }, []);
+
+  const handleDrop = useCallback((idx: number) => {
+    if (dragIdx === null || dragIdx === idx) { setDragIdx(null); setDragOverIdx(null); return; }
+    setItinerary(prev => {
+      const updated = [...prev];
+      const [moved] = updated.splice(dragIdx, 1);
+      updated.splice(idx, 0, moved);
+      return updated;
+    });
+    setDragIdx(null);
+    setDragOverIdx(null);
+  }, [dragIdx]);
+
+  const handleDragEnd = useCallback(() => {
+    setDragIdx(null);
+    setDragOverIdx(null);
+  }, []);
+
+  /* ── Time ruler helpers ────────────────────────────────────────── */
+  const timeRulerHours = useMemo(() => {
+    const hours: string[] = [];
+    for (let h = 7; h <= 23; h++) {
+      const ampm = h >= 12 ? "PM" : "AM";
+      const display = h > 12 ? h - 12 : h;
+      hours.push(`${display} ${ampm}`);
+    }
+    return hours;
+  }, []);
+
+  // Convert time string to minutes from midnight
+  const toMinutes = (t: string) => {
+    const m = t.match(/(\d+):(\d+)\s*(AM|PM)/i);
+    if (!m) return -1;
+    let h = parseInt(m[1]);
+    const min = parseInt(m[2]);
+    if (m[3].toUpperCase() === "PM" && h !== 12) h += 12;
+    if (m[3].toUpperCase() === "AM" && h === 12) h = 0;
+    return h * 60 + min;
+  };
+
+  // Build scheduled items map (hour → items)
+  const scheduledByHour = useMemo(() => {
+    const map: Record<number, ItineraryItem[]> = {};
+    itinerary.forEach(item => {
+      if (!item.startTime) return;
+      const mins = toMinutes(item.startTime);
+      if (mins < 0) return;
+      const hour = Math.floor(mins / 60);
+      if (!map[hour]) map[hour] = [];
+      map[hour].push(item);
+    });
+    return map;
+  }, [itinerary]);
+
+  // Unscheduled items (no start time)
+  const unscheduledItems = useMemo(() => itinerary.filter(i => !i.startTime), [itinerary]);
+
   const toggleGroupMember = (id: string) => {
     setGroupMembers(prev => prev.includes(id) ? prev.filter(m => m !== id) : [...prev, id]);
   };

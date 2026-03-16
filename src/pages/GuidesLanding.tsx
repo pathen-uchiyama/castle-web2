@@ -65,42 +65,56 @@ const GuidesLanding = () => (
           <motion.div key={resort.id} {...fade(0.05 + i * 0.08)}>
             <Link
               to={`/resort/${resort.id}`}
-              className="block rounded-lg border border-border bg-card p-8 lg:p-10 shadow-[var(--shadow-soft)] hover:shadow-[var(--shadow-hover)] transition-all duration-500 group hover:-translate-y-1"
+              className="block rounded-lg border border-border bg-card shadow-[var(--shadow-soft)] hover:shadow-[var(--shadow-hover)] transition-all duration-500 group hover:-translate-y-1 overflow-hidden"
             >
-              <div className="flex items-center gap-4 mb-4">
-                <motion.span
-                  className="text-4xl"
-                  whileHover={{ rotate: [0, -10, 10, -5, 0], scale: 1.15 }}
-                  transition={{ duration: 0.5 }}
-                >
-                  {resort.icon}
-                </motion.span>
-                <div>
-                  <h2 className="font-display text-3xl text-foreground group-hover:text-[hsl(var(--gold-dark))] transition-colors duration-500">
-                    {resort.name}
-                  </h2>
-                  <p className="font-editorial text-sm text-muted-foreground">{resort.tagline} · {resort.location}</p>
+              {/* Image */}
+              <div className="relative h-[200px] overflow-hidden">
+                <motion.img
+                  src={resortImages[resort.id]}
+                  alt={resort.name}
+                  className="w-full h-full object-cover"
+                  whileHover={{ scale: 1.05 }}
+                  transition={{ duration: 0.6, ease: [0.19, 1, 0.22, 1] }}
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-card via-transparent to-transparent" />
+              </div>
+
+              <div className="p-8 lg:p-10">
+                <div className="flex items-center gap-4 mb-4">
+                  <motion.span
+                    className="text-4xl"
+                    whileHover={{ rotate: [0, -10, 10, -5, 0], scale: 1.15 }}
+                    transition={{ duration: 0.5 }}
+                  >
+                    {resort.icon}
+                  </motion.span>
+                  <div>
+                    <h2 className="font-display text-3xl text-foreground group-hover:text-[hsl(var(--gold-dark))] transition-colors duration-500">
+                      {resort.name}
+                    </h2>
+                    <p className="font-editorial text-sm text-muted-foreground">{resort.tagline} · {resort.location}</p>
+                  </div>
                 </div>
-              </div>
 
-              <p className="font-editorial text-sm text-foreground/80 leading-relaxed mb-6">{resort.description}</p>
+                <p className="font-editorial text-sm text-foreground/80 leading-relaxed mb-6">{resort.description}</p>
 
-              <div className="flex flex-wrap gap-2 mb-6">
-                {resort.stats.map((stat) => (
-                  <span key={stat} className="px-3 py-1.5 rounded-md text-[0.5625rem] uppercase tracking-[0.1em] border border-border bg-secondary text-muted-foreground">
-                    {stat}
+                <div className="flex flex-wrap gap-2 mb-6">
+                  {resort.stats.map((stat) => (
+                    <span key={stat} className="px-3 py-1.5 rounded-md text-[0.5625rem] uppercase tracking-[0.1em] border border-border bg-secondary text-muted-foreground">
+                      {stat}
+                    </span>
+                  ))}
+                </div>
+
+                <div className="flex items-center gap-6 text-muted-foreground">
+                  <span className="flex items-center gap-1.5 text-[0.625rem]"><TreePine className="w-3 h-3" /> Parks</span>
+                  <span className="flex items-center gap-1.5 text-[0.625rem]"><BedDouble className="w-3 h-3" /> Hotels</span>
+                  <span className="flex items-center gap-1.5 text-[0.625rem]"><Utensils className="w-3 h-3" /> Dining</span>
+                  <span className="flex items-center gap-1.5 text-[0.625rem]"><MapPin className="w-3 h-3" /> Transport</span>
+                  <span className="ml-auto font-display text-xs text-[hsl(var(--gold-dark))] group-hover:translate-x-1 transition-transform duration-300">
+                    Explore →
                   </span>
-                ))}
-              </div>
-
-              <div className="flex items-center gap-6 text-muted-foreground">
-                <span className="flex items-center gap-1.5 text-[0.625rem]"><TreePine className="w-3 h-3" /> Parks</span>
-                <span className="flex items-center gap-1.5 text-[0.625rem]"><BedDouble className="w-3 h-3" /> Hotels</span>
-                <span className="flex items-center gap-1.5 text-[0.625rem]"><Utensils className="w-3 h-3" /> Dining</span>
-                <span className="flex items-center gap-1.5 text-[0.625rem]"><MapPin className="w-3 h-3" /> Transport</span>
-                <span className="ml-auto font-display text-xs text-[hsl(var(--gold-dark))] group-hover:translate-x-1 transition-transform duration-300">
-                  Explore →
-                </span>
+                </div>
               </div>
             </Link>
           </motion.div>

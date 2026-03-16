@@ -452,7 +452,7 @@ const ParkGuidePage = ({ parkGuides }: ParkGuidePageProps) => {
                           key={format(day.date, "yyyy-MM-dd")}
                           whileHover={{ scale: 1.05 }}
                           whileTap={{ scale: 0.97 }}
-                          onClick={() => setSelectedDate(day.date)}
+                          onClick={() => setSelectedDate(day.date instanceof Date ? day.date : new Date(day.date))}
                           className={cn(
                             "relative p-2 rounded-lg text-left transition-all duration-300 min-h-[72px]",
                             isSelected

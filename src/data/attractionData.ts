@@ -533,14 +533,15 @@ export const waitLabels: Record<WaitCategory, string> = {
   "ill-required": "ILL Required",
 };
 
-// Default sample itinerary for Magic Kingdom
+// Default sample itinerary for Magic Kingdom (ribbon model — no startTime)
 export const sampleItinerary: ItineraryItem[] = [
-  { id: "it-1", name: "Rope Drop Arrival", type: "rope-drop", startTime: "07:00 AM", duration: 30, walkTime: 8, notes: "ARRIVE 45 MINS EARLY" },
-  { id: "it-2", attractionId: "mk-space", name: "Space Mountain", type: "ride", startTime: "07:38 AM", duration: 3, waitTime: 10, walkTime: 8, llType: "ll-multi-1", waitCategory: "hard-to-get" },
-  { id: "it-3", attractionId: "mk-sdmt", name: "Seven Dwarfs Mine Train", type: "ride", startTime: "07:59 AM", duration: 3, waitTime: 5, walkTime: 8, llType: "ll-single", waitCategory: "ill-required" },
-  { id: "it-4", name: "Lunch at Be Our Guest", type: "meal", startTime: "08:15 AM", duration: 75, walkTime: 8, isConfirmed: true, notes: "RESERVATION CONFIRMED · ±15M WINDOW" },
-  { id: "it-5", attractionId: "mk-fof", name: "Festival of Fantasy Parade", type: "parade", startTime: "09:38 AM", duration: 12, waitTime: 20, walkTime: 8, notes: "STAKE OUT A SPOT 20 MIN EARLY" },
-  { id: "it-6", name: "Hotel Nap / Pool Time", type: "break", startTime: "10:18 AM", duration: 90, walkTime: 8, notes: "1–2 HRS" },
-  { id: "it-7", attractionId: "mk-haunted", name: "Haunted Mansion", type: "ride", startTime: "11:56 AM", duration: 9, waitTime: 20, walkTime: 7, waitCategory: "walk-on" },
-  { id: "it-8", name: "Happily Ever After", type: "show", startTime: "12:32 PM", duration: 18, waitTime: 30, notes: "DESSERT PARTY" },
+  { id: "it-1", name: "Rope Drop Arrival", type: "rope-drop", duration: 30, zone: "main-street", notes: "ARRIVE 45 MINS EARLY" },
+  { id: "it-2", attractionId: "mk-tron", name: "TRON Lightcycle / Run", type: "ride", duration: 2, waitTime: 60, zone: "tomorrowland", llType: "ll-single", waitCategory: "ill-required" },
+  { id: "it-3", attractionId: "mk-space", name: "Space Mountain", type: "ride", duration: 3, waitTime: 10, zone: "tomorrowland", llType: "ll-multi-1", waitCategory: "hard-to-get" },
+  { id: "it-4", attractionId: "mk-sdmt", name: "Seven Dwarfs Mine Train", type: "ride", duration: 3, waitTime: 5, zone: "fantasyland", llType: "ll-single", waitCategory: "ill-required" },
+  { id: "it-5", name: "Lunch at Be Our Guest", type: "meal", duration: 60, zone: "fantasyland", isConfirmed: true, notes: "RESERVATION CONFIRMED" },
+  { id: "it-6", attractionId: "mk-haunted", name: "Haunted Mansion", type: "ride", duration: 9, waitTime: 20, zone: "liberty-square", waitCategory: "walk-on" },
+  { id: "it-7", name: "Hotel Nap / Pool Time", type: "break", duration: 90, zone: "resort", notes: "Recharge at the resort" },
+  { id: "it-8", attractionId: "mk-btmr", name: "Big Thunder Mountain", type: "ride", duration: 4, waitTime: 15, zone: "frontierland", llType: "ll-multi-1", waitCategory: "walk-on-am" },
+  { id: "it-9", name: "Happily Ever After", type: "show", duration: 18, waitTime: 30, zone: "main-street", notes: "DESSERT PARTY" },
 ];

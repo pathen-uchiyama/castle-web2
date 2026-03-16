@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 import SovereignBridge from "./SovereignBridge";
-import CaptureConsentToggle from "@/components/CaptureConsentToggle";
+
 import type { TripMemory } from "@/data/types";
 
 const ease: [number, number, number, number] = [0.19, 1, 0.22, 1];

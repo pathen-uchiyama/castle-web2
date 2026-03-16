@@ -4,6 +4,7 @@ import { ChevronDown, Plus, X, Search, Star, Lock, Unlock, Sparkles, AlertTriang
 import type { BookedTrip, PartyMember, DiningReservation, BookedExperience } from "@/data/types";
 import {
   allParkAttractions, parkLabels, typeLabels, llLabels, waitLabels,
+  crowdImpactLabels, attractionStatusLabels,
   type ParkAttraction, type AttractionType, type ItineraryItem,
 } from "@/data/attractionData";
 import {
@@ -629,6 +630,35 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
                       )}
                     </div>
 
+                    {/* Attraction status badge */}
+                    {attraction.attractionStatus && attraction.attractionStatus.status !== "operating" && (
+                      <div className={`flex items-center gap-1.5 mt-2 px-2 py-1 ${
+                        attraction.attractionStatus.status === "new" ? "bg-[hsl(var(--destructive)/0.06)] border border-[hsl(var(--destructive)/0.15)]" :
+                        attraction.attractionStatus.status === "recently-opened" ? "bg-[hsl(var(--gold)/0.08)] border border-[hsl(var(--gold)/0.2)]" :
+                        attraction.attractionStatus.status === "closing-permanently" ? "bg-[hsl(var(--destructive)/0.06)] border border-[hsl(var(--destructive)/0.15)]" :
+                        attraction.attractionStatus.status === "refurbishment" ? "bg-muted border border-border" :
+                        "bg-[hsl(var(--gold)/0.06)] border border-[hsl(var(--gold)/0.15)]"
+                      }`}>
+                        <span className="text-[0.5rem]">
+                          {attraction.attractionStatus.status === "new" ? "🆕" :
+                           attraction.attractionStatus.status === "recently-opened" ? "✨" :
+                           attraction.attractionStatus.status === "closing-permanently" ? "⏳" :
+                           attraction.attractionStatus.status === "being-reimagined" ? "🔄" :
+                           attraction.attractionStatus.status === "refurbishment" ? "🔧" : "📅"}
+                        </span>
+                        <span className="font-display text-[0.5rem] text-foreground">{attraction.attractionStatus.label}</span>
+                        {attraction.attractionStatus.crowdImpact && attraction.attractionStatus.crowdImpact !== "none" && (
+                          <span className={`px-1 py-0.5 text-[0.35rem] uppercase tracking-[0.08em] ${
+                            attraction.attractionStatus.crowdImpact === "extreme" ? "bg-[hsl(var(--destructive)/0.1)] text-destructive" :
+                            attraction.attractionStatus.crowdImpact === "high" ? "bg-[hsl(var(--destructive)/0.08)] text-destructive" :
+                            "bg-[hsl(var(--gold)/0.1)] text-[hsl(var(--gold-dark))]"
+                          }`}>
+                            {crowdImpactLabels[attraction.attractionStatus.crowdImpact].label}
+                          </span>
+                        )}
+                      </div>
+                    )}
+
                     {/* Top-5 voters */}
                     {isTopFive && voters && (
                       <div className="flex items-center gap-1 mt-2">
@@ -662,7 +692,28 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
                             <p className="font-editorial text-[0.6875rem] text-foreground italic">{attraction.notableInsight}</p>
                           </div>
 
-                          {/* Stats grid */}
+                          {/* Crowd impact callout */}
+                          {attraction.attractionStatus && attraction.attractionStatus.crowdImpact && attraction.attractionStatus.crowdImpact !== "none" && (
+                            <div className={`flex items-start gap-2 mb-3 px-3 py-2 border ${
+                              attraction.attractionStatus.crowdImpact === "extreme" ? "bg-[hsl(var(--destructive)/0.04)] border-[hsl(var(--destructive)/0.15)]" :
+                              "bg-[hsl(var(--gold)/0.04)] border-[hsl(var(--gold)/0.15)]"
+                            }`}>
+                              <AlertTriangle className={`w-3 h-3 shrink-0 mt-0.5 ${
+                                attraction.attractionStatus.crowdImpact === "extreme" ? "text-destructive" : "text-[hsl(var(--gold-dark))]"
+                              }`} />
+                              <div>
+                                <p className={`font-display text-[0.5625rem] mb-0.5 ${
+                                  attraction.attractionStatus.crowdImpact === "extreme" ? "text-destructive" : "text-[hsl(var(--gold-dark))]"
+                                }`}>
+                                  {crowdImpactLabels[attraction.attractionStatus.crowdImpact].label} — Expect Longer Waits
+                                </p>
+                                {attraction.attractionStatus.note && (
+                                  <p className="font-editorial text-[0.5625rem] text-muted-foreground italic">{attraction.attractionStatus.note}</p>
+                                )}
+                              </div>
+                            </div>
+                          )}
+
                           <div className="grid grid-cols-2 gap-2 mb-3">
                             <div className="flex items-center gap-1.5">
                               <Clock className="w-3 h-3 text-muted-foreground" />

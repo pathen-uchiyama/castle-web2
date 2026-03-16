@@ -5,25 +5,61 @@ export type ThrillLevel = "mild" | "moderate" | "high";
 export type LLType = "ll-multi-1" | "ll-multi-2" | "ll-single" | "standby-only" | "none";
 export type WaitCategory = "walk-on" | "walk-on-am" | "fast-walk-on" | "hard-to-get" | "ill-required";
 
+/** Lifecycle status that affects crowd levels and demand */
+export type AttractionStatus =
+  | "operating"            // Normal operations
+  | "new"                  // Brand new attraction (< 1 year), expect extreme demand
+  | "recently-opened"      // Reopened after refurb or just opened (< 6 months), high demand
+  | "closing-permanently"  // Will close permanently / be replaced — last-chance demand spike
+  | "being-reimagined"     // Currently undergoing major transformation (e.g. Splash → Tiana's)
+  | "refurbishment"        // Temporarily closed for scheduled maintenance
+  | "seasonal";            // Only operates during certain seasons/events
+
+export interface AttractionStatusMeta {
+  status: AttractionStatus;
+  label: string;
+  note?: string;          // e.g. "Opens Summer 2025" or "Final day: Jan 22, 2025"
+  crowdImpact?: "extreme" | "high" | "moderate" | "none";
+}
+
 export interface ParkAttraction {
   id: string;
   name: string;
   parkId: string;
   type: AttractionType;
   rating: number;
-  duration: string; // e.g. "3 MIN"
-  heightRequirement?: string; // e.g. "48 IN" or "ANY"
+  duration: string;
+  heightRequirement?: string;
   thrillLevel: ThrillLevel;
-  environment: string; // e.g. "INDOOR, DARK"
+  environment: string;
   llType: LLType;
   waitCategory: WaitCategory;
   description: string;
   notableInsight: string;
-  rules: string[]; // e.g. ["DAS", "SINGLE RIDER", "CHILD SWITCH"]
-  warnings: string[]; // e.g. ["LOUD NOISES", "STROBES"]
+  rules: string[];
+  warnings: string[];
   isClosed?: boolean;
   tags?: string[];
+  /** Lifecycle status — affects demand and crowd levels */
+  attractionStatus?: AttractionStatusMeta;
 }
+
+export const attractionStatusLabels: Record<AttractionStatus, string> = {
+  "operating": "Operating",
+  "new": "Brand New",
+  "recently-opened": "Recently Opened",
+  "closing-permanently": "Closing Soon",
+  "being-reimagined": "Being Reimagined",
+  "refurbishment": "Refurbishment",
+  "seasonal": "Seasonal",
+};
+
+export const crowdImpactLabels: Record<string, { label: string; color: string }> = {
+  "extreme": { label: "Extreme Demand", color: "destructive" },
+  "high": { label: "High Demand", color: "destructive" },
+  "moderate": { label: "Elevated Crowds", color: "gold-dark" },
+  "none": { label: "Normal", color: "muted-foreground" },
+};
 
 export interface ItineraryItem {
   id: string;
@@ -49,6 +85,7 @@ export const magicKingdomAttractions: ParkAttraction[] = [
     notableInsight: "Intense Launch",
     rules: ["DAS", "EARLY MORNING ACCESS", "SINGLE RIDER", "CHILD SWITCH"],
     warnings: ["LOUD NOISES", "STROBES"],
+    attractionStatus: { status: "recently-opened", label: "Recently Opened", note: "Opened April 2023 — still drawing massive crowds", crowdImpact: "high" },
   },
   {
     id: "mk-space", name: "Space Mountain", parkId: "mk", type: "ride", rating: 4.6,
@@ -99,10 +136,11 @@ export const magicKingdomAttractions: ParkAttraction[] = [
     id: "mk-tianas", name: "Tiana's Bayou Adventure", parkId: "mk", type: "ride", rating: 4.4,
     duration: "9 MIN", heightRequirement: "40 IN", thrillLevel: "moderate", environment: "OUTDOOR/INDOOR",
     llType: "ll-multi-1", waitCategory: "hard-to-get",
-    description: "Log flume celebrating the spirit of New Orleans.",
+    description: "Log flume celebrating the spirit of New Orleans. Reimagined from Splash Mountain.",
     notableInsight: "Gets You Wet",
     rules: ["DAS", "CHILD SWITCH"],
     warnings: [],
+    attractionStatus: { status: "new", label: "Brand New", note: "Opened June 2024 — replaced Splash Mountain. Expect extreme waits.", crowdImpact: "extreme" },
   },
   {
     id: "mk-pirates", name: "Pirates of the Caribbean", parkId: "mk", type: "ride", rating: 4.7,
@@ -149,6 +187,7 @@ export const magicKingdomAttractions: ParkAttraction[] = [
     rules: ["DAS"],
     warnings: [],
     isClosed: true,
+    attractionStatus: { status: "refurbishment", label: "Refurbishment", note: "Closed for track maintenance. Expected return: TBD.", crowdImpact: "none" },
   },
   {
     id: "mk-small-world", name: "It's a Small World", parkId: "mk", type: "ride", rating: 4.0,
@@ -264,6 +303,7 @@ export const epcotAttractions: ParkAttraction[] = [
     notableInsight: "Virtual Queue or ILL",
     rules: ["DAS", "CHILD SWITCH"],
     warnings: ["LOUD NOISES", "STROBES"],
+    attractionStatus: { status: "recently-opened", label: "Recently Opened", note: "Still one of the hardest-to-ride attractions at WDW", crowdImpact: "high" },
   },
   {
     id: "ep-frozen", name: "Frozen Ever After", parkId: "epcot", type: "ride", rating: 4.5,

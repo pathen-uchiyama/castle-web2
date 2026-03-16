@@ -221,7 +221,7 @@ const Survey = () => {
             className="px-8 lg:px-16 pb-16"
           >
             <div className="max-w-lg mx-auto py-12">
-              <motion.div {...fade()} className="border border-border p-10 bg-card text-center">
+              <motion.div {...fade()} className="border border-border rounded-lg p-10 bg-card text-center">
                 <span className="text-5xl mb-6 block">🌊</span>
                 <h2 className="font-display text-3xl text-foreground mb-4">Go With the Flow?</h2>
                 <p className="font-editorial text-muted-foreground mb-8 leading-relaxed">

@@ -203,7 +203,7 @@ const BookingModal = ({ type, venueName, venueLocation, onClose, onBook }: Booki
           </div>
           <div>
             <label className="label-text mb-2 block">Notes (optional)</label>
-            <textarea value={notes} onChange={(e) => setNotes(e.target.value)} placeholder="Special requests, dietary needs..." rows={2} className="w-full border border-border bg-background px-3 py-2 font-editorial text-sm text-foreground focus:outline-none focus:border-[hsl(var(--gold))] transition-colors resize-none" />
+            <textarea value={notes} onChange={(e) => setNotes(e.target.value)} placeholder="Special requests, dietary needs..." rows={2} className="w-full border border-border bg-background rounded-md px-3 py-2 font-editorial text-sm text-foreground focus:outline-none focus:border-[hsl(var(--gold))] transition-colors resize-none" />
           </div>
         </div>
         <div className="p-6 border-t border-border flex gap-3">

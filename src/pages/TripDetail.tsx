@@ -852,46 +852,116 @@ const BookedTripDetail = ({ trip }: { trip: BookedTrip }) => {
 
           {experienceSubTab === "reservations" && (
             <>
-              <motion.div {...fade(0.1)} className="grid grid-cols-2 sm:grid-cols-4 gap-6 mb-16">
-                {[
-                  { label: "Experiences", value: String(allBookedExperiences.length) },
-                  { label: "Confirmed", value: String(allBookedExperiences.filter(e => e.status === "confirmed").length) },
-                  { label: "Pending", value: String(allBookedExperiences.filter(e => e.status === "pending").length) },
-                  { label: "Unique Days", value: String(new Set(allBookedExperiences.map(e => e.date)).size) },
-                ].map((stat) => (
-                  <div key={stat.label} className="border border-border bg-card p-5 shadow-[var(--shadow-soft)]"><p className="label-text mb-2">{stat.label}</p><p className="font-display text-3xl text-foreground">{stat.value}</p></div>
-                ))}
-              </motion.div>
-              <div className="space-y-12">
-                {Object.entries(allBookedExperiences.reduce<Record<string, typeof bookedExperiences>>((acc, exp) => { if (!acc[exp.date]) acc[exp.date] = []; acc[exp.date].push(exp); return acc; }, {})).map(([date, experiences], groupIdx) => (
-                  <motion.div key={date} {...fade(0.15 + groupIdx * 0.05)}>
-                    <p className="label-text mb-4 tracking-[0.25em]">{date}</p>
-                    <div className="space-y-4">
-                      {experiences.map((exp) => {
-                        const colors = statusColors[exp.status];
-                        return (
-                          <div key={exp.experienceId} className="border border-border bg-card shadow-[var(--shadow-soft)] hover:shadow-[var(--shadow-hover)] transition-shadow duration-500 overflow-hidden">
-                            <div className="p-6">
-                              <div className="flex items-start justify-between mb-4">
-                                <div className="flex items-center gap-3"><span className="text-2xl">{experienceIcons[exp.category]}</span><div><h3 className="font-display text-xl text-foreground">{exp.experienceName}</h3><p className="font-editorial text-sm text-muted-foreground">{exp.parkOrResort} · {experienceLabels[exp.category]}</p></div></div>
-                                <span className="px-3 py-1 text-[0.625rem] uppercase tracking-[0.15em] font-medium border" style={{ background: colors.bg, color: colors.text, borderColor: colors.border }}>{exp.status}</span>
-                              </div>
-                              <div className="flex flex-wrap gap-6 mb-4">
-                                <div><p className="label-text mb-1">Time</p><p className="font-display text-lg text-foreground">{exp.time}</p></div>
-                                {exp.duration && <div><p className="label-text mb-1">Duration</p><p className="font-display text-lg text-foreground">{exp.duration}</p></div>}
-                                <div><p className="label-text mb-1">Party</p><p className="font-display text-lg text-foreground">{exp.partySize}</p></div>
-                                <div><p className="label-text mb-1">Confirmation</p><p className="font-editorial text-sm text-foreground tracking-wide">{exp.confirmationNumber}</p></div>
-                              </div>
-                              {exp.notes && <p className="font-editorial text-sm text-muted-foreground italic">{exp.notes}</p>}
-                            </div>
-                          </div>
-                        );
-                      })}
+              {/* Status summary bar */}
+              <motion.div {...fade(0.05)} className="flex gap-3 mb-10">
+                {(["confirmed", "pending", "cancelled"] as const).map((status) => {
+                  const count = allBookedExperiences.filter(e => e.status === status).length;
+                  if (count === 0 && status === "cancelled") return null;
+                  const colors = statusColors[status];
+                  return (
+                    <div key={status} className="flex items-center gap-2 px-4 py-2 border" style={{ background: colors.bg, borderColor: colors.border }}>
+                      <span className="font-display text-xl" style={{ color: colors.text }}>{count}</span>
+                      <span className="text-[0.625rem] uppercase tracking-[0.15em] font-medium" style={{ color: colors.text }}>{status}</span>
                     </div>
-                  </motion.div>
-                ))}
+                  );
+                })}
+                <div className="flex items-center gap-2 px-4 py-2 border border-border bg-card ml-auto">
+                  <span className="label-text">Days</span>
+                  <span className="font-display text-xl text-foreground">{new Set(allBookedExperiences.map(e => e.date)).size}</span>
+                </div>
+              </motion.div>
+
+              {/* Two-column: Confirmed | Pending */}
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
+                {/* Confirmed column */}
+                <div>
+                  <p className="label-text mb-4 flex items-center gap-2">
+                    <span className="w-2 h-2 rounded-full" style={{ background: statusColors.confirmed.text }} />
+                    Confirmed ({allBookedExperiences.filter(e => e.status === "confirmed").length})
+                  </p>
+                  <div className="space-y-3">
+                    {allBookedExperiences.filter(e => e.status === "confirmed").map((exp) => (
+                      <div key={exp.experienceId} className="border border-[hsl(var(--gold)/0.3)] bg-[hsl(var(--gold)/0.04)] p-4 transition-shadow duration-500 hover:shadow-[var(--shadow-hover)]">
+                        <div className="flex items-start justify-between mb-2">
+                          <div className="flex items-center gap-2">
+                            <span className="text-lg">{experienceIcons[exp.category]}</span>
+                            <h4 className="font-display text-foreground">{exp.experienceName}</h4>
+                          </div>
+                          <span className="px-2 py-0.5 text-[0.5625rem] uppercase tracking-[0.12em] font-medium border" style={{ background: statusColors.confirmed.bg, color: statusColors.confirmed.text, borderColor: statusColors.confirmed.border }}>✓ Confirmed</span>
+                        </div>
+                        <p className="font-editorial text-xs text-muted-foreground mb-2">{exp.parkOrResort} · {experienceLabels[exp.category]}</p>
+                        <div className="flex flex-wrap gap-4 text-xs">
+                          <span className="font-editorial text-foreground">{exp.date} · {exp.time}</span>
+                          {exp.duration && <span className="font-editorial text-muted-foreground">⏱ {exp.duration}</span>}
+                          <span className="font-editorial text-muted-foreground">Party of {exp.partySize}</span>
+                          <span className="font-editorial text-muted-foreground/60">#{exp.confirmationNumber}</span>
+                        </div>
+                        {exp.notes && <p className="font-editorial text-xs text-muted-foreground/60 italic mt-2">{exp.notes}</p>}
+                      </div>
+                    ))}
+                    {allBookedExperiences.filter(e => e.status === "confirmed").length === 0 && (
+                      <p className="font-editorial text-sm text-muted-foreground/40 italic py-6 text-center">No confirmed experiences yet.</p>
+                    )}
+                  </div>
+                </div>
+
+                {/* Pending column */}
+                <div>
+                  <p className="label-text mb-4 flex items-center gap-2">
+                    <span className="w-2 h-2 rounded-full bg-muted-foreground" />
+                    Pending ({allBookedExperiences.filter(e => e.status === "pending").length})
+                  </p>
+                  <div className="space-y-3">
+                    {allBookedExperiences.filter(e => e.status === "pending").map((exp) => (
+                      <div key={exp.experienceId} className="border border-dashed border-border bg-card p-4 transition-shadow duration-500 hover:shadow-[var(--shadow-hover)]">
+                        <div className="flex items-start justify-between mb-2">
+                          <div className="flex items-center gap-2">
+                            <span className="text-lg">{experienceIcons[exp.category]}</span>
+                            <h4 className="font-display text-foreground">{exp.experienceName}</h4>
+                          </div>
+                          <span className="px-2 py-0.5 text-[0.5625rem] uppercase tracking-[0.12em] font-medium border" style={{ background: statusColors.pending.bg, color: statusColors.pending.text, borderColor: statusColors.pending.border }}>Pending</span>
+                        </div>
+                        <p className="font-editorial text-xs text-muted-foreground mb-2">{exp.parkOrResort} · {experienceLabels[exp.category]}</p>
+                        <div className="flex flex-wrap gap-4 text-xs">
+                          <span className="font-editorial text-foreground">{exp.date} · {exp.time}</span>
+                          {exp.duration && <span className="font-editorial text-muted-foreground">⏱ {exp.duration}</span>}
+                          <span className="font-editorial text-muted-foreground">Party of {exp.partySize}</span>
+                        </div>
+                        {exp.notes && <p className="font-editorial text-xs text-muted-foreground/60 italic mt-2">{exp.notes}</p>}
+                        <div className="mt-3 pt-2 border-t border-border/50">
+                          <p className="font-editorial text-[0.625rem] text-muted-foreground/50 italic">Add confirmation # once booked</p>
+                        </div>
+                      </div>
+                    ))}
+                    {allBookedExperiences.filter(e => e.status === "pending").length === 0 && (
+                      <p className="font-editorial text-sm text-muted-foreground/40 italic py-6 text-center">No pending experiences.</p>
+                    )}
+                  </div>
+                </div>
               </div>
-              <motion.div {...fade(0.3)} className="mt-12 border border-dashed border-border py-12 text-center cursor-pointer hover:border-[hsl(var(--gold)/0.5)] transition-colors duration-500">
+
+              {/* Cancelled (if any) */}
+              {allBookedExperiences.filter(e => e.status === "cancelled").length > 0 && (
+                <motion.div {...fade(0.2)} className="mb-12">
+                  <p className="label-text mb-4 flex items-center gap-2">
+                    <span className="w-2 h-2 rounded-full bg-destructive" />
+                    Cancelled
+                  </p>
+                  <div className="space-y-3 opacity-50">
+                    {allBookedExperiences.filter(e => e.status === "cancelled").map((exp) => (
+                      <div key={exp.experienceId} className="border border-border bg-card p-4 line-through">
+                        <div className="flex items-center gap-2">
+                          <span className="text-lg">{experienceIcons[exp.category]}</span>
+                          <span className="font-display text-foreground">{exp.experienceName}</span>
+                          <span className="font-editorial text-xs text-muted-foreground ml-2">{exp.date} · {exp.time}</span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </motion.div>
+              )}
+
+              <motion.div {...fade(0.3)} className="border border-dashed border-border py-10 text-center cursor-pointer hover:border-[hsl(var(--gold)/0.5)] transition-colors duration-500">
                 <p className="font-display text-xl text-muted-foreground/40 mb-2">+ Add Experience</p>
                 <p className="font-editorial text-sm text-muted-foreground/30">Track a new booked experience for your trip.</p>
               </motion.div>

@@ -303,6 +303,7 @@ export const epcotAttractions: ParkAttraction[] = [
     notableInsight: "Virtual Queue or ILL",
     rules: ["DAS", "CHILD SWITCH"],
     warnings: ["LOUD NOISES", "STROBES"],
+    attractionStatus: { status: "recently-opened", label: "Recently Opened", note: "Still one of the hardest-to-ride attractions at WDW", crowdImpact: "high" },
   },
   {
     id: "ep-frozen", name: "Frozen Ever After", parkId: "epcot", type: "ride", rating: 4.5,

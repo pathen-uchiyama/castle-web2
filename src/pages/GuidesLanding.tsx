@@ -2,6 +2,8 @@ import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { MapPin, TreePine, Utensils, BedDouble } from "lucide-react";
 import Footer from "@/components/Footer";
+import SparkleField from "@/components/SparkleField";
+import headerGuides from "@/assets/header-guides.jpg";
 
 const ease: [number, number, number, number] = [0.19, 1, 0.22, 1];
 const fade = (delay = 0) => ({

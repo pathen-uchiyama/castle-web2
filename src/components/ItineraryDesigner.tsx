@@ -150,6 +150,7 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
 
   const [ropeDrop, setRopeDrop] = useState("7:30 AM");
   const [leavePark, setLeavePark] = useState("10:00 PM");
+  const [hasEarlyEntry, setHasEarlyEntry] = useState(true); // Resort guests get 30 min early entry
 
   /* ── Stroller toggle ───────────────────────────────────────────── */
   const activeMembers = useMemo(
@@ -228,7 +229,8 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
   } | null>(null);
 
   /* ── Computed ribbon ───────────────────────────────────────────── */
-  const ropeDropMin = toMinutes(ropeDrop);
+  const baseRopeDropMin = toMinutes(ropeDrop);
+  const ropeDropMin = hasEarlyEntry ? baseRopeDropMin - 30 : baseRopeDropMin;
   const leaveMin = toMinutes(leavePark);
 
   const ribbon = useMemo(
@@ -705,17 +707,46 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
           {/* Rope Drop / Park Arrival */}
           <div className="flex items-center gap-3 mb-4 p-4 bg-[hsl(var(--gold)/0.06)] border border-[hsl(var(--gold)/0.2)]" style={{ borderRadius: 0 }}>
             <div className="text-center shrink-0 w-16">
-              <span className="font-display text-lg text-[hsl(var(--gold-dark))] font-bold block leading-none">{ropeDrop}</span>
-              <span className="text-[0.5625rem] uppercase tracking-[0.1em] text-[hsl(var(--gold-dark))]/70">Gates Open</span>
+              <span className="font-display text-lg text-[hsl(var(--gold-dark))] font-bold block leading-none">{formatMin(ropeDropMin)}</span>
+              <span className="text-[0.5625rem] uppercase tracking-[0.1em] text-[hsl(var(--gold-dark))]/70">
+                {hasEarlyEntry ? "Early Entry" : "Gates Open"}
+              </span>
             </div>
             <div className="border-l border-[hsl(var(--gold)/0.3)] pl-3 flex-1">
-              <p className="font-display text-sm text-[hsl(var(--ink))]">🏰 Rope Drop · {selectedParks.map(p => parkLabels[p] || p).join(" & ")}</p>
+              <p className="font-display text-sm text-[hsl(var(--ink))]">
+                🏰 {hasEarlyEntry ? "Early Theme Park Entry" : "Rope Drop"} · {selectedParks.map(p => parkLabels[p] || p).join(" & ")}
+              </p>
+              {hasEarlyEntry && (
+                <p className="text-xs text-[hsl(var(--gold-dark))] mt-1 font-medium">
+                  ✨ 30 min head start — ride EARLY MORNING ACCESS attractions with shorter waits
+                </p>
+              )}
               <p className="text-xs text-[hsl(var(--ink-light))] mt-1">
-                🚌 <strong>On-site guests:</strong> Leave resort by <strong>{formatMin(ropeDropMin - 60)}</strong> (Disney transport)
+                🚌 <strong>Leave resort by {formatMin(ropeDropMin - 60)}</strong> (Disney transport)
               </p>
-              <p className="text-xs text-[hsl(var(--ink-light))] mt-0.5">
-                🚗 <strong>Off-site guests:</strong> Arrive at park by <strong>{formatMin(ropeDropMin - 30)}</strong> (30 min before opening)
-              </p>
+              {!hasEarlyEntry && (
+                <p className="text-xs text-[hsl(var(--ink-light))] mt-0.5">
+                  🚗 <strong>Off-site guests:</strong> Arrive at park by <strong>{formatMin(baseRopeDropMin - 30)}</strong>
+                </p>
+              )}
+              {/* Early Entry toggle */}
+              <div className="flex items-center gap-2 mt-2 pt-2 border-t border-[hsl(var(--gold)/0.15)]">
+                <button
+                  onClick={() => setHasEarlyEntry(!hasEarlyEntry)}
+                  className={`w-9 h-[18px] rounded-full flex items-center px-0.5 cursor-pointer transition-colors duration-300 ${
+                    hasEarlyEntry ? "bg-[hsl(var(--gold))]" : "bg-muted"
+                  }`}
+                >
+                  <motion.div
+                    className="w-3.5 h-3.5 rounded-full bg-background shadow"
+                    animate={{ x: hasEarlyEntry ? 16 : 0 }}
+                    transition={{ type: "spring", stiffness: 500, damping: 30 }}
+                  />
+                </button>
+                <span className="text-[0.625rem] uppercase tracking-[0.1em] text-[hsl(var(--ink-light))]">
+                  Early Theme Park Entry (Resort Guest)
+                </span>
+              </div>
             </div>
           </div>
 
@@ -1170,12 +1201,17 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
                       </div>
                     </div>
 
-                    {/* Zone badge */}
-                    {attraction.zone && (
-                      <div className="mt-1.5">
+                    {/* Zone badge + Early Access badge */}
+                    <div className="flex items-center gap-2 mt-1.5 flex-wrap">
+                      {attraction.zone && (
                         <span className="text-[0.5625rem] text-[hsl(var(--ink-light))]/60 uppercase tracking-[0.08em]">📍 {zoneLabel(attraction.zone)}</span>
-                      </div>
-                    )}
+                      )}
+                      {hasEarlyEntry && attraction.rules.includes("EARLY MORNING ACCESS") && (
+                        <span className="px-2 py-0.5 text-[0.5rem] uppercase tracking-[0.08em] bg-[hsl(var(--gold)/0.15)] text-[hsl(var(--gold-dark))] border border-[hsl(var(--gold)/0.3)] font-semibold" style={{ borderRadius: 0 }}>
+                          ✨ Early Access
+                        </span>
+                      )}
+                    </div>
 
                     {/* Scheduled times badge — prominent for timed events */}
                     {attraction.scheduledTimes && attraction.scheduledTimes.length > 0 && (

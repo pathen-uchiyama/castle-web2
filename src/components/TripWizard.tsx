@@ -150,11 +150,9 @@ const wdwParks = [
 ];
 
 const wdwNonParkDays = [
-  { id: "rest", label: "Rest Day", icon: "😴", desc: "Resort pool, spa, or Downtown Disney" },
   { id: "travel-arrive", label: "Arrival Day", icon: "✈️", desc: "Travel + settle in at resort" },
   { id: "travel-depart", label: "Departure Day", icon: "🧳", desc: "Pack up + travel home" },
-  { id: "resort", label: "Resort Day", icon: "🏊", desc: "Pool, dining, mini golf, resort hopping" },
-  { id: "springs", label: "Disney Springs", icon: "🛍", desc: "Shopping, dining, entertainment" },
+  { id: "non-park", label: "Non-Park Day", icon: "🌴", desc: "Resort pool, Disney Springs, rest, or exploring" },
 ];
 
 const dlrParks = [

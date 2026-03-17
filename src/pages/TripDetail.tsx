@@ -226,10 +226,15 @@ interface AlertModalProps {
   opensDate: string;
   onClose: () => void;
   onSetAlert: (note: string) => void;
+  onBookForMe: (preferences: string) => void;
 }
 
-const AlertModal = ({ venueName, opensDate, onClose, onSetAlert }: AlertModalProps) => {
+const AlertModal = ({ venueName, opensDate, onClose, onSetAlert, onBookForMe }: AlertModalProps) => {
   const [alertNote, setAlertNote] = useState("");
+  const [mode, setMode] = useState<"notify" | "concierge">("notify");
+  const [conciergePrefs, setConciergePrefs] = useState("");
+  const [conciergeTime, setConciergeTime] = useState("");
+  const isSovereign = mockData.account.subscription.planName === "Sovereign";
 
   return (
     <motion.div
@@ -240,33 +245,104 @@ const AlertModal = ({ venueName, opensDate, onClose, onSetAlert }: AlertModalPro
       <motion.div
         initial={{ opacity: 0, y: 20, scale: 0.97 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: 20, scale: 0.97 }}
         transition={{ duration: 0.3 }}
-        className="w-full max-w-sm bg-card border border-border rounded-lg shadow-lg"
+        className="w-full max-w-md bg-card border border-border rounded-lg shadow-lg"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="p-6 border-b border-border">
           <div className="flex items-center justify-between">
             <div>
-              <p className="label-text mb-1">🔔 Set Booking Alert</p>
+              <p className="label-text mb-1">🔔 Booking Window</p>
               <h3 className="font-display text-lg text-foreground">{venueName}</h3>
             </div>
             <button onClick={onClose} className="text-muted-foreground hover:text-foreground transition-colors">✕</button>
           </div>
         </div>
+
+        {/* Mode selector */}
+        <div className="flex border-b border-border">
+          <button
+            onClick={() => setMode("notify")}
+            className={`flex-1 py-3 text-[0.625rem] uppercase tracking-[0.15em] font-medium transition-colors ${
+              mode === "notify" ? "text-foreground border-b-2 border-[hsl(var(--gold))]" : "text-muted-foreground"
+            }`}
+          >
+            🔔 Notify Me
+          </button>
+          <button
+            onClick={() => setMode("concierge")}
+            className={`flex-1 py-3 text-[0.625rem] uppercase tracking-[0.15em] font-medium transition-colors ${
+              mode === "concierge" ? "text-foreground border-b-2 border-[hsl(var(--gold))]" : "text-muted-foreground"
+            }`}
+          >
+            ✨ Book For Me
+          </button>
+        </div>
+
         <div className="p-6 space-y-4">
           <div className="border border-[hsl(var(--gold)/0.3)] bg-[hsl(var(--gold)/0.04)] rounded-lg p-4">
             <p className="font-editorial text-sm text-foreground mb-1">Booking window opens:</p>
             <p className="font-display text-xl text-foreground">{opensDate || "TBD"}</p>
-            <p className="font-editorial text-xs text-muted-foreground mt-2">We'll remind you to book at 6 AM ET on this date.</p>
           </div>
-          <div>
-            <label className="label-text mb-2 block">Reminder Note (optional)</label>
-            <input type="text" value={alertNote} onChange={(e) => setAlertNote(e.target.value)} placeholder="e.g., Request West Wing" className="w-full border border-border bg-background rounded-md px-3 py-2 font-editorial text-sm text-foreground focus:outline-none focus:border-[hsl(var(--gold))] transition-colors" />
-          </div>
+
+          {mode === "notify" ? (
+            <>
+              <p className="font-editorial text-xs text-muted-foreground">
+                We'll send you a reminder at <strong className="text-foreground">6 AM ET</strong> on your booking window day so you're ready to grab your spot.
+              </p>
+              <div>
+                <label className="label-text mb-2 block">Reminder Note (optional)</label>
+                <input type="text" value={alertNote} onChange={(e) => setAlertNote(e.target.value)} placeholder="e.g., Request West Wing" className="w-full border border-border bg-background rounded-md px-3 py-2 font-editorial text-sm text-foreground focus:outline-none focus:border-[hsl(var(--gold))] transition-colors" />
+              </div>
+            </>
+          ) : isSovereign ? (
+            <>
+              <p className="font-editorial text-xs text-muted-foreground">
+                Our concierge will book this for you the moment the window opens. Tell us your preferred times and any special requests.
+              </p>
+              <div>
+                <label className="label-text mb-2 block">Preferred Time(s)</label>
+                <input type="text" value={conciergeTime} onChange={(e) => setConciergeTime(e.target.value)} placeholder="e.g., 6:30 PM or anytime after 5 PM" className="w-full border border-border bg-background rounded-md px-3 py-2 font-editorial text-sm text-foreground focus:outline-none focus:border-[hsl(var(--gold))] transition-colors" />
+              </div>
+              <div>
+                <label className="label-text mb-2 block">Special Requests (optional)</label>
+                <input type="text" value={conciergePrefs} onChange={(e) => setConciergePrefs(e.target.value)} placeholder="e.g., Window table, allergy-safe menu" className="w-full border border-border bg-background rounded-md px-3 py-2 font-editorial text-sm text-foreground focus:outline-none focus:border-[hsl(var(--gold))] transition-colors" />
+              </div>
+              <div className="flex items-center gap-2 p-3 bg-[hsl(var(--gold)/0.06)] border border-[hsl(var(--gold)/0.2)] rounded-lg">
+                <span className="text-sm">👑</span>
+                <p className="font-editorial text-xs text-[hsl(var(--gold-dark))]">
+                  <strong>Sovereign Concierge</strong> — We'll book at 6 AM ET on your window day and confirm via notification.
+                </p>
+              </div>
+            </>
+          ) : (
+            <>
+              <div className="p-4 bg-[hsl(var(--gold)/0.04)] border border-[hsl(var(--gold)/0.2)] rounded-lg text-center space-y-3">
+                <p className="font-display text-base text-foreground">✨ Book For Me</p>
+                <p className="font-editorial text-sm text-muted-foreground leading-relaxed">
+                  Sovereign members get concierge booking — we'll secure your reservations the moment windows open. Pick your times and dates, and we handle the rest.
+                </p>
+                <p className="font-display text-lg text-[hsl(var(--gold-dark))]">$29.95/year</p>
+                <button className="px-6 py-2.5 text-[0.625rem] tracking-[0.15em] uppercase font-medium bg-[hsl(var(--gold))] text-background transition-opacity duration-300 hover:opacity-90 rounded-md">
+                  Upgrade to Sovereign
+                </button>
+              </div>
+              <p className="font-editorial text-xs text-muted-foreground text-center">
+                Or use the <strong>"Notify Me"</strong> tab for a free reminder instead.
+              </p>
+            </>
+          )}
         </div>
+
         <div className="p-6 border-t border-border">
-          <button onClick={() => onSetAlert(alertNote)} className="w-full px-6 py-3 rounded-lg text-[0.625rem] tracking-[0.15em] uppercase font-medium bg-[hsl(var(--gold))] text-background transition-opacity duration-300 hover:opacity-90">
-            Set Alert
-          </button>
+          {mode === "notify" ? (
+            <button onClick={() => onSetAlert(alertNote)} className="w-full px-6 py-3 rounded-lg text-[0.625rem] tracking-[0.15em] uppercase font-medium bg-[hsl(var(--gold))] text-background transition-opacity duration-300 hover:opacity-90">
+              Set Reminder
+            </button>
+          ) : isSovereign ? (
+            <button onClick={() => onBookForMe(`Time: ${conciergeTime || "Flexible"}${conciergePrefs ? ` · ${conciergePrefs}` : ""}`)} className="w-full px-6 py-3 rounded-lg text-[0.625rem] tracking-[0.15em] uppercase font-medium bg-[hsl(var(--gold))] text-background transition-opacity duration-300 hover:opacity-90">
+              Submit Concierge Request
+            </button>
+          ) : null}
         </div>
       </motion.div>
     </motion.div>
@@ -281,6 +357,7 @@ interface BookingAlert {
   type: "dining" | "experience";
   opensDate: string;
   note: string;
+  isConcierge?: boolean;
 }
 
 const BookedTripDetail = ({ trip }: { trip: BookedTrip }) => {
@@ -650,11 +727,36 @@ const BookedTripDetail = ({ trip }: { trip: BookedTrip }) => {
 
           {diningSubTab === "discover" && (
             <>
-              <motion.div {...fade(0.05)} className="mb-10 border border-[hsl(var(--gold)/0.3)] bg-[hsl(var(--gold)/0.04)] p-4 flex items-center gap-3">
-                <span className="text-lg">⏰</span>
-                <p className="font-editorial text-sm text-muted-foreground">
-                  <span className="text-foreground font-medium">Booking windows open 60 days before arrival</span> for most table-service restaurants. Set your alarm for 6 AM ET on your window day — popular spots fill within seconds.
-                </p>
+              <motion.div {...fade(0.05)} className="mb-10 border border-[hsl(var(--gold)/0.3)] bg-[hsl(var(--gold)/0.04)] p-4 flex items-start gap-3">
+                <span className="text-lg mt-0.5">⏰</span>
+                <div className="flex-1">
+                  <p className="font-editorial text-sm text-muted-foreground mb-3">
+                    <span className="text-foreground font-medium">Booking windows open 60 days before arrival</span> for most table-service restaurants. Popular spots fill within seconds.
+                  </p>
+                  <div className="flex flex-wrap gap-2">
+                    <button
+                      onClick={() => toast({ title: "🔔 Notifications enabled", description: "We'll alert you when each restaurant's booking window opens." })}
+                      className="px-4 py-2 text-[0.5625rem] tracking-[0.12em] uppercase font-medium bg-foreground text-background hover:opacity-90 transition-opacity"
+                    >
+                      🔔 Notify Me When Windows Open
+                    </button>
+                    {mockData.account.subscription.planName === "Sovereign" ? (
+                      <button
+                        onClick={() => toast({ title: "👑 Concierge Mode", description: "Select restaurants below and we'll book them the moment windows open." })}
+                        className="px-4 py-2 text-[0.5625rem] tracking-[0.12em] uppercase font-medium bg-[hsl(var(--gold))] text-background hover:opacity-90 transition-opacity"
+                      >
+                        ✨ Book For Me (Sovereign)
+                      </button>
+                    ) : (
+                      <button
+                        onClick={() => toast({ title: "✨ Sovereign Concierge", description: "Upgrade to Sovereign ($29.95/yr) and we'll book your dining reservations automatically." })}
+                        className="px-4 py-2 text-[0.5625rem] tracking-[0.12em] uppercase font-medium text-[hsl(var(--gold-dark))] border border-[hsl(var(--gold)/0.4)] hover:bg-[hsl(var(--gold)/0.08)] transition-colors"
+                      >
+                        ✨ Book For Me — Upgrade
+                      </button>
+                    )}
+                  </div>
+                </div>
               </motion.div>
 
               <div className="space-y-6">
@@ -892,11 +994,36 @@ const BookedTripDetail = ({ trip }: { trip: BookedTrip }) => {
 
           {experienceSubTab === "discover" && (
             <>
-               <motion.div {...fade(0.05)} className="mb-10 border border-[hsl(var(--gold)/0.3)] bg-[hsl(var(--gold)/0.04)] rounded-lg p-4 flex items-center gap-3">
-                <span className="text-lg">⏰</span>
-                <p className="font-editorial text-sm text-muted-foreground">
-                  <span className="text-foreground font-medium">Booking windows vary by experience</span> — most open 60 days before arrival. Premium experiences like Savi's Workshop sell out immediately.
-                </p>
+               <motion.div {...fade(0.05)} className="mb-10 border border-[hsl(var(--gold)/0.3)] bg-[hsl(var(--gold)/0.04)] rounded-lg p-4 flex items-start gap-3">
+                <span className="text-lg mt-0.5">⏰</span>
+                <div className="flex-1">
+                  <p className="font-editorial text-sm text-muted-foreground mb-3">
+                    <span className="text-foreground font-medium">Booking windows vary by experience</span> — most open 60 days before arrival. Premium experiences sell out immediately.
+                  </p>
+                  <div className="flex flex-wrap gap-2">
+                    <button
+                      onClick={() => toast({ title: "🔔 Notifications enabled", description: "We'll alert you when each experience's booking window opens." })}
+                      className="px-4 py-2 text-[0.5625rem] tracking-[0.12em] uppercase font-medium bg-foreground text-background hover:opacity-90 transition-opacity"
+                    >
+                      🔔 Notify Me When Windows Open
+                    </button>
+                    {mockData.account.subscription.planName === "Sovereign" ? (
+                      <button
+                        onClick={() => toast({ title: "👑 Concierge Mode", description: "Select experiences below and we'll book them the moment windows open." })}
+                        className="px-4 py-2 text-[0.5625rem] tracking-[0.12em] uppercase font-medium bg-[hsl(var(--gold))] text-background hover:opacity-90 transition-opacity"
+                      >
+                        ✨ Book For Me (Sovereign)
+                      </button>
+                    ) : (
+                      <button
+                        onClick={() => toast({ title: "✨ Sovereign Concierge", description: "Upgrade to Sovereign ($29.95/yr) and we'll book your experiences automatically." })}
+                        className="px-4 py-2 text-[0.5625rem] tracking-[0.12em] uppercase font-medium text-[hsl(var(--gold-dark))] border border-[hsl(var(--gold)/0.4)] hover:bg-[hsl(var(--gold)/0.08)] transition-colors"
+                      >
+                        ✨ Book For Me — Upgrade
+                      </button>
+                    )}
+                  </div>
+                </div>
               </motion.div>
 
               <div className="space-y-6">
@@ -1209,9 +1336,9 @@ const BookedTripDetail = ({ trip }: { trip: BookedTrip }) => {
           <div className="flex flex-wrap gap-3">
             {alerts.map((alert) => (
               <div key={alert.id} className="flex items-center gap-3 border border-[hsl(var(--gold)/0.3)] bg-[hsl(var(--gold)/0.04)] px-4 py-2">
-                <span className="text-sm">🔔</span>
+                <span className="text-sm">{alert.isConcierge ? "👑" : "🔔"}</span>
                 <div>
-                  <p className="font-display text-sm text-foreground">{alert.venueName}</p>
+                  <p className="font-display text-sm text-foreground">{alert.venueName} {alert.isConcierge && <span className="text-[0.5rem] uppercase tracking-[0.1em] px-1.5 py-0.5 bg-[hsl(var(--gold)/0.15)] text-[hsl(var(--gold-dark))] ml-1">Concierge</span>}</p>
                   <p className="font-editorial text-xs text-muted-foreground">{alert.opensDate ? `Opens ${alert.opensDate}` : "TBD"}{alert.note ? ` · ${alert.note}` : ""}</p>
                 </div>
                 <button onClick={() => setAlerts(prev => prev.filter(a => a.id !== alert.id))} className="text-muted-foreground/40 hover:text-foreground transition-colors text-xs ml-2">✕</button>
@@ -1246,6 +1373,11 @@ const BookedTripDetail = ({ trip }: { trip: BookedTrip }) => {
             opensDate={alertModal.opensDate}
             onClose={() => setAlertModal(null)}
             onSetAlert={(note) => handleSetAlert(alertModal.type, alertModal.venueName, alertModal.opensDate, note)}
+            onBookForMe={(prefs) => {
+              setAlerts(prev => [...prev, { id: `alert-${Date.now()}`, venueName: alertModal.venueName, type: alertModal.type, opensDate: alertModal.opensDate, note: prefs, isConcierge: true }]);
+              setAlertModal(null);
+              toast({ title: "👑 Concierge Request Submitted", description: `We'll book ${alertModal.venueName} for you when the window opens.` });
+            }}
           />
         )}
       </AnimatePresence>

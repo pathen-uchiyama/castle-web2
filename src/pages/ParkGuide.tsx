@@ -125,6 +125,12 @@ const ParkGuidePage = ({ parkGuides }: ParkGuidePageProps) => {
   const sameParkGuides = parkGuides.filter((p) => p?.resort === park?.resort);
   const attractions = mockData.partySurvey.attractions.filter((a) => a.parkId === park?.parkId);
 
+  // Get encyclopedia data for richer content
+  const allEncyclopediaParks = [...wdwParks, ...dlrParks];
+  const encyclopediaPark: ParkOverview | undefined = allEncyclopediaParks.find((p) => p.parkId === park?.parkId);
+  const allEncyclopediaAttractions = [...wdwEncyclopediaAttractions, ...dlrEncyclopediaAttractions];
+  const encyclopediaAttractions: ParkAttraction[] = park ? allEncyclopediaAttractions.filter((a) => a.parkId === park.parkId) : [];
+
   // Projected crowd data for the calendar month (paid)
   const projections = useMemo(() => {
     if (!park) return [];

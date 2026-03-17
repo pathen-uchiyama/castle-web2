@@ -326,6 +326,24 @@ const ParkGuidePage = ({ parkGuides }: ParkGuidePageProps) => {
   const newOpenings = parkNews.filter((n) => n.category === "opening-soon");
   const underConstruction = parkNews.filter((n) => n.category === "under-construction");
 
+  // Restaurant data — map parkId to locationName used in restaurant data
+  const parkIdToLocationName: Record<string, string[]> = {
+    mk: ["Magic Kingdom"],
+    epcot: ["EPCOT"],
+    hs: ["Hollywood Studios"],
+    ak: ["Animal Kingdom"],
+    dl: ["Disneyland"],
+    dca: ["Disney California Adventure", "California Adventure"],
+  };
+  const allRestaurants = [...wdwRestaurants, ...dlrRestaurants];
+  const parkRestaurants: ResortRestaurant[] = useMemo(() => {
+    if (!park) return [];
+    const locationNames = parkIdToLocationName[park.parkId] || [];
+    return allRestaurants.filter((r) =>
+      locationNames.some((name) => r.locationName.includes(name))
+    );
+  }, [park]);
+
   // Attraction type filters
   const attractionTypes = useMemo(() => {
     const types = new Set(encyclopediaAttractions.map((a) => a.type));

@@ -672,7 +672,38 @@ const Circle = ({ partyMembers, guestName }: CircleProps) => {
                                     </div>
                                   </div>
                                 )}
+                                {member.allergies && member.allergies.length > 0 && (
+                                  <div>
+                                    <p className="label-text mb-2">Allergies</p>
+                                    <div className="flex flex-wrap gap-2">
+                                      {member.allergies.map((a) => (
+                                        <span key={a} className="px-3 py-1 text-[0.625rem] uppercase tracking-[0.1em] rounded-md" style={{ background: "hsl(var(--destructive) / 0.08)", color: "hsl(var(--destructive))", border: "1px solid hsl(var(--destructive) / 0.2)" }}>
+                                          ⚠ {a}
+                                        </span>
+                                      ))}
+                                    </div>
+                                  </div>
+                                )}
+                                <ProfileField label="DAS Holder" value={member.dasHolder ? "✓ Active" : undefined} />
+                                <ProfileField label="Medical Notes" value={member.medicalNotes || undefined} />
                               </div>
+
+                              {/* Full-width: Ride Sensitivities */}
+                              {member.rideSensitivities && member.rideSensitivities.length > 0 && (
+                                <div className="sm:col-span-2 border-t border-border pt-5">
+                                  <p className="label-text mb-3 tracking-[0.2em]">Ride Sensitivities</p>
+                                  <div className="flex flex-wrap gap-2">
+                                    {member.rideSensitivities.map((sensId) => {
+                                      const sens = ALL_SENSITIVITIES.find((s) => s.id === sensId);
+                                      return (
+                                        <span key={sensId} className="px-3 py-1 text-[0.625rem] uppercase tracking-[0.1em] rounded-md" style={{ background: "hsl(var(--gold) / 0.12)", color: "hsl(var(--gold-dark))", border: "1px solid hsl(var(--gold) / 0.25)" }}>
+                                          {sens?.icon} {sens?.label ?? sensId}
+                                        </span>
+                                      );
+                                    })}
+                                  </div>
+                                </div>
+                              )}
 
                               {/* Full-width: Accessibility Needs */}
                               {member.accessibilityNeeds && member.accessibilityNeeds.length > 0 && (

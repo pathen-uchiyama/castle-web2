@@ -1546,6 +1546,15 @@ const BookedTripDetail = ({ trip }: { trip: BookedTrip }) => {
                           <p className="font-editorial text-[0.625rem] text-muted-foreground/50 italic">Add confirmation # once booked</p>
                           <div className="flex items-center gap-3">
                             <button
+                              onClick={() => setEditModal({
+                                type: "dining", isConfirmed: false, itemId: res.reservationId,
+                                currentData: { name: res.restaurantName, location: res.parkOrResort, date: res.date, time: res.time, timeRangeEnd: res.timeRangeEnd, partySize: res.partySize, notes: res.notes, mealType: res.mealType }
+                              })}
+                              className="text-[0.5625rem] uppercase tracking-[0.12em] font-medium text-muted-foreground hover:text-foreground transition-colors"
+                            >
+                              Edit
+                            </button>
+                            <button
                               onClick={() => handleRemovePendingDining(res.reservationId, res.restaurantName)}
                               className="text-[0.5625rem] uppercase tracking-[0.12em] font-medium text-destructive/60 hover:text-destructive transition-colors"
                             >

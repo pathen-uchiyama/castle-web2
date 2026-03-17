@@ -74,6 +74,7 @@ interface WizardData {
 interface TripWizardProps {
   open: boolean;
   onClose: () => void;
+  guestName?: string;
   onComplete?: (tripId: string) => void;
 }
 

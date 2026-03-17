@@ -152,8 +152,37 @@ const Circle = ({ partyMembers, guestName }: CircleProps) => {
       {/* ═══ MASTER REGISTRY TAB ═══ */}
       {activeTab === "registry" && (
         <section className="max-w-4xl mx-auto px-4 sm:px-8 py-16 sm:py-24">
+          {/* ═══ INTRO / VALUE PROP ═══ */}
+          <motion.div {...fade()} className="mb-12">
+            <p className="label-text mb-2 tracking-[0.25em]">Why Set This Up</p>
+            <h2 className="font-display text-3xl sm:text-4xl text-foreground leading-[1.08] mb-4">Your Traveling Troupe</h2>
+            <p className="font-editorial text-lg text-muted-foreground leading-relaxed max-w-3xl mb-6">
+              Set up profiles for everyone who travels with you — not just for this trip, but for every future adventure. When we know your party's ages, heights, dietary needs, and ride preferences, we can:
+            </p>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
+              <div className="border border-[hsl(var(--gold)/0.2)] bg-[hsl(var(--gold)/0.03)] rounded-lg p-4">
+                <span className="text-lg mb-2 block">🎢</span>
+                <p className="font-display text-sm text-foreground mb-1">Flag ride restrictions</p>
+                <p className="font-editorial text-xs text-muted-foreground leading-relaxed">Automatically warn you about height requirements, thrill levels, and sensory triggers before you're in line.</p>
+              </div>
+              <div className="border border-[hsl(var(--gold)/0.2)] bg-[hsl(var(--gold)/0.03)] rounded-lg p-4">
+                <span className="text-lg mb-2 block">🍽️</span>
+                <p className="font-display text-sm text-foreground mb-1">Filter dining for allergies</p>
+                <p className="font-editorial text-xs text-muted-foreground leading-relaxed">Surface restaurants that accommodate your party's dietary restrictions and highlight allergy-safe options.</p>
+              </div>
+              <div className="border border-[hsl(var(--gold)/0.2)] bg-[hsl(var(--gold)/0.03)] rounded-lg p-4">
+                <span className="text-lg mb-2 block">✨</span>
+                <p className="font-display text-sm text-foreground mb-1">Personalize itineraries</p>
+                <p className="font-editorial text-xs text-muted-foreground leading-relaxed">Build daily plans that balance everyone's thrill tolerance, accessibility needs, and must-do experiences.</p>
+              </div>
+            </div>
+            <p className="font-editorial text-sm text-muted-foreground italic">
+              Profiles persist across all trips — update once, benefit everywhere.
+            </p>
+          </motion.div>
+
           {/* Stats */}
-          <motion.div {...fade()} className="grid grid-cols-2 sm:grid-cols-4 gap-6 mb-16">
+          <motion.div {...fade(0.05)} className="grid grid-cols-2 sm:grid-cols-4 gap-6 mb-16">
             {[
               { label: "Party Members", value: String(members.length) },
               { label: "Total Adventures", value: String(members.reduce((s, m) => s + m.adventureCount, 0)) },

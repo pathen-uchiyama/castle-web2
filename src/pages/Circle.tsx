@@ -483,6 +483,92 @@ const Circle = ({ partyMembers, guestName }: CircleProps) => {
                                   })}
                                 </div>
                               </div>
+                              {/* Allergies */}
+                              <div className="sm:col-span-2">
+                                <label className="label-text mb-2 block">Allergies</label>
+                                <div className="flex flex-wrap gap-3">
+                                  {ALLERGY_OPTIONS.map((item) => {
+                                    const checked = member.allergies?.includes(item) ?? false;
+                                    return (
+                                      <button
+                                        key={item}
+                                        onClick={() => {
+                                          const current = member.allergies || [];
+                                          handleFieldChange(member.memberId, "allergies", checked ? current.filter(a => a !== item) : [...current, item]);
+                                        }}
+                                        className="px-4 py-2 text-xs tracking-[0.1em] transition-all duration-300"
+                                        style={{
+                                          background: checked ? "hsl(var(--destructive) / 0.1)" : "transparent",
+                                          color: checked ? "hsl(var(--destructive))" : "hsl(var(--muted-foreground))",
+                                          border: `1px solid ${checked ? "hsl(var(--destructive) / 0.35)" : "hsl(var(--border))"}`,
+                                        }}
+                                      >
+                                        {checked ? "⚠ " : ""}{item}
+                                      </button>
+                                    );
+                                  })}
+                                </div>
+                              </div>
+                              {/* DAS */}
+                              <div>
+                                <label className="label-text mb-2 block">DAS Holder</label>
+                                <div className="flex gap-2">
+                                  {[true, false].map((val) => (
+                                    <button
+                                      key={String(val)}
+                                      onClick={() => handleFieldChange(member.memberId, "dasHolder", val)}
+                                      className="px-4 py-2 rounded-md text-xs uppercase tracking-[0.1em] transition-all duration-300"
+                                      style={{
+                                        background: member.dasHolder === val ? "hsl(var(--foreground))" : "transparent",
+                                        color: member.dasHolder === val ? "hsl(var(--background))" : "hsl(var(--muted-foreground))",
+                                        border: `1px solid ${member.dasHolder === val ? "hsl(var(--foreground))" : "hsl(var(--border))"}`,
+                                      }}
+                                    >
+                                      {val ? "Yes" : "No"}
+                                    </button>
+                                  ))}
+                                </div>
+                              </div>
+                              {/* Medical Notes */}
+                              <div>
+                                <label className="label-text mb-2 block">Medical Notes</label>
+                                <textarea
+                                  value={member.medicalNotes ?? ""}
+                                  onChange={(e) => handleFieldChange(member.memberId, "medicalNotes", e.target.value)}
+                                  placeholder="Heat sensitivity, seizure precautions, etc."
+                                  rows={2}
+                                  className="w-full px-4 py-2.5 text-sm bg-background border border-border text-foreground placeholder:text-muted-foreground/40 focus:outline-none focus:border-[hsl(var(--gold))] transition-colors resize-none"
+                                />
+                              </div>
+                              {/* Ride Sensitivities */}
+                              <div className="sm:col-span-2">
+                                <label className="label-text mb-3 block tracking-[0.2em]">Ride Sensitivities</label>
+                                <p className="font-editorial text-xs text-muted-foreground mb-4 leading-relaxed">
+                                  Select triggers so the planner flags or de-prioritizes matching rides.
+                                </p>
+                                <div className="flex flex-wrap gap-2">
+                                  {ALL_SENSITIVITIES.map((sens) => {
+                                    const checked = member.rideSensitivities?.includes(sens.id) ?? false;
+                                    return (
+                                      <button
+                                        key={sens.id}
+                                        onClick={() => {
+                                          const current = member.rideSensitivities || [];
+                                          handleFieldChange(member.memberId, "rideSensitivities", checked ? current.filter(s => s !== sens.id) : [...current, sens.id]);
+                                        }}
+                                        className="px-4 py-2 text-xs tracking-[0.05em] rounded-md transition-all duration-300"
+                                        style={{
+                                          background: checked ? "hsl(var(--gold) / 0.15)" : "transparent",
+                                          color: checked ? "hsl(var(--gold-dark))" : "hsl(var(--muted-foreground))",
+                                          border: `1px solid ${checked ? "hsl(var(--gold) / 0.4)" : "hsl(var(--border))"}`,
+                                        }}
+                                      >
+                                        {sens.icon} {sens.label}
+                                      </button>
+                                    );
+                                  })}
+                                </div>
+                              </div>
                               {/* ── Accessibility & Safety Needs ── */}
                               <div className="sm:col-span-2">
                                 <label className="label-text mb-3 block tracking-[0.2em]">Accessibility & Safety Needs</label>

@@ -882,6 +882,21 @@ const TripWizard = ({ open, onClose, onComplete }: TripWizardProps) => {
                           ))}
                         </div>
                       </div>
+
+                      <div>
+                        <Label>Our Dining Tools</Label>
+                        <p className="text-xs mb-3" style={{ fontFamily: brand.font.body, color: brand.slate }}>
+                          These are features we offer to help you land the dining experiences you want.
+                        </p>
+                        <div className="space-y-3">
+                          <ToggleCard
+                            active={data.diningReservationScouting}
+                            onClick={() => set("diningReservationScouting", !data.diningReservationScouting)}
+                            label="Reservation Scouting"
+                            desc="Hard-to-get dining reservations often open up when other guests cancel. Enable this and we'll continuously monitor for openings at your preferred restaurants and time slots, alerting you the moment one appears."
+                          />
+                        </div>
+                      </div>
                     </div>
                   )}
                 </motion.div>

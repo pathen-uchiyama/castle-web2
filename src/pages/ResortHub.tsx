@@ -422,42 +422,42 @@ const ResortHub = () => {
                               <div className="flex items-start justify-between mb-2">
                                 <div>
                                   <div className="flex items-center gap-2 mb-1">
-                                    {a.mustDo && <Star className="w-3 h-3 text-[hsl(var(--gold))] fill-[hsl(var(--gold))]" />}
+                                    {a.mustDo && <Star className="w-3.5 h-3.5 text-[hsl(var(--gold))] fill-[hsl(var(--gold))]" />}
                                     <h4 className="font-display text-base text-foreground">{a.name}</h4>
                                   </div>
-                                  <p className="text-[0.5rem] text-muted-foreground">{a.land} · {a.duration}</p>
+                                  <p className="text-xs text-muted-foreground">{a.land} · {a.duration}</p>
                                 </div>
                                 <div className="flex items-center gap-2 shrink-0">
                                   {a.heightRequirement && (
-                                    <span className="px-2 py-0.5 rounded-md text-[0.4375rem] uppercase tracking-[0.08em] bg-muted text-muted-foreground border border-border">↕ {a.heightRequirement}</span>
+                                    <span className="px-2 py-0.5 rounded-md text-[0.5625rem] uppercase tracking-[0.08em] bg-muted text-muted-foreground border border-border">↕ {a.heightRequirement}</span>
                                   )}
-                                  <span className="px-2 py-0.5 rounded-md text-[0.4375rem] uppercase tracking-[0.08em] border" style={{ background: thrillColors[a.thrillLevel]?.bg, color: thrillColors[a.thrillLevel]?.text, borderColor: `${thrillColors[a.thrillLevel]?.text}30` }}>
+                                  <span className="px-2 py-0.5 rounded-md text-[0.5625rem] uppercase tracking-[0.08em] border" style={{ background: thrillColors[a.thrillLevel]?.bg, color: thrillColors[a.thrillLevel]?.text, borderColor: `${thrillColors[a.thrillLevel]?.text}30` }}>
                                     {a.thrillLevel}
                                   </span>
                                 </div>
                               </div>
-                              <p className="font-editorial text-xs text-foreground/80 mb-3">{a.description}</p>
+                              <p className="font-editorial text-sm text-foreground/80 mb-3">{a.description}</p>
                               <div className="flex flex-wrap gap-3 mb-2">
                                 <div>
-                                  <p className="text-[0.375rem] uppercase tracking-[0.1em] text-muted-foreground mb-0.5">Avg Wait</p>
+                                  <p className="text-[0.5625rem] uppercase tracking-[0.1em] text-muted-foreground mb-0.5">Avg Wait</p>
                                   <div className="flex gap-1.5">
-                                     <span className="text-[0.5rem] px-1.5 py-0.5 rounded-md bg-[hsl(142,60%,45%,0.1)] text-[hsl(142,60%,35%)] border border-[hsl(142,60%,45%,0.2)]">{a.avgWaitMinutes.low}m</span>
-                                     <span className="text-[0.5rem] px-1.5 py-0.5 rounded-md bg-[hsl(var(--gold)/0.1)] text-[hsl(var(--gold-dark))] border border-[hsl(var(--gold)/0.2)]">{a.avgWaitMinutes.typical}m</span>
-                                     <span className="text-[0.5rem] px-1.5 py-0.5 rounded-md bg-[hsl(var(--destructive)/0.08)] text-destructive border border-[hsl(var(--destructive)/0.15)]">{a.avgWaitMinutes.peak}m</span>
+                                     <span className="text-xs px-1.5 py-0.5 rounded-md bg-[hsl(142,60%,45%,0.1)] text-[hsl(142,60%,35%)] border border-[hsl(142,60%,45%,0.2)]">{a.avgWaitMinutes.low}m</span>
+                                     <span className="text-xs px-1.5 py-0.5 rounded-md bg-[hsl(var(--gold)/0.1)] text-[hsl(var(--gold-dark))] border border-[hsl(var(--gold)/0.2)]">{a.avgWaitMinutes.typical}m</span>
+                                     <span className="text-xs px-1.5 py-0.5 rounded-md bg-[hsl(var(--destructive)/0.08)] text-destructive border border-[hsl(var(--destructive)/0.15)]">{a.avgWaitMinutes.peak}m</span>
                                   </div>
                                 </div>
                                 <div className="flex flex-wrap gap-1.5 items-end">
                                   {a.lightningLane && (
-                                    <span className="text-[0.4375rem] uppercase tracking-[0.08em] px-2 py-0.5 bg-[hsl(var(--gold)/0.1)] text-[hsl(var(--gold-dark))] border border-[hsl(var(--gold)/0.2)]">
+                                    <span className="text-[0.5625rem] uppercase tracking-[0.08em] px-2 py-0.5 bg-[hsl(var(--gold)/0.1)] text-[hsl(var(--gold-dark))] border border-[hsl(var(--gold)/0.2)]">
                                        ⚡ {a.lightningLaneType === "individual" ? "Individual LL" : "Multi Pass"}
                                     </span>
                                   )}
-                                  {a.singleRider && <span className="text-[0.4375rem] uppercase tracking-[0.08em] px-2 py-0.5 bg-muted text-muted-foreground border border-border">🧍 Single Rider</span>}
-                                  {a.riderSwitch && <span className="text-[0.4375rem] uppercase tracking-[0.08em] px-2 py-0.5 bg-muted text-muted-foreground border border-border">🔄 Rider Switch</span>}
+                                  {a.singleRider && <span className="text-[0.5625rem] uppercase tracking-[0.08em] px-2 py-0.5 bg-muted text-muted-foreground border border-border">🧍 Single Rider</span>}
+                                  {a.riderSwitch && <span className="text-[0.5625rem] uppercase tracking-[0.08em] px-2 py-0.5 bg-muted text-muted-foreground border border-border">🔄 Rider Switch</span>}
                                 </div>
                               </div>
                               <div className="pl-3 border-l-2 border-[hsl(var(--gold)/0.3)]">
-                                <p className="font-editorial text-[0.625rem] text-muted-foreground italic">💡 {a.tip}</p>
+                                <p className="font-editorial text-xs text-muted-foreground italic">💡 {a.tip}</p>
                               </div>
                             </div>
                           ))}

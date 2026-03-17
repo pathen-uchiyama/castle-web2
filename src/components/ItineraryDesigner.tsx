@@ -150,7 +150,8 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
 
   const [ropeDrop, setRopeDrop] = useState("7:30 AM");
   const [leavePark, setLeavePark] = useState("10:00 PM");
-  const [hasEarlyEntry, setHasEarlyEntry] = useState(true); // Resort guests get 30 min early entry
+  const [hasEarlyEntry, setHasEarlyEntry] = useState(true);
+  const [hasExtendedHours, setHasExtendedHours] = useState(false); // Deluxe resort guests get +2 hrs
 
   /* ── Stroller toggle ───────────────────────────────────────────── */
   const activeMembers = useMemo(
@@ -231,7 +232,8 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
   /* ── Computed ribbon ───────────────────────────────────────────── */
   const baseRopeDropMin = toMinutes(ropeDrop);
   const ropeDropMin = hasEarlyEntry ? baseRopeDropMin - 30 : baseRopeDropMin;
-  const leaveMin = toMinutes(leavePark);
+  const baseLeaveMin = toMinutes(leavePark);
+  const leaveMin = hasExtendedHours ? baseLeaveMin + 120 : baseLeaveMin;
 
   const ribbon = useMemo(
     () => computeRibbon(itinerary, ropeDropMin, hasStroller),
@@ -747,6 +749,24 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
                   Early Theme Park Entry (Resort Guest)
                 </span>
               </div>
+              {/* Extended Evening Hours toggle */}
+              <div className="flex items-center gap-2 mt-2">
+                <button
+                  onClick={() => setHasExtendedHours(!hasExtendedHours)}
+                  className={`w-9 h-[18px] rounded-full flex items-center px-0.5 cursor-pointer transition-colors duration-300 ${
+                    hasExtendedHours ? "bg-[hsl(280,30%,55%)]" : "bg-muted"
+                  }`}
+                >
+                  <motion.div
+                    className="w-3.5 h-3.5 rounded-full bg-background shadow"
+                    animate={{ x: hasExtendedHours ? 16 : 0 }}
+                    transition={{ type: "spring", stiffness: 500, damping: 30 }}
+                  />
+                </button>
+                <span className="text-[0.625rem] uppercase tracking-[0.1em] text-[hsl(var(--ink-light))]">
+                  Extended Evening Hours (Deluxe Resort)
+                </span>
+              </div>
             </div>
           </div>
 
@@ -1005,13 +1025,20 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
                 {/* Planned departure waypoint */}
                 <div className="flex items-center gap-3 mt-2 p-3 bg-[hsl(var(--ink)/0.04)] border border-dashed border-[hsl(var(--ink)/0.15)]" style={{ borderRadius: 0 }}>
                   <div className="text-center shrink-0 w-16">
-                    <span className="font-display text-sm text-[hsl(var(--ink-light))] font-bold leading-none">{leavePark}</span>
-                    <span className="text-[0.5rem] text-[hsl(var(--ink-light))]/50 block">Planned</span>
+                    <span className="font-display text-sm text-[hsl(var(--ink-light))] font-bold leading-none">{formatMin(leaveMin)}</span>
+                    <span className="text-[0.5rem] text-[hsl(var(--ink-light))]/50 block">
+                      {hasExtendedHours ? "Extended" : "Planned"}
+                    </span>
                   </div>
                   <div className="border-l border-[hsl(var(--ink)/0.15)] pl-3 flex-1">
-                    <p className="font-display text-sm text-[hsl(var(--ink-light))]">🚗 Planned Departure</p>
+                    <p className="font-display text-sm text-[hsl(var(--ink-light))]">
+                      🚗 {hasExtendedHours ? "Extended Evening Hours End" : "Planned Departure"}
+                    </p>
                     <p className="text-[0.625rem] text-[hsl(var(--ink-light))]/60 mt-0.5">
-                      Park closes at {leavePark} · Head toward exit for transport
+                      {hasExtendedHours
+                        ? `Regular close at ${leavePark} · Extended hours until ${formatMin(leaveMin)}`
+                        : `Park closes at ${leavePark} · Head toward exit for transport`
+                      }
                     </p>
                   </div>
                 </div>

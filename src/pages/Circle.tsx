@@ -225,12 +225,17 @@ const Circle = ({ partyMembers, guestName }: CircleProps) => {
                       <motion.div
                         whileHover={{ scale: 1.1, rotate: 5 }}
                         transition={{ type: "spring", stiffness: 300, damping: 20 }}
-                        className="w-14 h-14 rounded-lg bg-foreground flex items-center justify-center shrink-0"
+                        className={`w-14 h-14 rounded-lg flex items-center justify-center shrink-0 ${isOwner ? "bg-[hsl(var(--gold))]" : "bg-foreground"}`}
                       >
                         <span className="font-display text-xl text-background">{member.initial}</span>
                       </motion.div>
                       <div className="min-w-0">
-                        <p className="font-display text-xl text-foreground">{member.name}</p>
+                        <div className="flex items-center gap-2">
+                          <p className="font-display text-xl text-foreground">{member.name}</p>
+                          {isOwner && (
+                            <span className="px-2 py-0.5 rounded-md text-[0.5rem] uppercase tracking-[0.12em] font-medium bg-[hsl(var(--gold)/0.12)] text-[hsl(var(--gold-dark))] border border-[hsl(var(--gold)/0.25)]">You</span>
+                          )}
+                        </div>
                         <div className="flex items-center gap-3 mt-1">
                           <p className="label-text">{member.role}</p>
                           <span className="text-muted-foreground/30">·</span>

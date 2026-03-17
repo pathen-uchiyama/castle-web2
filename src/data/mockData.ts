@@ -22,6 +22,8 @@ export const mockData: AppData = {
     tripId: "spring-break-2026",
     destination: "Walt Disney World",
     tripName: "Spring Break 2026",
+    startDate: "2026-03-21",
+    endDate: "2026-03-28",
     countdownDays: 6,
     partySize: 4,
     description:

@@ -104,29 +104,63 @@ function getStrollerParkTime(item: ItineraryItem, hasStroller: boolean) {
   return 0;
 }
 
+/** Check if an item is a fixed-time anchor (reservations, confirmed experiences, scheduled shows) */
+function isFixedAnchor(item: ItineraryItem): boolean {
+  if (item.isConfirmed && item.scheduledStartMin != null) return true;
+  if (["meal", "dining"].includes(item.type) && item.scheduledStartMin != null) return true;
+  if (["show", "parade"].includes(item.type) && item.scheduledStartMin != null) return true;
+  return false;
+}
+
 function computeRibbon(items: ItineraryItem[], ropeDropMin: number, hasStroller: boolean): RibbonItem[] {
   const result: RibbonItem[] = [];
   let currentMin = ropeDropMin;
 
-  for (let i = 0; i < items.length; i++) {
-    const item = items[i];
-    const prevZone = i > 0 ? items[i - 1].zone : undefined;
+  // First pass: sort items so fixed anchors are in time order while flexible items 
+  // stay in their relative user-defined order between anchors
+  const sortedItems = [...items];
+  // Stable sort: fixed anchors go to their scheduled position, flex items stay in insertion order
+  sortedItems.sort((a, b) => {
+    const aFixed = isFixedAnchor(a);
+    const bFixed = isFixedAnchor(b);
+    if (aFixed && bFixed) return (a.scheduledStartMin || 0) - (b.scheduledStartMin || 0);
+    if (aFixed && !bFixed) {
+      // If the flex item was before this anchor in original order, keep it before
+      const aOrig = items.indexOf(a);
+      const bOrig = items.indexOf(b);
+      return aOrig - bOrig;
+    }
+    if (!aFixed && bFixed) {
+      const aOrig = items.indexOf(a);
+      const bOrig = items.indexOf(b);
+      return aOrig - bOrig;
+    }
+    // Both flexible — keep original insertion order
+    return items.indexOf(a) - items.indexOf(b);
+  });
+
+  for (let i = 0; i < sortedItems.length; i++) {
+    const item = sortedItems[i];
+    const prevZone = i > 0 ? sortedItems[i - 1].zone : undefined;
     const walkBuffer = i === 0 ? 0 : getWalkBuffer(prevZone as ParkZone, item.zone as ParkZone, hasStroller);
     const checkinTime = getCheckinTime(item);
     const strollerTime = getStrollerParkTime(item, hasStroller);
 
-    // If this item has a scheduled start time, jump the timeline to it
-    // (accounting for check-in — the scheduled time is when the show STARTS,
-    //  so we need to arrive checkinTime minutes early)
     let startMin = currentMin + walkBuffer;
-    if (item.scheduledStartMin != null) {
+
+    if (isFixedAnchor(item) && item.scheduledStartMin != null) {
+      // Fixed anchor: always starts at its scheduled time (minus check-in)
       const arrivalNeeded = item.scheduledStartMin - checkinTime;
-      // Only jump forward — never go backwards in time
+      startMin = Math.max(currentMin, arrivalNeeded);
+    } else if (item.scheduledStartMin != null) {
+      // Non-confirmed scheduled item — try to honor time but don't go backwards
+      const arrivalNeeded = item.scheduledStartMin - checkinTime;
       if (arrivalNeeded > currentMin) {
         startMin = arrivalNeeded;
       }
     }
 
+    // Check if this flexible item would overflow into the next fixed anchor
     const totalBlockMin = strollerTime + checkinTime + (item.waitTime || 0) + item.duration;
     const endMin = startMin + totalBlockMin;
 
@@ -134,6 +168,51 @@ function computeRibbon(items: ItineraryItem[], ropeDropMin: number, hasStroller:
     currentMin = endMin;
   }
   return result;
+}
+
+/** Check if adding an item at the end would conflict with any fixed anchor */
+function wouldConflictWithAnchor(
+  items: ItineraryItem[], 
+  newItem: ItineraryItem, 
+  ropeDropMin: number, 
+  hasStroller: boolean
+): { conflicts: boolean; anchorName?: string; anchorTime?: string } {
+  const testItems = [...items, newItem];
+  const ribbon = computeRibbon(testItems, ropeDropMin, hasStroller);
+  
+  // Check each fixed anchor — did it get pushed from its scheduled time?
+  for (let i = 0; i < ribbon.length; i++) {
+    const ri = ribbon[i];
+    if (isFixedAnchor(ri.item) && ri.item.scheduledStartMin != null) {
+      const expectedArrival = ri.item.scheduledStartMin - ri.checkinTime;
+      // If the ribbon placed this anchor later than its scheduled time, there's a conflict
+      if (ri.startMin > expectedArrival + 2) {
+        return { 
+          conflicts: true, 
+          anchorName: ri.item.name, 
+          anchorTime: formatMin(ri.item.scheduledStartMin) 
+        };
+      }
+    }
+  }
+  
+  // Also check if any flexible item BEFORE a fixed anchor now overflows into it
+  for (let i = 0; i < ribbon.length - 1; i++) {
+    const current = ribbon[i];
+    const next = ribbon[i + 1];
+    if (isFixedAnchor(next.item) && next.item.scheduledStartMin != null) {
+      const nextArrival = next.item.scheduledStartMin - next.checkinTime;
+      if (current.endMin > nextArrival) {
+        return {
+          conflicts: true,
+          anchorName: next.item.name,
+          anchorTime: formatMin(next.item.scheduledStartMin)
+        };
+      }
+    }
+  }
+  
+  return { conflicts: false };
 }
 
 /* ═══════════════════════════════════════════════════════════════════

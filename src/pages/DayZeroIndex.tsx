@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import FloatingAnchor from "@/components/FloatingAnchor";
 import Footer from "@/components/Footer";
 import TripWizard from "@/components/TripWizard";
+import { mockData } from "@/data/mockData";
 
 const ease: [number, number, number, number] = [0.19, 1, 0.22, 1];
 

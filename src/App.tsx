@@ -19,6 +19,12 @@ import ResortHub from "./pages/ResortHub";
 import NotFound from "./pages/NotFound";
 import { mockData } from "./data/mockData";
 
+const ScrollToTop = () => {
+  const { pathname } = useLocation();
+  useEffect(() => { window.scrollTo(0, 0); }, [pathname]);
+  return null;
+};
+
 const queryClient = new QueryClient();
 
 const App = () => (

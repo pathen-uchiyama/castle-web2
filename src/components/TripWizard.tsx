@@ -161,11 +161,9 @@ const dlrParks = [
 ];
 
 const dlrNonParkDays = [
-  { id: "rest", label: "Rest Day", icon: "😴", desc: "Hotel pool & relax" },
   { id: "travel-arrive", label: "Arrival Day", icon: "✈️", desc: "Travel + settle in" },
   { id: "travel-depart", label: "Departure Day", icon: "🧳", desc: "Pack up + travel home" },
-  { id: "resort", label: "Resort Day", icon: "🏊", desc: "Hotel, pool, Downtown Disney" },
-  { id: "downtown", label: "Downtown Disney", icon: "🛍", desc: "Shopping & dining district" },
+  { id: "non-park", label: "Non-Park Day", icon: "🌴", desc: "Hotel pool, Downtown Disney, rest, or exploring" },
 ];
 
 const relationshipOptions = ["Self", "Spouse", "Child", "Parent", "Friend", "Relative"];

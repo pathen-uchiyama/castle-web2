@@ -1380,8 +1380,8 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
                     const ridesFit = Math.floor(actualFreeTime / 25);
                     
                     // Party context for short-gap suggestions
-                    const hasToddlers = activeMembers.some(m => m.age !== undefined && m.age <= 4);
-                    const hasYoungKids = activeMembers.some(m => m.age !== undefined && m.age <= 7);
+                    const hasToddlers = activeMembers.some(m => { const a = getAge(m.birthdate); return a !== undefined && a <= 4; });
+                    const hasYoungKids = activeMembers.some(m => { const a = getAge(m.birthdate); return a !== undefined && a <= 7; });
                     const partySize = activeMembers.length;
                     
                     const suggestions: string[] = [];

@@ -714,7 +714,7 @@ export const mockData: AppData = {
     email: "patchen@example.com",
     memberSince: "January 2024",
     adventuresCompleted: 12,
-    birthday: "June 15",
+    birthdate: "1988-06-15",
     favoriteCharacter: "Goofy",
     favoriteRide: "Rise of the Resistance",
     accessibilityNeeds: [],

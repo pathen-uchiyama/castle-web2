@@ -308,6 +308,10 @@ const TripWizard = ({ open, onClose }: TripWizardProps) => {
   };
 
   const handleNext = () => {
+    // When moving from Foundation to Troupe, auto-seed lead adventurer info
+    if (currentStep === 0 && data.leadAdventurer.trim()) {
+      // Show the lead adventurer context on the Troupe page but don't require additional members
+    }
     // When moving to park schedule page, sync the schedule
     if (currentStep === 2) syncSchedule();
     if (isLast) { onClose(); return; }

@@ -72,7 +72,7 @@ const ProfileField = ({ label, value }: { label: string; value?: string | null }
   );
 };
 
-const Circle = ({ partyMembers }: CircleProps) => {
+const Circle = ({ partyMembers, guestName }: CircleProps) => {
   const [activeTab, setActiveTab] = useState("registry");
   const [expandedMember, setExpandedMember] = useState<string | null>(null);
   const [editingMember, setEditingMember] = useState<string | null>(null);

@@ -379,22 +379,22 @@ const ResortHub = () => {
                       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-4">
                         <div>
                           <p className="label-text mb-2">Must-Do</p>
-                          <div className="space-y-1">
+                          <div className="space-y-1.5">
                             {park.mustDo.map(item => (
-                              <div key={item} className="flex items-center gap-2 px-3 py-1.5 rounded-md bg-[hsl(var(--gold)/0.04)] border border-[hsl(var(--gold)/0.1)]">
-                                <Star className="w-3 h-3 text-[hsl(var(--gold))] fill-[hsl(var(--gold))]" />
-                                <span className="font-editorial text-xs text-foreground">{item}</span>
+                              <div key={item} className="flex items-center gap-2 px-3 py-2 rounded-md bg-[hsl(var(--gold)/0.04)] border border-[hsl(var(--gold)/0.1)]">
+                                <Star className="w-3.5 h-3.5 text-[hsl(var(--gold))] fill-[hsl(var(--gold))]" />
+                                <span className="font-editorial text-sm text-foreground">{item}</span>
                               </div>
                             ))}
                           </div>
                         </div>
                         <div>
                           <p className="label-text mb-2">Insider Tips</p>
-                          <div className="space-y-1">
+                          <div className="space-y-1.5">
                             {park.tips.map(tip => (
-                              <div key={tip} className="flex items-start gap-2 px-3 py-1.5 rounded-md bg-muted/30 border border-border/50">
-                                <span className="text-[0.5rem] mt-0.5">💡</span>
-                                <span className="font-editorial text-[0.6875rem] text-muted-foreground">{tip}</span>
+                              <div key={tip} className="flex items-start gap-2 px-3 py-2 rounded-md bg-muted/30 border border-border/50">
+                                <span className="text-xs mt-0.5">💡</span>
+                                <span className="font-editorial text-sm text-muted-foreground">{tip}</span>
                               </div>
                             ))}
                           </div>

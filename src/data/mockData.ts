@@ -135,6 +135,20 @@ export const mockData: AppData = {
         mealType: "lunch",
         status: "pending",
       },
+      {
+        reservationId: "din-006",
+        restaurantName: "Happily Ever After Dessert Party",
+        parkOrResort: "Magic Kingdom",
+        date: "March 22",
+        time: "8:15 PM",
+        partySize: 4,
+        confirmationNumber: "HEA-2026-9901",
+        cuisine: "Desserts & Specialty Drinks",
+        mealType: "dinner",
+        notes: "Premium viewing for Happily Ever After fireworks. Check in at Tomorrowland Terrace.",
+        status: "confirmed",
+        linkedShowId: "mk-hea",
+      },
     ],
 
     bookedExperiences: [

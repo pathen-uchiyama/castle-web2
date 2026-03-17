@@ -43,10 +43,10 @@ const Navigation = () => {
           }}
         />
         <Link to="/" className="relative z-10 flex items-center gap-2.5">
-          <img src={isHome ? ccLogoDark : ccLogoLight} alt="Castle Companion" className={`h-7 w-auto transition-all duration-500 opacity-90 hover:opacity-100 ${isHome ? "drop-shadow-[0_0_6px_hsla(42,64%,50%,0.4)] brightness-110" : ""}`} />
-          <span className={`hidden sm:inline-flex items-baseline gap-[0.35em] text-[0.85rem] uppercase tracking-[0.12em] leading-none transition-colors duration-500`}>
-            <span className={`font-display font-bold ${isHome ? "text-white" : "text-foreground"}`}>Castle</span>
-            <span className={`font-display font-light ${isHome ? "text-gold-light" : "text-gold"}`}>Companion</span>
+          <img src={isHome ? ccLogoDark : ccLogoLight} alt="Castle Companion" className={`h-7 w-auto transition-all duration-500 ${isHome ? "drop-shadow-[0_0_6px_hsla(42,64%,50%,0.4)] brightness-110" : ""}`} />
+          <span className="brand-wordmark hidden sm:inline-flex items-baseline gap-[0.3em]">
+            <span className={isHome ? "brand-castle-dark" : "brand-castle"}>Castle</span>
+            <span className={isHome ? "brand-companion-dark" : "brand-companion"}>Companion</span>
           </span>
         </Link>
         <div className="relative z-10 hidden md:flex items-center gap-7 lg:gap-9">

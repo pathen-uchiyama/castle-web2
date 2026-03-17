@@ -5,6 +5,8 @@ import "@fontsource/fraunces/600.css";
 import "@fontsource/fraunces/700.css";
 import "@fontsource/inter/400.css";
 import "@fontsource/inter/500.css";
+import "@fontsource/playfair-display/400.css";
+import "@fontsource/playfair-display/700.css";
 import App from "./App.tsx";
 import "./index.css";
 

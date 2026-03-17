@@ -43,6 +43,8 @@ export interface ParkAttraction {
   zone?: ParkZone;
   /** Lifecycle status — affects demand and crowd levels */
   attractionStatus?: AttractionStatusMeta;
+  /** Scheduled show times (e.g. ["3:00 PM", "9:00 PM"]) — for parades, fireworks, timed shows */
+  scheduledTimes?: string[];
 }
 
 export const attractionStatusLabels: Record<AttractionStatus, string> = {
@@ -134,6 +136,8 @@ export interface ItineraryItem {
   waitCategory?: WaitCategory;
   notes?: string;
   isConfirmed?: boolean;
+  /** For scheduled shows — the target start time in minutes from midnight */
+  scheduledStartMin?: number;
 }
 
 /** Computed ribbon item — produced by the ribbon engine */
@@ -322,6 +326,7 @@ export const magicKingdomAttractions: ParkAttraction[] = [
     rules: [],
     warnings: [],
     zone: "main-street",
+    scheduledTimes: ["12:00 PM", "3:00 PM"],
   },
   {
     id: "mk-hea", name: "Happily Ever After", parkId: "mk", type: "show", rating: 4.9,
@@ -332,6 +337,7 @@ export const magicKingdomAttractions: ParkAttraction[] = [
     rules: [],
     warnings: ["LOUD NOISES"],
     zone: "main-street",
+    scheduledTimes: ["9:00 PM"],
   },
   {
     id: "mk-laugh-floor", name: "Monsters Inc. Laugh Floor", parkId: "mk", type: "show", rating: 4.3,
@@ -470,6 +476,7 @@ export const epcotAttractions: ParkAttraction[] = [
     rules: [],
     warnings: ["LOUD NOISES"],
     zone: "world-showcase",
+    scheduledTimes: ["9:00 PM"],
   },
   // Characters
   {

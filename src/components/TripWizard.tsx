@@ -683,17 +683,22 @@ const TripWizard = ({ open, onClose, onComplete, guestName = "" }: TripWizardPro
                       ) : (
                         <>
                           <p style={{ fontFamily: brand.font.body, color: brand.slate, fontSize: "0.8125rem", marginBottom: "0.5rem" }}>
-                            Assign each day a park, water park, or non-park activity. Arrival and departure days are flagged — most families prefer a lighter schedule those days.
+                            Assign each day a park or activity. You can select multiple parks per day if you plan to park-hop. Arrival and departure days are flagged — most families prefer a lighter schedule those days.
                           </p>
+                          <div className="p-4 mb-4" style={{ background: `${brand.gold}08`, border: `1px solid ${brand.gold}25` }}>
+                            <p style={{ fontFamily: brand.font.body, fontSize: "0.75rem", color: brand.slate, lineHeight: "1.6" }}>
+                              💡 <strong style={{ color: brand.lapis }}>Pro tip:</strong> Our crowd predictor uses historical data to help you choose the best park for each day. We'll surface crowd level insights on your trip dashboard once your schedule is set.
+                            </p>
+                          </div>
                           <div className="space-y-3">
                             {data.parkSchedule.map((ps, dayIdx) => {
                               const dateObj = new Date(ps.date + "T12:00:00");
                               const isFirstDay = dayIdx === 0;
                               const isLastDay = dayIdx === data.parkSchedule.length - 1;
                               const travelHint = isFirstDay ? "✈️ Arrival Day" : isLastDay ? "🧳 Departure Day" : null;
-                              const selectedPark = parks.find(p => p.id === ps.parkId);
-                              const selectedNonPark = nonParkDays.find(p => p.id === ps.parkId);
-                              const hasSelection = !!ps.parkId;
+                              const selectedParks = parks.filter(p => ps.parkIds.includes(p.id));
+                              const selectedNonPark = nonParkDays.find(p => ps.parkIds.includes(p.id));
+                              const hasSelection = ps.parkIds.length > 0;
 
                               return (
                                 <div
@@ -719,6 +724,7 @@ const TripWizard = ({ open, onClose, onComplete, guestName = "" }: TripWizardPro
                                       </div>
                                       <p style={{ fontFamily: brand.font.body, fontSize: "0.75rem", color: brand.slate }}>
                                         {format(dateObj, "MMMM d, yyyy")}
+                                        {selectedParks.length > 1 && " · 🎟 Park Hopper Day"}
                                         {selectedNonPark && ` · ${selectedNonPark.desc}`}
                                       </p>
                                     </div>

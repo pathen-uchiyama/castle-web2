@@ -474,6 +474,7 @@ export const epcotAttractions: ParkAttraction[] = [
     rules: [],
     warnings: ["LOUD NOISES"],
     zone: "world-showcase",
+    scheduledTimes: ["9:00 PM"],
   },
   // Characters
   {

@@ -184,6 +184,8 @@ export interface BookedTrip {
   tripId: string;
   destination: string;
   tripName: string;
+  startDate: string;
+  endDate: string;
   countdownDays: number;
   partySize: number;
   description: string;

@@ -840,10 +840,21 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
                 const fitsWithWalk = totalWithWalk <= earlyTimeLeft;
                 const isSameZone = lastEarlyZone ? a.zone === lastEarlyZone : false;
                 const isNearby = walkToRide <= 6;
-                return { attraction: a, earlyWait, rideDur, totalTime, fitsWithWalk, walkToRide, totalWithWalk, isSameZone, isNearby };
+                // Survey priority
+                const isTopFive = topFiveIds.has(a.id);
+                const voters = topFiveVoters[a.id];
+                const satisfies = attractionSatisfies[a.id];
+                const isSurveyPick = isTopFive || (satisfies && satisfies.length > 0);
+                const surveyWeight = (isTopFive ? 2 : 0) + (satisfies ? satisfies.length : 0);
+                return { attraction: a, earlyWait, rideDur, totalTime, fitsWithWalk, walkToRide, totalWithWalk, isSameZone, isNearby, isTopFive, voters, satisfies, isSurveyPick, surveyWeight };
               })
               .sort((a, b) => {
+                // 1. Fits first
                 if (a.fitsWithWalk !== b.fitsWithWalk) return a.fitsWithWalk ? -1 : 1;
+                // 2. Survey picks always above non-survey
+                if (a.isSurveyPick !== b.isSurveyPick) return a.isSurveyPick ? -1 : 1;
+                if (a.surveyWeight !== b.surveyWeight) return b.surveyWeight - a.surveyWeight;
+                // 3. Zone proximity (after first ride)
                 if (earlyRidesInWindow.length > 0) {
                   if (a.isSameZone !== b.isSameZone) return a.isSameZone ? -1 : 1;
                   if (a.isNearby !== b.isNearby) return a.isNearby ? -1 : 1;
@@ -911,51 +922,76 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
                       {/* Rides that fit */}
                       {fittingRides.length > 0 && (
                         <div className="space-y-1.5 mb-2">
-                          {fittingRides.map(({ attraction: a, earlyWait, rideDur, totalTime, walkToRide, totalWithWalk, isSameZone, isNearby }) => (
+                          {fittingRides.map(({ attraction: a, earlyWait, rideDur, totalTime, walkToRide, totalWithWalk, isSameZone, isNearby, isTopFive, voters, satisfies, isSurveyPick }) => (
                             <button
                               key={a.id}
                               onClick={() => addToEarlyAccess(a)}
                               disabled={isLocked}
-                              className="w-full flex items-center gap-2 px-3 py-2.5 bg-white border border-[hsl(var(--gold)/0.3)] text-left transition-all duration-200 hover:border-[hsl(var(--gold))] hover:bg-[hsl(var(--gold)/0.04)]"
-                              style={{ borderRadius: 0, boxShadow: "0 4px 12px rgba(26,26,27,0.04)" }}
+                              className={`w-full flex flex-col gap-1.5 px-3 py-2.5 bg-white border text-left transition-all duration-200 hover:border-[hsl(var(--gold))] hover:bg-[hsl(var(--gold)/0.04)] ${
+                                isSurveyPick ? "border-[hsl(var(--gold)/0.5)] ring-1 ring-[hsl(var(--gold)/0.15)]" : "border-[hsl(var(--gold)/0.3)]"
+                              }`}
+                              style={{ borderRadius: 0, boxShadow: isSurveyPick ? "0 4px 16px rgba(26,26,27,0.08)" : "0 4px 12px rgba(26,26,27,0.04)" }}
                             >
-                              <Plus className="w-3 h-3 text-[hsl(var(--gold-dark))] shrink-0" />
-                              <div className="flex-1 min-w-0">
-                                <div className="flex items-center gap-1.5">
-                                  <span className="text-[0.6875rem] font-display font-medium text-[hsl(var(--ink))] truncate">{a.name}</span>
-                                  {isSameZone && earlyRidesInWindow.length > 0 && (
-                                    <span className="px-1.5 py-0.5 text-[0.5rem] bg-[hsl(140,40%,45%,0.1)] text-[hsl(140,40%,35%)] font-semibold uppercase tracking-[0.08em] shrink-0" style={{ borderRadius: 0 }}>
-                                      Same zone ✓
-                                    </span>
-                                  )}
-                                  {!isSameZone && isNearby && earlyRidesInWindow.length > 0 && (
-                                    <span className="px-1.5 py-0.5 text-[0.5rem] bg-[hsl(var(--gold)/0.1)] text-[hsl(var(--gold-dark))] font-medium uppercase tracking-[0.08em] shrink-0" style={{ borderRadius: 0 }}>
-                                      {walkToRide}m walk
-                                    </span>
-                                  )}
-                                  {!isSameZone && !isNearby && earlyRidesInWindow.length > 0 && (
-                                    <span className="px-1.5 py-0.5 text-[0.5rem] bg-[hsl(var(--ink))]/5 text-[hsl(var(--ink-light))] font-medium uppercase tracking-[0.08em] shrink-0" style={{ borderRadius: 0 }}>
-                                      🚶 {walkToRide}m away
-                                    </span>
-                                  )}
+                              {/* Top row: name + badges + time chips */}
+                              <div className="flex items-center gap-2 w-full">
+                                <Plus className="w-3 h-3 text-[hsl(var(--gold-dark))] shrink-0" />
+                                <div className="flex-1 min-w-0">
+                                  <div className="flex items-center gap-1.5">
+                                    {isTopFive && <Star className="w-3 h-3 text-[hsl(var(--gold))] shrink-0 fill-[hsl(var(--gold))]" />}
+                                    <span className="text-[0.6875rem] font-display font-medium text-[hsl(var(--ink))] truncate">{a.name}</span>
+                                    {isSameZone && earlyRidesInWindow.length > 0 && (
+                                      <span className="px-1.5 py-0.5 text-[0.5rem] bg-[hsl(140,40%,45%,0.1)] text-[hsl(140,40%,35%)] font-semibold uppercase tracking-[0.08em] shrink-0" style={{ borderRadius: 0 }}>
+                                        Same zone ✓
+                                      </span>
+                                    )}
+                                    {!isSameZone && isNearby && earlyRidesInWindow.length > 0 && (
+                                      <span className="px-1.5 py-0.5 text-[0.5rem] bg-[hsl(var(--gold)/0.1)] text-[hsl(var(--gold-dark))] font-medium uppercase tracking-[0.08em] shrink-0" style={{ borderRadius: 0 }}>
+                                        {walkToRide}m walk
+                                      </span>
+                                    )}
+                                    {!isSameZone && !isNearby && earlyRidesInWindow.length > 0 && (
+                                      <span className="px-1.5 py-0.5 text-[0.5rem] bg-[hsl(var(--ink))]/5 text-[hsl(var(--ink-light))] font-medium uppercase tracking-[0.08em] shrink-0" style={{ borderRadius: 0 }}>
+                                        🚶 {walkToRide}m away
+                                      </span>
+                                    )}
+                                  </div>
                                 </div>
-                                {earlyRidesInWindow.length > 0 && walkToRide > 0 && !isSameZone && (
-                                  <span className="text-[0.5rem] text-[hsl(var(--ink-light))]/60">
-                                    {walkToRide}m walk + {earlyWait}m wait + {rideDur}m ride
+                                <div className="flex items-center gap-1.5 shrink-0">
+                                  <span className="px-1.5 py-0.5 text-[0.5625rem] bg-[hsl(var(--gold)/0.1)] text-[hsl(var(--gold-dark))] font-medium" style={{ borderRadius: 0 }}>
+                                    ⏱ {earlyWait}m
                                   </span>
-                                )}
+                                  <span className="px-1.5 py-0.5 text-[0.5625rem] bg-[hsl(var(--ink))]/5 text-[hsl(var(--ink))] font-medium" style={{ borderRadius: 0 }}>
+                                    🎢 {rideDur}m
+                                  </span>
+                                  <span className="px-1.5 py-0.5 text-[0.5625rem] font-bold bg-[hsl(var(--gold)/0.15)] text-[hsl(var(--gold-dark))]" style={{ borderRadius: 0 }}>
+                                    {earlyRidesInWindow.length > 0 ? `${totalWithWalk}m` : `${totalTime}m`}
+                                  </span>
+                                </div>
                               </div>
-                              <div className="flex items-center gap-1.5 shrink-0">
-                                <span className="px-1.5 py-0.5 text-[0.5625rem] bg-[hsl(var(--gold)/0.1)] text-[hsl(var(--gold-dark))] font-medium" style={{ borderRadius: 0 }}>
-                                  ⏱ {earlyWait}m
+                              
+                              {/* Walk breakdown for non-same-zone */}
+                              {earlyRidesInWindow.length > 0 && walkToRide > 0 && !isSameZone && (
+                                <span className="text-[0.5rem] text-[hsl(var(--ink-light))]/60 ml-5">
+                                  {walkToRide}m walk + {earlyWait}m wait + {rideDur}m ride
                                 </span>
-                                <span className="px-1.5 py-0.5 text-[0.5625rem] bg-[hsl(var(--ink))]/5 text-[hsl(var(--ink))] font-medium" style={{ borderRadius: 0 }}>
-                                  🎢 {rideDur}m
-                                </span>
-                                <span className="px-1.5 py-0.5 text-[0.5625rem] font-bold bg-[hsl(var(--gold)/0.15)] text-[hsl(var(--gold-dark))]" style={{ borderRadius: 0 }}>
-                                  {earlyRidesInWindow.length > 0 ? `${totalWithWalk}m` : `${totalTime}m`}
-                                </span>
-                              </div>
+                              )}
+                              
+                              {/* Survey attribution row */}
+                              {isSurveyPick && (
+                                <div className="flex items-center gap-1.5 ml-5 flex-wrap">
+                                  <Users className="w-2.5 h-2.5 text-[hsl(var(--gold-dark))] shrink-0" />
+                                  {satisfies && satisfies.map(s => (
+                                    <span key={s.memberId} className="inline-flex items-center gap-0.5 px-1.5 py-0.5 bg-[hsl(var(--gold)/0.1)] text-[0.5rem] text-[hsl(var(--gold-dark))]" style={{ borderRadius: 0 }}>
+                                      {s.name} · <span className="italic">{s.reason}</span>
+                                    </span>
+                                  ))}
+                                  {isTopFive && voters && !satisfies?.length && voters.map(v => (
+                                    <span key={v} className="inline-flex items-center gap-0.5 px-1.5 py-0.5 bg-[hsl(var(--gold)/0.1)] text-[0.5rem] text-[hsl(var(--gold-dark))]" style={{ borderRadius: 0 }}>
+                                      {v} · <span className="italic">Top 5</span>
+                                    </span>
+                                  ))}
+                                </div>
+                              )}
                             </button>
                           ))}
                         </div>

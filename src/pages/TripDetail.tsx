@@ -634,6 +634,8 @@ const BookedTripDetail = ({ trip }: { trip: BookedTrip }) => {
   const [pendingDining, setPendingDining] = useState<DiningReservation[]>([]);
   const [pendingExperiences, setPendingExperiences] = useState<BookedExperience[]>([]);
   const [alerts, setAlerts] = useState<BookingAlert[]>([]);
+  const [confirmedDiningCancelled, setConfirmedDiningCancelled] = useState<string[]>([]);
+  const [confirmedExpCancelled, setConfirmedExpCancelled] = useState<string[]>([]);
   const [bookingModal, setBookingModal] = useState<{ type: "dining" | "experience"; venue: DiningVenue | ExperienceVenue } | null>(null);
   const [alertModal, setAlertModal] = useState<{ type: "dining" | "experience"; venueName: string; opensDate: string } | null>(null);
   const { destination, tripName, countdownDays, travelLegs, diningReservations, bookedExperiences, diningVenues, experienceVenues } = trip;
@@ -669,9 +671,19 @@ const BookedTripDetail = ({ trip }: { trip: BookedTrip }) => {
   const getTotalPacked = () => Object.values(packedItems).flat().filter(Boolean).length;
   const getTotalItems = () => Object.values(packedItems).flat().length;
 
-  // Combined reservations (mock + pending)
-  const allDiningReservations = useMemo(() => [...diningReservations, ...pendingDining], [diningReservations, pendingDining]);
-  const allBookedExperiences = useMemo(() => [...bookedExperiences, ...pendingExperiences], [bookedExperiences, pendingExperiences]);
+  // Combined reservations (mock + pending), with cancellation tracking
+  const allDiningReservations = useMemo(() => {
+    const mock = diningReservations.map(d =>
+      confirmedDiningCancelled.includes(d.reservationId) ? { ...d, status: "cancelled" as const } : d
+    );
+    return [...mock, ...pendingDining];
+  }, [diningReservations, pendingDining, confirmedDiningCancelled]);
+  const allBookedExperiences = useMemo(() => {
+    const mock = bookedExperiences.map(e =>
+      confirmedExpCancelled.includes(e.experienceId) ? { ...e, status: "cancelled" as const } : e
+    );
+    return [...mock, ...pendingExperiences];
+  }, [bookedExperiences, pendingExperiences, confirmedExpCancelled]);
 
   /* ── Overlap detection for dining & experiences ─────────────────── */
   const parseTimeToMin = (timeStr: string): number => {
@@ -784,6 +796,36 @@ const BookedTripDetail = ({ trip }: { trip: BookedTrip }) => {
     toast({ title: "🔔 Alert set!", description: `We'll remind you when ${venueName} booking opens${opensDate ? ` on ${opensDate}` : ""}.` });
   };
 
+  // ── Cancel / Remove / Edit handlers ──
+  const handleCancelDining = (reservationId: string, restaurantName: string) => {
+    // Check if it's a pending (user-added) or confirmed (mock) reservation
+    const isPending = pendingDining.some(d => d.reservationId === reservationId);
+    if (isPending) {
+      setPendingDining(prev => prev.map(d => d.reservationId === reservationId ? { ...d, status: "cancelled" as const, monitoringActive: false } : d));
+    }
+    // For confirmed (mock data), we need to track cancellations separately — mutate the trip's array via state
+    setConfirmedDiningCancelled(prev => [...prev, reservationId]);
+    toast({ title: "Reservation cancelled", description: `${restaurantName} has been cancelled.` });
+  };
+
+  const handleRemovePendingDining = (reservationId: string, restaurantName: string) => {
+    setPendingDining(prev => prev.filter(d => d.reservationId !== reservationId));
+    toast({ title: "Removed", description: `${restaurantName} removed from pending.` });
+  };
+
+  const handleCancelExperience = (experienceId: string, experienceName: string) => {
+    const isPending = pendingExperiences.some(e => e.experienceId === experienceId);
+    if (isPending) {
+      setPendingExperiences(prev => prev.map(e => e.experienceId === experienceId ? { ...e, status: "cancelled" as const, monitoringActive: false } : e));
+    }
+    setConfirmedExpCancelled(prev => [...prev, experienceId]);
+    toast({ title: "Experience cancelled", description: `${experienceName} has been cancelled.` });
+  };
+
+  const handleRemovePendingExperience = (experienceId: string, experienceName: string) => {
+    setPendingExperiences(prev => prev.filter(e => e.experienceId !== experienceId));
+    toast({ title: "Removed", description: `${experienceName} removed from pending.` });
+  };
 
   const consensusData = useMemo(() => {
     const completed = partySurvey.responses.filter((r) => r.status === "completed");
@@ -1165,6 +1207,16 @@ const BookedTripDetail = ({ trip }: { trip: BookedTrip }) => {
                             </div>
                           </div>
                         )}
+                        {/* Cancel confirmed */}
+                        <div className="mt-3 pt-2 border-t border-border/50 flex items-center justify-between">
+                          <span className="font-editorial text-[0.625rem] text-muted-foreground/50">#{res.confirmationNumber}</span>
+                          <button
+                            onClick={() => handleCancelDining(res.reservationId, res.restaurantName)}
+                            className="text-[0.5625rem] uppercase tracking-[0.12em] font-medium text-destructive/60 hover:text-destructive transition-colors"
+                          >
+                            Cancel Reservation
+                          </button>
+                        </div>
                       </div>
                     ))}
                     {allDiningReservations.filter(d => d.status === "confirmed").length === 0 && (
@@ -1218,8 +1270,16 @@ const BookedTripDetail = ({ trip }: { trip: BookedTrip }) => {
                             </p>
                           </div>
                         )}
-                        <div className="mt-3 pt-2 border-t border-border/50">
+                        <div className="mt-3 pt-2 border-t border-border/50 flex items-center justify-between">
                           <p className="font-editorial text-[0.625rem] text-muted-foreground/50 italic">Add confirmation # once booked</p>
+                          <div className="flex items-center gap-3">
+                            <button
+                              onClick={() => handleRemovePendingDining(res.reservationId, res.restaurantName)}
+                              className="text-[0.5625rem] uppercase tracking-[0.12em] font-medium text-destructive/60 hover:text-destructive transition-colors"
+                            >
+                              Remove
+                            </button>
+                          </div>
                         </div>
                       </div>
                     ))}
@@ -1435,6 +1495,16 @@ const BookedTripDetail = ({ trip }: { trip: BookedTrip }) => {
                             </p>
                           </div>
                         )}
+                        {/* Cancel confirmed experience */}
+                        <div className="mt-3 pt-2 border-t border-border/50 flex items-center justify-between">
+                          <span className="font-editorial text-[0.625rem] text-muted-foreground/50">#{exp.confirmationNumber}</span>
+                          <button
+                            onClick={() => handleCancelExperience(exp.experienceId, exp.experienceName)}
+                            className="text-[0.5625rem] uppercase tracking-[0.12em] font-medium text-destructive/60 hover:text-destructive transition-colors"
+                          >
+                            Cancel Booking
+                          </button>
+                        </div>
                       </div>
                     ))}
                     {allBookedExperiences.filter(e => e.status === "confirmed").length === 0 && (
@@ -1489,8 +1559,16 @@ const BookedTripDetail = ({ trip }: { trip: BookedTrip }) => {
                             </p>
                           </div>
                         )}
-                        <div className="mt-3 pt-2 border-t border-border/50">
+                        <div className="mt-3 pt-2 border-t border-border/50 flex items-center justify-between">
                           <p className="font-editorial text-[0.625rem] text-muted-foreground/50 italic">Add confirmation # once booked</p>
+                          <div className="flex items-center gap-3">
+                            <button
+                              onClick={() => handleRemovePendingExperience(exp.experienceId, exp.experienceName)}
+                              className="text-[0.5625rem] uppercase tracking-[0.12em] font-medium text-destructive/60 hover:text-destructive transition-colors"
+                            >
+                              Remove
+                            </button>
+                          </div>
                         </div>
                       </div>
                     ))}

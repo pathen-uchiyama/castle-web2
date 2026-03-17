@@ -24,6 +24,7 @@ const slideRight = (delay = 0) => ({
 
 interface CircleProps {
   partyMembers: PartyMember[];
+  guestName: string;
 }
 
 const tabs = [
@@ -71,7 +72,7 @@ const ProfileField = ({ label, value }: { label: string; value?: string | null }
   );
 };
 
-const Circle = ({ partyMembers }: CircleProps) => {
+const Circle = ({ partyMembers, guestName }: CircleProps) => {
   const [activeTab, setActiveTab] = useState("registry");
   const [expandedMember, setExpandedMember] = useState<string | null>(null);
   const [editingMember, setEditingMember] = useState<string | null>(null);
@@ -151,8 +152,37 @@ const Circle = ({ partyMembers }: CircleProps) => {
       {/* ═══ MASTER REGISTRY TAB ═══ */}
       {activeTab === "registry" && (
         <section className="max-w-4xl mx-auto px-4 sm:px-8 py-16 sm:py-24">
+          {/* ═══ INTRO / VALUE PROP ═══ */}
+          <motion.div {...fade()} className="mb-12">
+            <p className="label-text mb-2 tracking-[0.25em]">Why Set This Up</p>
+            <h2 className="font-display text-3xl sm:text-4xl text-foreground leading-[1.08] mb-4">Your Traveling Troupe</h2>
+            <p className="font-editorial text-lg text-muted-foreground leading-relaxed max-w-3xl mb-6">
+              Set up profiles for everyone who travels with you — not just for this trip, but for every future adventure. When we know your party's ages, heights, dietary needs, and ride preferences, we can:
+            </p>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
+              <div className="border border-[hsl(var(--gold)/0.2)] bg-[hsl(var(--gold)/0.03)] rounded-lg p-4">
+                <span className="text-lg mb-2 block">🎢</span>
+                <p className="font-display text-sm text-foreground mb-1">Flag ride restrictions</p>
+                <p className="font-editorial text-xs text-muted-foreground leading-relaxed">Automatically warn you about height requirements, thrill levels, and sensory triggers before you're in line.</p>
+              </div>
+              <div className="border border-[hsl(var(--gold)/0.2)] bg-[hsl(var(--gold)/0.03)] rounded-lg p-4">
+                <span className="text-lg mb-2 block">🍽️</span>
+                <p className="font-display text-sm text-foreground mb-1">Filter dining for allergies</p>
+                <p className="font-editorial text-xs text-muted-foreground leading-relaxed">Surface restaurants that accommodate your party's dietary restrictions and highlight allergy-safe options.</p>
+              </div>
+              <div className="border border-[hsl(var(--gold)/0.2)] bg-[hsl(var(--gold)/0.03)] rounded-lg p-4">
+                <span className="text-lg mb-2 block">✨</span>
+                <p className="font-display text-sm text-foreground mb-1">Personalize itineraries</p>
+                <p className="font-editorial text-xs text-muted-foreground leading-relaxed">Build daily plans that balance everyone's thrill tolerance, accessibility needs, and must-do experiences.</p>
+              </div>
+            </div>
+            <p className="font-editorial text-sm text-muted-foreground italic">
+              Profiles persist across all trips — update once, benefit everywhere.
+            </p>
+          </motion.div>
+
           {/* Stats */}
-          <motion.div {...fade()} className="grid grid-cols-2 sm:grid-cols-4 gap-6 mb-16">
+          <motion.div {...fade(0.05)} className="grid grid-cols-2 sm:grid-cols-4 gap-6 mb-16">
             {[
               { label: "Party Members", value: String(members.length) },
               { label: "Total Adventures", value: String(members.reduce((s, m) => s + m.adventureCount, 0)) },
@@ -172,12 +202,14 @@ const Circle = ({ partyMembers }: CircleProps) => {
               const isExpanded = expandedMember === member.memberId;
               const isEditing = editingMember === member.memberId;
               const freshness = getFreshness(member.lastUpdated);
+              const isOwner = member.name.toLowerCase() === guestName.toLowerCase();
 
               return (
                 <motion.div
                   key={member.memberId}
                   {...slideRight(i * 0.1)}
                   className={`border bg-card rounded-lg shadow-[var(--shadow-soft)] hover:shadow-[var(--shadow-hover)] transition-all duration-500 overflow-hidden ${
+                    isOwner ? "border-[hsl(var(--gold)/0.5)] ring-1 ring-[hsl(var(--gold)/0.15)]" :
                     freshness.stale ? "border-destructive/30" : "border-border"
                   }`}
                 >
@@ -193,12 +225,17 @@ const Circle = ({ partyMembers }: CircleProps) => {
                       <motion.div
                         whileHover={{ scale: 1.1, rotate: 5 }}
                         transition={{ type: "spring", stiffness: 300, damping: 20 }}
-                        className="w-14 h-14 rounded-lg bg-foreground flex items-center justify-center shrink-0"
+                        className={`w-14 h-14 rounded-lg flex items-center justify-center shrink-0 ${isOwner ? "bg-[hsl(var(--gold))]" : "bg-foreground"}`}
                       >
                         <span className="font-display text-xl text-background">{member.initial}</span>
                       </motion.div>
                       <div className="min-w-0">
-                        <p className="font-display text-xl text-foreground">{member.name}</p>
+                        <div className="flex items-center gap-2">
+                          <p className="font-display text-xl text-foreground">{member.name}</p>
+                          {isOwner && (
+                            <span className="px-2 py-0.5 rounded-md text-[0.5rem] uppercase tracking-[0.12em] font-medium bg-[hsl(var(--gold)/0.12)] text-[hsl(var(--gold-dark))] border border-[hsl(var(--gold)/0.25)]">You</span>
+                          )}
+                        </div>
                         <div className="flex items-center gap-3 mt-1">
                           <p className="label-text">{member.role}</p>
                           <span className="text-muted-foreground/30">·</span>

@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import { useState } from "react";
 import { Lock } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import FloatingAnchor from "@/components/FloatingAnchor";
 import Footer from "@/components/Footer";
 import TripWizard from "@/components/TripWizard";
@@ -33,6 +34,7 @@ const teaserCards = [
 ];
 
 const DayZeroIndex = () => {
+  const navigate = useNavigate();
   const [wizardOpen, setWizardOpen] = useState(false);
 
   return (
@@ -214,7 +216,7 @@ const DayZeroIndex = () => {
       <FloatingAnchor waiting />
 
       {/* ═══ TRIP WIZARD — Full-screen concierge ═══ */}
-      <TripWizard open={wizardOpen} onClose={() => setWizardOpen(false)} />
+      <TripWizard open={wizardOpen} onClose={() => setWizardOpen(false)} onComplete={(tripId) => navigate(`/trip/${tripId}`)} />
     </div>
   );
 };

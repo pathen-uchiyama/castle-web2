@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Footer from "@/components/Footer";
 import SparkleField from "@/components/SparkleField";
 import TripWizard from "@/components/TripWizard";
@@ -27,6 +27,7 @@ const statusLabels: Record<string, string> = {
 };
 
 const TripsHub = ({ bookedTrip, futureTrips }: TripsHubProps) => {
+  const navigate = useNavigate();
   const [wizardOpen, setWizardOpen] = useState(false);
   const { partySurvey } = mockData;
   const completedCount = partySurvey.responses.filter((r) => r.status === "completed").length;
@@ -160,7 +161,7 @@ const TripsHub = ({ bookedTrip, futureTrips }: TripsHubProps) => {
       </section>
 
       <Footer />
-      <TripWizard open={wizardOpen} onClose={() => setWizardOpen(false)} />
+      <TripWizard open={wizardOpen} onClose={() => setWizardOpen(false)} onComplete={(tripId) => navigate(`/trip/${tripId}`)} />
     </div>
   );
 };

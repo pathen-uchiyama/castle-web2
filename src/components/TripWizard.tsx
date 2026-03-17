@@ -74,6 +74,7 @@ interface WizardData {
 interface TripWizardProps {
   open: boolean;
   onClose: () => void;
+  onComplete?: (tripId: string) => void;
 }
 
 /* ─── Step Definitions ─── */
@@ -233,7 +234,7 @@ const ToggleCard = ({ active, onClick, label, desc, cost }: { active: boolean; o
 );
 
 /* ─── Main Component ─── */
-const TripWizard = ({ open, onClose }: TripWizardProps) => {
+const TripWizard = ({ open, onClose, onComplete }: TripWizardProps) => {
   const [currentStep, setCurrentStep] = useState(0);
   const [data, setData] = useState<WizardData>({
     adventureTitle: "",
@@ -333,7 +334,15 @@ const TripWizard = ({ open, onClose }: TripWizardProps) => {
     }
     // When moving to park schedule page, sync the schedule
     if (currentStep === 2) syncSchedule();
-    if (isLast) { onClose(); return; }
+    if (isLast) {
+      // Generate a trip ID from the adventure title
+      const tripId = data.adventureTitle
+        ? data.adventureTitle.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "")
+        : `trip-${Date.now()}`;
+      onClose();
+      if (onComplete) onComplete(tripId);
+      return;
+    }
     setCurrentStep((s) => s + 1);
   };
   const handleBack = () => { if (!isFirst) setCurrentStep((s) => s - 1); };

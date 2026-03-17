@@ -24,6 +24,7 @@ const slideRight = (delay = 0) => ({
 
 interface CircleProps {
   partyMembers: PartyMember[];
+  guestName: string;
 }
 
 const tabs = [

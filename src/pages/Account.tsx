@@ -113,10 +113,14 @@ const Account = ({ account }: AccountProps) => {
 
   const { subscription } = account;
 
-  const profileFields: { label: string; key: "guestName" | "email" | "birthday" | null; value: string; editable: boolean }[] = [
+  const calcAge = (bd?: string) => { if (!bd) return undefined; const d = new Date(bd); const now = new Date(); let a = now.getFullYear() - d.getFullYear(); if (now.getMonth() < d.getMonth() || (now.getMonth() === d.getMonth() && now.getDate() < d.getDate())) a--; return a; };
+  const formatBirthdate = (bd?: string) => { if (!bd) return "—"; const d = new Date(bd); return d.toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" }); };
+
+  const profileFields: { label: string; key: "guestName" | "email" | "birthdate" | null; value: string; editable: boolean; inputType?: string }[] = [
     { label: "Name", key: "guestName", value: profileData.guestName, editable: true },
     { label: "Email", key: "email", value: profileData.email, editable: true },
-    { label: "Birthday", key: "birthday", value: profileData.birthday || "—", editable: true },
+    { label: "Birthdate", key: "birthdate", value: formatBirthdate(profileData.birthdate), editable: true, inputType: "date" },
+    { label: "Age", key: null, value: calcAge(profileData.birthdate) ? `${calcAge(profileData.birthdate)} years` : "—", editable: false },
     { label: "Member since", key: null, value: account.memberSince, editable: false },
     { label: "Adventures completed", key: null, value: String(account.adventuresCompleted), editable: false },
   ];

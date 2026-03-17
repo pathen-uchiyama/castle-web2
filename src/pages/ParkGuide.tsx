@@ -632,7 +632,7 @@ const ParkGuidePage = ({ parkGuides }: ParkGuidePageProps) => {
             </section>
           )}
 
-          {/* ═══ THEMED LANDS ═══ */}
+          {/* ═══ THEMED LANDS — with attraction listings ═══ */}
           {encyclopediaPark && (
             <section className="px-8 lg:px-16 py-12 lg:py-16 border-b border-border bg-[hsl(var(--warm))]">
               <motion.div {...fade()}>
@@ -642,141 +642,120 @@ const ParkGuidePage = ({ parkGuides }: ParkGuidePageProps) => {
                   {park.parkName} is divided into {encyclopediaPark.lands.length} immersive themed lands, each with its own rides, dining, and atmosphere.
                 </p>
               </motion.div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                {encyclopediaPark.lands.map((land, i) => (
-                  <motion.div key={land.name} {...fade(i * 0.05)}>
-                    <div className="border border-border bg-card rounded-lg p-6 shadow-[var(--shadow-soft)] h-full">
-                      <h4 className="font-display text-xl text-foreground mb-2">{land.name}</h4>
-                      <p className="font-editorial text-sm text-muted-foreground leading-relaxed mb-3">{land.description}</p>
-                      {land.iconicAttraction && (
-                        <p className="text-sm text-[hsl(var(--gold-dark))] font-medium">⭐ {land.iconicAttraction}</p>
-                      )}
-                      {/* Show attractions count for this land */}
-                      {(() => {
-                        const landAttractions = encyclopediaAttractions.filter((a) => a.land.includes(land.name) || land.name.includes(a.land.split(" —")[0]));
-                        return landAttractions.length > 0 ? (
-                          <p className="text-xs text-muted-foreground mt-2">{landAttractions.length} attraction{landAttractions.length > 1 ? "s" : ""} in this land</p>
-                        ) : null;
-                      })()}
-                    </div>
-                  </motion.div>
-                ))}
+              <div className="space-y-6">
+                {encyclopediaPark.lands.map((land, i) => {
+                  const landAttractions = encyclopediaAttractions.filter(
+                    (a) => a.land.includes(land.name) || land.name.includes(a.land.split(" —")[0])
+                  );
+                  return (
+                    <motion.div key={land.name} {...fade(i * 0.04)}>
+                      <div className="border border-border bg-card rounded-lg shadow-[var(--shadow-soft)] overflow-hidden">
+                        <div className="p-6">
+                          <div className="flex items-start justify-between gap-4 mb-2">
+                            <div>
+                              <h4 className="font-display text-xl text-foreground mb-1">{land.name}</h4>
+                              <p className="font-editorial text-sm text-muted-foreground leading-relaxed">{land.description}</p>
+                            </div>
+                            {land.iconicAttraction && (
+                              <span className="shrink-0 text-sm text-[hsl(var(--gold-dark))] font-medium whitespace-nowrap">⭐ {land.iconicAttraction}</span>
+                            )}
+                          </div>
+                        </div>
+                        {landAttractions.length > 0 && (
+                          <div className="border-t border-border/50 bg-muted/20 px-6 py-4">
+                            <p className="label-text mb-3 text-[0.5625rem]">{landAttractions.length} Experience{landAttractions.length > 1 ? "s" : ""}</p>
+                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
+                              {landAttractions.map((a) => {
+                                const typeIcons: Record<string, string> = { ride: "🎢", show: "🎭", "meet-and-greet": "✨", experience: "🌟", parade: "🎊", fireworks: "🎆", "play-area": "🎪", "water-ride": "💦" };
+                                return (
+                                  <div key={a.attractionId} className="flex items-center gap-2 px-3 py-2 rounded-lg bg-card border border-border/50 text-sm">
+                                    <span className="text-xs">{typeIcons[a.type] || "🎢"}</span>
+                                    <span className="font-editorial text-foreground truncate flex-1">{a.name}</span>
+                                    <span className="text-[0.6rem] uppercase tracking-wider shrink-0" style={{ color: thrillColors[a.thrillLevel] || "hsl(var(--foreground))" }}>
+                                      {a.thrillLevel}
+                                    </span>
+                                    {a.warnings && a.warnings.length > 0 && (
+                                      <span className="text-[0.6rem] text-destructive shrink-0" title={a.warnings.map(w => WARNING_LABELS[w]?.label).join(", ")}>⚠</span>
+                                    )}
+                                  </div>
+                                );
+                              })}
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    </motion.div>
+                  );
+                })}
               </div>
             </section>
           )}
 
-          {/* Must-Do & Insider Tips */}
+          {/* ═══ 3-COLUMN: Must-Do · Insider Tips · What's Changing ═══ */}
           {encyclopediaPark && (
             <section className="px-8 lg:px-16 py-12 lg:py-16 border-b border-border">
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-                <motion.div {...fade()}>
-                  <p className="label-text mb-6">Must-Do Experiences ⭐</p>
-                  <div className="space-y-2">
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                {/* Must-Do Experiences */}
+                <motion.div {...fade()} className="border border-border bg-card rounded-lg shadow-[var(--shadow-soft)] flex flex-col">
+                  <div className="p-6 pb-4 border-b border-border/50">
+                    <p className="label-text tracking-[0.2em]">Must-Do Experiences ⭐</p>
+                  </div>
+                  <div className="p-6 pt-4 space-y-2 flex-1">
                     {encyclopediaPark.mustDo.map((item) => (
                       <div key={item} className="flex items-center gap-3 px-4 py-3 rounded-lg bg-[hsl(var(--gold)/0.04)] border border-[hsl(var(--gold)/0.15)]">
-                        <span className="text-[hsl(var(--gold))] text-lg">★</span>
-                        <span className="font-editorial text-base text-foreground">{item}</span>
+                        <span className="text-[hsl(var(--gold))] text-sm shrink-0">★</span>
+                        <span className="font-editorial text-sm text-foreground">{item}</span>
                       </div>
                     ))}
                   </div>
                 </motion.div>
-                <motion.div {...fade(0.1)}>
-                  <p className="label-text mb-6">Insider Tips 💡</p>
-                  <div className="space-y-2">
+
+                {/* Insider Tips */}
+                <motion.div {...fade(0.05)} className="border border-border bg-card rounded-lg shadow-[var(--shadow-soft)] flex flex-col">
+                  <div className="p-6 pb-4 border-b border-border/50">
+                    <p className="label-text tracking-[0.2em]">Insider Tips 💡</p>
+                  </div>
+                  <div className="p-6 pt-4 space-y-2 flex-1">
                     {encyclopediaPark.tips.map((tip) => (
                       <div key={tip} className="flex items-start gap-3 px-4 py-3 rounded-lg bg-muted/30 border border-border/50">
-                        <span className="text-sm mt-0.5 shrink-0">💡</span>
+                        <span className="text-xs mt-0.5 shrink-0">💡</span>
                         <span className="font-editorial text-sm text-muted-foreground leading-relaxed">{tip}</span>
                       </div>
                     ))}
                   </div>
                 </motion.div>
+
+                {/* What's Changing */}
+                <motion.div {...fade(0.1)} className="border border-border bg-card rounded-lg shadow-[var(--shadow-soft)] flex flex-col">
+                  <div className="p-6 pb-4 border-b border-border/50">
+                    <p className="label-text tracking-[0.2em]">What's Changing 🔄</p>
+                  </div>
+                  <div className="p-6 pt-4 space-y-3 flex-1 overflow-y-auto max-h-[600px]">
+                    {parkNews.length === 0 ? (
+                      <p className="font-editorial text-sm text-muted-foreground italic">No current changes announced.</p>
+                    ) : (
+                      parkNews.map((item) => {
+                        const Icon = newsIcons[item.category] || Construction;
+                        const color = newsColors[item.category];
+                        return (
+                          <div key={item.id} className="flex items-start gap-3 px-4 py-3 rounded-lg border" style={{ borderColor: `${color}25`, backgroundColor: `${color}04` }}>
+                            <div className="w-7 h-7 rounded-md flex items-center justify-center shrink-0 mt-0.5" style={{ backgroundColor: `${color}12` }}>
+                              <Icon className="w-3.5 h-3.5" style={{ color }} />
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <div className="flex items-center gap-2 mb-0.5 flex-wrap">
+                                <span className="text-[0.6rem] uppercase tracking-[0.08em] font-medium" style={{ color }}>{newsLabels[item.category]}</span>
+                                {item.dateLabel && <span className="text-[0.6rem] text-muted-foreground">· {item.dateLabel}</span>}
+                              </div>
+                              <p className="font-display text-sm text-foreground leading-snug">{item.title}</p>
+                            </div>
+                          </div>
+                        );
+                      })
+                    )}
+                  </div>
+                </motion.div>
               </div>
-            </section>
-          )}
-
-          {/* ═══ DINING DIRECTORY ═══ */}
-          {parkRestaurants.length > 0 && (
-            <section className="px-8 lg:px-16 py-12 lg:py-16 border-b border-border bg-[hsl(var(--warm))]">
-              <motion.div {...fade()}>
-                <div className="flex items-center gap-3 mb-2">
-                  <UtensilsCrossed className="w-5 h-5 text-[hsl(var(--gold-dark))]" />
-                  <p className="label-text tracking-[0.25em]">Dining</p>
-                </div>
-                <h2 className="font-display text-3xl text-foreground leading-[1.08] mb-4">Where to Eat</h2>
-                <p className="font-editorial text-muted-foreground mb-10 max-w-2xl">
-                  Every restaurant, café, and quick-service spot at {park.parkName} — with dietary accommodations, reservation difficulty, and insider tips.
-                </p>
-              </motion.div>
-
-              <div className="space-y-4">
-                {parkRestaurants.map((r, i) => (
-                  <motion.div key={r.restaurantId} {...fade(Math.min(i * 0.03, 0.3))}>
-                    <DiningCard restaurant={r} />
-                  </motion.div>
-                ))}
-              </div>
-            </section>
-          )}
-
-          {/* ═══ PARK STATUS & NEWS ═══ */}
-          {parkNews.length > 0 && (
-            <section className="px-8 lg:px-16 py-12 lg:py-16 border-b border-border">
-              <motion.div {...fade()}>
-                <p className="label-text mb-2 tracking-[0.25em]">Park Status & News</p>
-                <h2 className="font-display text-3xl text-foreground leading-[1.08] mb-4">What's Changing</h2>
-                <p className="font-editorial text-muted-foreground mb-10 max-w-2xl">
-                  Current closures, upcoming changes, and new experiences coming to {park.parkName}.
-                </p>
-              </motion.div>
-
-              {closures.length > 0 && (
-                <motion.div {...fade(0.05)} className="mb-10">
-                  <div className="flex items-center gap-2 mb-4">
-                    <Wrench className="w-4 h-4 text-[hsl(var(--gold-dark))]" />
-                    <p className="label-text tracking-[0.2em]">Closures & Refurbishments</p>
-                  </div>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {closures.map((item) => <NewsCard key={item.id} item={item} />)}
-                  </div>
-                </motion.div>
-              )}
-
-              {permanentChanges.length > 0 && (
-                <motion.div {...fade(0.1)} className="mb-10">
-                  <div className="flex items-center gap-2 mb-4">
-                    <AlertTriangle className="w-4 h-4 text-destructive" />
-                    <p className="label-text tracking-[0.2em]">Permanent Changes & Re-Themings</p>
-                  </div>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {permanentChanges.map((item) => <NewsCard key={item.id} item={item} />)}
-                  </div>
-                </motion.div>
-              )}
-
-              {newOpenings.length > 0 && (
-                <motion.div {...fade(0.15)} className="mb-10">
-                  <div className="flex items-center gap-2 mb-4">
-                    <Sparkles className="w-4 h-4 text-[hsl(142,60%,38%)]" />
-                    <p className="label-text tracking-[0.2em]">Opening Soon</p>
-                  </div>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {newOpenings.map((item) => <NewsCard key={item.id} item={item} />)}
-                  </div>
-                </motion.div>
-              )}
-
-              {underConstruction.length > 0 && (
-                <motion.div {...fade(0.2)}>
-                  <div className="flex items-center gap-2 mb-4">
-                    <Construction className="w-4 h-4 text-[hsl(210,60%,50%)]" />
-                    <p className="label-text tracking-[0.2em]">Under Construction & Coming Soon</p>
-                  </div>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {underConstruction.map((item) => <NewsCard key={item.id} item={item} />)}
-                  </div>
-                </motion.div>
-              )}
             </section>
           )}
 

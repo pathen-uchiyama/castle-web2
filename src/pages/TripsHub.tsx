@@ -161,7 +161,7 @@ const TripsHub = ({ bookedTrip, futureTrips }: TripsHubProps) => {
       </section>
 
       <Footer />
-      <TripWizard open={wizardOpen} onClose={() => setWizardOpen(false)} />
+      <TripWizard open={wizardOpen} onClose={() => setWizardOpen(false)} onComplete={(tripId) => navigate(`/trip/${tripId}`)} />
     </div>
   );
 };

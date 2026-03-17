@@ -539,22 +539,32 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
   const insertAtIndex = useCallback((attraction: ParkAttraction, idx: number) => {
     if (isLocked) return;
     const estWait = attraction.waitCategory ? (defaultWaitByCategory[attraction.waitCategory] || 15) : 15;
+    const newItem: ItineraryItem = {
+      id: `it-${Date.now()}`,
+      attractionId: attraction.id,
+      name: attraction.name,
+      type: attraction.type,
+      duration: parseInt(attraction.duration) || DURATION_DEFAULTS[attraction.type] || 20,
+      waitTime: estWait,
+      zone: attraction.zone,
+      llType: attraction.llType,
+      waitCategory: attraction.waitCategory,
+    };
+    const conflict = wouldConflictWithAnchor(itinerary, newItem, ropeDropMin, hasStroller);
+    if (conflict.conflicts) {
+      toast({
+        title: "⚠️ Reservation Conflict",
+        description: `Adding ${attraction.name} would push into your ${conflict.anchorName} reservation at ${conflict.anchorTime}. Remove a ride or pick a shorter one.`,
+        variant: "destructive",
+      });
+      return;
+    }
     setItinerary(prev => {
       const next = [...prev];
-      next.splice(idx, 0, {
-        id: `it-${Date.now()}`,
-        attractionId: attraction.id,
-        name: attraction.name,
-        type: attraction.type,
-        duration: parseInt(attraction.duration) || DURATION_DEFAULTS[attraction.type] || 20,
-        waitTime: estWait,
-        zone: attraction.zone,
-        llType: attraction.llType,
-        waitCategory: attraction.waitCategory,
-      });
+      next.splice(idx, 0, newItem);
       return next;
     });
-  }, [isLocked]);
+  }, [isLocked, itinerary, ropeDropMin, hasStroller]);
 
   const addQuickItem = useCallback((type: ItineraryItem["type"], label: string, dur: number) => {
     if (isLocked) return;

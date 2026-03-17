@@ -118,6 +118,10 @@ export interface ParkOverview {
 }
 
 /* ── Attractions ────────────────────────────────────────────────── */
+export type AttractionWarning = "loud-noises" | "strobes" | "dark-ride" | "sudden-drops" | "spinning" | "motion-sickness" | "confined-spaces" | "heights" | "water-spray" | "pyrotechnics" | "intense-scenes";
+export type AttractionEnvironment = "indoor" | "outdoor" | "indoor-outdoor";
+export type AttractionStatus = "operating" | "refurbishment" | "seasonal-refurbishment" | "closing-permanently" | "re-theming" | "coming-soon" | "under-construction";
+
 export interface ParkAttraction {
   attractionId: string;
   parkId: string;
@@ -137,6 +141,11 @@ export interface ParkAttraction {
   mustDo: boolean;
   tip: string;
   tags: string[];
+  warnings?: AttractionWarning[];
+  environment?: AttractionEnvironment;
+  status?: AttractionStatus;
+  statusNote?: string;
+  statusDate?: string;
 }
 
 /* ── Transportation ──────────────────────────────────────────────── */

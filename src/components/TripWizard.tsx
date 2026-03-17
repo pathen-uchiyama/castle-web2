@@ -124,10 +124,10 @@ const focusOptions = [
 ];
 
 const diningStyleOptions = [
-  { id: "snacks-only", label: "Snacks Only", desc: "Graze on the go." },
-  { id: "quick-service", label: "Quick Service", desc: "Counter service, eat & move." },
-  { id: "table-service", label: "Table Service", desc: "Sit-down, part of the experience." },
-  { id: "signature", label: "Signature", desc: "Premium dining destinations." },
+  { id: "snacks-only", label: "Snacks & Treats", desc: "We want to hit the iconic snacks — Dole Whip, turkey legs, churros." },
+  { id: "quick-service", label: "Quick Service", desc: "We're happy with counter-service meals — fast, affordable, and easy." },
+  { id: "table-service", label: "Table Service", desc: "We'd enjoy sit-down restaurants as part of the experience." },
+  { id: "signature", label: "Signature Dining", desc: "We're interested in premium dining destinations for a special meal." },
 ];
 
 const splurgeOptions = [

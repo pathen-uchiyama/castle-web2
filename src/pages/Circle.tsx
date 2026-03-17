@@ -202,12 +202,14 @@ const Circle = ({ partyMembers, guestName }: CircleProps) => {
               const isExpanded = expandedMember === member.memberId;
               const isEditing = editingMember === member.memberId;
               const freshness = getFreshness(member.lastUpdated);
+              const isOwner = member.name.toLowerCase() === guestName.toLowerCase();
 
               return (
                 <motion.div
                   key={member.memberId}
                   {...slideRight(i * 0.1)}
                   className={`border bg-card rounded-lg shadow-[var(--shadow-soft)] hover:shadow-[var(--shadow-hover)] transition-all duration-500 overflow-hidden ${
+                    isOwner ? "border-[hsl(var(--gold)/0.5)] ring-1 ring-[hsl(var(--gold)/0.15)]" :
                     freshness.stale ? "border-destructive/30" : "border-border"
                   }`}
                 >

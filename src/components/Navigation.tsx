@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { motion, useScroll, useTransform, AnimatePresence } from "framer-motion";
 import { Link, useLocation } from "react-router-dom";
+import ccLogo from "@/assets/cc-logo-light.png";
 
 const navItems = [
   { label: "Plan Your Trip", path: "/adventure" },

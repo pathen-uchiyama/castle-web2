@@ -1058,6 +1058,31 @@ const BookedTripDetail = ({ trip }: { trip: BookedTrip }) => {
     toast({ title: "Removed", description: `${experienceName} removed from pending.` });
   };
 
+  // ── Edit handlers ──
+  const [confirmedDiningEdits, setConfirmedDiningEdits] = useState<Record<string, Partial<DiningReservation>>>({});
+  const [confirmedExpEdits, setConfirmedExpEdits] = useState<Record<string, Partial<BookedExperience>>>({});
+
+  const handleEditSave = (data: { date: string; time: string; timeRangeEnd?: string; partySize: number; notes: string }) => {
+    if (!editModal) return;
+    const { type, isConfirmed, itemId } = editModal;
+
+    if (type === "dining") {
+      if (isConfirmed) {
+        setConfirmedDiningEdits(prev => ({ ...prev, [itemId]: { date: data.date, time: data.time, timeRangeEnd: data.timeRangeEnd, partySize: data.partySize, notes: data.notes || undefined } }));
+      } else {
+        setPendingDining(prev => prev.map(d => d.reservationId === itemId ? { ...d, date: data.date, time: data.time, timeRangeEnd: data.timeRangeEnd, partySize: data.partySize, notes: data.notes || undefined } : d));
+      }
+      toast({ title: isConfirmed ? "Record updated" : "Changes saved", description: isConfirmed ? `${editModal.currentData.name} updated locally. Remember to update in My Disney Experience.` : `${editModal.currentData.name} updated.` });
+    } else {
+      if (isConfirmed) {
+        setConfirmedExpEdits(prev => ({ ...prev, [itemId]: { date: data.date, time: data.time, timeRangeEnd: data.timeRangeEnd, partySize: data.partySize, notes: data.notes || undefined } }));
+      } else {
+        setPendingExperiences(prev => prev.map(e => e.experienceId === itemId ? { ...e, date: data.date, time: data.time, timeRangeEnd: data.timeRangeEnd, partySize: data.partySize, notes: data.notes || undefined } : e));
+      }
+      toast({ title: isConfirmed ? "Record updated" : "Changes saved", description: isConfirmed ? `${editModal.currentData.name} updated locally. Remember to update in My Disney Experience.` : `${editModal.currentData.name} updated.` });
+    }
+    setEditModal(null);
+  };
   const consensusData = useMemo(() => {
     const completed = partySurvey.responses.filter((r) => r.status === "completed");
     if (completed.length === 0) return [];

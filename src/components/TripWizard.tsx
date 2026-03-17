@@ -284,8 +284,35 @@ const TripWizard = ({ open, onClose, onComplete, guestName = "" }: TripWizardPro
     set("parkSchedule", newSchedule);
   }, [tripDays, data.parkSchedule, set]);
 
-  const setParkForDay = (date: string, parkId: string | null) => {
-    set("parkSchedule", data.parkSchedule.map((ps) => ps.date === date ? { ...ps, parkId } : ps));
+  const toggleParkForDay = (date: string, parkId: string) => {
+    set("parkSchedule", data.parkSchedule.map((ps) => {
+      if (ps.date !== date) return ps;
+      // Non-park options are exclusive (not combinable with parks)
+      const isNonPark = [...(data.resort === "dlr" ? dlrNonParkDays : wdwNonParkDays)].some(np => np.id === parkId);
+      const currentHasNonPark = ps.parkIds.some(id => [...(data.resort === "dlr" ? dlrNonParkDays : wdwNonParkDays)].some(np => np.id === id));
+      if (isNonPark) {
+        // Selecting a non-park replaces everything
+        return { ...ps, parkIds: ps.parkIds.includes(parkId) ? [] : [parkId] };
+      }
+      // Selecting a park clears any non-park selection
+      const filtered = currentHasNonPark ? [] : ps.parkIds;
+      return {
+        ...ps,
+        parkIds: filtered.includes(parkId)
+          ? filtered.filter(id => id !== parkId)
+          : [...filtered, parkId],
+      };
+    }));
+  };
+
+  const clearDayParks = (date: string) => {
+    set("parkSchedule", data.parkSchedule.map((ps) => ps.date === date ? { ...ps, parkIds: [] } : ps));
+  };
+
+  const toggleDiningStyle = (id: string) => {
+    set("diningStyles", data.diningStyles.includes(id)
+      ? data.diningStyles.filter(s => s !== id)
+      : [...data.diningStyles, id]);
   };
 
   const toggleFocus = (id: string) => {

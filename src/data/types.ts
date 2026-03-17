@@ -93,6 +93,8 @@ export interface DiningReservation {
   notes?: string;
   dietaryFlags?: string[];
   status: "confirmed" | "pending" | "cancelled";
+  /** Links this dining to a scheduled show (e.g. dessert party → fireworks) */
+  linkedShowId?: string;
 }
 
 export type ExperienceCategory = "character-meet" | "tour" | "special-event" | "recreation" | "spa" | "photo-session";

@@ -43,6 +43,8 @@ export interface ParkAttraction {
   zone?: ParkZone;
   /** Lifecycle status — affects demand and crowd levels */
   attractionStatus?: AttractionStatusMeta;
+  /** Scheduled show times (e.g. ["3:00 PM", "9:00 PM"]) — for parades, fireworks, timed shows */
+  scheduledTimes?: string[];
 }
 
 export const attractionStatusLabels: Record<AttractionStatus, string> = {

@@ -141,15 +141,33 @@ const premiumOptions = [
 ];
 
 const wdwParks = [
-  { id: "mk", label: "Magic Kingdom" },
-  { id: "epcot", label: "EPCOT" },
-  { id: "hs", label: "Hollywood Studios" },
-  { id: "ak", label: "Animal Kingdom" },
+  { id: "mk", label: "Magic Kingdom", icon: "🏰" },
+  { id: "epcot", label: "EPCOT", icon: "🌐" },
+  { id: "hs", label: "Hollywood Studios", icon: "🎬" },
+  { id: "ak", label: "Animal Kingdom", icon: "🌿" },
+  { id: "typhoon", label: "Typhoon Lagoon", icon: "🌊" },
+  { id: "blizzard", label: "Blizzard Beach", icon: "❄️" },
+];
+
+const wdwNonParkDays = [
+  { id: "rest", label: "Rest Day", icon: "😴", desc: "Resort pool, spa, or Downtown Disney" },
+  { id: "travel-arrive", label: "Arrival Day", icon: "✈️", desc: "Travel + settle in at resort" },
+  { id: "travel-depart", label: "Departure Day", icon: "🧳", desc: "Pack up + travel home" },
+  { id: "resort", label: "Resort Day", icon: "🏊", desc: "Pool, dining, mini golf, resort hopping" },
+  { id: "springs", label: "Disney Springs", icon: "🛍", desc: "Shopping, dining, entertainment" },
 ];
 
 const dlrParks = [
-  { id: "dl", label: "Disneyland Park" },
-  { id: "dca", label: "California Adventure" },
+  { id: "dl", label: "Disneyland Park", icon: "🏰" },
+  { id: "dca", label: "California Adventure", icon: "🎡" },
+];
+
+const dlrNonParkDays = [
+  { id: "rest", label: "Rest Day", icon: "😴", desc: "Hotel pool & relax" },
+  { id: "travel-arrive", label: "Arrival Day", icon: "✈️", desc: "Travel + settle in" },
+  { id: "travel-depart", label: "Departure Day", icon: "🧳", desc: "Pack up + travel home" },
+  { id: "resort", label: "Resort Day", icon: "🏊", desc: "Hotel, pool, Downtown Disney" },
+  { id: "downtown", label: "Downtown Disney", icon: "🛍", desc: "Shopping & dining district" },
 ];
 
 const relationshipOptions = ["Self", "Spouse", "Child", "Parent", "Friend", "Relative"];
@@ -250,6 +268,7 @@ const TripWizard = ({ open, onClose }: TripWizardProps) => {
   const isFirst = currentStep === 0;
 
   const parks = data.resort === "dlr" ? dlrParks : wdwParks;
+  const nonParkDays = data.resort === "dlr" ? dlrNonParkDays : wdwNonParkDays;
 
   // Generate trip days when dates change
   const tripDays = useMemo(() => {
@@ -638,47 +657,78 @@ const TripWizard = ({ open, onClose }: TripWizardProps) => {
                         </div>
                       ) : (
                         <>
-                          <p style={{ fontFamily: brand.font.body, color: brand.slate, fontSize: "0.8125rem" }}>
-                            Assign a park to each day. You can visit the same park multiple times or leave a day as a rest day.
+                          <p style={{ fontFamily: brand.font.body, color: brand.slate, fontSize: "0.8125rem", marginBottom: "0.5rem" }}>
+                            Assign each day a park, water park, or non-park activity. Arrival and departure days are flagged — most families prefer a lighter schedule those days.
                           </p>
                           <div className="space-y-3">
-                            {data.parkSchedule.map((ps) => {
+                            {data.parkSchedule.map((ps, dayIdx) => {
                               const dateObj = new Date(ps.date + "T12:00:00");
+                              const isFirstDay = dayIdx === 0;
+                              const isLastDay = dayIdx === data.parkSchedule.length - 1;
+                              const travelHint = isFirstDay ? "✈️ Arrival Day" : isLastDay ? "🧳 Departure Day" : null;
+                              const selectedPark = parks.find(p => p.id === ps.parkId);
+                              const selectedNonPark = nonParkDays.find(p => p.id === ps.parkId);
+                              const hasSelection = !!ps.parkId;
+
                               return (
                                 <div
                                   key={ps.date}
                                   className="p-5 transition-all duration-300"
                                   style={{
-                                    background: ps.parkId ? brand.white : "transparent",
-                                    border: `1px solid ${ps.parkId ? brand.gold : brand.border}`,
-                                    boxShadow: ps.parkId ? brand.shadow : "none",
+                                    background: hasSelection ? brand.white : "transparent",
+                                    border: `1px solid ${hasSelection ? brand.gold : brand.border}`,
+                                    boxShadow: hasSelection ? brand.shadow : "none",
                                   }}
                                 >
                                   <div className="flex items-center justify-between mb-3">
                                     <div>
-                                      <p style={{ fontFamily: brand.font.display, fontWeight: 500, color: brand.lapis, fontSize: "1rem" }}>
-                                        {format(dateObj, "EEEE")}
-                                      </p>
+                                      <div className="flex items-center gap-2">
+                                        <p style={{ fontFamily: brand.font.display, fontWeight: 500, color: brand.lapis, fontSize: "1rem" }}>
+                                          {format(dateObj, "EEEE")}
+                                        </p>
+                                        {travelHint && (
+                                          <span className="px-2 py-0.5 text-[0.5rem] uppercase tracking-[0.12em] font-medium" style={{ background: `${brand.gold}20`, color: brand.goldDark, border: `1px solid ${brand.gold}40` }}>
+                                            {travelHint}
+                                          </span>
+                                        )}
+                                      </div>
                                       <p style={{ fontFamily: brand.font.body, fontSize: "0.75rem", color: brand.slate }}>
                                         {format(dateObj, "MMMM d, yyyy")}
+                                        {selectedNonPark && ` · ${selectedNonPark.desc}`}
                                       </p>
                                     </div>
-                                    {ps.parkId && (
+                                    {hasSelection && (
                                       <button
                                         onClick={() => setParkForDay(ps.date, null)}
                                         className="text-xs uppercase tracking-widest hover:opacity-60 transition-opacity"
                                         style={{ fontFamily: brand.font.body, color: brand.slate }}
                                       >
-                                        Rest Day
+                                        Clear
                                       </button>
                                     )}
                                   </div>
-                                  <div className={`grid gap-2 ${parks.length > 2 ? "grid-cols-2" : "grid-cols-2"}`}>
+
+                                  {/* Travel day suggestion for first/last day */}
+                                  {travelHint && !hasSelection && (
+                                    <div className="mb-3 p-3 flex items-start gap-2" style={{ background: `${brand.gold}08`, border: `1px solid ${brand.gold}25` }}>
+                                      <span className="text-sm mt-0.5">{isFirstDay ? "✈️" : "🧳"}</span>
+                                      <p style={{ fontFamily: brand.font.body, fontSize: "0.75rem", color: brand.slate, lineHeight: "1.5" }}>
+                                        {isFirstDay
+                                          ? "Most families arrive and settle in at the resort. Consider a lighter plan — resort pool, Disney Springs, or a half-day park visit."
+                                          : "Departure day is usually packing and travel. Some guests grab a character breakfast or squeeze in a few morning rides before checkout."
+                                        }
+                                      </p>
+                                    </div>
+                                  )}
+
+                                  {/* Theme parks */}
+                                  <p className="mb-1.5" style={{ fontFamily: brand.font.body, fontSize: "0.5625rem", color: brand.slate, textTransform: "uppercase", letterSpacing: "0.15em" }}>Theme Parks</p>
+                                  <div className="grid grid-cols-2 gap-2 mb-3">
                                     {parks.map((park) => (
                                       <button
                                         key={park.id}
                                         onClick={() => setParkForDay(ps.date, park.id)}
-                                        className="px-3 py-2.5 text-xs transition-all duration-300 text-left"
+                                        className="px-3 py-2.5 text-xs transition-all duration-300 text-left flex items-center gap-2"
                                         style={{
                                           fontFamily: brand.font.body,
                                           fontWeight: 500,
@@ -687,7 +737,28 @@ const TripWizard = ({ open, onClose }: TripWizardProps) => {
                                           border: `1px solid ${ps.parkId === park.id ? brand.lapis : brand.border}`,
                                         }}
                                       >
-                                        {park.label}
+                                        <span>{park.icon}</span> {park.label}
+                                      </button>
+                                    ))}
+                                  </div>
+
+                                  {/* Non-park options */}
+                                  <p className="mb-1.5" style={{ fontFamily: brand.font.body, fontSize: "0.5625rem", color: brand.slate, textTransform: "uppercase", letterSpacing: "0.15em" }}>Non-Park Days</p>
+                                  <div className="grid grid-cols-2 gap-2">
+                                    {nonParkDays.map((opt) => (
+                                      <button
+                                        key={opt.id}
+                                        onClick={() => setParkForDay(ps.date, opt.id)}
+                                        className="px-3 py-2 text-xs transition-all duration-300 text-left flex items-center gap-2"
+                                        style={{
+                                          fontFamily: brand.font.body,
+                                          fontWeight: 500,
+                                          background: ps.parkId === opt.id ? brand.goldDark : "transparent",
+                                          color: ps.parkId === opt.id ? brand.cream : brand.slate,
+                                          border: `1px solid ${ps.parkId === opt.id ? brand.goldDark : brand.border}`,
+                                        }}
+                                      >
+                                        <span>{opt.icon}</span> {opt.label}
                                       </button>
                                     ))}
                                   </div>

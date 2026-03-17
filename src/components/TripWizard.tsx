@@ -757,11 +757,21 @@ const TripWizard = ({ open, onClose, onComplete, guestName = "" }: TripWizardPro
                                   <div className="grid grid-cols-2 gap-2 mb-3">
                                     {parks.map((park) => {
                                       const active = ps.parkIds.includes(park.id);
+                                      // Pseudo-random crowd level seeded from date + park
+                                      const seed = (ps.date.charCodeAt(8) * 7 + ps.date.charCodeAt(9) * 13 + park.id.charCodeAt(0) * 3 + park.id.length * 11) % 5;
+                                      const crowdLevels = [
+                                        { label: "Low", color: "hsl(145, 50%, 38%)", icon: "🟢" },
+                                        { label: "Low", color: "hsl(145, 50%, 38%)", icon: "🟢" },
+                                        { label: "Moderate", color: "hsl(43, 70%, 45%)", icon: "🟡" },
+                                        { label: "High", color: "hsl(20, 70%, 50%)", icon: "🟠" },
+                                        { label: "Very High", color: "hsl(0, 65%, 50%)", icon: "🔴" },
+                                      ];
+                                      const crowd = crowdLevels[seed];
                                       return (
                                         <button
                                           key={park.id}
                                           onClick={() => toggleParkForDay(ps.date, park.id)}
-                                          className="px-3 py-2.5 text-xs transition-all duration-300 text-left flex items-center gap-2"
+                                          className="px-3 py-2.5 text-xs transition-all duration-300 text-left"
                                           style={{
                                             fontFamily: brand.font.body,
                                             fontWeight: 500,
@@ -770,7 +780,15 @@ const TripWizard = ({ open, onClose, onComplete, guestName = "" }: TripWizardPro
                                             border: `1px solid ${active ? brand.lapis : brand.border}`,
                                           }}
                                         >
-                                          <span>{park.icon}</span> {park.label}
+                                          <div className="flex items-center gap-2">
+                                            <span>{park.icon}</span>
+                                            <span className="flex-1">{park.label}</span>
+                                          </div>
+                                          <div className="flex items-center gap-1 mt-1" style={{ fontSize: "0.625rem", opacity: active ? 0.8 : 0.7 }}>
+                                            <span>{crowd.icon}</span>
+                                            <span style={{ color: active ? brand.cream : crowd.color, fontWeight: 600 }}>{crowd.label}</span>
+                                            <span style={{ color: active ? `${brand.cream}99` : `${brand.slate}99` }}>crowds</span>
+                                          </div>
                                         </button>
                                       );
                                     })}

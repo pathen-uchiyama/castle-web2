@@ -1336,9 +1336,9 @@ const BookedTripDetail = ({ trip }: { trip: BookedTrip }) => {
           <div className="flex flex-wrap gap-3">
             {alerts.map((alert) => (
               <div key={alert.id} className="flex items-center gap-3 border border-[hsl(var(--gold)/0.3)] bg-[hsl(var(--gold)/0.04)] px-4 py-2">
-                <span className="text-sm">🔔</span>
+                <span className="text-sm">{alert.isConcierge ? "👑" : "🔔"}</span>
                 <div>
-                  <p className="font-display text-sm text-foreground">{alert.venueName}</p>
+                  <p className="font-display text-sm text-foreground">{alert.venueName} {alert.isConcierge && <span className="text-[0.5rem] uppercase tracking-[0.1em] px-1.5 py-0.5 bg-[hsl(var(--gold)/0.15)] text-[hsl(var(--gold-dark))] ml-1">Concierge</span>}</p>
                   <p className="font-editorial text-xs text-muted-foreground">{alert.opensDate ? `Opens ${alert.opensDate}` : "TBD"}{alert.note ? ` · ${alert.note}` : ""}</p>
                 </div>
                 <button onClick={() => setAlerts(prev => prev.filter(a => a.id !== alert.id))} className="text-muted-foreground/40 hover:text-foreground transition-colors text-xs ml-2">✕</button>

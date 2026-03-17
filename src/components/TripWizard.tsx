@@ -775,39 +775,36 @@ const TripWizard = ({ open, onClose, onComplete }: TripWizardProps) => {
                   {currentStep === 4 && (
                     <div className="max-w-lg mx-auto space-y-10">
                       <div>
-                        <Label>Park Services</Label>
+                        <Label>Disney Park Services</Label>
+                        <p className="text-xs mb-3" style={{ fontFamily: brand.font.body, color: brand.slate }}>
+                          These are official Disney programs available to all guests. Let us know which ones you plan to use so we can build them into your itinerary.
+                        </p>
                         <div className="space-y-3">
                           <ToggleCard
                             active={data.needsDAS}
                             onClick={() => set("needsDAS", !data.needsDAS)}
                             label="Disability Access Service (DAS)"
-                            desc="Lets eligible guests receive a return time instead of waiting in standby. We'll route your day to maximize DAS efficiency."
+                            desc="A Disney accommodation for guests who have difficulty waiting in conventional queues due to a developmental disability. Eligible guests receive a return time equal to the current standby wait, so they can wait somewhere more comfortable."
                           />
                           <ToggleCard
                             active={data.willUseSingleRider}
                             onClick={() => set("willUseSingleRider", !data.willUseSingleRider)}
                             label="Single Rider Lines"
-                            desc="Each person joins the single rider queue independently — great for thrill-seekers who don't mind splitting up temporarily."
+                            desc="Available on select attractions — each person enters a separate, shorter queue to fill empty seats on ride vehicles. You'll ride separately from your group, but often with significantly less wait time."
                           />
                           <ToggleCard
                             active={data.willPurchaseLLMulti}
                             onClick={() => set("willPurchaseLLMulti", !data.willPurchaseLLMulti)}
                             label="Lightning Lane Multi Pass"
-                            desc="Book return times for select attractions one at a time throughout the day. We'll prioritize LL-eligible rides and factor in booking strategy."
+                            desc="A paid Disney add-on that lets you book return times for select attractions throughout the day, skipping the standby queue. You can hold one reservation at a time and book the next after you tap in."
                             cost="~$15–$35/person/day depending on date and park"
                           />
                           <ToggleCard
                             active={data.willPurchaseLLSingle}
                             onClick={() => set("willPurchaseLLSingle", !data.willPurchaseLLSingle)}
                             label="Lightning Lane Single Pass"
-                            desc="Per-ride purchase for highest-demand attractions (TRON, Guardians, Seven Dwarfs, etc.) not included in Multi Pass."
+                            desc="A separate per-ride purchase for the highest-demand attractions (like TRON, Guardians, and Tiana's Bayou Adventure) that aren't included in Multi Pass. One purchase per ride, per person."
                             cost="~$10–$25/person/ride depending on demand"
-                          />
-                          <ToggleCard
-                            active={data.diningReservationScouting}
-                            onClick={() => set("diningReservationScouting", !data.diningReservationScouting)}
-                            label="Active Reservation Scouting"
-                            desc="Recommended for Table Service or Signature dining. We'll actively monitor reservation drops to secure your requested time blocks."
                           />
                         </div>
                       </div>
@@ -883,6 +880,21 @@ const TripWizard = ({ open, onClose, onComplete }: TripWizardProps) => {
                           {diningStyleOptions.map((opt) => (
                             <SelectCard key={opt.id} selected={data.diningStyle === opt.id} onClick={() => set("diningStyle", opt.id)} label={opt.label} desc={opt.desc} />
                           ))}
+                        </div>
+                      </div>
+
+                      <div>
+                        <Label>Our Dining Tools</Label>
+                        <p className="text-xs mb-3" style={{ fontFamily: brand.font.body, color: brand.slate }}>
+                          These are features we offer to help you land the dining experiences you want.
+                        </p>
+                        <div className="space-y-3">
+                          <ToggleCard
+                            active={data.diningReservationScouting}
+                            onClick={() => set("diningReservationScouting", !data.diningReservationScouting)}
+                            label="Reservation Scouting"
+                            desc="Hard-to-get dining reservations often open up when other guests cancel. Enable this and we'll continuously monitor for openings at your preferred restaurants and time slots, alerting you the moment one appears."
+                          />
                         </div>
                       </div>
                     </div>

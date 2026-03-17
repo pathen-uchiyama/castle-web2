@@ -468,6 +468,35 @@ const TripWizard = ({ open, onClose }: TripWizardProps) => {
                   {/* ═══ PAGE 2: THE TRAVELING TROUPE ═══ */}
                   {currentStep === 1 && (
                     <div className="max-w-lg mx-auto space-y-6">
+                      {/* Lead Adventurer — auto-populated, not removable */}
+                      <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.4, ease }}
+                        className="p-6 relative"
+                        style={{ background: brand.white, border: `1px solid ${brand.gold}`, boxShadow: brand.shadow }}
+                      >
+                        <div className="flex items-center gap-2 mb-4">
+                          <span className="px-2 py-0.5 text-[0.5625rem] uppercase tracking-[0.12em] font-medium" style={{ background: `${brand.gold}20`, color: brand.goldDark, border: `1px solid ${brand.gold}40` }}>Lead Adventurer</span>
+                        </div>
+                        <p style={{ fontFamily: brand.font.display, fontWeight: 500, color: brand.lapis, fontSize: "1.125rem", marginBottom: "0.25rem" }}>
+                          {data.leadAdventurer || "You"}
+                        </p>
+                        <p style={{ fontFamily: brand.font.body, fontSize: "0.75rem", color: brand.slate }}>
+                          Trip organizer · Automatically included in your party
+                        </p>
+                      </motion.div>
+
+                      {/* Additional travelers */}
+                      {data.partyMembers.length === 0 && (
+                        <div className="text-center py-6" style={{ border: `1px dashed ${brand.border}`, background: "transparent" }}>
+                          <p style={{ fontFamily: brand.font.display, fontWeight: 400, color: brand.lapis, fontSize: "1rem", marginBottom: "0.5rem" }}>Solo adventure?</p>
+                          <p style={{ fontFamily: brand.font.body, fontSize: "0.8125rem", color: brand.slate, marginBottom: "0.25rem" }}>
+                            No problem — continue as a solo trip, or add travel companions below.
+                          </p>
+                        </div>
+                      )}
+
                       {data.partyMembers.map((member, idx) => (
                         <motion.div
                           key={member.id}
@@ -481,7 +510,7 @@ const TripWizard = ({ open, onClose }: TripWizardProps) => {
                             <Trash2 size={14} style={{ color: brand.slate }} />
                           </button>
                           <p style={{ fontFamily: brand.font.display, fontWeight: 500, color: brand.lapis, fontSize: "1rem", marginBottom: "1rem" }}>
-                            Traveler {idx + 1}
+                            Traveler {idx + 2}
                           </p>
                           <div className="space-y-4">
                             <div>

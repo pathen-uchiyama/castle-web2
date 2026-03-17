@@ -244,21 +244,22 @@ const ResortHub = () => {
 
             <motion.div {...fade(0.15)}>
               <p className="label-text mb-6">The Parks at a Glance</p>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                 {data.parks.map(park => (
-                  <button key={park.parkId} onClick={() => { setActiveTab("parks"); setParkType(park.type); }}
-                    className="text-left border border-border bg-card rounded-lg p-5 shadow-[var(--shadow-soft)] hover:shadow-[var(--shadow-hover)] transition-shadow duration-500">
+                  <Link key={park.parkId} to={`/parks/${park.parkId}`}
+                    className="text-left border border-border bg-card rounded-lg p-5 shadow-[var(--shadow-soft)] hover:shadow-[var(--shadow-hover)] transition-shadow duration-500 group block">
                     <div className="flex items-center gap-2 mb-2">
                       <span className="text-2xl">{park.icon}</span>
-                      <h3 className="font-display text-lg text-foreground">{park.name}</h3>
+                      <h3 className="font-display text-lg text-foreground group-hover:text-[hsl(var(--gold-dark))] transition-colors duration-500">{park.name}</h3>
                     </div>
-                    <p className="font-editorial text-xs text-muted-foreground mb-3">{park.tagline}</p>
-                    <div className="flex flex-wrap gap-1.5">
+                    <p className="font-editorial text-sm text-muted-foreground mb-3">{park.tagline}</p>
+                    <div className="flex flex-wrap gap-1.5 mb-3">
                       {park.knownFor.slice(0, 3).map(k => (
-                        <span key={k} className="text-[0.4375rem] uppercase tracking-[0.08em] px-2 py-0.5 rounded-md bg-muted text-muted-foreground">{k}</span>
+                        <span key={k} className="text-[0.5rem] uppercase tracking-[0.08em] px-2 py-0.5 rounded-md bg-muted text-muted-foreground">{k}</span>
                       ))}
                     </div>
-                  </button>
+                    <span className="link-editorial font-editorial text-sm text-foreground">View park guide →</span>
+                  </Link>
                 ))}
               </div>
             </motion.div>
@@ -299,15 +300,23 @@ const ResortHub = () => {
                         <div className="flex items-center gap-3">
                           <span className="text-3xl">{park.icon}</span>
                           <div>
-                            <h3 className="font-display text-2xl text-foreground">{park.name}</h3>
+                            <Link to={`/parks/${park.parkId}`} className="hover:text-[hsl(var(--gold-dark))] transition-colors duration-300">
+                              <h3 className="font-display text-2xl text-foreground">{park.name}</h3>
+                            </Link>
                             <p className="font-editorial text-sm text-muted-foreground">{park.tagline} · {park.size} · Est. {park.opened}</p>
                           </div>
                         </div>
-                         <span className={`px-3 py-1 rounded-md text-[0.5625rem] uppercase tracking-[0.12em] border ${
-                           park.type === "water-park" ? "bg-[hsl(200,70%,50%,0.1)] text-[hsl(200,70%,40%)] border-[hsl(200,70%,50%,0.2)]" : "bg-[hsl(var(--gold)/0.1)] text-[hsl(var(--gold-dark))] border-[hsl(var(--gold)/0.2)]"
-                         }`}>
-                          {park.type === "water-park" ? "Water Park" : "Theme Park"}
-                        </span>
+                        <div className="flex items-center gap-3 shrink-0">
+                          <Link to={`/parks/${park.parkId}`}
+                            className="px-3 py-1.5 rounded-md text-xs uppercase tracking-[0.1em] border border-[hsl(var(--gold)/0.3)] bg-[hsl(var(--gold)/0.06)] text-[hsl(var(--gold-dark))] hover:bg-[hsl(var(--gold)/0.12)] transition-colors font-medium">
+                            View Guide →
+                          </Link>
+                          <span className={`px-3 py-1 rounded-md text-xs uppercase tracking-[0.1em] border ${
+                            park.type === "water-park" ? "bg-[hsl(200,70%,50%,0.1)] text-[hsl(200,70%,40%)] border-[hsl(200,70%,50%,0.2)]" : "bg-[hsl(var(--gold)/0.1)] text-[hsl(var(--gold-dark))] border-[hsl(var(--gold)/0.2)]"
+                          }`}>
+                            {park.type === "water-park" ? "Water Park" : "Theme Park"}
+                          </span>
+                        </div>
                       </div>
 
                       <p className="font-editorial text-sm text-foreground/80 leading-relaxed mb-6 max-w-3xl">{park.description}</p>
@@ -315,17 +324,17 @@ const ResortHub = () => {
                       {/* Hours */}
                       <div className="flex flex-wrap gap-3 mb-6">
                         <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-muted border border-border">
-                          <Clock className="w-3 h-3 text-muted-foreground" />
-                          <span className="text-[0.5625rem] text-foreground font-medium">{park.operatingHours.regular}</span>
+                          <Clock className="w-3.5 h-3.5 text-muted-foreground" />
+                          <span className="text-xs text-foreground font-medium">{park.operatingHours.regular}</span>
                         </div>
                         <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-[hsl(var(--gold)/0.06)] border border-[hsl(var(--gold)/0.2)]">
-                          <span className="text-[0.5rem]">⭐</span>
-                          <span className="text-[0.5625rem] text-[hsl(var(--gold-dark))] font-medium">Early Entry: {park.operatingHours.earlyEntry}</span>
+                          <span className="text-xs">⭐</span>
+                          <span className="text-xs text-[hsl(var(--gold-dark))] font-medium">Early Entry: {park.operatingHours.earlyEntry}</span>
                         </div>
                         {park.operatingHours.extendedEvening && (
                           <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-foreground/5 border border-border">
-                            <span className="text-[0.5rem]">🌙</span>
-                            <span className="text-[0.5625rem] text-foreground font-medium">Extended: {park.operatingHours.extendedEvening}</span>
+                            <span className="text-xs">🌙</span>
+                            <span className="text-xs text-foreground font-medium">Extended: {park.operatingHours.extendedEvening}</span>
                           </div>
                         )}
                       </div>
@@ -337,16 +346,16 @@ const ResortHub = () => {
                           {park.typicalCrowds.map(c => (
                             <div key={c.day} className="border rounded-md px-3 py-2 text-center min-w-[90px]"
                               style={{ background: crowdColors[c.level]?.bg, borderColor: `${crowdColors[c.level]?.text}30` }}>
-                              <p className="font-display text-[0.625rem] text-foreground mb-0.5">{c.day}</p>
-                              <p className="text-[0.5rem] uppercase tracking-[0.1em] font-medium" style={{ color: crowdColors[c.level]?.text }}>
+                              <p className="font-display text-xs text-foreground mb-0.5">{c.day}</p>
+                              <p className="text-[0.625rem] uppercase tracking-[0.1em] font-medium" style={{ color: crowdColors[c.level]?.text }}>
                                 {c.level.replace("-", " ")}
                               </p>
                             </div>
                           ))}
                         </div>
                         <div className="flex gap-4 mt-2">
-                          <span className="text-[0.5rem] text-muted-foreground">✅ Best: <strong className="text-foreground">{park.bestDays.join(", ")}</strong></span>
-                          <span className="text-[0.5rem] text-muted-foreground">❌ Avoid: <strong className="text-destructive">{park.worstDays.join(", ")}</strong></span>
+                          <span className="text-xs text-muted-foreground">✅ Best: <strong className="text-foreground">{park.bestDays.join(", ")}</strong></span>
+                          <span className="text-xs text-muted-foreground">❌ Avoid: <strong className="text-destructive">{park.worstDays.join(", ")}</strong></span>
                         </div>
                       </div>
 
@@ -357,9 +366,9 @@ const ResortHub = () => {
                           {park.lands.map(land => (
                             <div key={land.name} className="border border-border bg-[hsl(var(--warm))] rounded-lg p-3">
                               <p className="font-display text-sm text-foreground mb-0.5">{land.name}</p>
-                              <p className="font-editorial text-[0.625rem] text-muted-foreground">{land.description}</p>
+                              <p className="font-editorial text-xs text-muted-foreground">{land.description}</p>
                               {land.iconicAttraction && (
-                                <p className="text-[0.5rem] text-[hsl(var(--gold-dark))] mt-1">⭐ {land.iconicAttraction}</p>
+                                <p className="text-xs text-[hsl(var(--gold-dark))] mt-1">⭐ {land.iconicAttraction}</p>
                               )}
                             </div>
                           ))}
@@ -370,22 +379,22 @@ const ResortHub = () => {
                       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-4">
                         <div>
                           <p className="label-text mb-2">Must-Do</p>
-                          <div className="space-y-1">
+                          <div className="space-y-1.5">
                             {park.mustDo.map(item => (
-                              <div key={item} className="flex items-center gap-2 px-3 py-1.5 rounded-md bg-[hsl(var(--gold)/0.04)] border border-[hsl(var(--gold)/0.1)]">
-                                <Star className="w-3 h-3 text-[hsl(var(--gold))] fill-[hsl(var(--gold))]" />
-                                <span className="font-editorial text-xs text-foreground">{item}</span>
+                              <div key={item} className="flex items-center gap-2 px-3 py-2 rounded-md bg-[hsl(var(--gold)/0.04)] border border-[hsl(var(--gold)/0.1)]">
+                                <Star className="w-3.5 h-3.5 text-[hsl(var(--gold))] fill-[hsl(var(--gold))]" />
+                                <span className="font-editorial text-sm text-foreground">{item}</span>
                               </div>
                             ))}
                           </div>
                         </div>
                         <div>
                           <p className="label-text mb-2">Insider Tips</p>
-                          <div className="space-y-1">
+                          <div className="space-y-1.5">
                             {park.tips.map(tip => (
-                              <div key={tip} className="flex items-start gap-2 px-3 py-1.5 rounded-md bg-muted/30 border border-border/50">
-                                <span className="text-[0.5rem] mt-0.5">💡</span>
-                                <span className="font-editorial text-[0.6875rem] text-muted-foreground">{tip}</span>
+                              <div key={tip} className="flex items-start gap-2 px-3 py-2 rounded-md bg-muted/30 border border-border/50">
+                                <span className="text-xs mt-0.5">💡</span>
+                                <span className="font-editorial text-sm text-muted-foreground">{tip}</span>
                               </div>
                             ))}
                           </div>
@@ -395,10 +404,10 @@ const ResortHub = () => {
                       {/* Attractions Toggle */}
                       {parkAttractions.length > 0 && (
                         <button onClick={() => setExpandedPark(isExpanded ? null : park.parkId)}
-                          className="flex items-center gap-2 mt-4 px-4 py-2 rounded-md border border-border hover:border-foreground/30 transition-colors text-[0.5625rem] uppercase tracking-[0.12em] text-muted-foreground hover:text-foreground">
-                          <Zap className="w-3 h-3" />
+                          className="flex items-center gap-2 mt-4 px-4 py-2 rounded-md border border-border hover:border-foreground/30 transition-colors text-xs uppercase tracking-[0.12em] text-muted-foreground hover:text-foreground">
+                          <Zap className="w-3.5 h-3.5" />
                           {isExpanded ? "Hide" : "Show"} {parkAttractions.length} Attractions
-                          <ChevronDown className={`w-3 h-3 transition-transform ${isExpanded ? "rotate-180" : ""}`} />
+                          <ChevronDown className={`w-3.5 h-3.5 transition-transform ${isExpanded ? "rotate-180" : ""}`} />
                         </button>
                       )}
                     </div>
@@ -413,42 +422,42 @@ const ResortHub = () => {
                               <div className="flex items-start justify-between mb-2">
                                 <div>
                                   <div className="flex items-center gap-2 mb-1">
-                                    {a.mustDo && <Star className="w-3 h-3 text-[hsl(var(--gold))] fill-[hsl(var(--gold))]" />}
+                                    {a.mustDo && <Star className="w-3.5 h-3.5 text-[hsl(var(--gold))] fill-[hsl(var(--gold))]" />}
                                     <h4 className="font-display text-base text-foreground">{a.name}</h4>
                                   </div>
-                                  <p className="text-[0.5rem] text-muted-foreground">{a.land} · {a.duration}</p>
+                                  <p className="text-xs text-muted-foreground">{a.land} · {a.duration}</p>
                                 </div>
                                 <div className="flex items-center gap-2 shrink-0">
                                   {a.heightRequirement && (
-                                    <span className="px-2 py-0.5 rounded-md text-[0.4375rem] uppercase tracking-[0.08em] bg-muted text-muted-foreground border border-border">↕ {a.heightRequirement}</span>
+                                    <span className="px-2 py-0.5 rounded-md text-[0.5625rem] uppercase tracking-[0.08em] bg-muted text-muted-foreground border border-border">↕ {a.heightRequirement}</span>
                                   )}
-                                  <span className="px-2 py-0.5 rounded-md text-[0.4375rem] uppercase tracking-[0.08em] border" style={{ background: thrillColors[a.thrillLevel]?.bg, color: thrillColors[a.thrillLevel]?.text, borderColor: `${thrillColors[a.thrillLevel]?.text}30` }}>
+                                  <span className="px-2 py-0.5 rounded-md text-[0.5625rem] uppercase tracking-[0.08em] border" style={{ background: thrillColors[a.thrillLevel]?.bg, color: thrillColors[a.thrillLevel]?.text, borderColor: `${thrillColors[a.thrillLevel]?.text}30` }}>
                                     {a.thrillLevel}
                                   </span>
                                 </div>
                               </div>
-                              <p className="font-editorial text-xs text-foreground/80 mb-3">{a.description}</p>
+                              <p className="font-editorial text-sm text-foreground/80 mb-3">{a.description}</p>
                               <div className="flex flex-wrap gap-3 mb-2">
                                 <div>
-                                  <p className="text-[0.375rem] uppercase tracking-[0.1em] text-muted-foreground mb-0.5">Avg Wait</p>
+                                  <p className="text-[0.5625rem] uppercase tracking-[0.1em] text-muted-foreground mb-0.5">Avg Wait</p>
                                   <div className="flex gap-1.5">
-                                     <span className="text-[0.5rem] px-1.5 py-0.5 rounded-md bg-[hsl(142,60%,45%,0.1)] text-[hsl(142,60%,35%)] border border-[hsl(142,60%,45%,0.2)]">{a.avgWaitMinutes.low}m</span>
-                                     <span className="text-[0.5rem] px-1.5 py-0.5 rounded-md bg-[hsl(var(--gold)/0.1)] text-[hsl(var(--gold-dark))] border border-[hsl(var(--gold)/0.2)]">{a.avgWaitMinutes.typical}m</span>
-                                     <span className="text-[0.5rem] px-1.5 py-0.5 rounded-md bg-[hsl(var(--destructive)/0.08)] text-destructive border border-[hsl(var(--destructive)/0.15)]">{a.avgWaitMinutes.peak}m</span>
+                                     <span className="text-xs px-1.5 py-0.5 rounded-md bg-[hsl(142,60%,45%,0.1)] text-[hsl(142,60%,35%)] border border-[hsl(142,60%,45%,0.2)]">{a.avgWaitMinutes.low}m</span>
+                                     <span className="text-xs px-1.5 py-0.5 rounded-md bg-[hsl(var(--gold)/0.1)] text-[hsl(var(--gold-dark))] border border-[hsl(var(--gold)/0.2)]">{a.avgWaitMinutes.typical}m</span>
+                                     <span className="text-xs px-1.5 py-0.5 rounded-md bg-[hsl(var(--destructive)/0.08)] text-destructive border border-[hsl(var(--destructive)/0.15)]">{a.avgWaitMinutes.peak}m</span>
                                   </div>
                                 </div>
                                 <div className="flex flex-wrap gap-1.5 items-end">
                                   {a.lightningLane && (
-                                    <span className="text-[0.4375rem] uppercase tracking-[0.08em] px-2 py-0.5 bg-[hsl(var(--gold)/0.1)] text-[hsl(var(--gold-dark))] border border-[hsl(var(--gold)/0.2)]">
+                                    <span className="text-[0.5625rem] uppercase tracking-[0.08em] px-2 py-0.5 bg-[hsl(var(--gold)/0.1)] text-[hsl(var(--gold-dark))] border border-[hsl(var(--gold)/0.2)]">
                                        ⚡ {a.lightningLaneType === "individual" ? "Individual LL" : "Multi Pass"}
                                     </span>
                                   )}
-                                  {a.singleRider && <span className="text-[0.4375rem] uppercase tracking-[0.08em] px-2 py-0.5 bg-muted text-muted-foreground border border-border">🧍 Single Rider</span>}
-                                  {a.riderSwitch && <span className="text-[0.4375rem] uppercase tracking-[0.08em] px-2 py-0.5 bg-muted text-muted-foreground border border-border">🔄 Rider Switch</span>}
+                                  {a.singleRider && <span className="text-[0.5625rem] uppercase tracking-[0.08em] px-2 py-0.5 bg-muted text-muted-foreground border border-border">🧍 Single Rider</span>}
+                                  {a.riderSwitch && <span className="text-[0.5625rem] uppercase tracking-[0.08em] px-2 py-0.5 bg-muted text-muted-foreground border border-border">🔄 Rider Switch</span>}
                                 </div>
                               </div>
                               <div className="pl-3 border-l-2 border-[hsl(var(--gold)/0.3)]">
-                                <p className="font-editorial text-[0.625rem] text-muted-foreground italic">💡 {a.tip}</p>
+                                <p className="font-editorial text-xs text-muted-foreground italic">💡 {a.tip}</p>
                               </div>
                             </div>
                           ))}
@@ -514,10 +523,10 @@ const ResortHub = () => {
                     </div>
 
                     <div className="mb-4">
-                      <p className="text-[0.4375rem] uppercase tracking-[0.12em] text-muted-foreground mb-2">Transport to Parks</p>
+                      <p className="text-[0.5625rem] uppercase tracking-[0.12em] text-muted-foreground mb-2">Transport to Parks</p>
                       <div className="flex flex-wrap gap-1.5">
                         {hotel.transportTo.map(t => (
-                          <span key={`${t.parkName}-${t.mode}`} className="px-2 py-1 rounded-md text-[0.5rem] bg-muted border border-border text-muted-foreground">
+                          <span key={`${t.parkName}-${t.mode}`} className="px-2 py-1 rounded-md text-xs bg-muted border border-border text-muted-foreground">
                             {t.parkName} · {t.mode} · ~{t.estimatedMinutes}min
                           </span>
                         ))}
@@ -525,12 +534,12 @@ const ResortHub = () => {
                     </div>
 
                     <div className="mb-4">
-                      <p className="text-[0.4375rem] uppercase tracking-[0.12em] text-muted-foreground mb-2">Room Types</p>
+                      <p className="text-[0.5625rem] uppercase tracking-[0.12em] text-muted-foreground mb-2">Room Types</p>
                       <div className="flex flex-wrap gap-2">
                         {hotel.roomTypes.map(r => (
                           <div key={r.name} className="px-3 py-2 rounded-md border border-border bg-[hsl(var(--warm))]">
-                            <p className="font-display text-[0.625rem] text-foreground">{r.name}</p>
-                            <p className="text-[0.5rem] text-muted-foreground">Sleeps {r.sleeps} · From ${r.priceFrom}/night</p>
+                            <p className="font-display text-xs text-foreground">{r.name}</p>
+                            <p className="text-[0.625rem] text-muted-foreground">Sleeps {r.sleeps} · From ${r.priceFrom}/night</p>
                           </div>
                         ))}
                       </div>
@@ -538,20 +547,20 @@ const ResortHub = () => {
 
                     <div className="flex flex-wrap gap-1.5 mb-3">
                       {hotel.bestFor.map(b => (
-                        <span key={b} className="text-[0.4375rem] uppercase tracking-[0.08em] px-2 py-0.5 rounded-md bg-[hsl(var(--gold)/0.08)] text-[hsl(var(--gold-dark))] border border-[hsl(var(--gold)/0.15)]">✦ {b}</span>
+                        <span key={b} className="text-[0.5625rem] uppercase tracking-[0.08em] px-2 py-0.5 rounded-md bg-[hsl(var(--gold)/0.08)] text-[hsl(var(--gold-dark))] border border-[hsl(var(--gold)/0.15)]">✦ {b}</span>
                       ))}
                     </div>
                     <div className="flex flex-wrap gap-1">
                       {hotel.tags.map(tag => (
-                         <span key={tag} className="text-[0.4375rem] uppercase tracking-[0.08em] px-2 py-0.5 rounded-md bg-muted text-muted-foreground">{tag}</span>
+                         <span key={tag} className="text-[0.5625rem] uppercase tracking-[0.08em] px-2 py-0.5 rounded-md bg-muted text-muted-foreground">{tag}</span>
                       ))}
                     </div>
 
                     {hotel.tips.length > 0 && (
                       <div className="mt-4 pt-3 border-t border-border/50">
-                        <p className="text-[0.4375rem] uppercase tracking-[0.12em] text-muted-foreground mb-1.5">💡 Insider Tips</p>
+                        <p className="text-[0.5625rem] uppercase tracking-[0.12em] text-muted-foreground mb-1.5">💡 Insider Tips</p>
                         {hotel.tips.map(tip => (
-                          <p key={tip} className="font-editorial text-[0.625rem] text-muted-foreground leading-relaxed">• {tip}</p>
+                          <p key={tip} className="font-editorial text-xs text-muted-foreground leading-relaxed">• {tip}</p>
                         ))}
                       </div>
                     )}
@@ -588,7 +597,7 @@ const ResortHub = () => {
                 <div className="flex gap-1 flex-wrap">
                   {diningLocations.map(loc => (
                     <button key={loc} onClick={() => setDiningLocation(loc)}
-                      className={`px-2.5 py-1 text-[0.5rem] uppercase tracking-[0.08em] border transition-all ${
+                      className={`px-2.5 py-1 text-xs uppercase tracking-[0.08em] border transition-all ${
                         diningLocation === loc ? "bg-foreground text-background border-foreground" : "text-muted-foreground border-border hover:border-foreground/30"
                       }`}>
                       {loc === "all" ? "All Locations" : loc}
@@ -599,7 +608,7 @@ const ResortHub = () => {
               <div className="flex flex-wrap gap-2 mt-2">
                 {(["all", "signature", "table-service", "quick-service", "character-dining", "buffet", "lounge", "snack"] as (ServiceType | "all")[]).map(s => (
                   <button key={s} onClick={() => setDiningService(s)}
-                    className={`px-2.5 py-1 text-[0.5rem] uppercase tracking-[0.08em] border transition-all ${
+                    className={`px-2.5 py-1 text-xs uppercase tracking-[0.08em] border transition-all ${
                       diningService === s ? "bg-foreground text-background border-foreground" : "text-muted-foreground border-border hover:border-foreground/30"
                     }`}>
                     {s === "all" ? "All Types" : serviceLabels[s]}
@@ -609,14 +618,14 @@ const ResortHub = () => {
               <div className="flex flex-wrap gap-2 mt-2">
                 {(["all", "$", "$$", "$$$", "$$$$"] as (PriceRange | "all")[]).map(p => (
                   <button key={p} onClick={() => setDiningPrice(p)}
-                    className={`px-2.5 py-1 text-[0.5rem] uppercase tracking-[0.08em] border transition-all ${
+                    className={`px-2.5 py-1 text-xs uppercase tracking-[0.08em] border transition-all ${
                       diningPrice === p ? "bg-foreground text-background border-foreground" : "text-muted-foreground border-border hover:border-foreground/30"
                     }`}>
                     {p === "all" ? "Any Price" : `${p} ${priceLabel[p]}`}
                   </button>
                 ))}
                 <button onClick={() => setDiningCharOnly(!diningCharOnly)}
-                  className={`px-2.5 py-1 text-[0.5rem] uppercase tracking-[0.08em] border transition-all ${
+                  className={`px-2.5 py-1 text-xs uppercase tracking-[0.08em] border transition-all ${
                     diningCharOnly ? "bg-[hsl(var(--gold))] text-background border-[hsl(var(--gold))]" : "text-muted-foreground border-border hover:border-foreground/30"
                   }`}>
                   🧚 Character Dining Only
@@ -643,10 +652,10 @@ const ResortHub = () => {
                         </div>
                         <div className="text-right shrink-0 ml-4">
                           <StarRating rating={r.rating} />
-                          <p className="text-[0.5rem] text-muted-foreground">{r.reviewCount.toLocaleString()} reviews</p>
+                          <p className="text-xs text-muted-foreground">{r.reviewCount.toLocaleString()} reviews</p>
                           <div className="flex items-center gap-2 mt-1 justify-end">
                             <span className="font-display text-sm text-foreground">{r.priceRange}</span>
-                            <span className="px-2 py-0.5 text-[0.4375rem] uppercase tracking-[0.08em] bg-muted text-muted-foreground border border-border">
+                            <span className="px-2 py-0.5 text-[0.5625rem] uppercase tracking-[0.08em] bg-muted text-muted-foreground border border-border">
                               {serviceLabels[r.serviceType]}
                             </span>
                           </div>
@@ -654,17 +663,17 @@ const ResortHub = () => {
                       </div>
                       <div className="flex flex-wrap gap-1.5 mt-2">
                         {r.mealPeriods.map(m => (
-                          <span key={m} className="text-[0.4375rem] uppercase tracking-[0.08em] px-2 py-0.5 bg-[hsl(var(--gold)/0.06)] text-[hsl(var(--gold-dark))] border border-[hsl(var(--gold)/0.1)]">{m}</span>
+                          <span key={m} className="text-[0.5625rem] uppercase tracking-[0.08em] px-2 py-0.5 bg-[hsl(var(--gold)/0.06)] text-[hsl(var(--gold-dark))] border border-[hsl(var(--gold)/0.1)]">{m}</span>
                         ))}
                         {r.requiresReservation && (
-                          <span className={`text-[0.4375rem] uppercase tracking-[0.08em] px-2 py-0.5 border ${
+                          <span className={`text-[0.5625rem] uppercase tracking-[0.08em] px-2 py-0.5 border ${
                             r.reservationDifficulty === "legendary" || r.reservationDifficulty === "hard"
                               ? "bg-[hsl(var(--destructive)/0.06)] text-destructive border-[hsl(var(--destructive)/0.15)]"
                               : "bg-muted text-muted-foreground border-border"
                           }`}>📋 {r.reservationDifficulty} to book</span>
                         )}
                         {!r.requiresReservation && (
-                          <span className="text-[0.4375rem] uppercase tracking-[0.08em] px-2 py-0.5 bg-[hsl(142,60%,45%,0.08)] text-[hsl(142,60%,35%)] border border-[hsl(142,60%,45%,0.15)]">✓ No reservation needed</span>
+                          <span className="text-[0.5625rem] uppercase tracking-[0.08em] px-2 py-0.5 bg-[hsl(142,60%,45%,0.08)] text-[hsl(142,60%,35%)] border border-[hsl(142,60%,45%,0.15)]">✓ No reservation needed</span>
                         )}
                         <ChevronDown className={`w-3 h-3 text-muted-foreground ml-auto transition-transform ${isExpanded ? "rotate-180" : ""}`} />
                       </div>
@@ -676,15 +685,15 @@ const ResortHub = () => {
                         <div className="mb-4 pl-3 border-l-2 border-[hsl(var(--gold)/0.4)]">
                           <p className="font-editorial text-xs text-muted-foreground italic">"{r.vibe}"</p>
                         </div>
-                        <p className="text-[0.4375rem] uppercase tracking-[0.12em] text-muted-foreground mb-2">✦ Signature Items</p>
+                        <p className="text-[0.5625rem] uppercase tracking-[0.12em] text-muted-foreground mb-2">✦ Signature Items</p>
                         <div className="flex flex-wrap gap-1.5 mb-4">
                           {r.signatureItems.map(item => (
-                            <span key={item} className="px-2.5 py-1 text-[0.5625rem] bg-[hsl(var(--gold)/0.06)] text-[hsl(var(--gold-dark))] border border-[hsl(var(--gold)/0.15)] font-editorial">{item}</span>
+                            <span key={item} className="px-2.5 py-1 text-xs bg-[hsl(var(--gold)/0.06)] text-[hsl(var(--gold-dark))] border border-[hsl(var(--gold)/0.15)] font-editorial">{item}</span>
                           ))}
                         </div>
-                        <p className="text-[0.4375rem] uppercase tracking-[0.12em] text-muted-foreground mb-1.5">Pricing</p>
-                        <p className="font-editorial text-xs text-foreground mb-4">{r.priceNote}</p>
-                        <div className="flex flex-wrap gap-4 mb-4 text-xs">
+                        <p className="text-[0.5625rem] uppercase tracking-[0.12em] text-muted-foreground mb-1.5">Pricing</p>
+                        <p className="font-editorial text-sm text-foreground mb-4">{r.priceNote}</p>
+                        <div className="flex flex-wrap gap-4 mb-4 text-sm">
                           {r.kidFriendly && <span className="font-editorial text-muted-foreground">👶 Kid-friendly</span>}
                           {r.dressCode && <span className="font-editorial text-muted-foreground">👔 {r.dressCode}</span>}
                           {r.dietaryAccommodations.length > 0 && (
@@ -693,23 +702,23 @@ const ResortHub = () => {
                         </div>
                         {(r.noShowFee || r.cancelPolicy) && (
                           <div className="mb-4 px-3 py-2 rounded-md bg-[hsl(var(--destructive)/0.04)] border border-[hsl(var(--destructive)/0.15)]">
-                            <p className="text-[0.4375rem] uppercase tracking-[0.1em] text-destructive mb-1">⚠ Cancellation Policy</p>
-                            {r.noShowFee && <p className="font-editorial text-[0.625rem] text-muted-foreground">No-show fee: <strong className="text-foreground">{r.noShowFee}</strong></p>}
-                            {r.cancelPolicy && <p className="font-editorial text-[0.625rem] text-muted-foreground">{r.cancelPolicy}</p>}
+                            <p className="text-[0.5625rem] uppercase tracking-[0.1em] text-destructive mb-1">⚠ Cancellation Policy</p>
+                            {r.noShowFee && <p className="font-editorial text-xs text-muted-foreground">No-show fee: <strong className="text-foreground">{r.noShowFee}</strong></p>}
+                            {r.cancelPolicy && <p className="font-editorial text-xs text-muted-foreground">{r.cancelPolicy}</p>}
                           </div>
                         )}
                         <div className="pl-3 border-l-2 border-[hsl(var(--gold)/0.3)] mb-4">
-                          <p className="text-[0.4375rem] uppercase tracking-[0.1em] text-[hsl(var(--gold-dark))] mb-1">💡 Insider Tip</p>
-                          <p className="font-editorial text-[0.6875rem] text-muted-foreground italic">{r.insiderTip}</p>
+                          <p className="text-[0.5625rem] uppercase tracking-[0.1em] text-[hsl(var(--gold-dark))] mb-1">💡 Insider Tip</p>
+                          <p className="font-editorial text-sm text-muted-foreground italic">{r.insiderTip}</p>
                         </div>
                         <div className="flex flex-wrap gap-1 mb-3">
                           {r.bestFor.map(b => (
-                            <span key={b} className="text-[0.4375rem] uppercase tracking-[0.08em] px-2 py-0.5 bg-[hsl(var(--gold)/0.08)] text-[hsl(var(--gold-dark))]">{b}</span>
+                            <span key={b} className="text-[0.5625rem] uppercase tracking-[0.08em] px-2 py-0.5 bg-[hsl(var(--gold)/0.08)] text-[hsl(var(--gold-dark))]">{b}</span>
                           ))}
                         </div>
                         <div className="flex flex-wrap gap-1">
                           {r.tags.map(tag => (
-                            <span key={tag} className="text-[0.4375rem] uppercase tracking-[0.08em] px-2 py-0.5 bg-muted text-muted-foreground">{tag}</span>
+                            <span key={tag} className="text-[0.5625rem] uppercase tracking-[0.08em] px-2 py-0.5 bg-muted text-muted-foreground">{tag}</span>
                           ))}
                         </div>
                       </div>
@@ -749,14 +758,14 @@ const ResortHub = () => {
                         <p className="font-editorial text-sm text-foreground/80 leading-relaxed mb-3">{t.description}</p>
                         <div className="flex flex-wrap gap-4 mb-3">
                           <div>
-                            <p className="text-[0.4375rem] uppercase tracking-[0.12em] text-muted-foreground mb-1">Cost</p>
+                            <p className="text-[0.5625rem] uppercase tracking-[0.12em] text-muted-foreground mb-1">Cost</p>
                             <p className="font-display text-sm text-foreground">{t.cost}</p>
                           </div>
                           <div className="flex-1">
-                            <p className="text-[0.4375rem] uppercase tracking-[0.12em] text-muted-foreground mb-1">Serves</p>
+                            <p className="text-[0.5625rem] uppercase tracking-[0.12em] text-muted-foreground mb-1">Serves</p>
                             <div className="flex flex-wrap gap-1">
                               {t.servesAreas.map(a => (
-                                <span key={a} className="text-[0.5rem] px-2 py-0.5 rounded-md bg-muted text-muted-foreground border border-border">{a}</span>
+                                <span key={a} className="text-xs px-2 py-0.5 rounded-md bg-muted text-muted-foreground border border-border">{a}</span>
                               ))}
                             </div>
                           </div>

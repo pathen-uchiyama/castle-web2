@@ -10,6 +10,9 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { cn } from "@/lib/utils";
 import type { ParkGuide, ParkDaySchedule, ParkHours } from "@/data/types";
 import { mockData } from "@/data/mockData";
+import { wdwParks, type ParkOverview, type ParkAttraction } from "@/data/resortEncyclopedia";
+import { dlrParks } from "@/data/dlrEncyclopedia";
+import { wdwEncyclopediaAttractions, dlrEncyclopediaAttractions } from "@/data/encyclopediaAttractions";
 
 const ease: [number, number, number, number] = [0.19, 1, 0.22, 1];
 const fade = (delay = 0) => ({
@@ -121,6 +124,12 @@ const ParkGuidePage = ({ parkGuides }: ParkGuidePageProps) => {
   const park = parkGuides.find((p) => p.parkId === parkId) || parkGuides[0];
   const sameParkGuides = parkGuides.filter((p) => p?.resort === park?.resort);
   const attractions = mockData.partySurvey.attractions.filter((a) => a.parkId === park?.parkId);
+
+  // Get encyclopedia data for richer content
+  const allEncyclopediaParks = [...wdwParks, ...dlrParks];
+  const encyclopediaPark: ParkOverview | undefined = allEncyclopediaParks.find((p) => p.parkId === park?.parkId);
+  const allEncyclopediaAttractions = [...wdwEncyclopediaAttractions, ...dlrEncyclopediaAttractions];
+  const encyclopediaAttractions: ParkAttraction[] = park ? allEncyclopediaAttractions.filter((a) => a.parkId === park.parkId) : [];
 
   // Projected crowd data for the calendar month (paid)
   const projections = useMemo(() => {
@@ -397,6 +406,101 @@ const ParkGuidePage = ({ parkGuides }: ParkGuidePageProps) => {
               </div>
             </motion.div>
           </section>
+
+          {/* Must-Do, Insider Tips & Lands from Encyclopedia */}
+          {encyclopediaPark && (
+            <section className="px-8 lg:px-16 py-12 lg:py-16 border-b border-border">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-16">
+                <motion.div {...fade()}>
+                  <p className="label-text mb-6">Must-Do Experiences ⭐</p>
+                  <div className="space-y-2">
+                    {encyclopediaPark.mustDo.map((item) => (
+                      <div key={item} className="flex items-center gap-3 px-4 py-3 rounded-lg bg-[hsl(var(--gold)/0.04)] border border-[hsl(var(--gold)/0.15)]">
+                        <span className="text-[hsl(var(--gold))] text-lg">★</span>
+                        <span className="font-editorial text-base text-foreground">{item}</span>
+                      </div>
+                    ))}
+                  </div>
+                </motion.div>
+
+                <motion.div {...fade(0.1)}>
+                  <p className="label-text mb-6">Insider Tips 💡</p>
+                  <div className="space-y-2">
+                    {encyclopediaPark.tips.map((tip) => (
+                      <div key={tip} className="flex items-start gap-3 px-4 py-3 rounded-lg bg-muted/30 border border-border/50">
+                        <span className="text-sm mt-0.5 shrink-0">💡</span>
+                        <span className="font-editorial text-sm text-muted-foreground leading-relaxed">{tip}</span>
+                      </div>
+                    ))}
+                  </div>
+                </motion.div>
+              </div>
+
+              <motion.div {...fade(0.15)}>
+                <p className="label-text mb-6">Themed Lands 🗺️</p>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {encyclopediaPark.lands.map((land) => (
+                    <div key={land.name} className="border border-border bg-card rounded-lg p-5 shadow-[var(--shadow-soft)]">
+                      <h4 className="font-display text-lg text-foreground mb-2">{land.name}</h4>
+                      <p className="font-editorial text-sm text-muted-foreground mb-2">{land.description}</p>
+                      {land.iconicAttraction && (
+                        <p className="text-sm text-[hsl(var(--gold-dark))] font-medium">⭐ {land.iconicAttraction}</p>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </motion.div>
+
+              {encyclopediaAttractions.length > 0 && (
+                <motion.div {...fade(0.2)} className="mt-16">
+                  <p className="label-text mb-6">Must-Do Attraction Details 🎢</p>
+                  <div className="space-y-3">
+                    {encyclopediaAttractions.filter(a => a.mustDo).map((a) => (
+                      <div key={a.attractionId} className="border border-border bg-card rounded-lg p-5 shadow-[var(--shadow-soft)]">
+                        <div className="flex items-start justify-between mb-2">
+                          <div>
+                            <div className="flex items-center gap-2 mb-1">
+                              <span className="text-[hsl(var(--gold))] text-sm">★</span>
+                              <h4 className="font-display text-lg text-foreground">{a.name}</h4>
+                            </div>
+                            <p className="text-sm text-muted-foreground">{a.land} · {a.duration}</p>
+                          </div>
+                          <div className="flex items-center gap-2 shrink-0">
+                            {a.heightRequirement && (
+                              <span className="px-2.5 py-1 rounded-lg text-xs uppercase tracking-[0.08em] bg-muted text-muted-foreground border border-border">↕ {a.heightRequirement}</span>
+                            )}
+                            <span className="px-2.5 py-1 rounded-lg text-xs uppercase tracking-[0.08em] border bg-muted text-muted-foreground">{a.thrillLevel}</span>
+                          </div>
+                        </div>
+                        <p className="font-editorial text-sm text-foreground/80 mb-3 leading-relaxed">{a.description}</p>
+                        <div className="flex flex-wrap gap-3 mb-3">
+                          <div>
+                            <p className="text-xs uppercase tracking-[0.1em] text-muted-foreground mb-1">Avg Wait</p>
+                            <div className="flex gap-1.5">
+                              <span className="text-xs px-2 py-0.5 rounded-lg bg-[hsl(142,60%,45%,0.1)] text-[hsl(142,60%,35%)] border border-[hsl(142,60%,45%,0.2)]">{a.avgWaitMinutes.low}m</span>
+                              <span className="text-xs px-2 py-0.5 rounded-lg bg-[hsl(var(--gold)/0.1)] text-[hsl(var(--gold-dark))] border border-[hsl(var(--gold)/0.2)]">{a.avgWaitMinutes.typical}m</span>
+                              <span className="text-xs px-2 py-0.5 rounded-lg bg-[hsl(var(--destructive)/0.08)] text-destructive border border-[hsl(var(--destructive)/0.15)]">{a.avgWaitMinutes.peak}m</span>
+                            </div>
+                          </div>
+                          <div className="flex flex-wrap gap-1.5 items-end">
+                            {a.lightningLane && (
+                              <span className="text-xs uppercase tracking-[0.08em] px-2 py-0.5 bg-[hsl(var(--gold)/0.1)] text-[hsl(var(--gold-dark))] border border-[hsl(var(--gold)/0.2)]">
+                                ⚡ {a.lightningLaneType === "individual" ? "Individual LL" : "Multi Pass"}
+                              </span>
+                            )}
+                            {a.singleRider && <span className="text-xs uppercase tracking-[0.08em] px-2 py-0.5 bg-muted text-muted-foreground border border-border">🧍 Single Rider</span>}
+                          </div>
+                        </div>
+                        <div className="pl-3 border-l-2 border-[hsl(var(--gold)/0.3)]">
+                          <p className="font-editorial text-sm text-muted-foreground italic">💡 {a.tip}</p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </motion.div>
+              )}
+            </section>
+          )}
 
           {/* Week-at-a-Glance (only when no date selected) */}
           {!selectedDate && park.schedule.length > 0 && (

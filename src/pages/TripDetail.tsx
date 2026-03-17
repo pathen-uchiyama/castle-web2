@@ -1776,15 +1776,26 @@ const BookedTripDetail = ({ trip }: { trip: BookedTrip }) => {
                             </p>
                           </div>
                         )}
-                        {/* Cancel confirmed experience */}
+                        {/* Edit / Cancel confirmed experience */}
                         <div className="mt-3 pt-2 border-t border-border/50 flex items-center justify-between">
                           <span className="font-editorial text-[0.625rem] text-muted-foreground/50">#{exp.confirmationNumber}</span>
-                          <button
-                            onClick={() => handleCancelExperience(exp.experienceId, exp.experienceName)}
-                            className="text-[0.5625rem] uppercase tracking-[0.12em] font-medium text-destructive/60 hover:text-destructive transition-colors"
-                          >
-                            Cancel Booking
-                          </button>
+                          <div className="flex items-center gap-3">
+                            <button
+                              onClick={() => setEditModal({
+                                type: "experience", isConfirmed: true, itemId: exp.experienceId,
+                                currentData: { name: exp.experienceName, location: exp.parkOrResort, date: exp.date, time: exp.time, timeRangeEnd: exp.timeRangeEnd, partySize: exp.partySize, notes: exp.notes }
+                              })}
+                              className="text-[0.5625rem] uppercase tracking-[0.12em] font-medium text-muted-foreground hover:text-foreground transition-colors"
+                            >
+                              Edit
+                            </button>
+                            <button
+                              onClick={() => handleCancelExperience(exp.experienceId, exp.experienceName)}
+                              className="text-[0.5625rem] uppercase tracking-[0.12em] font-medium text-destructive/60 hover:text-destructive transition-colors"
+                            >
+                              Cancel Booking
+                            </button>
+                          </div>
                         </div>
                       </div>
                     ))}

@@ -46,8 +46,7 @@ export interface PartyMember {
   role: string;
   initial: string;
   adventureCount: number;
-  age?: number;
-  birthday?: string;
+  birthdate?: string; // ISO date string e.g. "1988-06-15"
   heightInches?: number;
   dietaryRestrictions?: string[];
   allergies?: string[];

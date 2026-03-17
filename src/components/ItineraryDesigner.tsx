@@ -428,9 +428,36 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
     if (!attractionId) return;
     const allAttractions = selectedParks.flatMap(p => allParkAttractions[p] || []);
     const attraction = allAttractions.find(a => a.id === attractionId);
-    if (attraction) insertAtIndex(attraction, insertIdx);
+    if (!attraction) return;
+
+    // Timed shows/parades MUST go through the showtime picker
+    if (attraction.scheduledTimes && attraction.scheduledTimes.length > 0) {
+      // Check if any showtime is still available (not already in itinerary)
+      const availableTimes = attraction.scheduledTimes.filter(t => {
+        const tMin = toMinutes(t);
+        return !itinerary.some(i => i.attractionId === attraction.id && i.scheduledStartMin === tMin);
+      });
+
+      if (availableTimes.length === 0) {
+        toast({
+          title: "All showtimes filled",
+          description: `Every available time for ${attraction.name} is already in your plan.`,
+          variant: "destructive",
+        });
+      } else {
+        setScheduledPlacement({ attraction, times: availableTimes });
+        toast({
+          title: "Timed event — pick a showtime",
+          description: `${attraction.name} only runs at published times. Choose one from the picker.`,
+        });
+      }
+      setDropTargetIdx(null);
+      return;
+    }
+
+    insertAtIndex(attraction, insertIdx);
     setDropTargetIdx(null);
-  }, [selectedParks, insertAtIndex]);
+  }, [selectedParks, insertAtIndex, itinerary]);
 
   /* ── Zone label helper ─────────────────────────────────────────── */
   const zoneLabel = (z?: string) => {

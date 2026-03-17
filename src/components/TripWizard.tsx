@@ -456,7 +456,7 @@ const TripWizard = ({ open, onClose, onComplete }: TripWizardProps) => {
                               </button>
                             </PopoverTrigger>
                             <PopoverContent className="z-[200] w-auto p-0" align="start">
-                              <Calendar mode="single" selected={data.endDate} onSelect={(d) => set("endDate", d)} disabled={(d) => d < (data.startDate || new Date())} initialFocus className={cn("p-3 pointer-events-auto")} />
+                              <Calendar mode="single" selected={data.endDate} onSelect={(d) => set("endDate", d)} disabled={(d) => d < (data.startDate || new Date())} initialFocus defaultMonth={data.startDate || undefined} className={cn("p-3 pointer-events-auto")} />
                             </PopoverContent>
                           </Popover>
                         </div>

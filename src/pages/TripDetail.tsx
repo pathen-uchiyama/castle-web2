@@ -902,19 +902,23 @@ const BookedTripDetail = ({ trip }: { trip: BookedTrip }) => {
   const getTotalPacked = () => Object.values(packedItems).flat().filter(Boolean).length;
   const getTotalItems = () => Object.values(packedItems).flat().length;
 
-  // Combined reservations (mock + pending), with cancellation tracking
+  // Combined reservations (mock + pending), with cancellation & edit tracking
   const allDiningReservations = useMemo(() => {
-    const mock = diningReservations.map(d =>
-      confirmedDiningCancelled.includes(d.reservationId) ? { ...d, status: "cancelled" as const } : d
-    );
+    const mock = diningReservations.map(d => {
+      let res = confirmedDiningCancelled.includes(d.reservationId) ? { ...d, status: "cancelled" as const } : d;
+      if (confirmedDiningEdits[d.reservationId]) res = { ...res, ...confirmedDiningEdits[d.reservationId] };
+      return res;
+    });
     return [...mock, ...pendingDining];
-  }, [diningReservations, pendingDining, confirmedDiningCancelled]);
+  }, [diningReservations, pendingDining, confirmedDiningCancelled, confirmedDiningEdits]);
   const allBookedExperiences = useMemo(() => {
-    const mock = bookedExperiences.map(e =>
-      confirmedExpCancelled.includes(e.experienceId) ? { ...e, status: "cancelled" as const } : e
-    );
+    const mock = bookedExperiences.map(e => {
+      let exp = confirmedExpCancelled.includes(e.experienceId) ? { ...e, status: "cancelled" as const } : e;
+      if (confirmedExpEdits[e.experienceId]) exp = { ...exp, ...confirmedExpEdits[e.experienceId] };
+      return exp;
+    });
     return [...mock, ...pendingExperiences];
-  }, [bookedExperiences, pendingExperiences, confirmedExpCancelled]);
+  }, [bookedExperiences, pendingExperiences, confirmedExpCancelled, confirmedExpEdits]);
 
   /* ── Overlap detection for dining & experiences ─────────────────── */
   const parseTimeToMin = (timeStr: string): number => {

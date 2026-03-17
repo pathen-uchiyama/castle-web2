@@ -237,6 +237,13 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
   const [pacing, setPacing] = useState("Moderate");
   const [focus, setFocus] = useState("Classic Magic");
   const [minimizeWalking, setMinimizeWalking] = useState(false);
+  const [midDayBreak, setMidDayBreak] = useState<"none" | "hotel" | "pool" | "indoor-ac">("none");
+  const midDayBreakConfig = {
+    none: null,
+    hotel: { label: "🏨 Hotel Break", type: "hotel" as const, duration: 150, desc: "Return to resort — nap, recharge, come back refreshed" },
+    pool: { label: "🏊 Pool Cool-Down", type: "pool" as const, duration: 120, desc: "Resort pool break — beat the heat with a swim" },
+    "indoor-ac": { label: "❄️ Indoor / AC Block", type: "break" as const, duration: 90, desc: "Stay in-park — AC rides, shows & restaurants only (12–3 PM)" },
+  };
 
   const availableParks = Object.keys(allParkAttractions);
   const [selectedParks, setSelectedParks] = useState<string[]>(["mk"]);
@@ -929,6 +936,55 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
                 <span className="text-[0.625rem] uppercase tracking-[0.1em] text-[hsl(var(--ink-light))]">
                   Extended Evening Hours (Deluxe Resort)
                 </span>
+              </div>
+
+              {/* Mid-Day Break Strategy */}
+              <div className="mt-3 pt-3 border-t border-[hsl(var(--border))]">
+                <span className="text-[0.5625rem] uppercase tracking-[0.12em] text-[hsl(var(--ink-light))] block mb-2">Mid-Day Break Strategy</span>
+                <div className="grid grid-cols-2 gap-1.5">
+                  {([
+                    { id: "none" as const, label: "Power Through", icon: "💪" },
+                    { id: "hotel" as const, label: "Hotel Break", icon: "🏨" },
+                    { id: "pool" as const, label: "Pool Cool-Down", icon: "🏊" },
+                    { id: "indoor-ac" as const, label: "Indoor / AC", icon: "❄️" },
+                  ]).map(opt => (
+                    <button
+                      key={opt.id}
+                      onClick={() => {
+                        // Remove any existing mid-day break item
+                        setItinerary(prev => prev.filter(i => i.id !== "midday-break"));
+                        setMidDayBreak(opt.id);
+                        if (opt.id !== "none") {
+                          const config = midDayBreakConfig[opt.id]!;
+                          // Schedule at noon (720 min from midnight)
+                          const breakItem: ItineraryItem = {
+                            id: "midday-break",
+                            name: config.label,
+                            type: config.type,
+                            duration: config.duration,
+                            notes: config.desc,
+                            scheduledStartMin: 720, // 12:00 PM
+                            isConfirmed: false,
+                          };
+                          setItinerary(prev => [...prev, breakItem]);
+                        }
+                      }}
+                      className={`px-2.5 py-2 text-[0.625rem] font-display font-medium transition-all duration-200 text-left ${
+                        midDayBreak === opt.id
+                          ? "bg-[hsl(var(--gold)/0.12)] text-[hsl(var(--gold-dark))] border border-[hsl(var(--gold)/0.4)]"
+                          : "bg-[hsl(var(--muted))] text-[hsl(var(--ink-light))] border border-transparent hover:border-[hsl(var(--border))]"
+                      }`}
+                      style={{ borderRadius: 0 }}
+                    >
+                      {opt.icon} {opt.label}
+                    </button>
+                  ))}
+                </div>
+                {midDayBreak !== "none" && midDayBreakConfig[midDayBreak] && (
+                  <p className="text-[0.5625rem] text-[hsl(var(--ink-light))] mt-1.5 italic">
+                    {midDayBreakConfig[midDayBreak]!.desc}
+                  </p>
+                )}
               </div>
             </div>
           </div>

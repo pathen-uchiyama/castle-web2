@@ -671,9 +671,19 @@ const BookedTripDetail = ({ trip }: { trip: BookedTrip }) => {
   const getTotalPacked = () => Object.values(packedItems).flat().filter(Boolean).length;
   const getTotalItems = () => Object.values(packedItems).flat().length;
 
-  // Combined reservations (mock + pending)
-  const allDiningReservations = useMemo(() => [...diningReservations, ...pendingDining], [diningReservations, pendingDining]);
-  const allBookedExperiences = useMemo(() => [...bookedExperiences, ...pendingExperiences], [bookedExperiences, pendingExperiences]);
+  // Combined reservations (mock + pending), with cancellation tracking
+  const allDiningReservations = useMemo(() => {
+    const mock = diningReservations.map(d =>
+      confirmedDiningCancelled.includes(d.reservationId) ? { ...d, status: "cancelled" as const } : d
+    );
+    return [...mock, ...pendingDining];
+  }, [diningReservations, pendingDining, confirmedDiningCancelled]);
+  const allBookedExperiences = useMemo(() => {
+    const mock = bookedExperiences.map(e =>
+      confirmedExpCancelled.includes(e.experienceId) ? { ...e, status: "cancelled" as const } : e
+    );
+    return [...mock, ...pendingExperiences];
+  }, [bookedExperiences, pendingExperiences, confirmedExpCancelled]);
 
   /* ── Overlap detection for dining & experiences ─────────────────── */
   const parseTimeToMin = (timeStr: string): number => {

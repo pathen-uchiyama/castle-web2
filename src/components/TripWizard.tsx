@@ -298,7 +298,7 @@ const TripWizard = ({ open, onClose }: TripWizardProps) => {
   const canProceed = () => {
     switch (currentStep) {
       case 0: return !!data.resort && !!data.adventureTitle.trim() && !!data.startDate && !!data.leadAdventurer.trim();
-      case 1: return data.partyMembers.length > 0 && data.partyMembers.every((m) => m.name.trim());
+      case 1: return data.partyMembers.every((m) => m.name.trim()); // solo trip is valid (0 extra members)
       case 2: return !!data.tripPacing && !!data.arrivalIntent;
       case 3: return data.parkSchedule.length > 0;
       case 4: return true;

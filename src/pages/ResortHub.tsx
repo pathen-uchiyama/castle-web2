@@ -404,10 +404,10 @@ const ResortHub = () => {
                       {/* Attractions Toggle */}
                       {parkAttractions.length > 0 && (
                         <button onClick={() => setExpandedPark(isExpanded ? null : park.parkId)}
-                          className="flex items-center gap-2 mt-4 px-4 py-2 rounded-md border border-border hover:border-foreground/30 transition-colors text-[0.5625rem] uppercase tracking-[0.12em] text-muted-foreground hover:text-foreground">
-                          <Zap className="w-3 h-3" />
+                          className="flex items-center gap-2 mt-4 px-4 py-2 rounded-md border border-border hover:border-foreground/30 transition-colors text-xs uppercase tracking-[0.12em] text-muted-foreground hover:text-foreground">
+                          <Zap className="w-3.5 h-3.5" />
                           {isExpanded ? "Hide" : "Show"} {parkAttractions.length} Attractions
-                          <ChevronDown className={`w-3 h-3 transition-transform ${isExpanded ? "rotate-180" : ""}`} />
+                          <ChevronDown className={`w-3.5 h-3.5 transition-transform ${isExpanded ? "rotate-180" : ""}`} />
                         </button>
                       )}
                     </div>

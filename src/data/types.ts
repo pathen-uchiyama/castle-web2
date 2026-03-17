@@ -241,7 +241,6 @@ export interface Preference {
 export type RideSensitivity = "thrill-rides" | "spinning" | "dark-rides" | "drops" | "loud-noises" | "quick-starts" | "heights" | "motion-simulation";
 
 export interface GuestHealthProfile {
-  age?: number;
   heightInches?: number;
   allergies: string[];
   dietaryRestrictions: string[];

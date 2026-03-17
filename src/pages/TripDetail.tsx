@@ -817,6 +817,7 @@ const BookedTripDetail = ({ trip }: { trip: BookedTrip }) => {
     toast({ title: "Removed", description: `${experienceName} removed from pending.` });
   };
 
+  const consensusData = useMemo(() => {
     const completed = partySurvey.responses.filter((r) => r.status === "completed");
     if (completed.length === 0) return [];
     return partySurvey.attractions.map((attraction) => {

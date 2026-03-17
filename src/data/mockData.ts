@@ -730,7 +730,6 @@ export const mockData: AppData = {
       { label: "Home park", value: "Magic Kingdom" },
     ],
     healthProfile: {
-      age: 38,
       heightInches: 71,
       allergies: ["Tree nuts"],
       dietaryRestrictions: ["Gluten-free"],

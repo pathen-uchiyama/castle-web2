@@ -634,6 +634,8 @@ const BookedTripDetail = ({ trip }: { trip: BookedTrip }) => {
   const [pendingDining, setPendingDining] = useState<DiningReservation[]>([]);
   const [pendingExperiences, setPendingExperiences] = useState<BookedExperience[]>([]);
   const [alerts, setAlerts] = useState<BookingAlert[]>([]);
+  const [confirmedDiningCancelled, setConfirmedDiningCancelled] = useState<string[]>([]);
+  const [confirmedExpCancelled, setConfirmedExpCancelled] = useState<string[]>([]);
   const [bookingModal, setBookingModal] = useState<{ type: "dining" | "experience"; venue: DiningVenue | ExperienceVenue } | null>(null);
   const [alertModal, setAlertModal] = useState<{ type: "dining" | "experience"; venueName: string; opensDate: string } | null>(null);
   const { destination, tripName, countdownDays, travelLegs, diningReservations, bookedExperiences, diningVenues, experienceVenues } = trip;

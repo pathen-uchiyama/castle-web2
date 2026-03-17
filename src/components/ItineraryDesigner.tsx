@@ -749,6 +749,24 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
                   Early Theme Park Entry (Resort Guest)
                 </span>
               </div>
+              {/* Extended Evening Hours toggle */}
+              <div className="flex items-center gap-2 mt-2">
+                <button
+                  onClick={() => setHasExtendedHours(!hasExtendedHours)}
+                  className={`w-9 h-[18px] rounded-full flex items-center px-0.5 cursor-pointer transition-colors duration-300 ${
+                    hasExtendedHours ? "bg-[hsl(280,30%,55%)]" : "bg-muted"
+                  }`}
+                >
+                  <motion.div
+                    className="w-3.5 h-3.5 rounded-full bg-background shadow"
+                    animate={{ x: hasExtendedHours ? 16 : 0 }}
+                    transition={{ type: "spring", stiffness: 500, damping: 30 }}
+                  />
+                </button>
+                <span className="text-[0.625rem] uppercase tracking-[0.1em] text-[hsl(var(--ink-light))]">
+                  Extended Evening Hours (Deluxe Resort)
+                </span>
+              </div>
             </div>
           </div>
 

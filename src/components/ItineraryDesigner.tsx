@@ -170,12 +170,13 @@ function computeRibbon(items: ItineraryItem[], ropeDropMin: number, hasStroller:
   return result;
 }
 
-/** Check if adding an item at the end would conflict with any fixed anchor */
+/** Check if adding an item would conflict with fixed anchors or exceed park hours */
 function wouldConflictWithAnchor(
   items: ItineraryItem[], 
   newItem: ItineraryItem, 
   ropeDropMin: number, 
-  hasStroller: boolean
+  hasStroller: boolean,
+  leaveMin: number
 ): { conflicts: boolean; anchorName?: string; anchorTime?: string } {
   const testItems = [...items, newItem];
   const ribbon = computeRibbon(testItems, ropeDropMin, hasStroller);
@@ -185,7 +186,6 @@ function wouldConflictWithAnchor(
     const ri = ribbon[i];
     if (isFixedAnchor(ri.item) && ri.item.scheduledStartMin != null) {
       const expectedArrival = ri.item.scheduledStartMin - ri.checkinTime;
-      // If the ribbon placed this anchor later than its scheduled time, there's a conflict
       if (ri.startMin > expectedArrival + 2) {
         return { 
           conflicts: true, 
@@ -196,7 +196,7 @@ function wouldConflictWithAnchor(
     }
   }
   
-  // Also check if any flexible item BEFORE a fixed anchor now overflows into it
+  // Check if any flexible item overflows into a fixed anchor
   for (let i = 0; i < ribbon.length - 1; i++) {
     const current = ribbon[i];
     const next = ribbon[i + 1];
@@ -209,6 +209,18 @@ function wouldConflictWithAnchor(
           anchorTime: formatMin(next.item.scheduledStartMin)
         };
       }
+    }
+  }
+  
+  // Check if the last item extends past park hours
+  if (ribbon.length > 0) {
+    const lastEnd = ribbon[ribbon.length - 1].endMin;
+    if (lastEnd > leaveMin) {
+      return {
+        conflicts: true,
+        anchorName: "Park Close",
+        anchorTime: formatMin(leaveMin)
+      };
     }
   }
   
@@ -318,8 +330,9 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
   /* ── Computed ribbon ───────────────────────────────────────────── */
   const baseRopeDropMin = toMinutes(ropeDrop);
   const ropeDropMin = hasEarlyEntry ? baseRopeDropMin - 30 : baseRopeDropMin;
-  const baseLeaveMin = toMinutes(leavePark);
-  const leaveMin = hasExtendedHours ? baseLeaveMin + 120 : baseLeaveMin;
+  const parkCloseMin = toMinutes(leavePark);
+  const extendedCloseMin = parkCloseMin + 120;
+  const leaveMin = hasExtendedHours ? extendedCloseMin : parkCloseMin;
 
   const ribbon = useMemo(
     () => computeRibbon(itinerary, ropeDropMin, hasStroller),
@@ -481,7 +494,7 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
       waitCategory: attraction.waitCategory,
     };
     // Check for conflict with fixed anchors
-    const conflict = wouldConflictWithAnchor(itinerary, newItem, ropeDropMin, hasStroller);
+    const conflict = wouldConflictWithAnchor(itinerary, newItem, ropeDropMin, hasStroller, leaveMin);
     if (conflict.conflicts) {
       toast({
         title: "⚠️ Reservation Conflict",
@@ -510,7 +523,7 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
       notes: "✨ Early Access — reduced wait",
     };
     // Check for conflict with fixed anchors
-    const conflict = wouldConflictWithAnchor(itinerary, newItem, ropeDropMin, hasStroller);
+    const conflict = wouldConflictWithAnchor(itinerary, newItem, ropeDropMin, hasStroller, leaveMin);
     if (conflict.conflicts) {
       toast({
         title: "⚠️ Reservation Conflict",
@@ -550,7 +563,7 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
       llType: attraction.llType,
       waitCategory: attraction.waitCategory,
     };
-    const conflict = wouldConflictWithAnchor(itinerary, newItem, ropeDropMin, hasStroller);
+    const conflict = wouldConflictWithAnchor(itinerary, newItem, ropeDropMin, hasStroller, leaveMin);
     if (conflict.conflicts) {
       toast({
         title: "⚠️ Reservation Conflict",
@@ -1404,74 +1417,141 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
 
             return (
               <>
-                {/* Gap until park close */}
-                {remainingMin >= 5 && remainingMin < 15 ? (
-                  /* Short remaining gap — suggest quick activities */
-                  <div className="my-2 border-2 border-dashed flex flex-col items-center justify-center border-[hsl(var(--ink-light)/0.25)] bg-[hsl(var(--ink)/0.02)]"
-                    style={{ borderRadius: "0.75rem", minHeight: "56px" }}
-                  >
-                    <div className="flex items-center gap-2 mb-1">
-                      <span className="text-base">⏱</span>
-                      <span className="font-display text-sm text-[hsl(var(--ink))] font-medium">{remainingMin}m until departure</span>
-                    </div>
-                    <div className="flex flex-wrap gap-1.5 mt-1.5 justify-center px-3">
-                      <span className="px-2 py-1 text-[0.5625rem] bg-[hsl(var(--muted))] text-[hsl(var(--ink-light))] border border-[hsl(var(--border))]/50" style={{ borderRadius: 0 }}>🚶 Walk toward exit</span>
-                      <span className="px-2 py-1 text-[0.5625rem] bg-[hsl(var(--muted))] text-[hsl(var(--ink-light))] border border-[hsl(var(--border))]/50" style={{ borderRadius: 0 }}>📸 Last photos</span>
-                      <span className="px-2 py-1 text-[0.5625rem] bg-[hsl(var(--muted))] text-[hsl(var(--ink-light))] border border-[hsl(var(--border))]/50" style={{ borderRadius: 0 }}>🛍 Gift shop stop</span>
-                    </div>
-                  </div>
-                ) : remainingMin >= 15 ? (
-                  <div
-                    className={`my-2 border-2 border-dashed flex flex-col items-center justify-center transition-colors duration-200 ${
-                      dropTargetIdx === ribbon.length
-                        ? "border-[hsl(var(--gold))] bg-[hsl(var(--gold)/0.15)]"
-                        : "border-[hsl(var(--gold)/0.4)] bg-[hsl(var(--gold)/0.06)]"
-                    }`}
-                    style={{ borderRadius: "0.75rem", minHeight: `${remainingHeight}px` }}
-                    onDragOver={(e) => { e.preventDefault(); setDropTargetIdx(ribbon.length); }}
-                    onDragLeave={() => setDropTargetIdx(null)}
-                    onDrop={(e) => handleDropOnZone(e, ribbon.length)}
-                  >
-                    <div className="flex items-center gap-2 mb-1.5">
-                      <span className="text-lg">⏳</span>
-                      <span className="font-display text-base text-[hsl(var(--gold-dark))] font-bold">{remainingMin}m open</span>
-                    </div>
-                    <p className="text-[0.6875rem] text-[hsl(var(--ink-light))] font-medium">
-                      {formatMin(lastEnd)} → {formatMin(leaveMin)}
-                    </p>
-                    {Math.floor(remainingMin / 25) > 0 && (
-                      <p className="text-[0.625rem] text-[hsl(var(--ink-light))] mt-0.5">
-                        ~{Math.floor(remainingMin / 25)} ride{Math.floor(remainingMin / 25) > 1 ? "s" : ""} could fit
-                      </p>
-                    )}
-                    {lastZone && (
-                      <span className="mt-2 text-[0.5625rem] uppercase tracking-[0.1em] px-2.5 py-1 bg-[hsl(var(--gold)/0.12)] text-[hsl(var(--gold-dark))]" style={{ borderRadius: "0.5rem" }}>
-                        📍 Near {zoneLabel(lastZone)} · Drag here to fill
-                      </span>
-                    )}
-                  </div>
-                ) : null}
+                {/* ── Pre-close gap ── */}
+                {(() => {
+                  const preCloseEnd = hasExtendedHours ? parkCloseMin : leaveMin;
+                  const preCloseRemaining = Math.max(0, preCloseEnd - lastEnd);
+                  const preCloseHeight = preCloseRemaining >= 10 ? Math.max(60, Math.min(preCloseRemaining * 1.2, 220)) : 0;
 
-                {/* Planned departure waypoint */}
-                <div className="flex items-center gap-3 mt-2 p-3 bg-[hsl(var(--ink)/0.04)] border border-dashed border-[hsl(var(--ink)/0.15)]" style={{ borderRadius: 0 }}>
+                  return preCloseRemaining >= 5 ? (
+                    preCloseRemaining < 15 ? (
+                      <div className="my-2 border-2 border-dashed flex flex-col items-center justify-center border-[hsl(var(--ink-light)/0.25)] bg-[hsl(var(--ink)/0.02)]"
+                        style={{ borderRadius: "0.75rem", minHeight: "56px" }}
+                      >
+                        <div className="flex items-center gap-2 mb-1">
+                          <span className="text-base">⏱</span>
+                          <span className="font-display text-sm text-[hsl(var(--ink))] font-medium">{preCloseRemaining}m until {hasExtendedHours ? "regular close" : "departure"}</span>
+                        </div>
+                        <div className="flex flex-wrap gap-1.5 mt-1.5 justify-center px-3">
+                          <span className="px-2 py-1 text-[0.5625rem] bg-[hsl(var(--muted))] text-[hsl(var(--ink-light))] border border-[hsl(var(--border))]/50" style={{ borderRadius: 0 }}>🚶 Walk toward exit</span>
+                          <span className="px-2 py-1 text-[0.5625rem] bg-[hsl(var(--muted))] text-[hsl(var(--ink-light))] border border-[hsl(var(--border))]/50" style={{ borderRadius: 0 }}>📸 Last photos</span>
+                          <span className="px-2 py-1 text-[0.5625rem] bg-[hsl(var(--muted))] text-[hsl(var(--ink-light))] border border-[hsl(var(--border))]/50" style={{ borderRadius: 0 }}>🛍 Gift shop stop</span>
+                        </div>
+                      </div>
+                    ) : (
+                      <div
+                        className={`my-2 border-2 border-dashed flex flex-col items-center justify-center transition-colors duration-200 ${
+                          dropTargetIdx === ribbon.length
+                            ? "border-[hsl(var(--gold))] bg-[hsl(var(--gold)/0.15)]"
+                            : "border-[hsl(var(--gold)/0.4)] bg-[hsl(var(--gold)/0.06)]"
+                        }`}
+                        style={{ borderRadius: "0.75rem", minHeight: `${preCloseHeight}px` }}
+                        onDragOver={(e) => { e.preventDefault(); setDropTargetIdx(ribbon.length); }}
+                        onDragLeave={() => setDropTargetIdx(null)}
+                        onDrop={(e) => handleDropOnZone(e, ribbon.length)}
+                      >
+                        <div className="flex items-center gap-2 mb-1.5">
+                          <span className="text-lg">⏳</span>
+                          <span className="font-display text-base text-[hsl(var(--gold-dark))] font-bold">{preCloseRemaining}m open</span>
+                        </div>
+                        <p className="text-[0.6875rem] text-[hsl(var(--ink-light))] font-medium">
+                          {formatMin(lastEnd)} → {formatMin(preCloseEnd)}
+                        </p>
+                        {Math.floor(preCloseRemaining / 25) > 0 && (
+                          <p className="text-[0.625rem] text-[hsl(var(--ink-light))] mt-0.5">
+                            ~{Math.floor(preCloseRemaining / 25)} ride{Math.floor(preCloseRemaining / 25) > 1 ? "s" : ""} could fit
+                          </p>
+                        )}
+                        {lastZone && (
+                          <span className="mt-2 text-[0.5625rem] uppercase tracking-[0.1em] px-2.5 py-1 bg-[hsl(var(--gold)/0.12)] text-[hsl(var(--gold-dark))]" style={{ borderRadius: "0.5rem" }}>
+                            📍 Near {zoneLabel(lastZone)} · Drag here to fill
+                          </span>
+                        )}
+                      </div>
+                    )
+                  ) : null;
+                })()}
+
+                {/* ── Park Close marker ── */}
+                <div className={`flex items-center gap-3 mt-2 p-3 border ${
+                  hasExtendedHours 
+                    ? "bg-[hsl(280,30%,55%,0.06)] border-[hsl(280,30%,55%,0.25)]" 
+                    : "bg-[hsl(var(--ink)/0.04)] border-dashed border-[hsl(var(--ink)/0.15)]"
+                }`} style={{ borderRadius: 0 }}>
                   <div className="text-center shrink-0 w-16">
-                    <span className="font-display text-sm text-[hsl(var(--ink-light))] font-bold leading-none">{formatMin(leaveMin)}</span>
-                    <span className="text-[0.5rem] text-[hsl(var(--ink-light))]/50 block">
-                      {hasExtendedHours ? "Extended" : "Planned"}
-                    </span>
+                    <span className="font-display text-sm text-[hsl(var(--ink))] font-bold leading-none">{formatMin(parkCloseMin)}</span>
+                    <span className="text-[0.5rem] text-[hsl(var(--ink-light))]/50 block">Close</span>
                   </div>
                   <div className="border-l border-[hsl(var(--ink)/0.15)] pl-3 flex-1">
-                    <p className="font-display text-sm text-[hsl(var(--ink-light))]">
-                      🚗 {hasExtendedHours ? "Extended Evening Hours End" : "Planned Departure"}
+                    <p className="font-display text-sm text-[hsl(var(--ink))]">
+                      🏰 {hasExtendedHours ? "Regular Park Close" : "Park Close — Planned Departure"}
                     </p>
                     <p className="text-[0.625rem] text-[hsl(var(--ink-light))]/60 mt-0.5">
                       {hasExtendedHours
-                        ? `Regular close at ${leavePark} · Extended hours until ${formatMin(leaveMin)}`
+                        ? "Day guests exit · Extended Evening Hours begin for Deluxe resort guests"
                         : `Park closes at ${leavePark} · Head toward exit for transport`
                       }
                     </p>
                   </div>
                 </div>
+
+                {/* ── Extended Evening Hours section ── */}
+                {hasExtendedHours && (
+                  <>
+                    {/* Extended hours open time */}
+                    {(() => {
+                      const extStart = Math.max(parkCloseMin, lastEnd);
+                      const extRemaining = Math.max(0, extendedCloseMin - extStart);
+                      const extHeight = extRemaining >= 10 ? Math.max(60, Math.min(extRemaining * 1.2, 180)) : 0;
+
+                      return extRemaining >= 5 ? (
+                        <div
+                          className={`my-2 border-2 border-dashed flex flex-col items-center justify-center transition-colors duration-200 ${
+                            dropTargetIdx === ribbon.length
+                              ? "border-[hsl(280,30%,55%)] bg-[hsl(280,30%,55%,0.15)]"
+                              : "border-[hsl(280,30%,55%,0.3)] bg-[hsl(280,30%,55%,0.04)]"
+                          }`}
+                          style={{ borderRadius: "0.75rem", minHeight: `${extHeight}px` }}
+                          onDragOver={(e) => { e.preventDefault(); setDropTargetIdx(ribbon.length); }}
+                          onDragLeave={() => setDropTargetIdx(null)}
+                          onDrop={(e) => handleDropOnZone(e, ribbon.length)}
+                        >
+                          <div className="flex items-center gap-2 mb-1.5">
+                            <span className="text-lg">🌙</span>
+                            <span className="font-display text-base text-[hsl(280,30%,45%)] font-bold">{extRemaining}m Extended Hours</span>
+                          </div>
+                          <p className="text-[0.6875rem] text-[hsl(var(--ink-light))] font-medium">
+                            {formatMin(extStart)} → {formatMin(extendedCloseMin)}
+                          </p>
+                          <p className="text-[0.625rem] text-[hsl(280,30%,55%)] mt-0.5">
+                            Shorter lines · Select attractions only · Deluxe resort guests
+                          </p>
+                          {Math.floor(extRemaining / 20) > 0 && (
+                            <p className="text-[0.625rem] text-[hsl(var(--ink-light))] mt-0.5">
+                              ~{Math.floor(extRemaining / 20)} ride{Math.floor(extRemaining / 20) > 1 ? "s" : ""} could fit
+                            </p>
+                          )}
+                        </div>
+                      ) : null;
+                    })()}
+
+                    {/* Extended Hours End marker */}
+                    <div className="flex items-center gap-3 mt-2 p-3 bg-[hsl(280,30%,55%,0.06)] border border-[hsl(280,30%,55%,0.25)]" style={{ borderRadius: 0 }}>
+                      <div className="text-center shrink-0 w-16">
+                        <span className="font-display text-sm text-[hsl(280,30%,45%)] font-bold leading-none">{formatMin(extendedCloseMin)}</span>
+                        <span className="text-[0.5rem] text-[hsl(280,30%,55%)]/70 block">Extended</span>
+                      </div>
+                      <div className="border-l border-[hsl(280,30%,55%,0.3)] pl-3 flex-1">
+                        <p className="font-display text-sm text-[hsl(280,30%,45%)]">
+                          🌙 Extended Evening Hours End
+                        </p>
+                        <p className="text-[0.625rem] text-[hsl(var(--ink-light))]/60 mt-0.5">
+                          Park fully closes · Head to resort transportation
+                        </p>
+                      </div>
+                    </div>
+                  </>
+                )}
               </>
             );
           })()}

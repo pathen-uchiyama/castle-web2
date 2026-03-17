@@ -16,6 +16,8 @@ import Account from "./pages/Account";
 import ParkGuidePage from "./pages/ParkGuide";
 import GuidesLanding from "./pages/GuidesLanding";
 import ResortHub from "./pages/ResortHub";
+import Terms from "./pages/Terms";
+import Privacy from "./pages/Privacy";
 import NotFound from "./pages/NotFound";
 import { mockData } from "./data/mockData";
 

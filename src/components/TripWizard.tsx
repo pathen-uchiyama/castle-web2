@@ -687,7 +687,7 @@ const TripWizard = ({ open, onClose, onComplete, guestName = "" }: TripWizardPro
                           </p>
                           <div className="p-4 mb-4" style={{ background: `${brand.gold}08`, border: `1px solid ${brand.gold}25` }}>
                             <p style={{ fontFamily: brand.font.body, fontSize: "0.75rem", color: brand.slate, lineHeight: "1.6" }}>
-                              💡 <strong style={{ color: brand.lapis }}>Pro tip:</strong> Our crowd predictor uses historical data to help you choose the best park for each day. We'll surface crowd level insights on your trip dashboard once your schedule is set.
+                              💡 <strong style={{ color: brand.lapis }}>Pro tip:</strong> Crowd levels shown next to each park are predictions based on historical data, helping you pick the best park for each day.
                             </p>
                           </div>
                           <div className="space-y-3">

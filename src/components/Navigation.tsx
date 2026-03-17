@@ -42,9 +42,9 @@ const Navigation = () => {
             background: isHome ? "hsla(0, 0%, 5%, 0.85)" : "hsla(35, 20%, 95%, 0.92)",
           }}
         />
-        <Link to="/" className="relative z-10 flex items-center gap-2.5">
+        <Link to="/" className="relative z-10 flex items-center gap-1.5">
           <img src={isHome ? ccLogoDark : ccLogoLight} alt="Castle Companion" className="h-9 w-auto transition-all duration-500 opacity-90 hover:opacity-100" />
-          <span className={`font-display text-lg tracking-[-0.03em] transition-colors duration-500 hidden sm:inline ${isHome ? "text-white/90 hover:text-white" : "text-foreground/90 hover:text-foreground"}`}>
+          <span className={`font-display-bold text-[1.05rem] tracking-[-0.04em] leading-none transition-colors duration-500 hidden sm:inline ${isHome ? "text-white/90 hover:text-white" : "text-foreground/90 hover:text-foreground"}`}>
             Castle Companion
           </span>
         </Link>

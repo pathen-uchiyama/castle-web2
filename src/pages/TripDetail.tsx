@@ -1519,6 +1519,9 @@ const BookedTripDetail = ({ trip }: { trip: BookedTrip }) => {
             type={bookingModal.type}
             venueName={bookingModal.venue.name}
             venueLocation={bookingModal.venue.parkOrResort}
+            tripStartDate={trip.startDate}
+            tripEndDate={trip.endDate}
+            tripName={trip.tripName}
             onClose={() => setBookingModal(null)}
             onBook={(data) => {
               if (bookingModal.type === "dining") {

@@ -10,6 +10,9 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { cn } from "@/lib/utils";
 import type { ParkGuide, ParkDaySchedule, ParkHours } from "@/data/types";
 import { mockData } from "@/data/mockData";
+import { wdwParks, dlrParks, type ParkOverview } from "@/data/resortEncyclopedia";
+import { wdwEncyclopediaAttractions, dlrEncyclopediaAttractions, type } from "@/data/encyclopediaAttractions";
+import type { ParkAttraction } from "@/data/resortEncyclopedia";
 
 const ease: [number, number, number, number] = [0.19, 1, 0.22, 1];
 const fade = (delay = 0) => ({

@@ -269,7 +269,7 @@ const Account = ({ account }: AccountProps) => {
                   <p className="label-text">{item.label}</p>
                   {editingProfile && item.editable && item.key ? (
                     <input
-                      type={item.key === "email" ? "email" : "text"}
+                      type={item.inputType || (item.key === "email" ? "email" : "text")}
                       value={profileData[item.key]}
                       onChange={(e) => setProfileData((prev) => ({ ...prev, [item.key!]: e.target.value }))}
                       className="font-editorial text-base text-foreground bg-transparent border-b border-[hsl(var(--gold))] outline-none text-right w-48 focus:border-[hsl(var(--gold-dark))] transition-colors"

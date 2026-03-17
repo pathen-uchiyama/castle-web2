@@ -38,7 +38,7 @@ interface PartyMember {
 
 interface ParkDayAssignment {
   date: string; // ISO date string
-  parkId: string | null;
+  parkIds: string[];
 }
 
 interface WizardData {

@@ -113,9 +113,10 @@ const Account = ({ account }: AccountProps) => {
 
   const { subscription } = account;
 
-  const profileFields = [
-    { label: "Name", key: "guestName" as const, value: profileData.guestName, editable: true },
-    { label: "Email", key: "email" as const, value: profileData.email, editable: true },
+  const profileFields: { label: string; key: "guestName" | "email" | "birthday" | null; value: string; editable: boolean }[] = [
+    { label: "Name", key: "guestName", value: profileData.guestName, editable: true },
+    { label: "Email", key: "email", value: profileData.email, editable: true },
+    { label: "Birthday", key: "birthday", value: profileData.birthday || "—", editable: true },
     { label: "Member since", key: null, value: account.memberSince, editable: false },
     { label: "Adventures completed", key: null, value: String(account.adventuresCompleted), editable: false },
   ];

@@ -405,6 +405,39 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
     }]);
   }, [isLocked]);
 
+  /** Add a ride specifically into the early access window — inserts at the right position with reduced waits */
+  const addToEarlyAccess = useCallback((attraction: ParkAttraction) => {
+    if (isLocked) return;
+    const earlyWait = attraction.waitCategory ? (earlyAccessWaitByCategory[attraction.waitCategory] || 5) : 5;
+    const newItem: ItineraryItem = {
+      id: `it-${Date.now()}`,
+      attractionId: attraction.id,
+      name: attraction.name,
+      type: attraction.type,
+      duration: parseInt(attraction.duration) || DURATION_DEFAULTS[attraction.type] || 20,
+      waitTime: earlyWait,
+      zone: attraction.zone,
+      llType: attraction.llType,
+      waitCategory: attraction.waitCategory,
+      notes: "✨ Early Access — reduced wait",
+    };
+    setItinerary(prev => {
+      // Find the insertion point: after any existing early-window items but before regular items
+      const currentRibbon = computeRibbon(prev, ropeDropMin, hasStroller);
+      let insertIdx = 0;
+      for (let i = 0; i < currentRibbon.length; i++) {
+        if (currentRibbon[i].endMin <= baseRopeDropMin) {
+          insertIdx = i + 1;
+        } else {
+          break;
+        }
+      }
+      const next = [...prev];
+      next.splice(insertIdx, 0, newItem);
+      return next;
+    });
+  }, [isLocked, ropeDropMin, baseRopeDropMin, hasStroller]);
+
   const insertAtIndex = useCallback((attraction: ParkAttraction, idx: number) => {
     if (isLocked) return;
     const estWait = attraction.waitCategory ? (defaultWaitByCategory[attraction.waitCategory] || 15) : 15;

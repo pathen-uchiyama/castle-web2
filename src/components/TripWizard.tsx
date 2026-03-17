@@ -38,7 +38,7 @@ interface PartyMember {
 
 interface ParkDayAssignment {
   date: string; // ISO date string
-  parkId: string | null;
+  parkIds: string[];
 }
 
 interface WizardData {
@@ -63,12 +63,11 @@ interface WizardData {
   willUseSingleRider: boolean;
   willPurchaseLLMulti: boolean;
   willPurchaseLLSingle: boolean;
-  diningReservationScouting: boolean;
   splurgeAppetite: string | null;
   premiumInterests: string[];
   // Page 6 — Foodie
   allergies: string[];
-  diningStyle: string | null;
+  diningStyles: string[];
 }
 
 interface TripWizardProps {
@@ -125,10 +124,10 @@ const focusOptions = [
 ];
 
 const diningStyleOptions = [
-  { id: "snacks-only", label: "Snacks Only", desc: "Graze on the go." },
-  { id: "quick-service", label: "Quick Service", desc: "Counter service, eat & move." },
-  { id: "table-service", label: "Table Service", desc: "Sit-down, part of the experience." },
-  { id: "signature", label: "Signature", desc: "Premium dining destinations." },
+  { id: "snacks-only", label: "Snacks & Treats", desc: "We want to hit the iconic snacks — Dole Whip, turkey legs, churros." },
+  { id: "quick-service", label: "Quick Service", desc: "We're happy with counter-service meals — fast, affordable, and easy." },
+  { id: "table-service", label: "Table Service", desc: "We'd enjoy sit-down restaurants as part of the experience." },
+  { id: "signature", label: "Signature Dining", desc: "We're interested in premium dining destinations for a special meal." },
 ];
 
 const splurgeOptions = [
@@ -151,11 +150,9 @@ const wdwParks = [
 ];
 
 const wdwNonParkDays = [
-  { id: "rest", label: "Rest Day", icon: "😴", desc: "Resort pool, spa, or Downtown Disney" },
   { id: "travel-arrive", label: "Arrival Day", icon: "✈️", desc: "Travel + settle in at resort" },
   { id: "travel-depart", label: "Departure Day", icon: "🧳", desc: "Pack up + travel home" },
-  { id: "resort", label: "Resort Day", icon: "🏊", desc: "Pool, dining, mini golf, resort hopping" },
-  { id: "springs", label: "Disney Springs", icon: "🛍", desc: "Shopping, dining, entertainment" },
+  { id: "non-park", label: "Non-Park Day", icon: "🌴", desc: "Resort pool, Disney Springs, rest, or exploring" },
 ];
 
 const dlrParks = [
@@ -164,11 +161,9 @@ const dlrParks = [
 ];
 
 const dlrNonParkDays = [
-  { id: "rest", label: "Rest Day", icon: "😴", desc: "Hotel pool & relax" },
   { id: "travel-arrive", label: "Arrival Day", icon: "✈️", desc: "Travel + settle in" },
   { id: "travel-depart", label: "Departure Day", icon: "🧳", desc: "Pack up + travel home" },
-  { id: "resort", label: "Resort Day", icon: "🏊", desc: "Hotel, pool, Downtown Disney" },
-  { id: "downtown", label: "Downtown Disney", icon: "🛍", desc: "Shopping & dining district" },
+  { id: "non-park", label: "Non-Park Day", icon: "🌴", desc: "Hotel pool, Downtown Disney, rest, or exploring" },
 ];
 
 const relationshipOptions = ["Self", "Spouse", "Child", "Parent", "Friend", "Relative"];
@@ -253,11 +248,10 @@ const TripWizard = ({ open, onClose, onComplete, guestName = "" }: TripWizardPro
     willUseSingleRider: false,
     willPurchaseLLMulti: false,
     willPurchaseLLSingle: false,
-    diningReservationScouting: false,
     splurgeAppetite: null,
     premiumInterests: [],
     allergies: [],
-    diningStyle: null,
+    diningStyles: [],
   });
 
   const set = useCallback(<K extends keyof WizardData>(key: K, value: WizardData[K]) => {
@@ -282,16 +276,43 @@ const TripWizard = ({ open, onClose, onComplete, guestName = "" }: TripWizardPro
   // Sync park schedule when dates change
   const syncSchedule = useCallback(() => {
     if (tripDays.length === 0) return;
-    const existing = new Map(data.parkSchedule.map((ps) => [ps.date, ps.parkId]));
+    const existing = new Map(data.parkSchedule.map((ps) => [ps.date, ps.parkIds]));
     const newSchedule = tripDays.map((d) => {
       const iso = format(d, "yyyy-MM-dd");
-      return { date: iso, parkId: existing.get(iso) ?? null };
+      return { date: iso, parkIds: existing.get(iso) ?? [] };
     });
     set("parkSchedule", newSchedule);
   }, [tripDays, data.parkSchedule, set]);
 
-  const setParkForDay = (date: string, parkId: string | null) => {
-    set("parkSchedule", data.parkSchedule.map((ps) => ps.date === date ? { ...ps, parkId } : ps));
+  const toggleParkForDay = (date: string, parkId: string) => {
+    set("parkSchedule", data.parkSchedule.map((ps) => {
+      if (ps.date !== date) return ps;
+      // Non-park options are exclusive (not combinable with parks)
+      const isNonPark = [...(data.resort === "dlr" ? dlrNonParkDays : wdwNonParkDays)].some(np => np.id === parkId);
+      const currentHasNonPark = ps.parkIds.some(id => [...(data.resort === "dlr" ? dlrNonParkDays : wdwNonParkDays)].some(np => np.id === id));
+      if (isNonPark) {
+        // Selecting a non-park replaces everything
+        return { ...ps, parkIds: ps.parkIds.includes(parkId) ? [] : [parkId] };
+      }
+      // Selecting a park clears any non-park selection
+      const filtered = currentHasNonPark ? [] : ps.parkIds;
+      return {
+        ...ps,
+        parkIds: filtered.includes(parkId)
+          ? filtered.filter(id => id !== parkId)
+          : [...filtered, parkId],
+      };
+    }));
+  };
+
+  const clearDayParks = (date: string) => {
+    set("parkSchedule", data.parkSchedule.map((ps) => ps.date === date ? { ...ps, parkIds: [] } : ps));
+  };
+
+  const toggleDiningStyle = (id: string) => {
+    set("diningStyles", data.diningStyles.includes(id)
+      ? data.diningStyles.filter(s => s !== id)
+      : [...data.diningStyles, id]);
   };
 
   const toggleFocus = (id: string) => {
@@ -603,6 +624,9 @@ const TripWizard = ({ open, onClose, onComplete, guestName = "" }: TripWizardPro
                       >
                         <Plus size={14} /> Add a Traveler
                       </button>
+                      <p className="text-center mt-4" style={{ fontFamily: brand.font.body, fontSize: "0.75rem", color: brand.slate, fontStyle: "italic" }}>
+                        Don't worry — you can always add more travelers later.
+                      </p>
                     </div>
                   )}
 
@@ -659,17 +683,22 @@ const TripWizard = ({ open, onClose, onComplete, guestName = "" }: TripWizardPro
                       ) : (
                         <>
                           <p style={{ fontFamily: brand.font.body, color: brand.slate, fontSize: "0.8125rem", marginBottom: "0.5rem" }}>
-                            Assign each day a park, water park, or non-park activity. Arrival and departure days are flagged — most families prefer a lighter schedule those days.
+                            Assign each day a park or activity. You can select multiple parks per day if you plan to park-hop. Arrival and departure days are flagged — most families prefer a lighter schedule those days.
                           </p>
+                          <div className="p-4 mb-4" style={{ background: `${brand.gold}08`, border: `1px solid ${brand.gold}25` }}>
+                            <p style={{ fontFamily: brand.font.body, fontSize: "0.75rem", color: brand.slate, lineHeight: "1.6" }}>
+                              💡 <strong style={{ color: brand.lapis }}>Pro tip:</strong> Our crowd predictor uses historical data to help you choose the best park for each day. We'll surface crowd level insights on your trip dashboard once your schedule is set.
+                            </p>
+                          </div>
                           <div className="space-y-3">
                             {data.parkSchedule.map((ps, dayIdx) => {
                               const dateObj = new Date(ps.date + "T12:00:00");
                               const isFirstDay = dayIdx === 0;
                               const isLastDay = dayIdx === data.parkSchedule.length - 1;
                               const travelHint = isFirstDay ? "✈️ Arrival Day" : isLastDay ? "🧳 Departure Day" : null;
-                              const selectedPark = parks.find(p => p.id === ps.parkId);
-                              const selectedNonPark = nonParkDays.find(p => p.id === ps.parkId);
-                              const hasSelection = !!ps.parkId;
+                              const selectedParks = parks.filter(p => ps.parkIds.includes(p.id));
+                              const selectedNonPark = nonParkDays.find(p => ps.parkIds.includes(p.id));
+                              const hasSelection = ps.parkIds.length > 0;
 
                               return (
                                 <div
@@ -695,12 +724,13 @@ const TripWizard = ({ open, onClose, onComplete, guestName = "" }: TripWizardPro
                                       </div>
                                       <p style={{ fontFamily: brand.font.body, fontSize: "0.75rem", color: brand.slate }}>
                                         {format(dateObj, "MMMM d, yyyy")}
+                                        {selectedParks.length > 1 && " · 🎟 Park Hopper Day"}
                                         {selectedNonPark && ` · ${selectedNonPark.desc}`}
                                       </p>
                                     </div>
                                     {hasSelection && (
                                       <button
-                                        onClick={() => setParkForDay(ps.date, null)}
+                                        onClick={() => clearDayParks(ps.date)}
                                         className="text-xs uppercase tracking-widest hover:opacity-60 transition-opacity"
                                         style={{ fontFamily: brand.font.body, color: brand.slate }}
                                       >
@@ -722,46 +752,52 @@ const TripWizard = ({ open, onClose, onComplete, guestName = "" }: TripWizardPro
                                     </div>
                                   )}
 
-                                  {/* Theme parks */}
-                                  <p className="mb-1.5" style={{ fontFamily: brand.font.body, fontSize: "0.5625rem", color: brand.slate, textTransform: "uppercase", letterSpacing: "0.15em" }}>Theme Parks</p>
+                                  {/* Theme parks — multi-select for park hopping */}
+                                  <p className="mb-1.5" style={{ fontFamily: brand.font.body, fontSize: "0.5625rem", color: brand.slate, textTransform: "uppercase", letterSpacing: "0.15em" }}>Theme Parks (select multiple to park-hop)</p>
                                   <div className="grid grid-cols-2 gap-2 mb-3">
-                                    {parks.map((park) => (
-                                      <button
-                                        key={park.id}
-                                        onClick={() => setParkForDay(ps.date, park.id)}
-                                        className="px-3 py-2.5 text-xs transition-all duration-300 text-left flex items-center gap-2"
-                                        style={{
-                                          fontFamily: brand.font.body,
-                                          fontWeight: 500,
-                                          background: ps.parkId === park.id ? brand.lapis : "transparent",
-                                          color: ps.parkId === park.id ? brand.cream : brand.slate,
-                                          border: `1px solid ${ps.parkId === park.id ? brand.lapis : brand.border}`,
-                                        }}
-                                      >
-                                        <span>{park.icon}</span> {park.label}
-                                      </button>
-                                    ))}
+                                    {parks.map((park) => {
+                                      const active = ps.parkIds.includes(park.id);
+                                      return (
+                                        <button
+                                          key={park.id}
+                                          onClick={() => toggleParkForDay(ps.date, park.id)}
+                                          className="px-3 py-2.5 text-xs transition-all duration-300 text-left flex items-center gap-2"
+                                          style={{
+                                            fontFamily: brand.font.body,
+                                            fontWeight: 500,
+                                            background: active ? brand.lapis : "transparent",
+                                            color: active ? brand.cream : brand.slate,
+                                            border: `1px solid ${active ? brand.lapis : brand.border}`,
+                                          }}
+                                        >
+                                          <span>{park.icon}</span> {park.label}
+                                        </button>
+                                      );
+                                    })}
                                   </div>
 
                                   {/* Non-park options */}
-                                  <p className="mb-1.5" style={{ fontFamily: brand.font.body, fontSize: "0.5625rem", color: brand.slate, textTransform: "uppercase", letterSpacing: "0.15em" }}>Non-Park Days</p>
+                                  <p className="mb-1.5" style={{ fontFamily: brand.font.body, fontSize: "0.5625rem", color: brand.slate, textTransform: "uppercase", letterSpacing: "0.15em" }}>Non-Park Day</p>
                                   <div className="grid grid-cols-2 gap-2">
-                                    {nonParkDays.map((opt) => (
-                                      <button
-                                        key={opt.id}
-                                        onClick={() => setParkForDay(ps.date, opt.id)}
-                                        className="px-3 py-2 text-xs transition-all duration-300 text-left flex items-center gap-2"
-                                        style={{
-                                          fontFamily: brand.font.body,
-                                          fontWeight: 500,
-                                          background: ps.parkId === opt.id ? brand.goldDark : "transparent",
-                                          color: ps.parkId === opt.id ? brand.cream : brand.slate,
-                                          border: `1px solid ${ps.parkId === opt.id ? brand.goldDark : brand.border}`,
-                                        }}
-                                      >
-                                        <span>{opt.icon}</span> {opt.label}
-                                      </button>
-                                    ))}
+                                    {nonParkDays.map((opt) => {
+                                      const active = ps.parkIds.includes(opt.id);
+                                      return (
+                                        <button
+                                          key={opt.id}
+                                          onClick={() => toggleParkForDay(ps.date, opt.id)}
+                                          className="px-3 py-2 text-xs transition-all duration-300 text-left flex items-center gap-2"
+                                          style={{
+                                            fontFamily: brand.font.body,
+                                            fontWeight: 500,
+                                            background: active ? brand.goldDark : "transparent",
+                                            color: active ? brand.cream : brand.slate,
+                                            border: `1px solid ${active ? brand.goldDark : brand.border}`,
+                                          }}
+                                        >
+                                          <span>{opt.icon}</span> {opt.label}
+                                        </button>
+                                      );
+                                    })}
                                   </div>
                                 </div>
                               );
@@ -797,14 +833,14 @@ const TripWizard = ({ open, onClose, onComplete, guestName = "" }: TripWizardPro
                             active={data.willPurchaseLLMulti}
                             onClick={() => set("willPurchaseLLMulti", !data.willPurchaseLLMulti)}
                             label="Lightning Lane Multi Pass"
-                            desc="A paid Disney add-on that lets you book return times for select attractions throughout the day, skipping the standby queue. You can hold one reservation at a time and book the next after you tap in."
+                            desc="A paid Disney add-on that lets you book return times for select attractions throughout the day, skipping the standby queue. You can hold one reservation at a time and book the next after you tap in. Each ride can only be booked once per day with Multi Pass."
                             cost="~$15–$35/person/day depending on date and park"
                           />
                           <ToggleCard
                             active={data.willPurchaseLLSingle}
                             onClick={() => set("willPurchaseLLSingle", !data.willPurchaseLLSingle)}
                             label="Lightning Lane Single Pass"
-                            desc="A separate per-ride purchase for the highest-demand attractions (like TRON, Guardians, and Tiana's Bayou Adventure) that aren't included in Multi Pass. One purchase per ride, per person."
+                            desc="A separate per-ride purchase for the highest-demand attractions (like TRON, Guardians, and Tiana's Bayou Adventure) that aren't included in Multi Pass. Each ride can only be purchased once per person, per day."
                             cost="~$10–$25/person/ride depending on demand"
                           />
                         </div>
@@ -876,26 +912,14 @@ const TripWizard = ({ open, onClose, onComplete, guestName = "" }: TripWizardPro
                       </div>
 
                       <div>
-                        <Label>Dining Style</Label>
+                        <Label>Dining Styles (select all that apply)</Label>
+                        <p className="text-xs mb-3" style={{ fontFamily: brand.font.body, color: brand.slate }}>
+                          What kinds of dining experiences is your party interested in? Select everything you'd enjoy — we'll use this to build a mix that fits your trip.
+                        </p>
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                           {diningStyleOptions.map((opt) => (
-                            <SelectCard key={opt.id} selected={data.diningStyle === opt.id} onClick={() => set("diningStyle", opt.id)} label={opt.label} desc={opt.desc} />
+                            <SelectCard key={opt.id} selected={data.diningStyles.includes(opt.id)} onClick={() => toggleDiningStyle(opt.id)} label={opt.label} desc={opt.desc} />
                           ))}
-                        </div>
-                      </div>
-
-                      <div>
-                        <Label>Our Dining Tools</Label>
-                        <p className="text-xs mb-3" style={{ fontFamily: brand.font.body, color: brand.slate }}>
-                          These are features we offer to help you land the dining experiences you want.
-                        </p>
-                        <div className="space-y-3">
-                          <ToggleCard
-                            active={data.diningReservationScouting}
-                            onClick={() => set("diningReservationScouting", !data.diningReservationScouting)}
-                            label="Reservation Scouting"
-                            desc="Hard-to-get dining reservations often open up when other guests cancel. Enable this and we'll continuously monitor for openings at your preferred restaurants and time slots, alerting you the moment one appears."
-                          />
                         </div>
                       </div>
                     </div>

@@ -244,21 +244,22 @@ const ResortHub = () => {
 
             <motion.div {...fade(0.15)}>
               <p className="label-text mb-6">The Parks at a Glance</p>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                 {data.parks.map(park => (
-                  <button key={park.parkId} onClick={() => { setActiveTab("parks"); setParkType(park.type); }}
-                    className="text-left border border-border bg-card rounded-lg p-5 shadow-[var(--shadow-soft)] hover:shadow-[var(--shadow-hover)] transition-shadow duration-500">
+                  <Link key={park.parkId} to={`/parks/${park.parkId}`}
+                    className="text-left border border-border bg-card rounded-lg p-5 shadow-[var(--shadow-soft)] hover:shadow-[var(--shadow-hover)] transition-shadow duration-500 group block">
                     <div className="flex items-center gap-2 mb-2">
                       <span className="text-2xl">{park.icon}</span>
-                      <h3 className="font-display text-lg text-foreground">{park.name}</h3>
+                      <h3 className="font-display text-lg text-foreground group-hover:text-[hsl(var(--gold-dark))] transition-colors duration-500">{park.name}</h3>
                     </div>
-                    <p className="font-editorial text-xs text-muted-foreground mb-3">{park.tagline}</p>
-                    <div className="flex flex-wrap gap-1.5">
+                    <p className="font-editorial text-sm text-muted-foreground mb-3">{park.tagline}</p>
+                    <div className="flex flex-wrap gap-1.5 mb-3">
                       {park.knownFor.slice(0, 3).map(k => (
-                        <span key={k} className="text-[0.4375rem] uppercase tracking-[0.08em] px-2 py-0.5 rounded-md bg-muted text-muted-foreground">{k}</span>
+                        <span key={k} className="text-[0.5rem] uppercase tracking-[0.08em] px-2 py-0.5 rounded-md bg-muted text-muted-foreground">{k}</span>
                       ))}
                     </div>
-                  </button>
+                    <span className="link-editorial font-editorial text-sm text-foreground">View park guide →</span>
+                  </Link>
                 ))}
               </div>
             </motion.div>

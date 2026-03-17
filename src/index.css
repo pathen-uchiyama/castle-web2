@@ -38,6 +38,7 @@
     --gold: 42 64% 35%;
     --gold-light: 42 55% 55%;
     --gold-dark: 42 70% 28%;
+    --lapis: 222 47% 20%;
     --warm: 35 20% 95%;
     --ink: 0 0% 8%;
     --ink-light: 0 0% 45%;
@@ -193,5 +194,37 @@
 
   .float-gentle {
     animation: float 3s ease-in-out infinite;
+  }
+
+  /* Brand wordmark */
+  .brand-wordmark {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: 0.9375rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    line-height: 1;
+  }
+
+  .brand-castle {
+    font-weight: 700;
+    color: hsl(var(--lapis));
+  }
+
+  .brand-companion {
+    font-weight: 400;
+    background: linear-gradient(135deg, hsl(43 69% 52%), hsl(43 80% 60%));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .brand-castle-dark {
+    font-weight: 700;
+    color: hsl(var(--lapis));
+  }
+
+  .brand-companion-dark {
+    font-weight: 400;
+    color: white;
   }
 }

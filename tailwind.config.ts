@@ -54,6 +54,7 @@ export default {
           light: "hsl(var(--thistle-light))",
         },
         parchment: "hsl(var(--parchment))",
+        lapis: "hsl(var(--lapis))",
         obsidian: "hsl(var(--obsidian))",
         "slate-plaid": "hsl(var(--slate-plaid))",
         primary: {

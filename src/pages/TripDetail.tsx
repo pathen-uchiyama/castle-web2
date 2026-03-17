@@ -204,7 +204,7 @@ const BookingModal = ({ type, venueName, venueLocation, tripStartDate, tripEndDa
   }, [tripStartDate, tripEndDate]);
 
   const [date, setDate] = useState(tripDays[0]?.value || "");
-  const [timeMode, setTimeMode] = useState<"meal" | "specific">("meal");
+  const [timeMode, setTimeMode] = useState<"meal" | "specific">(type === "experience" ? "specific" : "meal");
   const [selectedMeal, setSelectedMeal] = useState<string>("");
   const [specificTime, setSpecificTime] = useState("");
   const [flexMinutes, setFlexMinutes] = useState(60);
@@ -222,7 +222,6 @@ const BookingModal = ({ type, venueName, venueLocation, tripStartDate, tripEndDa
     }
     if (!specificTime) return { start: "", end: "" };
     if (flexMinutes === 0) return { start: specificTime, end: "" };
-    // Calculate flex range
     const idx = TIME_SLOTS.findIndex(s => s.value === specificTime);
     if (idx < 0) return { start: specificTime, end: "" };
     const flexSlots = Math.round(flexMinutes / 30);
@@ -236,20 +235,10 @@ const BookingModal = ({ type, venueName, venueLocation, tripStartDate, tripEndDa
   const handleAttemptBooking = () => {
     if (!canSubmit) return;
     setBookingState("attempting");
-
-    // Simulate booking attempt (1.5s delay)
     setTimeout(() => {
-      // Simulate ~40% success rate
       const success = Math.random() > 0.6;
       if (success) {
-        onBook({
-          date,
-          time: effectiveTime.start,
-          timeRangeEnd: effectiveTime.end || undefined,
-          partySize,
-          notes,
-          monitoringActive: false,
-        });
+        onBook({ date, time: effectiveTime.start, timeRangeEnd: effectiveTime.end || undefined, partySize, notes, monitoringActive: false });
       } else {
         setBookingState("failed");
       }
@@ -257,14 +246,7 @@ const BookingModal = ({ type, venueName, venueLocation, tripStartDate, tripEndDa
   };
 
   const handleAddPending = () => {
-    onBook({
-      date,
-      time: effectiveTime.start,
-      timeRangeEnd: effectiveTime.end || undefined,
-      partySize,
-      notes,
-      monitoringActive: enableMonitoring,
-    });
+    onBook({ date, time: effectiveTime.start, timeRangeEnd: effectiveTime.end || undefined, partySize, notes, monitoringActive: enableMonitoring });
   };
 
   return (
@@ -308,84 +290,58 @@ const BookingModal = ({ type, venueName, venueLocation, tripStartDate, tripEndDa
             </div>
           </div>
 
-          {/* Time mode toggle */}
+          {/* Time selection — dining gets meal/specific toggle, experiences get specific only */}
           <div>
-            <div className="flex items-center gap-1 mb-3 p-1 bg-muted rounded-lg">
-              <button
-                onClick={() => { setTimeMode("meal"); setBookingState("idle"); }}
-                className={`flex-1 py-2 text-[0.5625rem] uppercase tracking-[0.12em] font-medium rounded-md transition-all duration-200 ${
-                  timeMode === "meal" ? "bg-card text-foreground shadow-sm" : "text-muted-foreground"
-                }`}
-              >
-                Meal Period
-              </button>
-              <button
-                onClick={() => { setTimeMode("specific"); setBookingState("idle"); }}
-                className={`flex-1 py-2 text-[0.5625rem] uppercase tracking-[0.12em] font-medium rounded-md transition-all duration-200 ${
-                  timeMode === "specific" ? "bg-card text-foreground shadow-sm" : "text-muted-foreground"
-                }`}
-              >
-                Specific Time
-              </button>
-            </div>
-
-            {timeMode === "meal" ? (
-              <div className="grid grid-cols-3 gap-2">
-                {MEAL_PRESETS.map((meal) => (
+            {type === "dining" ? (
+              <>
+                <div className="flex items-center gap-1 mb-3 p-1 bg-muted rounded-lg">
                   <button
-                    key={meal.id}
-                    onClick={() => { setSelectedMeal(meal.id); setBookingState("idle"); }}
-                    className={`flex flex-col items-center gap-1.5 p-4 rounded-lg border transition-all duration-200 ${
-                      selectedMeal === meal.id
-                        ? "bg-foreground text-background border-foreground"
-                        : "border-border text-muted-foreground hover:border-foreground/30"
+                    onClick={() => { setTimeMode("meal"); setBookingState("idle"); }}
+                    className={`flex-1 py-2 text-[0.5625rem] uppercase tracking-[0.12em] font-medium rounded-md transition-all duration-200 ${
+                      timeMode === "meal" ? "bg-card text-foreground shadow-sm" : "text-muted-foreground"
                     }`}
                   >
-                    <span className="text-lg">{meal.icon}</span>
-                    <span className="font-display text-xs">{meal.label}</span>
-                    <span className={`text-[0.5rem] ${selectedMeal === meal.id ? "text-background/70" : "text-muted-foreground/60"}`}>
-                      {meal.start} – {meal.end}
-                    </span>
+                    Meal Period
                   </button>
-                ))}
-              </div>
-            ) : (
-              <div className="space-y-3">
-                <div>
-                  <label className="text-[0.5625rem] uppercase tracking-[0.1em] text-muted-foreground mb-1.5 block">Preferred Time</label>
-                  <select
-                    value={specificTime}
-                    onChange={(e) => { setSpecificTime(e.target.value); setBookingState("idle"); }}
-                    className="w-full border border-border bg-background rounded-lg px-3 py-2.5 font-editorial text-sm text-foreground focus:outline-none focus:border-[hsl(var(--gold))] transition-colors appearance-none cursor-pointer"
+                  <button
+                    onClick={() => { setTimeMode("specific"); setBookingState("idle"); }}
+                    className={`flex-1 py-2 text-[0.5625rem] uppercase tracking-[0.12em] font-medium rounded-md transition-all duration-200 ${
+                      timeMode === "specific" ? "bg-card text-foreground shadow-sm" : "text-muted-foreground"
+                    }`}
                   >
-                    <option value="">Select time</option>
-                    {TIME_SLOTS.map((s) => (
-                      <option key={s.value} value={s.value}>{s.label}</option>
-                    ))}
-                  </select>
+                    Specific Time
+                  </button>
                 </div>
-                <div>
-                  <label className="text-[0.5625rem] uppercase tracking-[0.1em] text-muted-foreground mb-1.5 block">Flexibility</label>
-                  <div className="flex gap-1.5 flex-wrap">
-                    {FLEX_OPTIONS.map((opt) => (
+
+                {timeMode === "meal" ? (
+                  <div className="grid grid-cols-3 gap-2">
+                    {MEAL_PRESETS.map((meal) => (
                       <button
-                        key={opt.value}
-                        onClick={() => { setFlexMinutes(opt.value); setBookingState("idle"); }}
-                        className={`px-3 py-1.5 rounded-lg text-xs font-display transition-all duration-200 border ${
-                          flexMinutes === opt.value
+                        key={meal.id}
+                        onClick={() => { setSelectedMeal(meal.id); setBookingState("idle"); }}
+                        className={`flex flex-col items-center gap-1.5 p-4 rounded-lg border transition-all duration-200 ${
+                          selectedMeal === meal.id
                             ? "bg-foreground text-background border-foreground"
                             : "border-border text-muted-foreground hover:border-foreground/30"
                         }`}
-                      >{opt.label}</button>
+                      >
+                        <span className="text-lg">{meal.icon}</span>
+                        <span className="font-display text-xs">{meal.label}</span>
+                        <span className={`text-[0.5rem] ${selectedMeal === meal.id ? "text-background/70" : "text-muted-foreground/60"}`}>
+                          {meal.start} – {meal.end}
+                        </span>
+                      </button>
                     ))}
                   </div>
-                  {specificTime && flexMinutes > 0 && (
-                    <p className="font-editorial text-[0.625rem] text-muted-foreground mt-1.5">
-                      Window: <span className="text-foreground font-medium">{effectiveTime.start} – {effectiveTime.end}</span>
-                    </p>
-                  )}
-                </div>
-              </div>
+                ) : (
+                  <TimePickerSection specificTime={specificTime} setSpecificTime={setSpecificTime} flexMinutes={flexMinutes} setFlexMinutes={setFlexMinutes} effectiveTime={effectiveTime} setBookingState={setBookingState} />
+                )}
+              </>
+            ) : (
+              <>
+                <label className="label-text mb-2 block">Time</label>
+                <TimePickerSection specificTime={specificTime} setSpecificTime={setSpecificTime} flexMinutes={flexMinutes} setFlexMinutes={setFlexMinutes} effectiveTime={effectiveTime} setBookingState={setBookingState} />
+              </>
             )}
           </div>
 
@@ -479,6 +435,275 @@ const BookingModal = ({ type, venueName, venueLocation, tripStartDate, tripEndDa
   );
 };
 
+/* ─── Shared Time Picker Section ────────────────────────────────── */
+
+const TimePickerSection = ({ specificTime, setSpecificTime, flexMinutes, setFlexMinutes, effectiveTime, setBookingState }: {
+  specificTime: string;
+  setSpecificTime: (v: string) => void;
+  flexMinutes: number;
+  setFlexMinutes: (v: number) => void;
+  effectiveTime: { start: string; end: string };
+  setBookingState: (v: "idle" | "attempting" | "failed") => void;
+}) => (
+  <div className="space-y-3">
+    <div>
+      <label className="text-[0.5625rem] uppercase tracking-[0.1em] text-muted-foreground mb-1.5 block">Preferred Time</label>
+      <select
+        value={specificTime}
+        onChange={(e) => { setSpecificTime(e.target.value); setBookingState("idle"); }}
+        className="w-full border border-border bg-background rounded-lg px-3 py-2.5 font-editorial text-sm text-foreground focus:outline-none focus:border-[hsl(var(--gold))] transition-colors appearance-none cursor-pointer"
+      >
+        <option value="">Select time</option>
+        {TIME_SLOTS.map((s) => (
+          <option key={s.value} value={s.value}>{s.label}</option>
+        ))}
+      </select>
+    </div>
+    <div>
+      <label className="text-[0.5625rem] uppercase tracking-[0.1em] text-muted-foreground mb-1.5 block">Flexibility</label>
+      <div className="flex gap-1.5 flex-wrap">
+        {FLEX_OPTIONS.map((opt) => (
+          <button
+            key={opt.value}
+            onClick={() => { setFlexMinutes(opt.value); setBookingState("idle"); }}
+            className={`px-3 py-1.5 rounded-lg text-xs font-display transition-all duration-200 border ${
+              flexMinutes === opt.value
+                ? "bg-foreground text-background border-foreground"
+                : "border-border text-muted-foreground hover:border-foreground/30"
+            }`}
+          >{opt.label}</button>
+        ))}
+      </div>
+      {specificTime && flexMinutes > 0 && (
+        <p className="font-editorial text-[0.625rem] text-muted-foreground mt-1.5">
+          Window: <span className="text-foreground font-medium">{effectiveTime.start} – {effectiveTime.end}</span>
+        </p>
+      )}
+    </div>
+  </div>
+);
+
+/* ─── Edit Reservation Modal ───────────────────────────────────── */
+
+interface EditModalProps {
+  type: "dining" | "experience";
+  isConfirmed: boolean;
+  currentData: {
+    name: string;
+    location: string;
+    date: string;
+    time: string;
+    timeRangeEnd?: string;
+    partySize: number;
+    notes?: string;
+    mealType?: string;
+  };
+  tripStartDate: string;
+  tripEndDate: string;
+  tripName: string;
+  onClose: () => void;
+  onSave: (data: { date: string; time: string; timeRangeEnd?: string; partySize: number; notes: string }) => void;
+}
+
+const EditModal = ({ type, isConfirmed, currentData, tripStartDate, tripEndDate, tripName, onClose, onSave }: EditModalProps) => {
+  const tripDays = useMemo(() => {
+    const days: { value: string; label: string }[] = [];
+    const start = new Date(tripStartDate + "T12:00:00");
+    const end = new Date(tripEndDate + "T12:00:00");
+    const cur = new Date(start);
+    while (cur <= end) {
+      const iso = cur.toISOString().split("T")[0];
+      const dayName = cur.toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" });
+      days.push({ value: iso, label: dayName });
+      cur.setDate(cur.getDate() + 1);
+    }
+    return days;
+  }, [tripStartDate, tripEndDate]);
+
+  const inferMeal = () => {
+    if (type !== "dining" || !currentData.mealType) return "";
+    const preset = MEAL_PRESETS.find(p => p.id === currentData.mealType);
+    return preset ? preset.id : "";
+  };
+
+  const [date, setDate] = useState(currentData.date);
+  const [timeMode, setTimeMode] = useState<"meal" | "specific">(type === "experience" ? "specific" : (inferMeal() ? "meal" : "specific"));
+  const [selectedMeal, setSelectedMeal] = useState<string>(inferMeal());
+  const [specificTime, setSpecificTime] = useState(currentData.time);
+  const [flexMinutes, setFlexMinutes] = useState(0);
+  const [partySize, setPartySize] = useState(currentData.partySize);
+  const [notes, setNotes] = useState(currentData.notes || "");
+
+  const effectiveTime = useMemo(() => {
+    if (timeMode === "meal") {
+      const preset = MEAL_PRESETS.find(p => p.id === selectedMeal);
+      if (!preset) return { start: "", end: "" };
+      return { start: preset.start, end: preset.end };
+    }
+    if (!specificTime) return { start: "", end: "" };
+    if (flexMinutes === 0) return { start: specificTime, end: "" };
+    const idx = TIME_SLOTS.findIndex(s => s.value === specificTime);
+    if (idx < 0) return { start: specificTime, end: "" };
+    const flexSlots = Math.round(flexMinutes / 30);
+    const startIdx = Math.max(0, idx - flexSlots);
+    const endIdx = Math.min(TIME_SLOTS.length - 1, idx + flexSlots);
+    return { start: TIME_SLOTS[startIdx].value, end: TIME_SLOTS[endIdx].value };
+  }, [timeMode, selectedMeal, specificTime, flexMinutes]);
+
+  const canSave = date && effectiveTime.start;
+  // Dummy setter for TimePickerSection compatibility
+  const noop = () => {};
+
+  return (
+    <motion.div
+      initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm px-4"
+      onClick={onClose}
+    >
+      <motion.div
+        initial={{ opacity: 0, y: 20, scale: 0.97 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: 20, scale: 0.97 }}
+        transition={{ duration: 0.3 }}
+        className="w-full max-w-md bg-card border border-border rounded-lg shadow-lg max-h-[90vh] overflow-y-auto"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="p-6 border-b border-border">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="label-text mb-1">Edit {type === "dining" ? "Reservation" : "Experience"}</p>
+              <h3 className="font-display text-xl text-foreground">{currentData.name}</h3>
+              <p className="font-editorial text-sm text-muted-foreground">{currentData.location}</p>
+            </div>
+            <button onClick={onClose} className="text-muted-foreground hover:text-foreground transition-colors">✕</button>
+          </div>
+        </div>
+        <div className="p-6 space-y-5">
+          {/* Confirmed warning */}
+          {isConfirmed && (
+            <div className="p-4 bg-[hsl(var(--destructive)/0.06)] border border-[hsl(var(--destructive)/0.25)] rounded-lg">
+              <p className="font-display text-sm text-foreground mb-1">⚠️ Confirmed Reservation</p>
+              <p className="font-editorial text-xs text-muted-foreground leading-relaxed">
+                This {type === "dining" ? "dining reservation" : "experience"} is already confirmed with Disney. Changes made here update your local record only — <strong className="text-foreground">you'll need to modify the actual reservation through My Disney Experience or by calling Disney directly</strong>. Availability for the new time/date is not guaranteed.
+              </p>
+            </div>
+          )}
+
+          {/* Trip context */}
+          <div className="p-3 bg-[hsl(var(--gold)/0.04)] border border-[hsl(var(--gold)/0.15)] rounded-lg">
+            <p className="font-editorial text-xs text-muted-foreground">📅 <span className="text-foreground font-medium">{tripName}</span></p>
+          </div>
+
+          {/* Date */}
+          <div>
+            <label className="label-text mb-2 block">Date</label>
+            <div className="flex gap-1.5 flex-wrap">
+              {tripDays.map((d) => (
+                <button key={d.value} onClick={() => setDate(d.value)}
+                  className={`px-3 py-2 rounded-lg text-xs font-display transition-all duration-200 border ${
+                    date === d.value ? "bg-foreground text-background border-foreground" : "border-border text-muted-foreground hover:border-foreground/30"
+                  }`}>{d.label}</button>
+              ))}
+            </div>
+          </div>
+
+          {/* Time — dining: meal/specific toggle; experience: specific only */}
+          <div>
+            {type === "dining" ? (
+              <>
+                <div className="flex items-center gap-1 mb-3 p-1 bg-muted rounded-lg">
+                  <button
+                    onClick={() => setTimeMode("meal")}
+                    className={`flex-1 py-2 text-[0.5625rem] uppercase tracking-[0.12em] font-medium rounded-md transition-all duration-200 ${
+                      timeMode === "meal" ? "bg-card text-foreground shadow-sm" : "text-muted-foreground"
+                    }`}
+                  >
+                    Meal Period
+                  </button>
+                  <button
+                    onClick={() => setTimeMode("specific")}
+                    className={`flex-1 py-2 text-[0.5625rem] uppercase tracking-[0.12em] font-medium rounded-md transition-all duration-200 ${
+                      timeMode === "specific" ? "bg-card text-foreground shadow-sm" : "text-muted-foreground"
+                    }`}
+                  >
+                    Specific Time
+                  </button>
+                </div>
+                {timeMode === "meal" ? (
+                  <div className="grid grid-cols-3 gap-2">
+                    {MEAL_PRESETS.map((meal) => (
+                      <button
+                        key={meal.id}
+                        onClick={() => setSelectedMeal(meal.id)}
+                        className={`flex flex-col items-center gap-1.5 p-4 rounded-lg border transition-all duration-200 ${
+                          selectedMeal === meal.id
+                            ? "bg-foreground text-background border-foreground"
+                            : "border-border text-muted-foreground hover:border-foreground/30"
+                        }`}
+                      >
+                        <span className="text-lg">{meal.icon}</span>
+                        <span className="font-display text-xs">{meal.label}</span>
+                        <span className={`text-[0.5rem] ${selectedMeal === meal.id ? "text-background/70" : "text-muted-foreground/60"}`}>
+                          {meal.start} – {meal.end}
+                        </span>
+                      </button>
+                    ))}
+                  </div>
+                ) : (
+                  <TimePickerSection specificTime={specificTime} setSpecificTime={setSpecificTime} flexMinutes={flexMinutes} setFlexMinutes={setFlexMinutes} effectiveTime={effectiveTime} setBookingState={noop as any} />
+                )}
+              </>
+            ) : (
+              <>
+                <label className="label-text mb-2 block">Time</label>
+                <TimePickerSection specificTime={specificTime} setSpecificTime={setSpecificTime} flexMinutes={flexMinutes} setFlexMinutes={setFlexMinutes} effectiveTime={effectiveTime} setBookingState={noop as any} />
+              </>
+            )}
+          </div>
+
+          {/* Party Size */}
+          <div>
+            <label className="label-text mb-2 block">Party Size</label>
+            <div className="flex gap-2">
+              {[1, 2, 3, 4, 5, 6, 7, 8].map((n) => (
+                <button key={n} onClick={() => setPartySize(n)}
+                  className={`w-9 h-9 rounded-lg border text-sm font-display transition-all duration-200 ${
+                    partySize === n ? "bg-foreground text-background border-foreground" : "border-border text-muted-foreground hover:border-foreground/30"
+                  }`}>{n}</button>
+              ))}
+            </div>
+          </div>
+
+          {/* Notes */}
+          <div>
+            <label className="label-text mb-2 block">Notes (optional)</label>
+            <textarea value={notes} onChange={(e) => setNotes(e.target.value)} placeholder="Special requests, dietary needs..." rows={2}
+              className="w-full border border-border bg-background rounded-lg px-3 py-2 font-editorial text-sm text-foreground focus:outline-none focus:border-[hsl(var(--gold))] transition-colors resize-none" />
+          </div>
+        </div>
+
+        <div className="p-6 border-t border-border">
+          <div className="flex gap-3">
+            <button onClick={() => {
+              if (!canSave) return;
+              onSave({ date, time: effectiveTime.start, timeRangeEnd: effectiveTime.end || undefined, partySize, notes });
+            }}
+              className="flex-1 px-6 py-3 rounded-lg text-[0.625rem] tracking-[0.15em] uppercase font-medium bg-foreground text-background transition-opacity duration-300 hover:opacity-90 disabled:opacity-40"
+              disabled={!canSave}>
+              {isConfirmed ? "Update Record" : "Save Changes"}
+            </button>
+            <button onClick={onClose} className="px-6 py-3 rounded-lg text-[0.625rem] tracking-[0.15em] uppercase font-medium text-muted-foreground border border-border hover:border-foreground/30 transition-all duration-300">
+              Cancel
+            </button>
+          </div>
+          {isConfirmed && (
+            <p className="font-editorial text-[0.625rem] text-muted-foreground/60 text-center mt-3 leading-relaxed">
+              Remember to also update this reservation in My Disney Experience.
+            </p>
+          )}
+        </div>
+      </motion.div>
+    </motion.div>
+  );
+};
 /* ─── Alert Modal ──────────────────────────────────────────────── */
 
 interface AlertModalProps {

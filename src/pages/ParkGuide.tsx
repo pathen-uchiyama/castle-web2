@@ -642,40 +642,36 @@ const ParkGuidePage = ({ parkGuides }: ParkGuidePageProps) => {
                   {park.parkName} is divided into {encyclopediaPark.lands.length} immersive themed lands, each with its own rides, dining, and atmosphere.
                 </p>
               </motion.div>
-              <div className="space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {encyclopediaPark.lands.map((land, i) => {
                   const landAttractions = encyclopediaAttractions.filter(
                     (a) => a.land.includes(land.name) || land.name.includes(a.land.split(" —")[0])
                   );
                   return (
-                    <motion.div key={land.name} {...fade(i * 0.04)}>
-                      <div className="border border-border bg-card rounded-lg shadow-[var(--shadow-soft)] overflow-hidden">
-                        <div className="p-6">
-                          <div className="flex items-start justify-between gap-4 mb-2">
-                            <div>
-                              <h4 className="font-display text-xl text-foreground mb-1">{land.name}</h4>
-                              <p className="font-editorial text-sm text-muted-foreground leading-relaxed">{land.description}</p>
-                            </div>
-                            {land.iconicAttraction && (
-                              <span className="shrink-0 text-sm text-[hsl(var(--gold-dark))] font-medium whitespace-nowrap">⭐ {land.iconicAttraction}</span>
-                            )}
-                          </div>
+                    <motion.div key={land.name} {...fade(i * 0.04)} className="flex">
+                      <div className="border border-border bg-card rounded-lg shadow-[var(--shadow-soft)] overflow-hidden flex flex-col w-full">
+                        <div className="p-5 flex-1">
+                          <h4 className="font-display text-base text-foreground mb-1">{land.name}</h4>
+                          <p className="font-editorial text-xs text-muted-foreground leading-relaxed mb-2">{land.description}</p>
+                          {land.iconicAttraction && (
+                            <p className="text-xs text-[hsl(var(--gold-dark))] font-medium">⭐ {land.iconicAttraction}</p>
+                          )}
                         </div>
                         {landAttractions.length > 0 && (
-                          <div className="border-t border-border/50 bg-muted/20 px-6 py-4">
-                            <p className="label-text mb-3 text-[0.5625rem]">{landAttractions.length} Experience{landAttractions.length > 1 ? "s" : ""}</p>
-                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
+                          <div className="border-t border-border/50 bg-muted/20 px-5 py-3">
+                            <p className="label-text mb-2 text-[0.5rem]">{landAttractions.length} Experience{landAttractions.length > 1 ? "s" : ""}</p>
+                            <div className="space-y-1">
                               {landAttractions.map((a) => {
                                 const typeIcons: Record<string, string> = { ride: "🎢", show: "🎭", "meet-and-greet": "✨", experience: "🌟", parade: "🎊", fireworks: "🎆", "play-area": "🎪", "water-ride": "💦" };
                                 return (
-                                  <div key={a.attractionId} className="flex items-center gap-2 px-3 py-2 rounded-lg bg-card border border-border/50 text-sm">
-                                    <span className="text-xs">{typeIcons[a.type] || "🎢"}</span>
+                                  <div key={a.attractionId} className="flex items-center gap-1.5 px-2 py-1 rounded-md bg-card border border-border/40 text-xs">
+                                    <span className="text-[0.6rem]">{typeIcons[a.type] || "🎢"}</span>
                                     <span className="font-editorial text-foreground truncate flex-1">{a.name}</span>
-                                    <span className="text-[0.6rem] uppercase tracking-wider shrink-0" style={{ color: thrillColors[a.thrillLevel] || "hsl(var(--foreground))" }}>
+                                    <span className="text-[0.5rem] uppercase tracking-wider shrink-0" style={{ color: thrillColors[a.thrillLevel] || "hsl(var(--foreground))" }}>
                                       {a.thrillLevel}
                                     </span>
                                     {a.warnings && a.warnings.length > 0 && (
-                                      <span className="text-[0.6rem] text-destructive shrink-0" title={a.warnings.map(w => WARNING_LABELS[w]?.label).join(", ")}>⚠</span>
+                                      <span className="text-[0.5rem] text-destructive shrink-0" title={a.warnings.map(w => WARNING_LABELS[w]?.label).join(", ")}>⚠</span>
                                     )}
                                   </div>
                                 );

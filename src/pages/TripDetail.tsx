@@ -1353,21 +1353,36 @@ const BookedTripDetail = ({ trip }: { trip: BookedTrip }) => {
                   </p>
                   <div className="space-y-3">
                     {allBookedExperiences.filter(e => e.status === "pending").map((exp) => (
-                      <div key={exp.experienceId} className="border border-dashed border-border bg-card p-4 transition-shadow duration-500 hover:shadow-[var(--shadow-hover)]">
+                      <div key={exp.experienceId} className={`border bg-card p-4 transition-shadow duration-500 hover:shadow-[var(--shadow-hover)] ${exp.monitoringActive ? "border-[hsl(var(--gold)/0.4)]" : "border-dashed border-border"}`}>
                         <div className="flex items-start justify-between mb-2">
                           <div className="flex items-center gap-2">
                             <span className="text-lg">{experienceIcons[exp.category]}</span>
                             <h4 className="font-display text-foreground">{exp.experienceName}</h4>
                           </div>
-                          <span className="px-2 py-0.5 text-[0.5625rem] uppercase tracking-[0.12em] font-medium border" style={{ background: statusColors.pending.bg, color: statusColors.pending.text, borderColor: statusColors.pending.border }}>Pending</span>
+                          <div className="flex items-center gap-2">
+                            {exp.monitoringActive && (
+                              <span className="px-2 py-0.5 rounded-md text-[0.5625rem] uppercase tracking-[0.12em] font-medium border border-[hsl(var(--gold)/0.3)] bg-[hsl(var(--gold)/0.08)] text-[hsl(var(--gold-dark))]">📡 Monitoring</span>
+                            )}
+                            <span className="px-2 py-0.5 text-[0.5625rem] uppercase tracking-[0.12em] font-medium border" style={{ background: statusColors.pending.bg, color: statusColors.pending.text, borderColor: statusColors.pending.border }}>Pending</span>
+                          </div>
                         </div>
                         <p className="font-editorial text-xs text-muted-foreground mb-2">{exp.parkOrResort} · {experienceLabels[exp.category]}</p>
                         <div className="flex flex-wrap gap-4 text-xs">
-                          <span className="font-editorial text-foreground">{exp.date} · {exp.time}</span>
+                          <span className="font-editorial text-foreground">
+                            {exp.date} · {exp.time}{exp.timeRangeEnd ? ` – ${exp.timeRangeEnd}` : ""}
+                          </span>
                           {exp.duration && <span className="font-editorial text-muted-foreground">⏱ {exp.duration}</span>}
                           <span className="font-editorial text-muted-foreground">Party of {exp.partySize}</span>
                         </div>
                         {exp.notes && <p className="font-editorial text-xs text-muted-foreground/60 italic mt-2">{exp.notes}</p>}
+                        {exp.monitoringActive && (
+                          <div className="mt-2 flex items-start gap-2 px-3 py-2 rounded-lg bg-[hsl(var(--gold)/0.04)] border border-[hsl(var(--gold)/0.15)]">
+                            <span className="text-xs shrink-0">🔍</span>
+                            <p className="font-editorial text-[0.625rem] text-muted-foreground leading-relaxed">
+                              Actively scanning for availability{exp.timeRangeEnd ? ` between ${exp.time} – ${exp.timeRangeEnd}` : ` at ${exp.time}`} for a party of {exp.partySize}.
+                            </p>
+                          </div>
+                        )}
                         {overlapMap[exp.experienceId] && (
                           <div className="mt-2 flex items-start gap-2 px-2 py-1.5 bg-[hsl(var(--destructive)/0.04)] border border-[hsl(var(--destructive)/0.15)]">
                             <span className="text-xs shrink-0">⚠️</span>

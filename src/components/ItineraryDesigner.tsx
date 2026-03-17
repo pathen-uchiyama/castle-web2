@@ -1093,6 +1093,16 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
                       </div>
                     )}
 
+                    {/* Scheduled times badge */}
+                    {attraction.scheduledTimes && attraction.scheduledTimes.length > 0 && (
+                      <div className="flex items-center gap-1.5 mt-2 px-2.5 py-1.5 bg-[hsl(280,30%,55%,0.06)] border border-[hsl(280,30%,55%,0.2)]" style={{ borderRadius: 0 }}>
+                        <CalendarClock className="w-3.5 h-3.5 text-[hsl(280,30%,55%)] shrink-0" />
+                        <span className="text-[0.625rem] text-[hsl(280,30%,45%)] font-medium">
+                          Showtimes: {attraction.scheduledTimes.join(" · ")}
+                        </span>
+                      </div>
+                    )}
+
                     {/* Status badge */}
                     {attraction.attractionStatus && attraction.attractionStatus.status !== "operating" && (
                       <div className={`flex items-center gap-1.5 mt-2 px-2 py-1 ${

@@ -1175,130 +1175,7 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
                   {/* Gap analysis between items */}
                   {(() => {
                     const nextRi = ribbon[idx + 1];
-                    const gapMin = nextRi ? nextRi.startMin - endMin : 0;
-                    const nextWalk = nextRi ? nextRi.walkBuffer : 0;
-                    const actualFreeTime = Math.max(0, gapMin - nextWalk);
-                    const currentZone = item.zone;
-                    const nextZone = nextRi?.item.zone;
-                    
-                    // Determine party context for suggestions
-                    const hasToddlers = activeMembers.some(m => m.age !== undefined && m.age <= 4);
-                    const hasYoungKids = activeMembers.some(m => m.age !== undefined && m.age <= 7);
-                    const partySize = activeMembers.length;
-                    
-                    // Show gap indicators for any gap >= 3 minutes
-                    if (gapMin >= 3) {
-                      const isAllWalking = actualFreeTime <= 2;
-                      const isShortGap = actualFreeTime > 2 && actualFreeTime < 15;
-                      const gapHeight = isAllWalking 
-                        ? Math.max(40, Math.min(gapMin * 1.2, 80))
-                        : Math.max(56, Math.min(gapMin * 1.8, 200));
-                      const ridesFit = Math.floor(actualFreeTime / 25);
-                      
-                      // Build contextual suggestions for short gaps
-                      const suggestions: string[] = [];
-                      if (isShortGap) {
-                        // Bathroom frequency: toddlers every 45-60min, young kids every 90min, large parties more often
-                        if (hasToddlers) suggestions.push("🚻 Bathroom break (toddlers)");
-                        else if (hasYoungKids && partySize >= 3) suggestions.push("🚻 Bathroom break");
-                        else if (partySize >= 5) suggestions.push("🚻 Bathroom stop (large group)");
-                        
-                        if (actualFreeTime >= 5) suggestions.push("📸 Photo op / PhotoPass");
-                        if (actualFreeTime >= 5) suggestions.push("💧 Water / hydration refill");
-                        if (actualFreeTime >= 10 && hasYoungKids) suggestions.push("🍦 Quick snack stop");
-                        if (actualFreeTime >= 10) suggestions.push("🗺 Explore nearby area");
-                      }
-                      
-                      return (
-                        <div
-                          className={`my-2 border-2 border-dashed flex flex-col items-center justify-center transition-colors duration-200 ${
-                            isAllWalking
-                              ? "border-[hsl(var(--ink-light)/0.2)] bg-[hsl(var(--ink)/0.02)]"
-                              : dropTargetIdx === idx + 1
-                              ? "border-[hsl(var(--gold))] bg-[hsl(var(--gold)/0.15)]"
-                              : isShortGap
-                              ? "border-[hsl(var(--ink-light)/0.25)] bg-[hsl(var(--ink)/0.02)]"
-                              : "border-[hsl(var(--gold)/0.4)] bg-[hsl(var(--gold)/0.06)]"
-                          }`}
-                          style={{ borderRadius: "0.75rem", minHeight: `${gapHeight}px` }}
-                          onDragOver={(e) => { e.preventDefault(); setDropTargetIdx(idx + 1); }}
-                          onDragLeave={() => setDropTargetIdx(null)}
-                          onDrop={(e) => handleDropOnZone(e, idx + 1)}
-                        >
-                          {isAllWalking ? (
-                            /* Entire gap is walking/transit */
-                            <>
-                              <div className="flex items-center gap-2">
-                                <span className="text-base">🚶</span>
-                                <span className="font-display text-sm text-[hsl(var(--ink-light))] font-medium">
-                                  {gapMin}m transit
-                                  {currentZone && nextZone && currentZone !== nextZone && (
-                                    <span className="text-[hsl(var(--ink-light))]/50"> · {zoneLabel(currentZone)} → {zoneLabel(nextZone)}</span>
-                                  )}
-                                </span>
-                              </div>
-                              {hasStroller && (
-                                <span className="text-[0.5625rem] text-[hsl(var(--gold-dark))] mt-0.5">🍼 Stroller pace applied</span>
-                              )}
-                            </>
-                          ) : isShortGap ? (
-                            /* Short gap: suggest quick activities */
-                            <>
-                              <div className="flex items-center gap-2 mb-1">
-                                <span className="text-base">⏱</span>
-                                <span className="font-display text-sm text-[hsl(var(--ink))] font-medium">
-                                  {actualFreeTime}m free
-                                  {nextWalk > 0 && <span className="text-[hsl(var(--ink-light))] font-normal"> + {nextWalk}m walk</span>}
-                                </span>
-                              </div>
-                              <p className="text-[0.625rem] text-[hsl(var(--ink-light))]">
-                                {formatMin(endMin)} → {formatMin(nextRi.startMin)}
-                              </p>
-                              {suggestions.length > 0 && (
-                                <div className="flex flex-wrap gap-1.5 mt-2 justify-center px-3">
-                                  {suggestions.slice(0, 3).map((s, si) => (
-                                    <span key={si} className="px-2 py-1 text-[0.5625rem] bg-[hsl(var(--muted))] text-[hsl(var(--ink-light))] border border-[hsl(var(--border))]/50" style={{ borderRadius: 0 }}>
-                                      {s}
-                                    </span>
-                                  ))}
-                                </div>
-                              )}
-                              {suggestions.length === 0 && (
-                                <p className="text-[0.5625rem] text-[hsl(var(--ink-light))]/60 mt-1 italic">
-                                  Too short for a ride — enjoy the stroll
-                                </p>
-                              )}
-                            </>
-                          ) : (
-                            /* Normal open gap */
-                            <>
-                              <div className="flex items-center gap-2 mb-1.5">
-                                <span className="text-lg">⏳</span>
-                                <span className="font-display text-base text-[hsl(var(--gold-dark))] font-bold">
-                                  {actualFreeTime}m open
-                                  {nextWalk > 0 && <span className="text-sm font-normal text-[hsl(var(--ink-light))]"> + {nextWalk}m walk</span>}
-                                </span>
-                              </div>
-                              <p className="text-[0.6875rem] text-[hsl(var(--ink-light))] font-medium">
-                                {formatMin(endMin)} → {formatMin(nextRi.startMin)}
-                              </p>
-                              {ridesFit > 0 && (
-                                <p className="text-[0.625rem] text-[hsl(var(--ink-light))] mt-0.5">
-                                  ~{ridesFit} ride{ridesFit > 1 ? "s" : ""} could fit
-                                </p>
-                              )}
-                              {currentZone && (
-                                <span className="mt-2 text-[0.5625rem] uppercase tracking-[0.1em] px-2.5 py-1 bg-[hsl(var(--gold)/0.12)] text-[hsl(var(--gold-dark))]" style={{ borderRadius: "0.5rem" }}>
-                                  📍 Near {zoneLabel(currentZone)} · Drag here to fill
-                                </span>
-                              )}
-                            </>
-                          )}
-                        </div>
-                      );
-                    }
-                    
-                    return (
+                    if (!nextRi) return (
                       <DropZone
                         idx={idx + 1}
                         isActive={dropTargetIdx === idx + 1}
@@ -1306,6 +1183,113 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
                         onDragLeave={() => setDropTargetIdx(null)}
                         onDrop={(e) => handleDropOnZone(e, idx + 1)}
                       />
+                    );
+                    
+                    const gapMin = nextRi.startMin - endMin;
+                    const nextWalk = nextRi.walkBuffer;
+                    // Free time = gap minus the walk to the next item
+                    // (walk is already shown by the next item's walk connector, so don't double-count)
+                    const actualFreeTime = Math.max(0, gapMin - nextWalk);
+                    
+                    // No meaningful gap — just show a drop zone
+                    if (actualFreeTime <= 2) {
+                      return (
+                        <DropZone
+                          idx={idx + 1}
+                          isActive={dropTargetIdx === idx + 1}
+                          onDragOver={(e) => { e.preventDefault(); setDropTargetIdx(idx + 1); }}
+                          onDragLeave={() => setDropTargetIdx(null)}
+                          onDrop={(e) => handleDropOnZone(e, idx + 1)}
+                        />
+                      );
+                    }
+                    
+                    const currentZone = item.zone;
+                    const isShortGap = actualFreeTime < 15;
+                    const gapHeight = isShortGap 
+                      ? Math.max(48, Math.min(actualFreeTime * 2, 100))
+                      : Math.max(56, Math.min(actualFreeTime * 1.8, 200));
+                    const ridesFit = Math.floor(actualFreeTime / 25);
+                    
+                    // Party context for short-gap suggestions
+                    const hasToddlers = activeMembers.some(m => m.age !== undefined && m.age <= 4);
+                    const hasYoungKids = activeMembers.some(m => m.age !== undefined && m.age <= 7);
+                    const partySize = activeMembers.length;
+                    
+                    const suggestions: string[] = [];
+                    if (isShortGap) {
+                      if (hasToddlers) suggestions.push("🚻 Bathroom break (toddlers)");
+                      else if (hasYoungKids && partySize >= 3) suggestions.push("🚻 Bathroom break");
+                      else if (partySize >= 5) suggestions.push("🚻 Bathroom stop (large group)");
+                      if (actualFreeTime >= 5) suggestions.push("📸 Photo op / PhotoPass");
+                      if (actualFreeTime >= 5) suggestions.push("💧 Water / hydration refill");
+                      if (actualFreeTime >= 10 && hasYoungKids) suggestions.push("🍦 Quick snack stop");
+                      if (actualFreeTime >= 10) suggestions.push("🗺 Explore nearby area");
+                    }
+                    
+                    return (
+                      <div
+                        className={`my-2 border-2 border-dashed flex flex-col items-center justify-center transition-colors duration-200 ${
+                          dropTargetIdx === idx + 1
+                            ? "border-[hsl(var(--gold))] bg-[hsl(var(--gold)/0.15)]"
+                            : isShortGap
+                            ? "border-[hsl(var(--ink-light)/0.25)] bg-[hsl(var(--ink)/0.02)]"
+                            : "border-[hsl(var(--gold)/0.4)] bg-[hsl(var(--gold)/0.06)]"
+                        }`}
+                        style={{ borderRadius: "0.75rem", minHeight: `${gapHeight}px` }}
+                        onDragOver={(e) => { e.preventDefault(); setDropTargetIdx(idx + 1); }}
+                        onDragLeave={() => setDropTargetIdx(null)}
+                        onDrop={(e) => handleDropOnZone(e, idx + 1)}
+                      >
+                        {isShortGap ? (
+                          <>
+                            <div className="flex items-center gap-2 mb-1">
+                              <span className="text-base">⏱</span>
+                              <span className="font-display text-sm text-[hsl(var(--ink))] font-medium">
+                                {actualFreeTime}m free
+                              </span>
+                            </div>
+                            <p className="text-[0.625rem] text-[hsl(var(--ink-light))]">
+                              {formatMin(endMin + nextWalk)} → {formatMin(nextRi.startMin)}
+                            </p>
+                            {suggestions.length > 0 ? (
+                              <div className="flex flex-wrap gap-1.5 mt-2 justify-center px-3">
+                                {suggestions.slice(0, 3).map((s, si) => (
+                                  <span key={si} className="px-2 py-1 text-[0.5625rem] bg-[hsl(var(--muted))] text-[hsl(var(--ink-light))] border border-[hsl(var(--border))]/50" style={{ borderRadius: 0 }}>
+                                    {s}
+                                  </span>
+                                ))}
+                              </div>
+                            ) : (
+                              <p className="text-[0.5625rem] text-[hsl(var(--ink-light))]/60 mt-1 italic">
+                                Too short for a ride — enjoy the moment
+                              </p>
+                            )}
+                          </>
+                        ) : (
+                          <>
+                            <div className="flex items-center gap-2 mb-1.5">
+                              <span className="text-lg">⏳</span>
+                              <span className="font-display text-base text-[hsl(var(--gold-dark))] font-bold">
+                                {actualFreeTime}m open
+                              </span>
+                            </div>
+                            <p className="text-[0.6875rem] text-[hsl(var(--ink-light))] font-medium">
+                              {formatMin(endMin + nextWalk)} → {formatMin(nextRi.startMin)}
+                            </p>
+                            {ridesFit > 0 && (
+                              <p className="text-[0.625rem] text-[hsl(var(--ink-light))] mt-0.5">
+                                ~{ridesFit} ride{ridesFit > 1 ? "s" : ""} could fit
+                              </p>
+                            )}
+                            {currentZone && (
+                              <span className="mt-2 text-[0.5625rem] uppercase tracking-[0.1em] px-2.5 py-1 bg-[hsl(var(--gold)/0.12)] text-[hsl(var(--gold-dark))]" style={{ borderRadius: "0.5rem" }}>
+                                📍 Near {zoneLabel(currentZone)} · Drag here to fill
+                              </span>
+                            )}
+                          </>
+                        )}
+                      </div>
                     );
                   })()}
                 </Reorder.Item>

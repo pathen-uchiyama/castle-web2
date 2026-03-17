@@ -63,12 +63,11 @@ interface WizardData {
   willUseSingleRider: boolean;
   willPurchaseLLMulti: boolean;
   willPurchaseLLSingle: boolean;
-  diningReservationScouting: boolean;
   splurgeAppetite: string | null;
   premiumInterests: string[];
   // Page 6 — Foodie
   allergies: string[];
-  diningStyle: string | null;
+  diningStyles: string[];
 }
 
 interface TripWizardProps {

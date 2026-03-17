@@ -202,8 +202,6 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
         isConfirmed: d.status === "confirmed",
         notes: `${mealLabel} · ${d.time}` + (d.status === "confirmed" ? ` · ✓ ${d.confirmationNumber}` : " · PENDING") + linkedNote,
         scheduledStartMin,
-        zone,
-        scheduledStartMin,
         zone: zone as ParkZone | undefined,
       });
     });

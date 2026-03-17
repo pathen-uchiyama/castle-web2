@@ -1214,10 +1214,14 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
                             <button
                               onClick={(e) => { e.stopPropagation(); addToItinerary(attraction); }}
                               disabled={isLocked}
-                              className="w-full py-2.5 text-xs tracking-[0.15em] uppercase font-medium transition-all duration-300 bg-[hsl(var(--ink))] text-[#F9F7F2] hover:opacity-90"
+                              className="w-full py-2.5 text-xs tracking-[0.15em] uppercase font-medium transition-all duration-300 bg-[hsl(var(--ink))] text-[#F9F7F2] hover:opacity-90 flex items-center justify-center gap-2"
                               style={{ borderRadius: 0, boxShadow: "0 10px 30px rgba(26,26,27,0.05)" }}
                             >
-                              + Add to Itinerary
+                              {attraction.scheduledTimes && attraction.scheduledTimes.length > 0 ? (
+                                <><CalendarClock className="w-3.5 h-3.5" /> Pick Showtime &amp; Place</>
+                              ) : (
+                                <>+ Add to Itinerary</>
+                              )}
                             </button>
                           )}
                         </div>

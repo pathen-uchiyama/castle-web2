@@ -300,23 +300,6 @@ const Account = ({ account }: AccountProps) => {
             </p>
 
             <div className="space-y-6">
-              {/* Age */}
-              <div className="flex items-baseline justify-between border-b border-border pb-4">
-                <p className="label-text">Age</p>
-                {editingHealth ? (
-                  <input
-                    type="number"
-                    min={1}
-                    max={120}
-                    value={healthData.age || ""}
-                    onChange={(e) => setHealthData((prev) => ({ ...prev, age: Number(e.target.value) || undefined }))}
-                    className="font-editorial text-base text-foreground bg-transparent border-b border-[hsl(var(--gold))] outline-none text-right w-20 focus:border-[hsl(var(--gold-dark))] transition-colors"
-                  />
-                ) : (
-                  <p className="font-editorial text-base text-foreground">{healthData.age ? `${healthData.age} years` : "—"}</p>
-                )}
-              </div>
-
               {/* Height */}
               <div className="flex items-baseline justify-between border-b border-border pb-4">
                 <p className="label-text">Height</p>

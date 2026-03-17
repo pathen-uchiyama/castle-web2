@@ -620,8 +620,8 @@ const Circle = ({ partyMembers, guestName }: CircleProps) => {
                               {/* Column 1: Vitals */}
                               <div className="space-y-5">
                                 <p className="label-text mb-4 tracking-[0.2em]">Vitals</p>
-                                <ProfileField label="Age" value={member.age ? `${member.age} years old` : undefined} />
-                                <ProfileField label="Birthday" value={member.birthday} />
+                                <ProfileField label="Age" value={member.birthdate ? `${calcAge(member.birthdate)} years old` : undefined} />
+                                <ProfileField label="Birthdate" value={member.birthdate ? new Date(member.birthdate).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" }) : undefined} />
                                 <ProfileField label="Height" value={member.heightInches ? formatHeight(member.heightInches) : undefined} />
                                 <ProfileField label="Thrill Tolerance" value={member.thrillTolerance ? thrillLabels[member.thrillTolerance] : undefined} />
                                 {member.magicStatus && member.magicStatus.length > 0 && (

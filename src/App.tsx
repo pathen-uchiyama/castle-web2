@@ -69,6 +69,7 @@ const App = () => (
           <Route path="/resort/:resortId" element={<ResortHub />} />
           <Route path="/terms" element={<Terms />} />
           <Route path="/privacy" element={<Privacy />} />
+          <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
     </TooltipProvider>

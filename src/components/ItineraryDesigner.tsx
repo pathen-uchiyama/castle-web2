@@ -292,8 +292,50 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
 
   /* ── Handlers ───────────────────────────────────────────────────── */
 
+  /** Insert an item at the correct ribbon position based on a target start time (in minutes) */
+  const insertAtTimePosition = useCallback((attraction: ParkAttraction, targetMin: number) => {
+    if (isLocked) return;
+    const estWait = attraction.waitCategory ? (defaultWaitByCategory[attraction.waitCategory] || 15) : 15;
+    const newItem: ItineraryItem = {
+      id: `it-${Date.now()}`,
+      attractionId: attraction.id,
+      name: attraction.name,
+      type: attraction.type,
+      duration: parseInt(attraction.duration) || DURATION_DEFAULTS[attraction.type] || 20,
+      waitTime: estWait,
+      zone: attraction.zone,
+      llType: attraction.llType,
+      waitCategory: attraction.waitCategory,
+      notes: `🕐 Scheduled: ${formatMin(targetMin)}`,
+      scheduledStartMin: targetMin,
+    };
+    setItinerary(prev => {
+      // Find the right insertion index based on the ribbon timeline
+      const currentRibbon = computeRibbon(prev, ropeDropMin, hasStroller);
+      let insertIdx = currentRibbon.length; // default: end
+      for (let i = 0; i < currentRibbon.length; i++) {
+        if (currentRibbon[i].startMin >= targetMin) {
+          insertIdx = i;
+          break;
+        }
+        // If the target falls between this item's end and the next item's start
+        if (i < currentRibbon.length - 1 && currentRibbon[i].endMin <= targetMin) {
+          insertIdx = i + 1;
+        }
+      }
+      const next = [...prev];
+      next.splice(insertIdx, 0, newItem);
+      return next;
+    });
+  }, [isLocked, ropeDropMin, hasStroller]);
+
   const addToItinerary = useCallback((attraction: ParkAttraction) => {
     if (isLocked) return;
+    // If this attraction has scheduled times, show the placement modal
+    if (attraction.scheduledTimes && attraction.scheduledTimes.length > 0) {
+      setScheduledPlacement({ attraction, times: attraction.scheduledTimes });
+      return;
+    }
     const estWait = attraction.waitCategory ? (defaultWaitByCategory[attraction.waitCategory] || 15) : 15;
     setItinerary(prev => [...prev, {
       id: `it-${Date.now()}`,

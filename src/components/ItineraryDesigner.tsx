@@ -1184,6 +1184,11 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
                       }`} style={{ borderRadius: 0 }}>
                         {isMeal ? "🍽 Dining" : isExperience ? "✨ Experience" : item.type}
                       </span>
+                      {isFixedAnchor(item) && (
+                        <span className="px-2 py-0.5 text-[0.5rem] uppercase tracking-[0.1em] bg-[hsl(var(--ink))]/8 text-[hsl(var(--ink-light))] flex items-center gap-1" style={{ borderRadius: 0 }}>
+                          <Lock className="w-2.5 h-2.5" /> Fixed
+                        </span>
+                      )}
                       <div className="flex-1" />
                       {wait > 0 && (
                         <div className="shrink-0 px-4 py-2.5 bg-[hsl(var(--destructive)/0.08)] border border-[hsl(var(--destructive)/0.2)] flex items-center gap-2 ml-auto" style={{ borderRadius: 0 }}>

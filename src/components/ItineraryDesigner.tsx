@@ -1201,12 +1201,17 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
                       </div>
                     </div>
 
-                    {/* Zone badge */}
-                    {attraction.zone && (
-                      <div className="mt-1.5">
+                    {/* Zone badge + Early Access badge */}
+                    <div className="flex items-center gap-2 mt-1.5 flex-wrap">
+                      {attraction.zone && (
                         <span className="text-[0.5625rem] text-[hsl(var(--ink-light))]/60 uppercase tracking-[0.08em]">📍 {zoneLabel(attraction.zone)}</span>
-                      </div>
-                    )}
+                      )}
+                      {hasEarlyEntry && attraction.rules.includes("EARLY MORNING ACCESS") && (
+                        <span className="px-2 py-0.5 text-[0.5rem] uppercase tracking-[0.08em] bg-[hsl(var(--gold)/0.15)] text-[hsl(var(--gold-dark))] border border-[hsl(var(--gold)/0.3)] font-semibold" style={{ borderRadius: 0 }}>
+                          ✨ Early Access
+                        </span>
+                      )}
+                    </div>
 
                     {/* Scheduled times badge — prominent for timed events */}
                     {attraction.scheduledTimes && attraction.scheduledTimes.length > 0 && (

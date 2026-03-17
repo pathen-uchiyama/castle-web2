@@ -284,7 +284,7 @@ const Account = ({ account }: AccountProps) => {
               {editingProfile ? (
                 <>
                   <button onClick={handleProfileSave} className="link-editorial font-editorial text-sm text-[hsl(var(--gold-dark))] cursor-pointer hover:text-foreground transition-colors">Save changes</button>
-                  <button onClick={() => { setEditingProfile(false); setProfileData({ guestName: account.guestName, email: account.email, birthday: account.birthday || "" }); }} className="link-editorial font-editorial text-sm text-muted-foreground cursor-pointer hover:text-foreground transition-colors">Cancel</button>
+                  <button onClick={() => { setEditingProfile(false); setProfileData({ guestName: account.guestName, email: account.email, birthdate: account.birthdate || "" }); }} className="link-editorial font-editorial text-sm text-muted-foreground cursor-pointer hover:text-foreground transition-colors">Cancel</button>
                 </>
               ) : (
                 <button onClick={() => setEditingProfile(true)} className="link-editorial font-editorial text-sm text-foreground cursor-pointer">Edit profile</button>

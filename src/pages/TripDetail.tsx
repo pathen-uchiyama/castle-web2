@@ -784,8 +784,37 @@ const BookedTripDetail = ({ trip }: { trip: BookedTrip }) => {
     toast({ title: "🔔 Alert set!", description: `We'll remind you when ${venueName} booking opens${opensDate ? ` on ${opensDate}` : ""}.` });
   };
 
+  // ── Cancel / Remove / Edit handlers ──
+  const handleCancelDining = (reservationId: string, restaurantName: string) => {
+    // Check if it's a pending (user-added) or confirmed (mock) reservation
+    const isPending = pendingDining.some(d => d.reservationId === reservationId);
+    if (isPending) {
+      setPendingDining(prev => prev.map(d => d.reservationId === reservationId ? { ...d, status: "cancelled" as const, monitoringActive: false } : d));
+    }
+    // For confirmed (mock data), we need to track cancellations separately — mutate the trip's array via state
+    setConfirmedDiningCancelled(prev => [...prev, reservationId]);
+    toast({ title: "Reservation cancelled", description: `${restaurantName} has been cancelled.` });
+  };
 
-  const consensusData = useMemo(() => {
+  const handleRemovePendingDining = (reservationId: string, restaurantName: string) => {
+    setPendingDining(prev => prev.filter(d => d.reservationId !== reservationId));
+    toast({ title: "Removed", description: `${restaurantName} removed from pending.` });
+  };
+
+  const handleCancelExperience = (experienceId: string, experienceName: string) => {
+    const isPending = pendingExperiences.some(e => e.experienceId === experienceId);
+    if (isPending) {
+      setPendingExperiences(prev => prev.map(e => e.experienceId === experienceId ? { ...e, status: "cancelled" as const, monitoringActive: false } : e));
+    }
+    setConfirmedExpCancelled(prev => [...prev, experienceId]);
+    toast({ title: "Experience cancelled", description: `${experienceName} has been cancelled.` });
+  };
+
+  const handleRemovePendingExperience = (experienceId: string, experienceName: string) => {
+    setPendingExperiences(prev => prev.filter(e => e.experienceId !== experienceId));
+    toast({ title: "Removed", description: `${experienceName} removed from pending.` });
+  };
+
     const completed = partySurvey.responses.filter((r) => r.status === "completed");
     if (completed.length === 0) return [];
     return partySurvey.attractions.map((attraction) => {

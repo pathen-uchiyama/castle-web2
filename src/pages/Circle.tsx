@@ -266,10 +266,10 @@ const Circle = ({ partyMembers, guestName }: CircleProps) => {
                     </button>
                     <div className="flex items-center gap-3 sm:gap-6">
                       <div className="hidden sm:flex gap-6">
-                        {member.age && (
+                        {member.birthdate && (
                           <div className="text-right">
                             <p className="label-text">Age</p>
-                            <p className="font-display text-sm text-foreground">{member.age}</p>
+                            <p className="font-display text-sm text-foreground">{calcAge(member.birthdate)}</p>
                           </div>
                         )}
                         {member.heightInches && (

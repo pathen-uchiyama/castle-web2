@@ -685,15 +685,15 @@ const ResortHub = () => {
                         <div className="mb-4 pl-3 border-l-2 border-[hsl(var(--gold)/0.4)]">
                           <p className="font-editorial text-xs text-muted-foreground italic">"{r.vibe}"</p>
                         </div>
-                        <p className="text-[0.4375rem] uppercase tracking-[0.12em] text-muted-foreground mb-2">✦ Signature Items</p>
+                        <p className="text-[0.5625rem] uppercase tracking-[0.12em] text-muted-foreground mb-2">✦ Signature Items</p>
                         <div className="flex flex-wrap gap-1.5 mb-4">
                           {r.signatureItems.map(item => (
-                            <span key={item} className="px-2.5 py-1 text-[0.5625rem] bg-[hsl(var(--gold)/0.06)] text-[hsl(var(--gold-dark))] border border-[hsl(var(--gold)/0.15)] font-editorial">{item}</span>
+                            <span key={item} className="px-2.5 py-1 text-xs bg-[hsl(var(--gold)/0.06)] text-[hsl(var(--gold-dark))] border border-[hsl(var(--gold)/0.15)] font-editorial">{item}</span>
                           ))}
                         </div>
-                        <p className="text-[0.4375rem] uppercase tracking-[0.12em] text-muted-foreground mb-1.5">Pricing</p>
-                        <p className="font-editorial text-xs text-foreground mb-4">{r.priceNote}</p>
-                        <div className="flex flex-wrap gap-4 mb-4 text-xs">
+                        <p className="text-[0.5625rem] uppercase tracking-[0.12em] text-muted-foreground mb-1.5">Pricing</p>
+                        <p className="font-editorial text-sm text-foreground mb-4">{r.priceNote}</p>
+                        <div className="flex flex-wrap gap-4 mb-4 text-sm">
                           {r.kidFriendly && <span className="font-editorial text-muted-foreground">👶 Kid-friendly</span>}
                           {r.dressCode && <span className="font-editorial text-muted-foreground">👔 {r.dressCode}</span>}
                           {r.dietaryAccommodations.length > 0 && (
@@ -702,23 +702,23 @@ const ResortHub = () => {
                         </div>
                         {(r.noShowFee || r.cancelPolicy) && (
                           <div className="mb-4 px-3 py-2 rounded-md bg-[hsl(var(--destructive)/0.04)] border border-[hsl(var(--destructive)/0.15)]">
-                            <p className="text-[0.4375rem] uppercase tracking-[0.1em] text-destructive mb-1">⚠ Cancellation Policy</p>
-                            {r.noShowFee && <p className="font-editorial text-[0.625rem] text-muted-foreground">No-show fee: <strong className="text-foreground">{r.noShowFee}</strong></p>}
-                            {r.cancelPolicy && <p className="font-editorial text-[0.625rem] text-muted-foreground">{r.cancelPolicy}</p>}
+                            <p className="text-[0.5625rem] uppercase tracking-[0.1em] text-destructive mb-1">⚠ Cancellation Policy</p>
+                            {r.noShowFee && <p className="font-editorial text-xs text-muted-foreground">No-show fee: <strong className="text-foreground">{r.noShowFee}</strong></p>}
+                            {r.cancelPolicy && <p className="font-editorial text-xs text-muted-foreground">{r.cancelPolicy}</p>}
                           </div>
                         )}
                         <div className="pl-3 border-l-2 border-[hsl(var(--gold)/0.3)] mb-4">
-                          <p className="text-[0.4375rem] uppercase tracking-[0.1em] text-[hsl(var(--gold-dark))] mb-1">💡 Insider Tip</p>
-                          <p className="font-editorial text-[0.6875rem] text-muted-foreground italic">{r.insiderTip}</p>
+                          <p className="text-[0.5625rem] uppercase tracking-[0.1em] text-[hsl(var(--gold-dark))] mb-1">💡 Insider Tip</p>
+                          <p className="font-editorial text-sm text-muted-foreground italic">{r.insiderTip}</p>
                         </div>
                         <div className="flex flex-wrap gap-1 mb-3">
                           {r.bestFor.map(b => (
-                            <span key={b} className="text-[0.4375rem] uppercase tracking-[0.08em] px-2 py-0.5 bg-[hsl(var(--gold)/0.08)] text-[hsl(var(--gold-dark))]">{b}</span>
+                            <span key={b} className="text-[0.5625rem] uppercase tracking-[0.08em] px-2 py-0.5 bg-[hsl(var(--gold)/0.08)] text-[hsl(var(--gold-dark))]">{b}</span>
                           ))}
                         </div>
                         <div className="flex flex-wrap gap-1">
                           {r.tags.map(tag => (
-                            <span key={tag} className="text-[0.4375rem] uppercase tracking-[0.08em] px-2 py-0.5 bg-muted text-muted-foreground">{tag}</span>
+                            <span key={tag} className="text-[0.5625rem] uppercase tracking-[0.08em] px-2 py-0.5 bg-muted text-muted-foreground">{tag}</span>
                           ))}
                         </div>
                       </div>

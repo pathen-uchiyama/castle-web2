@@ -902,6 +902,10 @@ const BookedTripDetail = ({ trip }: { trip: BookedTrip }) => {
   const getTotalPacked = () => Object.values(packedItems).flat().filter(Boolean).length;
   const getTotalItems = () => Object.values(packedItems).flat().length;
 
+  // Edit tracking for confirmed reservations
+  const [confirmedDiningEdits, setConfirmedDiningEdits] = useState<Record<string, Partial<DiningReservation>>>({});
+  const [confirmedExpEdits, setConfirmedExpEdits] = useState<Record<string, Partial<BookedExperience>>>({});
+
   // Combined reservations (mock + pending), with cancellation & edit tracking
   const allDiningReservations = useMemo(() => {
     const mock = diningReservations.map(d => {

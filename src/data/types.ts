@@ -229,6 +229,31 @@ export interface Preference {
   value: string;
 }
 
+export type RideSensitivity = "thrill-rides" | "spinning" | "dark-rides" | "drops" | "loud-noises" | "quick-starts" | "heights" | "motion-simulation";
+
+export interface GuestHealthProfile {
+  age?: number;
+  heightInches?: number;
+  allergies: string[];
+  dietaryRestrictions: string[];
+  dasHolder: boolean;
+  medicalNotes?: string;
+}
+
+export interface RidePreferences {
+  sensitivities: RideSensitivity[];
+  thrillTolerance: "low" | "moderate" | "high";
+}
+
+export interface PaymentMethod {
+  cardId: string;
+  brand: string;
+  last4: string;
+  expMonth: number;
+  expYear: number;
+  isDefault: boolean;
+}
+
 export interface AccountProfile {
   guestName: string;
   email: string;
@@ -236,6 +261,9 @@ export interface AccountProfile {
   adventuresCompleted: number;
   subscription: Subscription;
   preferences: Preference[];
+  healthProfile: GuestHealthProfile;
+  ridePreferences: RidePreferences;
+  paymentMethods: PaymentMethod[];
 }
 
 export type AttractionCategory = "ride" | "show" | "character" | "dining" | "parade" | "experience";

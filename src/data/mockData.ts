@@ -720,6 +720,22 @@ export const mockData: AppData = {
       { label: "Default party", value: "The Noelke Four" },
       { label: "Home park", value: "Magic Kingdom" },
     ],
+    healthProfile: {
+      age: 38,
+      heightInches: 71,
+      allergies: ["Tree nuts"],
+      dietaryRestrictions: ["Gluten-free"],
+      dasHolder: false,
+      medicalNotes: "",
+    },
+    ridePreferences: {
+      sensitivities: ["spinning", "drops"],
+      thrillTolerance: "high",
+    },
+    paymentMethods: [
+      { cardId: "card-1", brand: "Visa", last4: "4242", expMonth: 8, expYear: 2027, isDefault: true },
+      { cardId: "card-2", brand: "Amex", last4: "1001", expMonth: 12, expYear: 2026, isDefault: false },
+    ],
   },
 
   partySurvey: {

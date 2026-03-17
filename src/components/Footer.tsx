@@ -38,19 +38,31 @@ const Footer = () => (
         <div>
           <p className="label-text mb-5 tracking-[0.2em]">Legal</p>
           <ul className="space-y-3">
-            {[
-              { label: "Terms of Use", href: "https://www.castlecompanion.com/terms" },
-              { label: "Privacy Policy", href: "https://www.castlecompanion.com/privacy" },
-              { label: "Cookie Policy", href: "https://www.castlecompanion.com/privacy#cookies" },
-              { label: "CCPA / CPRA Notice", href: "https://www.castlecompanion.com/privacy#ccpa" },
-              { label: "Do Not Sell My Info", href: "https://www.castlecompanion.com/privacy#do-not-sell" },
-            ].map((link) => (
-              <li key={link.label}>
-                <a href={link.href} target="_blank" rel="noopener noreferrer" className="font-editorial text-sm text-muted-foreground hover:text-foreground transition-colors duration-300">
-                  {link.label}
-                </a>
-              </li>
-            ))}
+            <li>
+              <Link to="/terms" className="font-editorial text-sm text-muted-foreground hover:text-foreground transition-colors duration-300">
+                Terms of Use
+              </Link>
+            </li>
+            <li>
+              <Link to="/privacy" className="font-editorial text-sm text-muted-foreground hover:text-foreground transition-colors duration-300">
+                Privacy Policy
+              </Link>
+            </li>
+            <li>
+              <Link to="/privacy#cookies" className="font-editorial text-sm text-muted-foreground hover:text-foreground transition-colors duration-300">
+                Cookie Policy
+              </Link>
+            </li>
+            <li>
+              <Link to="/privacy#ccpa" className="font-editorial text-sm text-muted-foreground hover:text-foreground transition-colors duration-300">
+                CCPA / CPRA Notice
+              </Link>
+            </li>
+            <li>
+              <Link to="/privacy#do-not-sell" className="font-editorial text-sm text-muted-foreground hover:text-foreground transition-colors duration-300">
+                Do Not Sell My Info
+              </Link>
+            </li>
           </ul>
         </div>
 
@@ -68,6 +80,11 @@ const Footer = () => (
                 </a>
               </li>
             ))}
+            <li>
+              <a href="mailto:support@castlecompanion.com" className="font-editorial text-sm text-muted-foreground hover:text-foreground transition-colors duration-300">
+                support@castlecompanion.com
+              </a>
+            </li>
           </ul>
         </div>
       </div>

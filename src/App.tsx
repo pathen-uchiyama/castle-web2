@@ -16,6 +16,8 @@ import Account from "./pages/Account";
 import ParkGuidePage from "./pages/ParkGuide";
 import GuidesLanding from "./pages/GuidesLanding";
 import ResortHub from "./pages/ResortHub";
+import Terms from "./pages/Terms";
+import Privacy from "./pages/Privacy";
 import NotFound from "./pages/NotFound";
 import { mockData } from "./data/mockData";
 
@@ -65,6 +67,8 @@ const App = () => (
           <Route path="/guides" element={<GuidesLanding />} />
           <Route path="/parks/:parkId" element={<ParkGuidePage parkGuides={mockData.parkGuides} />} />
           <Route path="/resort/:resortId" element={<ResortHub />} />
+          <Route path="/terms" element={<Terms />} />
+          <Route path="/privacy" element={<Privacy />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>

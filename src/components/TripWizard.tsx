@@ -833,14 +833,14 @@ const TripWizard = ({ open, onClose, onComplete, guestName = "" }: TripWizardPro
                             active={data.willPurchaseLLMulti}
                             onClick={() => set("willPurchaseLLMulti", !data.willPurchaseLLMulti)}
                             label="Lightning Lane Multi Pass"
-                            desc="A paid Disney add-on that lets you book return times for select attractions throughout the day, skipping the standby queue. You can hold one reservation at a time and book the next after you tap in."
+                            desc="A paid Disney add-on that lets you book return times for select attractions throughout the day, skipping the standby queue. You can hold one reservation at a time and book the next after you tap in. Each ride can only be booked once per day with Multi Pass."
                             cost="~$15–$35/person/day depending on date and park"
                           />
                           <ToggleCard
                             active={data.willPurchaseLLSingle}
                             onClick={() => set("willPurchaseLLSingle", !data.willPurchaseLLSingle)}
                             label="Lightning Lane Single Pass"
-                            desc="A separate per-ride purchase for the highest-demand attractions (like TRON, Guardians, and Tiana's Bayou Adventure) that aren't included in Multi Pass. One purchase per ride, per person."
+                            desc="A separate per-ride purchase for the highest-demand attractions (like TRON, Guardians, and Tiana's Bayou Adventure) that aren't included in Multi Pass. Each ride can only be purchased once per person, per day."
                             cost="~$10–$25/person/ride depending on demand"
                           />
                         </div>

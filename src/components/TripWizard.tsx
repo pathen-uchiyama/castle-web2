@@ -624,6 +624,9 @@ const TripWizard = ({ open, onClose, onComplete, guestName = "" }: TripWizardPro
                       >
                         <Plus size={14} /> Add a Traveler
                       </button>
+                      <p className="text-center mt-4" style={{ fontFamily: brand.font.body, fontSize: "0.75rem", color: brand.slate, fontStyle: "italic" }}>
+                        Don't worry — you can always add more travelers later.
+                      </p>
                     </div>
                   )}
 

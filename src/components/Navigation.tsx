@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { motion, useScroll, useTransform, AnimatePresence } from "framer-motion";
 import { Link, useLocation } from "react-router-dom";
-import ccLogo from "@/assets/cc-logo-light.png";
+import ccLogoLight from "@/assets/cc-logo-light.png";
+import ccLogoDark from "@/assets/cc-logo-dark.png";
 
 const navItems = [
   { label: "Plan Your Trip", path: "/adventure" },
@@ -42,7 +43,7 @@ const Navigation = () => {
           }}
         />
         <Link to="/" className="relative z-10 flex items-center gap-2.5">
-          <img src={ccLogo} alt="Castle Companion" className={`h-9 w-auto transition-all duration-500 ${isHome ? "brightness-0 invert opacity-90 hover:opacity-100" : "opacity-90 hover:opacity-100"}`} />
+          <img src={isHome ? ccLogoDark : ccLogoLight} alt="Castle Companion" className="h-9 w-auto transition-all duration-500 opacity-90 hover:opacity-100" />
           <span className={`font-display text-lg tracking-[-0.03em] transition-colors duration-500 hidden sm:inline ${isHome ? "text-white/90 hover:text-white" : "text-foreground/90 hover:text-foreground"}`}>
             Castle Companion
           </span>

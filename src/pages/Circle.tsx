@@ -6,7 +6,20 @@ import Footer from "@/components/Footer";
 import SectionNav from "@/components/SectionNav";
 import SparkleField from "@/components/SparkleField";
 import headerCircle from "@/assets/header-circle.jpg";
-import type { PartyMember } from "@/data/types";
+import type { PartyMember, RideSensitivity } from "@/data/types";
+
+const ALL_SENSITIVITIES: { id: RideSensitivity; label: string; icon: string }[] = [
+  { id: "thrill-rides", label: "Thrill Rides", icon: "🎢" },
+  { id: "spinning", label: "Spinning", icon: "🌀" },
+  { id: "dark-rides", label: "Dark Rides", icon: "🌑" },
+  { id: "drops", label: "Drops", icon: "⬇️" },
+  { id: "loud-noises", label: "Loud Noises", icon: "🔊" },
+  { id: "quick-starts", label: "Quick Starts", icon: "⚡" },
+  { id: "heights", label: "Heights", icon: "🏔️" },
+  { id: "motion-simulation", label: "Motion Simulation", icon: "🎬" },
+];
+
+const ALLERGY_OPTIONS = ["Tree nuts", "Peanuts", "Shellfish", "Dairy", "Eggs", "Wheat", "Soy", "Fish", "Sesame"];
 
 const ease: [number, number, number, number] = [0.19, 1, 0.22, 1];
 const fade = (delay = 0) => ({

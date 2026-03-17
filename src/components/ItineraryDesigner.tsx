@@ -58,6 +58,15 @@ const defaultWaitByCategory: Record<string, number> = {
   "ill-required": 60,
 };
 
+/* ─── Early access wait times (30 min before open — much lower waits) ── */
+const earlyAccessWaitByCategory: Record<string, number> = {
+  "walk-on": 0,
+  "walk-on-am": 5,
+  "fast-walk-on": 5,
+  "hard-to-get": 10,
+  "ill-required": 15,
+};
+
 /* ─── Time helpers ───────────────────────────────────────────────── */
 function toMinutes(t: string) {
   const m = t.match(/(\d+):(\d+)\s*(AM|PM)/i);

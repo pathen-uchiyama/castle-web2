@@ -50,8 +50,12 @@ export interface PartyMember {
   birthday?: string;
   heightInches?: number;
   dietaryRestrictions?: string[];
+  allergies?: string[];
+  dasHolder?: boolean;
+  medicalNotes?: string;
   sensoryNotes?: string;
   accessibilityNeeds?: string[];
+  rideSensitivities?: RideSensitivity[];
   favoriteCharacter?: string;
   favoriteRide?: string;
   thrillTolerance?: "low" | "moderate" | "high";

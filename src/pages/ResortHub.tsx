@@ -474,9 +474,106 @@ const ResortHub = () => {
         {/* ═══ HOTELS ═══ */}
         {activeTab === "hotels" && (
           <div>
-            <motion.div {...fade()}>
+            {/* ═══ ON-PROPERTY BENEFITS ═══ */}
+            <motion.div {...fade()} className="mb-12">
+              <p className="label-text mb-2 tracking-[0.25em]">Why Stay On Property</p>
+              <h2 className="font-display text-4xl text-foreground leading-[1.08] mb-4">Resort Guest Benefits</h2>
+              <p className="font-editorial text-muted-foreground text-lg max-w-3xl mb-8">
+                {resortId === "wdw"
+                  ? "Staying at a Walt Disney World resort hotel unlocks exclusive perks that give your family a real advantage — from extra park time to complimentary transport across 25,000 acres."
+                  : "Disneyland Resort hotels put you steps from the parks with exclusive perks that maximize every moment of your vacation."}
+              </p>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
+                {/* Early Entry */}
+                <div className="border border-[hsl(var(--gold)/0.3)] bg-[hsl(var(--gold)/0.04)] rounded-lg p-5 shadow-[var(--shadow-soft)]">
+                  <div className="flex items-center gap-2.5 mb-3">
+                    <span className="text-xl">✨</span>
+                    <h4 className="font-display text-base text-foreground">Early Theme Park Entry</h4>
+                  </div>
+                  <p className="font-editorial text-sm text-muted-foreground leading-relaxed mb-2">
+                    Enter <strong className="text-foreground">any park 30 minutes early</strong>, every day of your stay. Ride headliners with virtually no wait before the general public arrives.
+                  </p>
+                  <p className="text-xs text-[hsl(var(--gold-dark))] font-medium">Available to all resort guests</p>
+                </div>
+
+                {/* Extended Evening */}
+                <div className="border border-[hsl(280,30%,55%,0.25)] bg-[hsl(280,30%,55%,0.03)] rounded-lg p-5 shadow-[var(--shadow-soft)]">
+                  <div className="flex items-center gap-2.5 mb-3">
+                    <span className="text-xl">🌙</span>
+                    <h4 className="font-display text-base text-foreground">Extended Evening Hours</h4>
+                  </div>
+                  <p className="font-editorial text-sm text-muted-foreground leading-relaxed mb-2">
+                    {resortId === "wdw"
+                      ? "Deluxe & Deluxe Villa guests get 2 extra hours in select parks on select nights — ride marquee attractions with minimal waits."
+                      : "On-property guests enjoy extra time in the parks on select evenings with shorter lines on top attractions."}
+                  </p>
+                  <p className="text-xs text-[hsl(280,30%,45%)] font-medium">
+                    {resortId === "wdw" ? "Deluxe & Deluxe Villa resorts only" : "All on-property hotels"}
+                  </p>
+                </div>
+
+                {/* Transport */}
+                <div className="border border-border bg-card rounded-lg p-5 shadow-[var(--shadow-soft)]">
+                  <div className="flex items-center gap-2.5 mb-3">
+                    <span className="text-xl">🚌</span>
+                    <h4 className="font-display text-base text-foreground">
+                      {resortId === "wdw" ? "Complimentary Transport" : "Walking Distance"}
+                    </h4>
+                  </div>
+                  <p className="font-editorial text-sm text-muted-foreground leading-relaxed mb-2">
+                    {resortId === "wdw"
+                      ? "Free buses, monorail, boats, and Skyliner gondolas connect every resort to every park, water park, and Disney Springs — no rental car needed."
+                      : "All three hotels are a short walk to both Disneyland and Disney California Adventure, plus Downtown Disney is right outside your door."}
+                  </p>
+                  <p className="text-xs text-muted-foreground font-medium">Included with your stay</p>
+                </div>
+
+                {/* MagicBand+ / Room Key */}
+                <div className="border border-border bg-card rounded-lg p-5 shadow-[var(--shadow-soft)]">
+                  <div className="flex items-center gap-2.5 mb-3">
+                    <span className="text-xl">⌚</span>
+                    <h4 className="font-display text-base text-foreground">
+                      {resortId === "wdw" ? "MagicBand+ & Room Charging" : "Digital Room Key"}
+                    </h4>
+                  </div>
+                  <p className="font-editorial text-sm text-muted-foreground leading-relaxed">
+                    {resortId === "wdw"
+                      ? "Use your MagicBand+ as your room key, park ticket, Lightning Lane pass, and charge purchases to your room — all on one wristband."
+                      : "Use your phone as a room key and charge food, merchandise, and more directly to your hotel room throughout the resort."}
+                  </p>
+                </div>
+
+                {/* Merchandise & Package Delivery */}
+                <div className="border border-border bg-card rounded-lg p-5 shadow-[var(--shadow-soft)]">
+                  <div className="flex items-center gap-2.5 mb-3">
+                    <span className="text-xl">🛍️</span>
+                    <h4 className="font-display text-base text-foreground">Merchandise Delivery</h4>
+                  </div>
+                  <p className="font-editorial text-sm text-muted-foreground leading-relaxed">
+                    Buy souvenirs in the parks and have them delivered directly to your resort hotel — no need to carry bags all day.
+                  </p>
+                </div>
+
+                {/* Booking Advantage */}
+                <div className="border border-border bg-card rounded-lg p-5 shadow-[var(--shadow-soft)]">
+                  <div className="flex items-center gap-2.5 mb-3">
+                    <span className="text-xl">📅</span>
+                    <h4 className="font-display text-base text-foreground">Early Booking Access</h4>
+                  </div>
+                  <p className="font-editorial text-sm text-muted-foreground leading-relaxed">
+                    {resortId === "wdw"
+                      ? "Book dining reservations 60 days out (vs. 60 for off-site) and add Lightning Lane selections 7 days before arrival."
+                      : "Book dining and experiences earlier than off-site guests, giving you the best shot at hard-to-get reservations."}
+                  </p>
+                </div>
+              </div>
+            </motion.div>
+
+            {/* ═══ HOTEL DIRECTORY ═══ */}
+            <motion.div {...fade(0.05)}>
               <p className="label-text mb-4">Where to Stay</p>
-              <h2 className="font-display text-4xl text-foreground leading-[1.08] mb-4">Resort Hotels</h2>
+              <h2 className="font-display text-3xl text-foreground leading-[1.08] mb-4">Resort Hotels</h2>
               <p className="font-editorial text-muted-foreground text-lg max-w-2xl mb-8">
                 {resortId === "wdw"
                   ? "From budget-friendly value resorts to ultra-luxurious deluxe hotels — every WDW resort includes complimentary transport, Early Entry, and MagicBand+."

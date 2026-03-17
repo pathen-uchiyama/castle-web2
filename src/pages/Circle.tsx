@@ -400,21 +400,12 @@ const Circle = ({ partyMembers, guestName }: CircleProps) => {
                                 </select>
                               </div>
                               <div>
-                                <label className="label-text mb-2 block">Age</label>
+                                <label className="label-text mb-2 block">Birthdate</label>
                                 <input
-                                  type="number"
-                                  value={member.age ?? ""}
-                                  onChange={(e) => handleFieldChange(member.memberId, "age", e.target.value ? Number(e.target.value) : undefined)}
-                                   className="w-full px-4 py-2.5 rounded-md text-sm bg-background border border-border text-foreground focus:outline-none focus:border-[hsl(var(--gold))] transition-colors"
-                                />
-                              </div>
-                              <div>
-                                <label className="label-text mb-2 block">Birthday</label>
-                                <input
-                                  value={member.birthday ?? ""}
-                                  onChange={(e) => handleFieldChange(member.memberId, "birthday", e.target.value)}
-                                  placeholder="e.g. June 15"
-                                  className="w-full px-4 py-2.5 rounded-md text-sm bg-background border border-border text-foreground placeholder:text-muted-foreground/40 focus:outline-none focus:border-[hsl(var(--gold))] transition-colors"
+                                  type="date"
+                                  value={member.birthdate ?? ""}
+                                  onChange={(e) => handleFieldChange(member.memberId, "birthdate", e.target.value || undefined)}
+                                  className="w-full px-4 py-2.5 rounded-md text-sm bg-background border border-border text-foreground focus:outline-none focus:border-[hsl(var(--gold))] transition-colors"
                                 />
                               </div>
                               <div>

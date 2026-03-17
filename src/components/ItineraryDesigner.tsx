@@ -1530,17 +1530,11 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
                       </span>
                     </div>
 
-                    {/* Time breakdown bar */}
-                    <div className="w-full mt-2 flex items-center gap-2">
-                      <div className="flex-1 flex h-2.5 overflow-hidden bg-[#F9F7F2]">
-                        <div className="bg-destructive/25" style={{ width: `${(estWait / totalBlockEst) * 100}%` }} />
-                        <div className="bg-[hsl(var(--ink))]/10" style={{ width: `${(rideDur / totalBlockEst) * 100}%` }} />
-                      </div>
-                      <div className="flex items-center gap-1.5 shrink-0">
-                        <span className="text-[0.5625rem] text-destructive font-medium">⏱ {estWait}m</span>
-                        <span className="text-[hsl(var(--ink-light))]/30 text-[0.5625rem]">·</span>
-                        <span className="text-[0.5625rem] text-[hsl(var(--ink))] font-medium">🎢 {rideDur}m</span>
-                      </div>
+                    {/* Time info */}
+                    <div className="w-full mt-2 pt-2 border-t border-[hsl(var(--border))] flex items-center gap-2">
+                      <span className="text-[0.5625rem] text-destructive font-medium">⏱ {estWait}m wait</span>
+                      <span className="text-[hsl(var(--ink-light))]/30 text-[0.5625rem]">·</span>
+                      <span className="text-[0.5625rem] text-[hsl(var(--ink))] font-medium">🎢 {rideDur}m ride</span>
                     </div>
 
                     {/* Zone badge + Early Access badge */}

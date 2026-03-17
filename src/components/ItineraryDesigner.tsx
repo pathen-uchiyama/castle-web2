@@ -1234,6 +1234,138 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
           </div>
         </div>
       </div>
+
+      {/* ═══════════════════════════════════════════════════════════════
+          SCHEDULED SHOW PLACEMENT MODAL
+         ═══════════════════════════════════════════════════════════════ */}
+      <AnimatePresence>
+        {scheduledPlacement && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center bg-[hsl(var(--ink))]/60"
+            onClick={() => setScheduledPlacement(null)}
+          >
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 20 }}
+              transition={{ type: "spring", damping: 25, stiffness: 300 }}
+              className="bg-white w-full max-w-md mx-4"
+              style={{ borderRadius: 0, boxShadow: "0 25px 80px rgba(26,26,27,0.25)" }}
+              onClick={(e) => e.stopPropagation()}
+            >
+              {/* Modal header */}
+              <div className="px-6 pt-6 pb-4 border-b border-[hsl(var(--border))]">
+                <div className="flex items-center gap-3 mb-2">
+                  <CalendarClock className="w-5 h-5 text-[hsl(280,30%,55%)]" />
+                  <h3 className="font-display text-xl text-[hsl(var(--ink))]">Schedule {scheduledPlacement.attraction.name}</h3>
+                </div>
+                <p className="font-sans text-sm text-[hsl(var(--ink-light))]" style={{ letterSpacing: "-0.02em" }}>
+                  This is a timed event. Choose a showtime to place it at the right spot in your itinerary.
+                </p>
+              </div>
+
+              {/* Time options */}
+              <div className="px-6 py-5 space-y-3">
+                {scheduledPlacement.times.map(time => {
+                  const timeMin = toMinutes(time);
+                  const checkin = getCheckinTime({ type: scheduledPlacement.attraction.type } as ItineraryItem);
+                  const arriveBy = formatMin(timeMin - checkin);
+                  
+                  // Check if this time conflicts with existing items
+                  const hasConflict = ribbon.some(ri => {
+                    return ri.startMin < timeMin + (parseInt(scheduledPlacement.attraction.duration) || 20) && ri.endMin > timeMin - checkin;
+                  });
+
+                  return (
+                    <button
+                      key={time}
+                      onClick={() => {
+                        insertAtTimePosition(scheduledPlacement.attraction, timeMin);
+                        setScheduledPlacement(null);
+                      }}
+                      className={`w-full text-left p-4 border-2 transition-all duration-200 group ${
+                        hasConflict
+                          ? "border-[hsl(var(--destructive)/0.3)] bg-[hsl(var(--destructive)/0.03)] hover:border-[hsl(var(--destructive)/0.5)]"
+                          : "border-[hsl(var(--border))] bg-[hsl(var(--gold)/0.02)] hover:border-[hsl(var(--gold))] hover:bg-[hsl(var(--gold)/0.06)]"
+                      }`}
+                      style={{ borderRadius: 0 }}
+                    >
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+                          <div className="text-center shrink-0">
+                            <span className="font-display text-2xl text-[hsl(var(--ink))] font-bold block leading-none">{time}</span>
+                            <span className="text-[0.5625rem] text-[hsl(var(--ink-light))] uppercase tracking-[0.1em]">Showtime</span>
+                          </div>
+                          <div className="border-l border-[hsl(var(--border))] pl-3">
+                            <p className="font-sans text-sm text-[hsl(var(--ink))]">
+                              📍 Arrive by <strong>{arriveBy}</strong>
+                              <span className="text-[hsl(var(--ink-light))]"> ({checkin}m early for spots)</span>
+                            </p>
+                            <p className="font-sans text-xs text-[hsl(var(--ink-light))] mt-0.5">
+                              Duration: {scheduledPlacement.attraction.duration} · {zoneLabel(scheduledPlacement.attraction.zone)}
+                            </p>
+                          </div>
+                        </div>
+                        <div className="shrink-0">
+                          <span className={`px-3 py-1.5 text-[0.625rem] uppercase tracking-[0.1em] font-medium transition-all duration-200 ${
+                            hasConflict
+                              ? "bg-[hsl(var(--destructive)/0.08)] text-destructive"
+                              : "bg-[hsl(var(--ink))] text-[#F9F7F2] group-hover:bg-[hsl(var(--gold))]"
+                          }`} style={{ borderRadius: 0 }}>
+                            {hasConflict ? "⚠ Overlap" : "Place Here →"}
+                          </span>
+                        </div>
+                      </div>
+                      {hasConflict && (
+                        <p className="text-[0.625rem] text-destructive/70 mt-2 italic">
+                          This time overlaps with an existing item — tap to place anyway and adjust manually
+                        </p>
+                      )}
+                    </button>
+                  );
+                })}
+              </div>
+
+              {/* Footer */}
+              <div className="px-6 pb-5 flex justify-between items-center">
+                <button
+                  onClick={() => setScheduledPlacement(null)}
+                  className="px-4 py-2 text-[0.625rem] uppercase tracking-[0.12em] text-[hsl(var(--ink-light))] border border-[hsl(var(--border))] hover:border-[hsl(var(--ink))]/30 transition-all duration-200"
+                  style={{ borderRadius: 0 }}
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={() => {
+                    // Add without scheduled time (manual placement)
+                    const a = scheduledPlacement.attraction;
+                    const estWait = a.waitCategory ? (defaultWaitByCategory[a.waitCategory] || 15) : 15;
+                    setItinerary(prev => [...prev, {
+                      id: `it-${Date.now()}`,
+                      attractionId: a.id,
+                      name: a.name,
+                      type: a.type,
+                      duration: parseInt(a.duration) || DURATION_DEFAULTS[a.type] || 20,
+                      waitTime: estWait,
+                      zone: a.zone,
+                      llType: a.llType,
+                      waitCategory: a.waitCategory,
+                    }]);
+                    setScheduledPlacement(null);
+                  }}
+                  className="px-4 py-2 text-[0.625rem] uppercase tracking-[0.12em] text-[hsl(var(--ink-light))] hover:text-[hsl(var(--ink))] transition-all duration-200"
+                  style={{ borderRadius: 0 }}
+                >
+                  Skip — Add to End
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </section>
   );
 };

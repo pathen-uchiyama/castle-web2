@@ -136,6 +136,8 @@ export interface ItineraryItem {
   waitCategory?: WaitCategory;
   notes?: string;
   isConfirmed?: boolean;
+  /** For scheduled shows — the target start time in minutes from midnight */
+  scheduledStartMin?: number;
 }
 
 /** Computed ribbon item — produced by the ribbon engine */

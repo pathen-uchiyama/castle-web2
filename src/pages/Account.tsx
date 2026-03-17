@@ -222,8 +222,44 @@ const Account = ({ account }: AccountProps) => {
             </div>
           </motion.div>
 
-          {/* Notification settings */}
+          {/* Display Settings */}
           <motion.div {...fade(0.1)} className="mt-16">
+            <p className="label-text mb-8 tracking-[0.25em]">Display Settings</p>
+            <div className="space-y-5">
+              {(() => {
+                const use24h = localStorage.getItem("pref-use24h") === "true";
+                return (
+                  <div className="flex items-center justify-between border-b border-border pb-4">
+                    <div>
+                      <p className="font-display text-base text-foreground">24-Hour Time</p>
+                      <p className="font-editorial text-xs text-muted-foreground mt-1">Display times in 24-hour format (e.g. 21:00) instead of 12-hour (e.g. 9:00 PM).</p>
+                    </div>
+                    <button
+                      onClick={() => {
+                        const next = !use24h;
+                        localStorage.setItem("pref-use24h", String(next));
+                        toast.success(`Switched to ${next ? "24-hour" : "12-hour"} time format.`);
+                        // Force re-render
+                        setNotifications(prev => ({ ...prev }));
+                      }}
+                      className={`w-10 h-5 rounded-full flex items-center px-0.5 cursor-pointer transition-colors duration-300 ${
+                        use24h ? "bg-[hsl(var(--gold))]" : "bg-muted"
+                      }`}
+                    >
+                      <motion.div
+                        className="w-4 h-4 rounded-full bg-background shadow"
+                        animate={{ x: use24h ? 20 : 0 }}
+                        transition={{ type: "spring", stiffness: 500, damping: 30 }}
+                      />
+                    </button>
+                  </div>
+                );
+              })()}
+            </div>
+          </motion.div>
+
+          {/* Notification settings */}
+          <motion.div {...fade(0.15)} className="mt-16">
             <p className="label-text mb-8 tracking-[0.25em]">Notification Settings</p>
             <div className="space-y-5">
               {[

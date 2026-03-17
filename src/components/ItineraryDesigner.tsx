@@ -70,8 +70,12 @@ function toMinutes(t: string) {
 }
 
 function formatMin(min: number) {
+  const use24h = localStorage.getItem("pref-use24h") === "true";
   const h = Math.floor(min / 60);
   const m = min % 60;
+  if (use24h) {
+    return `${h.toString().padStart(2, "0")}:${m.toString().padStart(2, "0")}`;
+  }
   const ampm = h >= 12 ? "PM" : "AM";
   const displayH = h > 12 ? h - 12 : h === 0 ? 12 : h;
   return `${displayH}:${m.toString().padStart(2, "0")} ${ampm}`;

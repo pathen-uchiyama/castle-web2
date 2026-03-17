@@ -248,11 +248,10 @@ const TripWizard = ({ open, onClose, onComplete, guestName = "" }: TripWizardPro
     willUseSingleRider: false,
     willPurchaseLLMulti: false,
     willPurchaseLLSingle: false,
-    diningReservationScouting: false,
     splurgeAppetite: null,
     premiumInterests: [],
     allergies: [],
-    diningStyle: null,
+    diningStyles: [],
   });
 
   const set = useCallback(<K extends keyof WizardData>(key: K, value: WizardData[K]) => {

@@ -597,7 +597,7 @@ const ResortHub = () => {
                 <div className="flex gap-1 flex-wrap">
                   {diningLocations.map(loc => (
                     <button key={loc} onClick={() => setDiningLocation(loc)}
-                      className={`px-2.5 py-1 text-[0.5rem] uppercase tracking-[0.08em] border transition-all ${
+                      className={`px-2.5 py-1 text-xs uppercase tracking-[0.08em] border transition-all ${
                         diningLocation === loc ? "bg-foreground text-background border-foreground" : "text-muted-foreground border-border hover:border-foreground/30"
                       }`}>
                       {loc === "all" ? "All Locations" : loc}
@@ -608,7 +608,7 @@ const ResortHub = () => {
               <div className="flex flex-wrap gap-2 mt-2">
                 {(["all", "signature", "table-service", "quick-service", "character-dining", "buffet", "lounge", "snack"] as (ServiceType | "all")[]).map(s => (
                   <button key={s} onClick={() => setDiningService(s)}
-                    className={`px-2.5 py-1 text-[0.5rem] uppercase tracking-[0.08em] border transition-all ${
+                    className={`px-2.5 py-1 text-xs uppercase tracking-[0.08em] border transition-all ${
                       diningService === s ? "bg-foreground text-background border-foreground" : "text-muted-foreground border-border hover:border-foreground/30"
                     }`}>
                     {s === "all" ? "All Types" : serviceLabels[s]}
@@ -618,14 +618,14 @@ const ResortHub = () => {
               <div className="flex flex-wrap gap-2 mt-2">
                 {(["all", "$", "$$", "$$$", "$$$$"] as (PriceRange | "all")[]).map(p => (
                   <button key={p} onClick={() => setDiningPrice(p)}
-                    className={`px-2.5 py-1 text-[0.5rem] uppercase tracking-[0.08em] border transition-all ${
+                    className={`px-2.5 py-1 text-xs uppercase tracking-[0.08em] border transition-all ${
                       diningPrice === p ? "bg-foreground text-background border-foreground" : "text-muted-foreground border-border hover:border-foreground/30"
                     }`}>
                     {p === "all" ? "Any Price" : `${p} ${priceLabel[p]}`}
                   </button>
                 ))}
                 <button onClick={() => setDiningCharOnly(!diningCharOnly)}
-                  className={`px-2.5 py-1 text-[0.5rem] uppercase tracking-[0.08em] border transition-all ${
+                  className={`px-2.5 py-1 text-xs uppercase tracking-[0.08em] border transition-all ${
                     diningCharOnly ? "bg-[hsl(var(--gold))] text-background border-[hsl(var(--gold))]" : "text-muted-foreground border-border hover:border-foreground/30"
                   }`}>
                   🧚 Character Dining Only

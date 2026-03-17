@@ -161,6 +161,20 @@ const TIME_SLOTS = (() => {
   return slots;
 })();
 
+const MEAL_PRESETS: { id: string; label: string; icon: string; start: string; end: string }[] = [
+  { id: "breakfast", label: "Breakfast", icon: "☀️", start: "7:30 AM", end: "10:30 AM" },
+  { id: "lunch", label: "Lunch", icon: "🌤", start: "11:00 AM", end: "2:00 PM" },
+  { id: "dinner", label: "Dinner", icon: "🌙", start: "5:00 PM", end: "9:00 PM" },
+];
+
+const FLEX_OPTIONS = [
+  { value: 0, label: "Exact" },
+  { value: 30, label: "± 30 min" },
+  { value: 60, label: "± 1 hr" },
+  { value: 90, label: "± 1.5 hr" },
+  { value: 120, label: "± 2 hr" },
+];
+
 /* ─── Booking Modal ─────────────────────────────────────────────── */
 
 interface BookingModalProps {
@@ -175,7 +189,6 @@ interface BookingModalProps {
 }
 
 const BookingModal = ({ type, venueName, venueLocation, tripStartDate, tripEndDate, tripName, onClose, onBook }: BookingModalProps) => {
-  // Build trip day options
   const tripDays = useMemo(() => {
     const days: { value: string; label: string }[] = [];
     const start = new Date(tripStartDate + "T12:00:00");
@@ -191,14 +204,68 @@ const BookingModal = ({ type, venueName, venueLocation, tripStartDate, tripEndDa
   }, [tripStartDate, tripEndDate]);
 
   const [date, setDate] = useState(tripDays[0]?.value || "");
-  const [timeStart, setTimeStart] = useState("");
-  const [timeEnd, setTimeEnd] = useState("");
-  const [useRange, setUseRange] = useState(false);
+  const [timeMode, setTimeMode] = useState<"meal" | "specific">("meal");
+  const [selectedMeal, setSelectedMeal] = useState<string>("");
+  const [specificTime, setSpecificTime] = useState("");
+  const [flexMinutes, setFlexMinutes] = useState(60);
   const [partySize, setPartySize] = useState(4);
   const [notes, setNotes] = useState("");
   const [enableMonitoring, setEnableMonitoring] = useState(true);
+  const [bookingState, setBookingState] = useState<"idle" | "attempting" | "failed">("idle");
 
-  const canSubmit = date && timeStart;
+  // Compute effective time/range
+  const effectiveTime = useMemo(() => {
+    if (timeMode === "meal") {
+      const preset = MEAL_PRESETS.find(p => p.id === selectedMeal);
+      if (!preset) return { start: "", end: "" };
+      return { start: preset.start, end: preset.end };
+    }
+    if (!specificTime) return { start: "", end: "" };
+    if (flexMinutes === 0) return { start: specificTime, end: "" };
+    // Calculate flex range
+    const idx = TIME_SLOTS.findIndex(s => s.value === specificTime);
+    if (idx < 0) return { start: specificTime, end: "" };
+    const flexSlots = Math.round(flexMinutes / 30);
+    const startIdx = Math.max(0, idx - flexSlots);
+    const endIdx = Math.min(TIME_SLOTS.length - 1, idx + flexSlots);
+    return { start: TIME_SLOTS[startIdx].value, end: TIME_SLOTS[endIdx].value };
+  }, [timeMode, selectedMeal, specificTime, flexMinutes]);
+
+  const canSubmit = date && effectiveTime.start && bookingState !== "attempting";
+
+  const handleAttemptBooking = () => {
+    if (!canSubmit) return;
+    setBookingState("attempting");
+
+    // Simulate booking attempt (1.5s delay)
+    setTimeout(() => {
+      // Simulate ~40% success rate
+      const success = Math.random() > 0.6;
+      if (success) {
+        onBook({
+          date,
+          time: effectiveTime.start,
+          timeRangeEnd: effectiveTime.end || undefined,
+          partySize,
+          notes,
+          monitoringActive: false,
+        });
+      } else {
+        setBookingState("failed");
+      }
+    }, 1500);
+  };
+
+  const handleAddPending = () => {
+    onBook({
+      date,
+      time: effectiveTime.start,
+      timeRangeEnd: effectiveTime.end || undefined,
+      partySize,
+      notes,
+      monitoringActive: enableMonitoring,
+    });
+  };
 
   return (
     <motion.div
@@ -223,78 +290,102 @@ const BookingModal = ({ type, venueName, venueLocation, tripStartDate, tripEndDa
           </div>
         </div>
         <div className="p-6 space-y-5">
-          {/* Trip date context */}
+          {/* Trip context */}
           <div className="p-3 bg-[hsl(var(--gold)/0.04)] border border-[hsl(var(--gold)/0.15)] rounded-lg">
             <p className="font-editorial text-xs text-muted-foreground">📅 <span className="text-foreground font-medium">{tripName}</span> · {tripDays[0]?.label} – {tripDays[tripDays.length - 1]?.label}</p>
           </div>
 
-          {/* Date — trip days only */}
+          {/* Date */}
           <div>
             <label className="label-text mb-2 block">Date</label>
             <div className="flex gap-1.5 flex-wrap">
               {tripDays.map((d) => (
-                <button
-                  key={d.value}
-                  onClick={() => setDate(d.value)}
+                <button key={d.value} onClick={() => setDate(d.value)}
                   className={`px-3 py-2 rounded-lg text-xs font-display transition-all duration-200 border ${
-                    date === d.value
-                      ? "bg-foreground text-background border-foreground"
-                      : "border-border text-muted-foreground hover:border-foreground/30"
-                  }`}
-                >
-                  {d.label}
-                </button>
+                    date === d.value ? "bg-foreground text-background border-foreground" : "border-border text-muted-foreground hover:border-foreground/30"
+                  }`}>{d.label}</button>
               ))}
             </div>
           </div>
 
-          {/* Time — dropdown with optional range */}
+          {/* Time mode toggle */}
           <div>
-            <div className="flex items-center justify-between mb-2">
-              <label className="label-text">{useRange ? "Desired Time Range" : "Preferred Time"}</label>
+            <div className="flex items-center gap-1 mb-3 p-1 bg-muted rounded-lg">
               <button
-                onClick={() => setUseRange(!useRange)}
-                className="text-[0.5625rem] uppercase tracking-[0.12em] text-[hsl(var(--gold-dark))] hover:text-foreground transition-colors"
+                onClick={() => { setTimeMode("meal"); setBookingState("idle"); }}
+                className={`flex-1 py-2 text-[0.5625rem] uppercase tracking-[0.12em] font-medium rounded-md transition-all duration-200 ${
+                  timeMode === "meal" ? "bg-card text-foreground shadow-sm" : "text-muted-foreground"
+                }`}
               >
-                {useRange ? "← Exact time" : "Set a range →"}
+                Meal Period
+              </button>
+              <button
+                onClick={() => { setTimeMode("specific"); setBookingState("idle"); }}
+                className={`flex-1 py-2 text-[0.5625rem] uppercase tracking-[0.12em] font-medium rounded-md transition-all duration-200 ${
+                  timeMode === "specific" ? "bg-card text-foreground shadow-sm" : "text-muted-foreground"
+                }`}
+              >
+                Specific Time
               </button>
             </div>
-            <div className="flex gap-2 items-center">
-              <select
-                value={timeStart}
-                onChange={(e) => setTimeStart(e.target.value)}
-                className="flex-1 border border-border bg-background rounded-lg px-3 py-2.5 font-editorial text-sm text-foreground focus:outline-none focus:border-[hsl(var(--gold))] transition-colors appearance-none cursor-pointer"
-              >
-                <option value="">{useRange ? "Earliest" : "Select time"}</option>
-                {TIME_SLOTS.map((s) => (
-                  <option key={s.value} value={s.value}>{s.label}</option>
-                ))}
-              </select>
-              {useRange && (
-                <>
-                  <span className="text-muted-foreground text-sm">to</span>
-                  <select
-                    value={timeEnd}
-                    onChange={(e) => setTimeEnd(e.target.value)}
-                    className="flex-1 border border-border bg-background rounded-lg px-3 py-2.5 font-editorial text-sm text-foreground focus:outline-none focus:border-[hsl(var(--gold))] transition-colors appearance-none cursor-pointer"
+
+            {timeMode === "meal" ? (
+              <div className="grid grid-cols-3 gap-2">
+                {MEAL_PRESETS.map((meal) => (
+                  <button
+                    key={meal.id}
+                    onClick={() => { setSelectedMeal(meal.id); setBookingState("idle"); }}
+                    className={`flex flex-col items-center gap-1.5 p-4 rounded-lg border transition-all duration-200 ${
+                      selectedMeal === meal.id
+                        ? "bg-foreground text-background border-foreground"
+                        : "border-border text-muted-foreground hover:border-foreground/30"
+                    }`}
                   >
-                    <option value="">Latest</option>
-                    {TIME_SLOTS.filter((s) => {
-                      if (!timeStart) return true;
-                      const startIdx = TIME_SLOTS.findIndex((t) => t.value === timeStart);
-                      const curIdx = TIME_SLOTS.findIndex((t) => t.value === s.value);
-                      return curIdx > startIdx;
-                    }).map((s) => (
+                    <span className="text-lg">{meal.icon}</span>
+                    <span className="font-display text-xs">{meal.label}</span>
+                    <span className={`text-[0.5rem] ${selectedMeal === meal.id ? "text-background/70" : "text-muted-foreground/60"}`}>
+                      {meal.start} – {meal.end}
+                    </span>
+                  </button>
+                ))}
+              </div>
+            ) : (
+              <div className="space-y-3">
+                <div>
+                  <label className="text-[0.5625rem] uppercase tracking-[0.1em] text-muted-foreground mb-1.5 block">Preferred Time</label>
+                  <select
+                    value={specificTime}
+                    onChange={(e) => { setSpecificTime(e.target.value); setBookingState("idle"); }}
+                    className="w-full border border-border bg-background rounded-lg px-3 py-2.5 font-editorial text-sm text-foreground focus:outline-none focus:border-[hsl(var(--gold))] transition-colors appearance-none cursor-pointer"
+                  >
+                    <option value="">Select time</option>
+                    {TIME_SLOTS.map((s) => (
                       <option key={s.value} value={s.value}>{s.label}</option>
                     ))}
                   </select>
-                </>
-              )}
-            </div>
-            {useRange && (
-              <p className="font-editorial text-[0.625rem] text-muted-foreground mt-1.5 italic">
-                💡 A range improves your chances for hard-to-get reservations. We'll monitor for any opening in this window.
-              </p>
+                </div>
+                <div>
+                  <label className="text-[0.5625rem] uppercase tracking-[0.1em] text-muted-foreground mb-1.5 block">Flexibility</label>
+                  <div className="flex gap-1.5 flex-wrap">
+                    {FLEX_OPTIONS.map((opt) => (
+                      <button
+                        key={opt.value}
+                        onClick={() => { setFlexMinutes(opt.value); setBookingState("idle"); }}
+                        className={`px-3 py-1.5 rounded-lg text-xs font-display transition-all duration-200 border ${
+                          flexMinutes === opt.value
+                            ? "bg-foreground text-background border-foreground"
+                            : "border-border text-muted-foreground hover:border-foreground/30"
+                        }`}
+                      >{opt.label}</button>
+                    ))}
+                  </div>
+                  {specificTime && flexMinutes > 0 && (
+                    <p className="font-editorial text-[0.625rem] text-muted-foreground mt-1.5">
+                      Window: <span className="text-foreground font-medium">{effectiveTime.start} – {effectiveTime.end}</span>
+                    </p>
+                  )}
+                </div>
+              </div>
             )}
           </div>
 
@@ -303,17 +394,10 @@ const BookingModal = ({ type, venueName, venueLocation, tripStartDate, tripEndDa
             <label className="label-text mb-2 block">Party Size</label>
             <div className="flex gap-2">
               {[1, 2, 3, 4, 5, 6, 7, 8].map((n) => (
-                <button
-                  key={n}
-                  onClick={() => setPartySize(n)}
+                <button key={n} onClick={() => setPartySize(n)}
                   className={`w-9 h-9 rounded-lg border text-sm font-display transition-all duration-200 ${
-                    partySize === n
-                      ? "bg-foreground text-background border-foreground"
-                      : "border-border text-muted-foreground hover:border-foreground/30"
-                  }`}
-                >
-                  {n}
-                </button>
+                    partySize === n ? "bg-foreground text-background border-foreground" : "border-border text-muted-foreground hover:border-foreground/30"
+                  }`}>{n}</button>
               ))}
             </div>
           </div>
@@ -321,60 +405,74 @@ const BookingModal = ({ type, venueName, venueLocation, tripStartDate, tripEndDa
           {/* Notes */}
           <div>
             <label className="label-text mb-2 block">Notes (optional)</label>
-            <textarea
-              value={notes}
-              onChange={(e) => setNotes(e.target.value)}
-              placeholder="Special requests, dietary needs, seating preference..."
-              rows={2}
-              className="w-full border border-border bg-background rounded-lg px-3 py-2 font-editorial text-sm text-foreground focus:outline-none focus:border-[hsl(var(--gold))] transition-colors resize-none"
-            />
+            <textarea value={notes} onChange={(e) => setNotes(e.target.value)} placeholder="Special requests, dietary needs, seating preference..." rows={2}
+              className="w-full border border-border bg-background rounded-lg px-3 py-2 font-editorial text-sm text-foreground focus:outline-none focus:border-[hsl(var(--gold))] transition-colors resize-none" />
           </div>
 
-          {/* Monitoring toggle */}
-          <div
-            className={`flex items-start gap-3 p-4 rounded-lg border cursor-pointer transition-all duration-300 ${
-              enableMonitoring
-                ? "border-[hsl(var(--gold)/0.4)] bg-[hsl(var(--gold)/0.04)]"
-                : "border-border bg-muted/20"
-            }`}
-            onClick={() => setEnableMonitoring(!enableMonitoring)}
-          >
-            <div className={`w-5 h-5 rounded-md border-2 flex items-center justify-center shrink-0 mt-0.5 transition-all duration-200 ${
-              enableMonitoring ? "border-[hsl(var(--gold))] bg-[hsl(var(--gold))]" : "border-border"
-            }`}>
-              {enableMonitoring && <span className="text-background text-xs font-bold">✓</span>}
-            </div>
-            <div>
-              <p className="font-display text-sm text-foreground">🔍 Enable Availability Monitoring</p>
-              <p className="font-editorial text-xs text-muted-foreground mt-0.5 leading-relaxed">
-                We'll watch for openings matching your date{useRange ? ", time range" : ""}, and party size — and notify you instantly when a slot opens.
-              </p>
-            </div>
-          </div>
+          {/* Booking failed state */}
+          {bookingState === "failed" && (
+            <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="space-y-3">
+              <div className="p-4 bg-[hsl(var(--destructive)/0.06)] border border-[hsl(var(--destructive)/0.2)] rounded-lg">
+                <p className="font-display text-sm text-foreground mb-1">😔 No availability found</p>
+                <p className="font-editorial text-xs text-muted-foreground leading-relaxed">
+                  We couldn't find an open slot for {effectiveTime.start}{effectiveTime.end ? ` – ${effectiveTime.end}` : ""} on this date for a party of {partySize}.
+                </p>
+              </div>
+
+              {/* Monitoring option */}
+              <div
+                className={`flex items-start gap-3 p-4 rounded-lg border cursor-pointer transition-all duration-300 ${
+                  enableMonitoring ? "border-[hsl(var(--gold)/0.4)] bg-[hsl(var(--gold)/0.04)]" : "border-border bg-muted/20"
+                }`}
+                onClick={() => setEnableMonitoring(!enableMonitoring)}
+              >
+                <div className={`w-5 h-5 rounded-md border-2 flex items-center justify-center shrink-0 mt-0.5 transition-all duration-200 ${
+                  enableMonitoring ? "border-[hsl(var(--gold))] bg-[hsl(var(--gold))]" : "border-border"
+                }`}>
+                  {enableMonitoring && <span className="text-background text-xs font-bold">✓</span>}
+                </div>
+                <div>
+                  <p className="font-display text-sm text-foreground">📡 Monitor for openings</p>
+                  <p className="font-editorial text-xs text-muted-foreground mt-0.5 leading-relaxed">
+                    We'll watch for cancellations and notify you the instant a slot opens matching your preferences.
+                  </p>
+                </div>
+              </div>
+            </motion.div>
+          )}
         </div>
 
-        <div className="p-6 border-t border-border flex gap-3">
-          <button
-            onClick={() => {
-              if (canSubmit) {
-                onBook({
-                  date,
-                  time: timeStart,
-                  timeRangeEnd: useRange && timeEnd ? timeEnd : undefined,
-                  partySize,
-                  notes,
-                  monitoringActive: enableMonitoring,
-                });
-              }
-            }}
-            className="flex-1 px-6 py-3 rounded-lg text-[0.625rem] tracking-[0.15em] uppercase font-medium bg-foreground text-background transition-opacity duration-300 hover:opacity-90 disabled:opacity-40"
-            disabled={!canSubmit}
-          >
-            {enableMonitoring ? "📡 Add & Start Monitoring" : "Add as Pending"}
-          </button>
-          <button onClick={onClose} className="px-6 py-3 rounded-lg text-[0.625rem] tracking-[0.15em] uppercase font-medium text-muted-foreground border border-border hover:border-foreground/30 transition-all duration-300">
-            Cancel
-          </button>
+        <div className="p-6 border-t border-border">
+          {bookingState === "idle" && (
+            <div className="flex gap-3">
+              <button onClick={handleAttemptBooking}
+                className="flex-1 px-6 py-3 rounded-lg text-[0.625rem] tracking-[0.15em] uppercase font-medium bg-foreground text-background transition-opacity duration-300 hover:opacity-90 disabled:opacity-40"
+                disabled={!canSubmit}>
+                Attempt Booking
+              </button>
+              <button onClick={onClose} className="px-6 py-3 rounded-lg text-[0.625rem] tracking-[0.15em] uppercase font-medium text-muted-foreground border border-border hover:border-foreground/30 transition-all duration-300">
+                Cancel
+              </button>
+            </div>
+          )}
+          {bookingState === "attempting" && (
+            <div className="flex items-center justify-center gap-3 py-3">
+              <div className="w-4 h-4 border-2 border-foreground/30 border-t-foreground rounded-full animate-spin" />
+              <p className="font-display text-sm text-foreground">Checking availability…</p>
+            </div>
+          )}
+          {bookingState === "failed" && (
+            <div className="flex gap-3">
+              <button onClick={handleAddPending}
+                className="flex-1 px-6 py-3 rounded-lg text-[0.625rem] tracking-[0.15em] uppercase font-medium bg-[hsl(var(--gold))] text-background transition-opacity duration-300 hover:opacity-90">
+                {enableMonitoring ? "📡 Add to Pending & Monitor" : "Add to Pending"}
+              </button>
+              <button onClick={() => setBookingState("idle")}
+                className="px-6 py-3 rounded-lg text-[0.625rem] tracking-[0.15em] uppercase font-medium text-muted-foreground border border-border hover:border-foreground/30 transition-all duration-300">
+                Try Again
+              </button>
+            </div>
+          )}
         </div>
       </motion.div>
     </motion.div>

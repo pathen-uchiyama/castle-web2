@@ -563,7 +563,7 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
       llType: attraction.llType,
       waitCategory: attraction.waitCategory,
     };
-    const conflict = wouldConflictWithAnchor(itinerary, newItem, ropeDropMin, hasStroller);
+    const conflict = wouldConflictWithAnchor(itinerary, newItem, ropeDropMin, hasStroller, leaveMin);
     if (conflict.conflicts) {
       toast({
         title: "⚠️ Reservation Conflict",

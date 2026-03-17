@@ -730,7 +730,7 @@ const TripWizard = ({ open, onClose, onComplete, guestName = "" }: TripWizardPro
                                     </div>
                                     {hasSelection && (
                                       <button
-                                        onClick={() => setParkForDay(ps.date, null)}
+                                        onClick={() => clearDayParks(ps.date)}
                                         className="text-xs uppercase tracking-widest hover:opacity-60 transition-opacity"
                                         style={{ fontFamily: brand.font.body, color: brand.slate }}
                                       >

@@ -941,25 +941,30 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
                 {/* Gap until park close */}
                 {remainingMin >= 10 && (
                   <div
-                    className={`my-1 border-2 border-dashed flex flex-col items-center justify-center transition-colors duration-200 ${
+                    className={`my-2 border-2 border-dashed flex flex-col items-center justify-center transition-colors duration-200 ${
                       dropTargetIdx === ribbon.length
-                        ? "border-[hsl(var(--gold))] bg-[hsl(var(--gold)/0.12)]"
-                        : "border-[hsl(var(--gold)/0.35)] bg-[hsl(var(--gold)/0.04)]"
+                        ? "border-[hsl(var(--gold))] bg-[hsl(var(--gold)/0.15)]"
+                        : "border-[hsl(var(--gold)/0.4)] bg-[hsl(var(--gold)/0.06)]"
                     }`}
-                    style={{ borderRadius: 0, minHeight: `${remainingHeight}px` }}
+                    style={{ borderRadius: "0.75rem", minHeight: `${remainingHeight}px` }}
                     onDragOver={(e) => { e.preventDefault(); setDropTargetIdx(ribbon.length); }}
                     onDragLeave={() => setDropTargetIdx(null)}
                     onDrop={(e) => handleDropOnZone(e, ribbon.length)}
                   >
-                    <div className="flex items-center gap-2 mb-1">
-                      <span className="text-xl">⏳</span>
-                      <span className="font-display text-lg text-[hsl(var(--gold-dark))] font-bold">{remainingMin}m open</span>
+                    <div className="flex items-center gap-2 mb-1.5">
+                      <span className="text-lg">⏳</span>
+                      <span className="font-display text-base text-[hsl(var(--gold-dark))] font-bold">{remainingMin}m open</span>
                     </div>
-                    <p className="text-xs text-[hsl(var(--ink-light))]">
-                      ~{Math.floor(remainingMin / 25)} rides could fit · {formatMin(lastEnd)} → {formatMin(leaveMin)}
+                    <p className="text-[0.6875rem] text-[hsl(var(--ink-light))] font-medium">
+                      {formatMin(lastEnd)} → {formatMin(leaveMin)}
                     </p>
+                    {Math.floor(remainingMin / 25) > 0 && (
+                      <p className="text-[0.625rem] text-[hsl(var(--ink-light))] mt-0.5">
+                        ~{Math.floor(remainingMin / 25)} ride{Math.floor(remainingMin / 25) > 1 ? "s" : ""} could fit
+                      </p>
+                    )}
                     {lastZone && (
-                      <span className="mt-1.5 text-[0.5625rem] uppercase tracking-[0.1em] px-2.5 py-1 bg-[hsl(var(--gold)/0.12)] text-[hsl(var(--gold-dark))]" style={{ borderRadius: 0 }}>
+                      <span className="mt-2 text-[0.5625rem] uppercase tracking-[0.1em] px-2.5 py-1 bg-[hsl(var(--gold)/0.12)] text-[hsl(var(--gold-dark))]" style={{ borderRadius: "0.5rem" }}>
                         📍 Near {zoneLabel(lastZone)} · Drag here to fill
                       </span>
                     )}

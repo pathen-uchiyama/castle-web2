@@ -269,6 +269,11 @@ export interface AccountProfile {
   email: string;
   memberSince: string;
   adventuresCompleted: number;
+  birthday?: string;
+  favoriteCharacter?: string;
+  favoriteRide?: string;
+  accessibilityNeeds?: string[];
+  sensoryNotes?: string;
   subscription: Subscription;
   preferences: Preference[];
   healthProfile: GuestHealthProfile;

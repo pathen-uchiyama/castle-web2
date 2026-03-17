@@ -267,7 +267,7 @@ export interface AccountProfile {
   email: string;
   memberSince: string;
   adventuresCompleted: number;
-  birthday?: string;
+  birthdate?: string; // ISO date string
   favoriteCharacter?: string;
   favoriteRide?: string;
   accessibilityNeeds?: string[];

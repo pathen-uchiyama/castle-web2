@@ -179,32 +179,30 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
   const seededBookings = useMemo((): ItineraryItem[] => {
     const items: ItineraryItem[] = [];
     diningReservations.forEach(d => {
-      // If linked to a show, look up the show's scheduled time and zone
-      let scheduledStartMin: number | undefined;
+      // All dining reservations are pinned to their booked time
+      const diningTimeMin = toMinutes(d.time);
+      const scheduledStartMin = diningTimeMin >= 0 ? diningTimeMin : undefined;
       let linkedNote = "";
+      let zone: string | undefined;
       if (d.linkedShowId) {
         const allAttr = Object.values(allParkAttractions).flat();
         const linkedShow = allAttr.find(a => a.id === d.linkedShowId);
         if (linkedShow) {
-          // Use the dining reservation time as the start, show time is when the event happens
-          const diningTimeMin = toMinutes(d.time);
-          scheduledStartMin = diningTimeMin >= 0 ? diningTimeMin : undefined;
           const showTimes = linkedShow.scheduledTimes?.join(" / ") || "";
           linkedNote = ` · 🎆 Linked to ${linkedShow.name}${showTimes ? ` @ ${showTimes}` : ""}`;
+          zone = linkedShow.zone;
         }
       }
+      const mealLabel = d.mealType === "breakfast" ? "🌅 Breakfast" : d.mealType === "lunch" ? "☀️ Lunch" : d.mealType === "snack" ? "🍿 Snack" : "🌙 Dinner";
       items.push({
         id: `booked-${d.reservationId}`,
         name: d.restaurantName,
         type: "meal",
-        duration: 60,
+        duration: d.mealType === "breakfast" ? 50 : d.mealType === "snack" ? 30 : 60,
         isConfirmed: d.status === "confirmed",
-        notes: (d.status === "confirmed" ? `✓ CONFIRMED · ${d.confirmationNumber}` : "PENDING") + linkedNote,
+        notes: `${mealLabel} · ${d.time}` + (d.status === "confirmed" ? ` · ✓ ${d.confirmationNumber}` : " · PENDING") + linkedNote,
         scheduledStartMin,
-        zone: d.linkedShowId ? (() => {
-          const allAttr = Object.values(allParkAttractions).flat();
-          return allAttr.find(a => a.id === d.linkedShowId)?.zone;
-        })() : undefined,
+        zone,
       });
     });
     bookedExperiences.forEach(e => {

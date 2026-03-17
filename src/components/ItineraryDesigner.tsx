@@ -149,9 +149,9 @@ function computeRibbon(items: ItineraryItem[], ropeDropMin: number, hasStroller:
     let startMin = currentMin + walkBuffer;
 
     if (isFixedAnchor(item) && item.scheduledStartMin != null) {
-      // Fixed anchor: always starts at its scheduled time (minus check-in)
+      // Fixed anchor: ALWAYS starts at its scheduled time — never pushed later
       const arrivalNeeded = item.scheduledStartMin - checkinTime;
-      startMin = Math.max(currentMin, arrivalNeeded);
+      startMin = arrivalNeeded;
     } else if (item.scheduledStartMin != null) {
       // Non-confirmed scheduled item — try to honor time but don't go backwards
       const arrivalNeeded = item.scheduledStartMin - checkinTime;

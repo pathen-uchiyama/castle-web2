@@ -27,6 +27,7 @@ const statusLabels: Record<string, string> = {
 };
 
 const TripsHub = ({ bookedTrip, futureTrips }: TripsHubProps) => {
+  const navigate = useNavigate();
   const [wizardOpen, setWizardOpen] = useState(false);
   const { partySurvey } = mockData;
   const completedCount = partySurvey.responses.filter((r) => r.status === "completed").length;

@@ -237,6 +237,13 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
   const [pacing, setPacing] = useState("Moderate");
   const [focus, setFocus] = useState("Classic Magic");
   const [minimizeWalking, setMinimizeWalking] = useState(false);
+  const [midDayBreak, setMidDayBreak] = useState<"none" | "hotel" | "pool" | "indoor-ac">("none");
+  const midDayBreakConfig = {
+    none: null,
+    hotel: { label: "🏨 Hotel Break", type: "hotel" as const, duration: 150, desc: "Return to resort — nap, recharge, come back refreshed" },
+    pool: { label: "🏊 Pool Cool-Down", type: "pool" as const, duration: 120, desc: "Resort pool break — beat the heat with a swim" },
+    "indoor-ac": { label: "❄️ Indoor / AC Block", type: "break" as const, duration: 90, desc: "Stay in-park — AC rides, shows & restaurants only (12–3 PM)" },
+  };
 
   const availableParks = Object.keys(allParkAttractions);
   const [selectedParks, setSelectedParks] = useState<string[]>(["mk"]);

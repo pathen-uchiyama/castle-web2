@@ -151,13 +151,32 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
   const seededBookings = useMemo((): ItineraryItem[] => {
     const items: ItineraryItem[] = [];
     diningReservations.forEach(d => {
+      // If linked to a show, look up the show's scheduled time and zone
+      let scheduledStartMin: number | undefined;
+      let linkedNote = "";
+      if (d.linkedShowId) {
+        const allAttr = Object.values(allParkAttractions).flat();
+        const linkedShow = allAttr.find(a => a.id === d.linkedShowId);
+        if (linkedShow) {
+          // Use the dining reservation time as the start, show time is when the event happens
+          const diningTimeMin = toMinutes(d.time);
+          scheduledStartMin = diningTimeMin >= 0 ? diningTimeMin : undefined;
+          const showTimes = linkedShow.scheduledTimes?.join(" / ") || "";
+          linkedNote = ` · 🎆 Linked to ${linkedShow.name}${showTimes ? ` @ ${showTimes}` : ""}`;
+        }
+      }
       items.push({
         id: `booked-${d.reservationId}`,
         name: d.restaurantName,
         type: "meal",
         duration: 60,
         isConfirmed: d.status === "confirmed",
-        notes: d.status === "confirmed" ? `✓ CONFIRMED · ${d.confirmationNumber}` : "PENDING",
+        notes: (d.status === "confirmed" ? `✓ CONFIRMED · ${d.confirmationNumber}` : "PENDING") + linkedNote,
+        scheduledStartMin,
+        zone: d.linkedShowId ? (() => {
+          const allAttr = Object.values(allParkAttractions).flat();
+          return allAttr.find(a => a.id === d.linkedShowId)?.zone;
+        })() : undefined,
       });
     });
     bookedExperiences.forEach(e => {
@@ -170,7 +189,13 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
         notes: e.status === "confirmed" ? `✓ CONFIRMED · ${e.confirmationNumber}` : "PENDING",
       });
     });
-    return items;
+    // Sort seeded items by scheduledStartMin so linked dining lands in the right order
+    return items.sort((a, b) => {
+      if (a.scheduledStartMin !== undefined && b.scheduledStartMin !== undefined) return a.scheduledStartMin - b.scheduledStartMin;
+      if (a.scheduledStartMin !== undefined) return -1;
+      if (b.scheduledStartMin !== undefined) return 1;
+      return 0;
+    });
   }, [diningReservations, bookedExperiences]);
 
   const [itinerary, setItinerary] = useState<ItineraryItem[]>(seededBookings);

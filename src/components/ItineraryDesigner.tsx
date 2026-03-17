@@ -170,12 +170,13 @@ function computeRibbon(items: ItineraryItem[], ropeDropMin: number, hasStroller:
   return result;
 }
 
-/** Check if adding an item at the end would conflict with any fixed anchor */
+/** Check if adding an item would conflict with fixed anchors or exceed park hours */
 function wouldConflictWithAnchor(
   items: ItineraryItem[], 
   newItem: ItineraryItem, 
   ropeDropMin: number, 
-  hasStroller: boolean
+  hasStroller: boolean,
+  leaveMin: number
 ): { conflicts: boolean; anchorName?: string; anchorTime?: string } {
   const testItems = [...items, newItem];
   const ribbon = computeRibbon(testItems, ropeDropMin, hasStroller);
@@ -185,7 +186,6 @@ function wouldConflictWithAnchor(
     const ri = ribbon[i];
     if (isFixedAnchor(ri.item) && ri.item.scheduledStartMin != null) {
       const expectedArrival = ri.item.scheduledStartMin - ri.checkinTime;
-      // If the ribbon placed this anchor later than its scheduled time, there's a conflict
       if (ri.startMin > expectedArrival + 2) {
         return { 
           conflicts: true, 
@@ -196,7 +196,7 @@ function wouldConflictWithAnchor(
     }
   }
   
-  // Also check if any flexible item BEFORE a fixed anchor now overflows into it
+  // Check if any flexible item overflows into a fixed anchor
   for (let i = 0; i < ribbon.length - 1; i++) {
     const current = ribbon[i];
     const next = ribbon[i + 1];
@@ -209,6 +209,18 @@ function wouldConflictWithAnchor(
           anchorTime: formatMin(next.item.scheduledStartMin)
         };
       }
+    }
+  }
+  
+  // Check if the last item extends past park hours
+  if (ribbon.length > 0) {
+    const lastEnd = ribbon[ribbon.length - 1].endMin;
+    if (lastEnd > leaveMin) {
+      return {
+        conflicts: true,
+        anchorName: "Park Close",
+        anchorTime: formatMin(leaveMin)
+      };
     }
   }
   

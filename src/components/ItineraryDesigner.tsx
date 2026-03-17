@@ -494,7 +494,7 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
       waitCategory: attraction.waitCategory,
     };
     // Check for conflict with fixed anchors
-    const conflict = wouldConflictWithAnchor(itinerary, newItem, ropeDropMin, hasStroller);
+    const conflict = wouldConflictWithAnchor(itinerary, newItem, ropeDropMin, hasStroller, leaveMin);
     if (conflict.conflicts) {
       toast({
         title: "⚠️ Reservation Conflict",

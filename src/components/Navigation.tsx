@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { motion, useScroll, useTransform, AnimatePresence } from "framer-motion";
+import { motion, useScroll, useTransform, useMotionValueEvent, AnimatePresence } from "framer-motion";
 import { Link, useLocation } from "react-router-dom";
 import ccLogoLight from "@/assets/cc-logo-light.png";
 import ccLogoDark from "@/assets/cc-logo-dark.png";
@@ -18,6 +18,14 @@ const Navigation = () => {
   const location = useLocation();
   const isHome = location.pathname === "/";
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+
+  useMotionValueEvent(bgOpacity, "change", (v) => {
+    setScrolled(v > 0.5);
+  });
+
+  // On home: before scroll = light logo + lapis/gold; after scroll (dark bg) = dark logo + gold/white
+  const homeScrolled = isHome && scrolled;
 
   // Match /guides, /resort/*, and /parks/* for Park Guides active state
   const isGuideActive = (path: string) => {

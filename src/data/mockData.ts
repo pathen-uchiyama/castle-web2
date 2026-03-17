@@ -617,7 +617,7 @@ export const mockData: AppData = {
   partyMembers: [
     {
       memberId: "P", name: "Patchen", role: "Trip Captain", initial: "P", adventureCount: 12,
-      age: 38, birthday: "June 15", heightInches: 72, dietaryRestrictions: ["Gluten-free"],
+      birthdate: "1988-06-15", heightInches: 72, dietaryRestrictions: ["Gluten-free"],
       allergies: ["Tree nuts"], dasHolder: false, medicalNotes: "",
       rideSensitivities: ["spinning", "drops"],
       favoriteCharacter: "Goofy", favoriteRide: "Rise of the Resistance",
@@ -627,7 +627,7 @@ export const mockData: AppData = {
     },
     {
       memberId: "S", name: "Sarah", role: "Co-planner", initial: "S", adventureCount: 12,
-      age: 36, birthday: "November 3", heightInches: 65, dietaryRestrictions: ["Gluten-free"],
+      birthdate: "1990-11-03", heightInches: 65, dietaryRestrictions: ["Gluten-free"],
       favoriteCharacter: "Rapunzel", favoriteRide: "Flight of Passage",
       thrillTolerance: "moderate", magicStatus: ["Annual Passholder", "DVC Member"],
       sensoryNotes: "Sensitive to loud sudden noises (Tower of Terror drop sirens).",
@@ -636,7 +636,7 @@ export const mockData: AppData = {
     },
     {
       memberId: "E", name: "Emma", role: "Little Explorer", initial: "E", adventureCount: 8,
-      age: 9, birthday: "March 28", heightInches: 52, dietaryRestrictions: ["Nut allergy"],
+      birthdate: "2017-03-28", heightInches: 52, dietaryRestrictions: ["Nut allergy"],
       favoriteCharacter: "Elsa", favoriteRide: "Frozen Ever After",
       thrillTolerance: "moderate", magicStatus: [],
       accessibilityNeeds: ["avoid-drops", "avoid-loud"],
@@ -646,7 +646,7 @@ export const mockData: AppData = {
     },
     {
       memberId: "J", name: "Jack", role: "Snack Scout", initial: "J", adventureCount: 8,
-      age: 6, birthday: "September 12", heightInches: 44, dietaryRestrictions: [],
+      birthdate: "2020-09-12", heightInches: 44, dietaryRestrictions: [],
       favoriteCharacter: "Buzz Lightyear", favoriteRide: "Slinky Dog Dash",
       thrillTolerance: "low", magicStatus: [],
       accessibilityNeeds: ["avoid-dark", "avoid-loud", "avoid-drops", "avoid-strobes"],

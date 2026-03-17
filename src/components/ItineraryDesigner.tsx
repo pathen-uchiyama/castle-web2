@@ -814,47 +814,104 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
 
           {/* Early Access Window — shows eligible rides when early entry is on and no rides are in the window yet */}
           {hasEarlyEntry && (() => {
-            const earlyWindowEnd = baseRopeDropMin; // regular park open
-            const earlyWindowStart = ropeDropMin; // 30 min before
+            const earlyWindowEnd = baseRopeDropMin;
+            const earlyWindowStart = ropeDropMin;
+            const earlyWindowTotal = 30; // minutes
             const earlyRidesInWindow = ribbon.filter(ri => ri.startMin < earlyWindowEnd);
+            const earlyTimeUsed = earlyRidesInWindow.length > 0
+              ? Math.min(earlyWindowTotal, earlyRidesInWindow[earlyRidesInWindow.length - 1].endMin - earlyWindowStart)
+              : 0;
+            const earlyTimeLeft = Math.max(0, earlyWindowTotal - earlyTimeUsed);
             const earlyAccessAttractions = selectedParks
               .flatMap(p => allParkAttractions[p] || [])
               .filter(a => a.rules.includes("EARLY MORNING ACCESS") && !a.isClosed && !itinerary.some(i => i.attractionId === a.id));
             
-            // Show the early access helper when no rides are placed in that window
-            if (earlyRidesInWindow.length === 0 && earlyAccessAttractions.length > 0) {
+            if (earlyAccessAttractions.length > 0 || earlyRidesInWindow.length > 0) {
               return (
                 <motion.div
                   initial={{ opacity: 0, y: -8 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className="mb-3 p-4 bg-[hsl(var(--gold)/0.08)] border-2 border-dashed border-[hsl(var(--gold)/0.4)]"
+                  className="mb-3 p-4 bg-[hsl(var(--gold)/0.08)] border-2 border-[hsl(var(--gold)/0.3)]"
                   style={{ borderRadius: 0 }}
                 >
-                  <div className="flex items-center gap-2 mb-2">
+                  <div className="flex items-center gap-2 mb-1">
                     <span className="text-base">✨</span>
                     <span className="font-display text-sm text-[hsl(var(--gold-dark))] font-bold uppercase tracking-[0.08em]">
-                      Early Access Window · {formatMin(earlyWindowStart)} – {formatMin(earlyWindowEnd)}
+                      Early Access Window
                     </span>
-                    <span className="text-[0.5625rem] text-[hsl(var(--gold-dark))]/60 ml-auto">30 min · Low waits</span>
+                    <span className="text-[0.5625rem] text-[hsl(var(--gold-dark))]/60 ml-auto">
+                      {formatMin(earlyWindowStart)} – {formatMin(earlyWindowEnd)}
+                    </span>
                   </div>
-                  <p className="text-[0.625rem] text-[hsl(var(--ink-light))] mb-3">
-                    Tap to add a ride to your early entry window — expect 5-15 min waits on headliners
-                  </p>
-                  <div className="flex flex-wrap gap-1.5">
-                    {earlyAccessAttractions.slice(0, 6).map(a => (
-                      <button
-                        key={a.id}
-                        onClick={() => addToItinerary(a)}
-                        disabled={isLocked}
-                        className="flex items-center gap-1.5 px-3 py-2 bg-white border border-[hsl(var(--gold)/0.3)] text-[hsl(var(--ink))] hover:border-[hsl(var(--gold))] hover:bg-[hsl(var(--gold)/0.06)] transition-all duration-200"
-                        style={{ borderRadius: 0, boxShadow: "0 4px 12px rgba(26,26,27,0.04)" }}
-                      >
-                        <Plus className="w-3 h-3 text-[hsl(var(--gold-dark))]" />
-                        <span className="text-[0.625rem] font-display font-medium">{a.name}</span>
-                        <span className="text-[0.5rem] text-[hsl(var(--ink-light))]">~{defaultWaitByCategory[a.waitCategory] || 15}m</span>
-                      </button>
-                    ))}
+                  
+                  {/* Time budget bar */}
+                  <div className="flex items-center gap-2 mb-3">
+                    <div className="flex-1 h-2 bg-[hsl(var(--gold)/0.12)] overflow-hidden" style={{ borderRadius: 0 }}>
+                      <div 
+                        className="h-full bg-[hsl(var(--gold))] transition-all duration-500" 
+                        style={{ width: `${(earlyTimeUsed / earlyWindowTotal) * 100}%` }} 
+                      />
+                    </div>
+                    <span className={`text-[0.625rem] font-display font-bold ${earlyTimeLeft <= 5 ? "text-destructive" : "text-[hsl(var(--gold-dark))]"}`}>
+                      {earlyTimeLeft}m left
+                    </span>
                   </div>
+
+                  {earlyTimeLeft <= 0 ? (
+                    <p className="text-[0.625rem] text-[hsl(var(--gold-dark))] font-medium">
+                      ✓ Early access window is fully planned
+                    </p>
+                  ) : (
+                    <>
+                      <p className="text-[0.625rem] text-[hsl(var(--ink-light))] mb-3">
+                        {earlyRidesInWindow.length === 0 
+                          ? "Pick 1-2 headliners — you won't have time for all of them"
+                          : `Room for ${Math.floor(earlyTimeLeft / 12) > 0 ? Math.floor(earlyTimeLeft / 12) : "maybe 1 more"} ride${Math.floor(earlyTimeLeft / 12) > 1 ? "s" : ""}`
+                        }
+                      </p>
+                      <div className="space-y-1.5">
+                        {earlyAccessAttractions.slice(0, 6).map(a => {
+                          const earlyWait = a.waitCategory ? (earlyAccessWaitByCategory[a.waitCategory] || 5) : 5;
+                          const rideDur = parseInt(a.duration) || DURATION_DEFAULTS[a.type] || 20;
+                          const totalTime = earlyWait + rideDur;
+                          const fitsInWindow = totalTime <= earlyTimeLeft;
+                          
+                          return (
+                            <button
+                              key={a.id}
+                              onClick={() => addToEarlyAccess(a)}
+                              disabled={isLocked || !fitsInWindow}
+                              className={`w-full flex items-center gap-2 px-3 py-2.5 bg-white border text-left transition-all duration-200 ${
+                                fitsInWindow 
+                                  ? "border-[hsl(var(--gold)/0.3)] hover:border-[hsl(var(--gold))] hover:bg-[hsl(var(--gold)/0.04)]"
+                                  : "border-[hsl(var(--border))] opacity-40 cursor-not-allowed"
+                              }`}
+                              style={{ borderRadius: 0, boxShadow: "0 4px 12px rgba(26,26,27,0.04)" }}
+                            >
+                              <Plus className="w-3 h-3 text-[hsl(var(--gold-dark))] shrink-0" />
+                              <span className="text-[0.6875rem] font-display font-medium text-[hsl(var(--ink))] flex-1 truncate">{a.name}</span>
+                              <div className="flex items-center gap-2 shrink-0">
+                                <span className="px-1.5 py-0.5 text-[0.5625rem] bg-[hsl(var(--gold)/0.1)] text-[hsl(var(--gold-dark))] font-medium" style={{ borderRadius: 0 }}>
+                                  ⏱ {earlyWait}m wait
+                                </span>
+                                <span className="px-1.5 py-0.5 text-[0.5625rem] bg-[hsl(var(--ink))]/5 text-[hsl(var(--ink))] font-medium" style={{ borderRadius: 0 }}>
+                                  🎢 {rideDur}m ride
+                                </span>
+                                <span className={`px-1.5 py-0.5 text-[0.5625rem] font-bold ${
+                                  fitsInWindow ? "bg-[hsl(var(--gold)/0.15)] text-[hsl(var(--gold-dark))]" : "bg-destructive/10 text-destructive"
+                                }`} style={{ borderRadius: 0 }}>
+                                  {totalTime}m total
+                                </span>
+                              </div>
+                              {!fitsInWindow && (
+                                <span className="text-[0.5rem] text-destructive shrink-0">Won't fit</span>
+                              )}
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </>
+                  )}
                 </motion.div>
               );
             }

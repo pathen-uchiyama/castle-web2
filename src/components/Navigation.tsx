@@ -51,10 +51,14 @@ const Navigation = () => {
           }}
         />
         <Link to="/" className="relative z-10 flex items-center gap-2.5">
-          <img src={ccLogoLight} alt="Castle Companion" className={`h-[2.375rem] w-auto transition-all duration-500 ${isHome ? "drop-shadow-[0_0_6px_hsla(42,64%,50%,0.4)] brightness-110" : ""}`} />
+          <img
+            src={homeScrolled ? ccLogoDark : ccLogoLight}
+            alt="Castle Companion"
+            className={`h-[2.375rem] w-auto transition-all duration-500 ${isHome ? "drop-shadow-[0_0_6px_hsla(42,64%,50%,0.4)] brightness-110" : ""}`}
+          />
           <span className="brand-wordmark hidden sm:inline-flex items-baseline gap-[0.3em]">
-            <span className={isHome ? "brand-castle-dark" : "brand-castle"}>Castle</span>
-            <span className={isHome ? "brand-companion-dark" : "brand-companion"}>Companion</span>
+            <span className={homeScrolled ? "brand-castle-gold" : (isHome ? "brand-castle" : "brand-castle")}>{`Castle`}</span>
+            <span className={homeScrolled ? "brand-companion-dark" : (isHome ? "brand-companion" : "brand-companion")}>{`Companion`}</span>
           </span>
         </Link>
         <div className="relative z-10 hidden md:flex items-center gap-7 lg:gap-9">

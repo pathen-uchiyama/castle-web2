@@ -34,6 +34,7 @@ const teaserCards = [
 ];
 
 const DayZeroIndex = () => {
+  const navigate = useNavigate();
   const [wizardOpen, setWizardOpen] = useState(false);
 
   return (

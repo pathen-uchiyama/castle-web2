@@ -313,6 +313,89 @@ const ParkGuidePage = ({ parkGuides }: ParkGuidePageProps) => {
                 <HoursDisplay hours={displayHours} label={selectedDate ? format(selectedDate, "MMM d") + " Hours" : "Operating Hours"} />
               </div>
             </motion.div>
+
+            {/* Resort Benefits Callout */}
+            <motion.div {...fade(0.1)} className="mt-8">
+              <p className="label-text mb-4 tracking-[0.2em]">Resort Guest Benefits</p>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                {/* Early Theme Park Entry */}
+                <div className="border border-[hsl(var(--gold)/0.3)] bg-[hsl(var(--gold)/0.04)] rounded-lg p-5 shadow-[var(--shadow-soft)]">
+                  <div className="flex items-center gap-2.5 mb-3">
+                    <span className="text-xl">✨</span>
+                    <h4 className="font-display text-base text-foreground">Early Theme Park Entry</h4>
+                  </div>
+                  <p className="font-editorial text-sm text-muted-foreground leading-relaxed mb-3">
+                    Enter the park <strong className="text-foreground">30 minutes before</strong> regular opening. Ride headliners with minimal waits.
+                  </p>
+                  <div className="flex items-center gap-2 px-3 py-2 bg-[hsl(var(--gold)/0.08)] rounded-md">
+                    <span className="text-[0.625rem] uppercase tracking-[0.1em] text-[hsl(var(--gold-dark))] font-semibold">
+                      🏨 All Disney Resort Hotels
+                    </span>
+                  </div>
+                  {displayHours.earlyEntry && (
+                    <p className="font-display text-sm text-[hsl(var(--gold-dark))] mt-3">
+                      🕐 {displayHours.earlyEntry}
+                    </p>
+                  )}
+                </div>
+
+                {/* Extended Evening Hours */}
+                <div className="border border-[hsl(280,30%,55%,0.25)] bg-[hsl(280,30%,55%,0.03)] rounded-lg p-5 shadow-[var(--shadow-soft)]">
+                  <div className="flex items-center gap-2.5 mb-3">
+                    <span className="text-xl">🌙</span>
+                    <h4 className="font-display text-base text-foreground">Extended Evening Hours</h4>
+                  </div>
+                  <p className="font-editorial text-sm text-muted-foreground leading-relaxed mb-3">
+                    Stay <strong className="text-foreground">2 extra hours</strong> after park close with dramatically shorter lines on top attractions.
+                  </p>
+                  <div className="flex items-center gap-2 px-3 py-2 bg-[hsl(280,30%,55%,0.06)] rounded-md">
+                    <span className="text-[0.625rem] uppercase tracking-[0.1em] text-[hsl(280,30%,45%)] font-semibold">
+                      🏨 Deluxe & Deluxe Villa Resorts Only
+                    </span>
+                  </div>
+                  {displayHours.extendedEvening && (
+                    <p className="font-display text-sm text-[hsl(280,30%,45%)] mt-3">
+                      🕐 {displayHours.extendedEvening}
+                    </p>
+                  )}
+                  <div className="mt-3 flex flex-wrap gap-1.5">
+                    {["Polynesian Village", "Grand Floridian", "Contemporary", "Wilderness Lodge", "Animal Kingdom Lodge", "Riviera", "Beach Club", "BoardWalk"].map(r => (
+                      <span key={r} className="px-2 py-0.5 text-[0.5rem] uppercase tracking-[0.08em] bg-[hsl(280,30%,55%,0.08)] text-[hsl(280,30%,45%)] border border-[hsl(280,30%,55%,0.15)] rounded-sm">
+                        {r}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Why It Matters */}
+                <div className="border border-border bg-card rounded-lg p-5 shadow-[var(--shadow-soft)]">
+                  <div className="flex items-center gap-2.5 mb-3">
+                    <span className="text-xl">⚡</span>
+                    <h4 className="font-display text-base text-foreground">Why It Matters</h4>
+                  </div>
+                  <ul className="space-y-2.5">
+                    <li className="flex items-start gap-2">
+                      <span className="text-[hsl(var(--gold))] mt-0.5">•</span>
+                      <p className="font-editorial text-sm text-muted-foreground leading-relaxed">
+                        Ride <strong className="text-foreground">2–3 headliners</strong> in the early entry window before standby waits spike
+                      </p>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <span className="text-[hsl(var(--gold))] mt-0.5">•</span>
+                      <p className="font-editorial text-sm text-muted-foreground leading-relaxed">
+                        Extended hours see <strong className="text-foreground">5–15 min waits</strong> on rides that average 60–90 min during the day
+                      </p>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <span className="text-[hsl(var(--gold))] mt-0.5">•</span>
+                      <p className="font-editorial text-sm text-muted-foreground leading-relaxed">
+                        On-site guests save <strong className="text-foreground">$50–100/day</strong> in equivalent Lightning Lane value
+                      </p>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </motion.div>
           </section>
 
           {/* Week-at-a-Glance (only when no date selected) */}

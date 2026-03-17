@@ -346,16 +346,16 @@ const ResortHub = () => {
                           {park.typicalCrowds.map(c => (
                             <div key={c.day} className="border rounded-md px-3 py-2 text-center min-w-[90px]"
                               style={{ background: crowdColors[c.level]?.bg, borderColor: `${crowdColors[c.level]?.text}30` }}>
-                              <p className="font-display text-[0.625rem] text-foreground mb-0.5">{c.day}</p>
-                              <p className="text-[0.5rem] uppercase tracking-[0.1em] font-medium" style={{ color: crowdColors[c.level]?.text }}>
+                              <p className="font-display text-xs text-foreground mb-0.5">{c.day}</p>
+                              <p className="text-[0.625rem] uppercase tracking-[0.1em] font-medium" style={{ color: crowdColors[c.level]?.text }}>
                                 {c.level.replace("-", " ")}
                               </p>
                             </div>
                           ))}
                         </div>
                         <div className="flex gap-4 mt-2">
-                          <span className="text-[0.5rem] text-muted-foreground">✅ Best: <strong className="text-foreground">{park.bestDays.join(", ")}</strong></span>
-                          <span className="text-[0.5rem] text-muted-foreground">❌ Avoid: <strong className="text-destructive">{park.worstDays.join(", ")}</strong></span>
+                          <span className="text-xs text-muted-foreground">✅ Best: <strong className="text-foreground">{park.bestDays.join(", ")}</strong></span>
+                          <span className="text-xs text-muted-foreground">❌ Avoid: <strong className="text-destructive">{park.worstDays.join(", ")}</strong></span>
                         </div>
                       </div>
 

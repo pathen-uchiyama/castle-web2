@@ -324,6 +324,7 @@ export const magicKingdomAttractions: ParkAttraction[] = [
     rules: [],
     warnings: [],
     zone: "main-street",
+    scheduledTimes: ["12:00 PM", "3:00 PM"],
   },
   {
     id: "mk-hea", name: "Happily Ever After", parkId: "mk", type: "show", rating: 4.9,

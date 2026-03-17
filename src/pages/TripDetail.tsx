@@ -1083,20 +1083,35 @@ const BookedTripDetail = ({ trip }: { trip: BookedTrip }) => {
                   </p>
                   <div className="space-y-3">
                     {allDiningReservations.filter(d => d.status === "pending").map((res) => (
-                      <div key={res.reservationId} className="border border-dashed border-border bg-card rounded-lg p-4 transition-shadow duration-500 hover:shadow-[var(--shadow-hover)]">
+                      <div key={res.reservationId} className={`border bg-card rounded-lg p-4 transition-shadow duration-500 hover:shadow-[var(--shadow-hover)] ${res.monitoringActive ? "border-[hsl(var(--gold)/0.4)]" : "border-dashed border-border"}`}>
                         <div className="flex items-start justify-between mb-2">
                           <div className="flex items-center gap-2">
                             <span className="text-lg">{mealIcons[res.mealType]}</span>
                             <h4 className="font-display text-foreground">{res.restaurantName}</h4>
                           </div>
-                           <span className="px-2 py-0.5 rounded-md text-[0.5625rem] uppercase tracking-[0.12em] font-medium border" style={{ background: statusColors.pending.bg, color: statusColors.pending.text, borderColor: statusColors.pending.border }}>Pending</span>
+                          <div className="flex items-center gap-2">
+                            {res.monitoringActive && (
+                              <span className="px-2 py-0.5 rounded-md text-[0.5625rem] uppercase tracking-[0.12em] font-medium border border-[hsl(var(--gold)/0.3)] bg-[hsl(var(--gold)/0.08)] text-[hsl(var(--gold-dark))]">📡 Monitoring</span>
+                            )}
+                            <span className="px-2 py-0.5 rounded-md text-[0.5625rem] uppercase tracking-[0.12em] font-medium border" style={{ background: statusColors.pending.bg, color: statusColors.pending.text, borderColor: statusColors.pending.border }}>Pending</span>
+                          </div>
                         </div>
                         <p className="font-editorial text-xs text-muted-foreground mb-2">{res.parkOrResort} · {res.cuisine}</p>
                         <div className="flex flex-wrap gap-4 text-xs">
-                          <span className="font-editorial text-foreground">{res.date} · {res.time}</span>
+                          <span className="font-editorial text-foreground">
+                            {res.date} · {res.time}{res.timeRangeEnd ? ` – ${res.timeRangeEnd}` : ""}
+                          </span>
                           <span className="font-editorial text-muted-foreground">Party of {res.partySize}</span>
                         </div>
                         {res.notes && <p className="font-editorial text-xs text-muted-foreground/60 italic mt-2">{res.notes}</p>}
+                        {res.monitoringActive && (
+                          <div className="mt-2 flex items-start gap-2 px-3 py-2 rounded-lg bg-[hsl(var(--gold)/0.04)] border border-[hsl(var(--gold)/0.15)]">
+                            <span className="text-xs shrink-0">🔍</span>
+                            <p className="font-editorial text-[0.625rem] text-muted-foreground leading-relaxed">
+                              Actively scanning for availability{res.timeRangeEnd ? ` between ${res.time} – ${res.timeRangeEnd}` : ` at ${res.time}`} for a party of {res.partySize}. You'll be notified when a slot opens.
+                            </p>
+                          </div>
+                        )}
                         {overlapMap[res.reservationId] && (
                            <div className="mt-2 flex items-start gap-2 px-2 py-1.5 rounded-md bg-[hsl(var(--destructive)/0.04)] border border-[hsl(var(--destructive)/0.15)]">
                             <span className="text-xs shrink-0">⚠️</span>

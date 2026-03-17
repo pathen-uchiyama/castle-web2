@@ -179,6 +179,12 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
   /* ── Drop zone for research drag ───────────────────────────────── */
   const [dropTargetIdx, setDropTargetIdx] = useState<number | null>(null);
 
+  /* ── Scheduled show placement modal ────────────────────────────── */
+  const [scheduledPlacement, setScheduledPlacement] = useState<{
+    attraction: ParkAttraction;
+    times: string[];
+  } | null>(null);
+
   /* ── Computed ribbon ───────────────────────────────────────────── */
   const ropeDropMin = toMinutes(ropeDrop);
   const leaveMin = toMinutes(leavePark);

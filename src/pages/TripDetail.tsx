@@ -1062,6 +1062,10 @@ const BookedTripDetail = ({ trip }: { trip: BookedTrip }) => {
     toast({ title: "Removed", description: `${experienceName} removed from pending.` });
   };
 
+  // Edit tracking for confirmed reservations
+  const [confirmedDiningEdits, setConfirmedDiningEdits] = useState<Record<string, Partial<DiningReservation>>>({});
+  const [confirmedExpEdits, setConfirmedExpEdits] = useState<Record<string, Partial<BookedExperience>>>({});
+
 
   const handleEditSave = (data: { date: string; time: string; timeRangeEnd?: string; partySize: number; notes: string }) => {
     if (!editModal) return;

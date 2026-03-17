@@ -99,9 +99,21 @@ function computeRibbon(items: ItineraryItem[], ropeDropMin: number, hasStroller:
     const item = items[i];
     const prevZone = i > 0 ? items[i - 1].zone : undefined;
     const walkBuffer = i === 0 ? 0 : getWalkBuffer(prevZone as ParkZone, item.zone as ParkZone, hasStroller);
-    const startMin = currentMin + walkBuffer;
     const checkinTime = getCheckinTime(item);
     const strollerTime = getStrollerParkTime(item, hasStroller);
+
+    // If this item has a scheduled start time, jump the timeline to it
+    // (accounting for check-in — the scheduled time is when the show STARTS,
+    //  so we need to arrive checkinTime minutes early)
+    let startMin = currentMin + walkBuffer;
+    if (item.scheduledStartMin != null) {
+      const arrivalNeeded = item.scheduledStartMin - checkinTime;
+      // Only jump forward — never go backwards in time
+      if (arrivalNeeded > currentMin) {
+        startMin = arrivalNeeded;
+      }
+    }
+
     const totalBlockMin = strollerTime + checkinTime + (item.waitTime || 0) + item.duration;
     const endMin = startMin + totalBlockMin;
 

@@ -1121,7 +1121,22 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
             return (
               <>
                 {/* Gap until park close */}
-                {remainingMin >= 10 && (
+                {remainingMin >= 5 && remainingMin < 15 ? (
+                  /* Short remaining gap — suggest quick activities */
+                  <div className="my-2 border-2 border-dashed flex flex-col items-center justify-center border-[hsl(var(--ink-light)/0.25)] bg-[hsl(var(--ink)/0.02)]"
+                    style={{ borderRadius: "0.75rem", minHeight: "56px" }}
+                  >
+                    <div className="flex items-center gap-2 mb-1">
+                      <span className="text-base">⏱</span>
+                      <span className="font-display text-sm text-[hsl(var(--ink))] font-medium">{remainingMin}m until departure</span>
+                    </div>
+                    <div className="flex flex-wrap gap-1.5 mt-1.5 justify-center px-3">
+                      <span className="px-2 py-1 text-[0.5625rem] bg-[hsl(var(--muted))] text-[hsl(var(--ink-light))] border border-[hsl(var(--border))]/50" style={{ borderRadius: 0 }}>🚶 Walk toward exit</span>
+                      <span className="px-2 py-1 text-[0.5625rem] bg-[hsl(var(--muted))] text-[hsl(var(--ink-light))] border border-[hsl(var(--border))]/50" style={{ borderRadius: 0 }}>📸 Last photos</span>
+                      <span className="px-2 py-1 text-[0.5625rem] bg-[hsl(var(--muted))] text-[hsl(var(--ink-light))] border border-[hsl(var(--border))]/50" style={{ borderRadius: 0 }}>🛍 Gift shop stop</span>
+                    </div>
+                  </div>
+                ) : remainingMin >= 15 ? (
                   <div
                     className={`my-2 border-2 border-dashed flex flex-col items-center justify-center transition-colors duration-200 ${
                       dropTargetIdx === ribbon.length
@@ -1151,7 +1166,7 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
                       </span>
                     )}
                   </div>
-                )}
+                ) : null}
 
                 {/* Planned departure waypoint */}
                 <div className="flex items-center gap-3 mt-2 p-3 bg-[hsl(var(--ink)/0.04)] border border-dashed border-[hsl(var(--ink)/0.15)]" style={{ borderRadius: 0 }}>

@@ -714,6 +714,11 @@ export const mockData: AppData = {
     email: "patchen@example.com",
     memberSince: "January 2024",
     adventuresCompleted: 12,
+    birthday: "June 15",
+    favoriteCharacter: "Goofy",
+    favoriteRide: "Rise of the Resistance",
+    accessibilityNeeds: [],
+    sensoryNotes: "",
     subscription: {
       planName: "Royal Charter",
       planDescription: "Unlimited adventures · Priority Lightning Lane · Family sync",

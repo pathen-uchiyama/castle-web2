@@ -1468,15 +1468,26 @@ const BookedTripDetail = ({ trip }: { trip: BookedTrip }) => {
                             </div>
                           </div>
                         )}
-                        {/* Cancel confirmed */}
+                        {/* Edit / Cancel confirmed */}
                         <div className="mt-3 pt-2 border-t border-border/50 flex items-center justify-between">
                           <span className="font-editorial text-[0.625rem] text-muted-foreground/50">#{res.confirmationNumber}</span>
-                          <button
-                            onClick={() => handleCancelDining(res.reservationId, res.restaurantName)}
-                            className="text-[0.5625rem] uppercase tracking-[0.12em] font-medium text-destructive/60 hover:text-destructive transition-colors"
-                          >
-                            Cancel Reservation
-                          </button>
+                          <div className="flex items-center gap-3">
+                            <button
+                              onClick={() => setEditModal({
+                                type: "dining", isConfirmed: true, itemId: res.reservationId,
+                                currentData: { name: res.restaurantName, location: res.parkOrResort, date: res.date, time: res.time, timeRangeEnd: res.timeRangeEnd, partySize: res.partySize, notes: res.notes, mealType: res.mealType }
+                              })}
+                              className="text-[0.5625rem] uppercase tracking-[0.12em] font-medium text-muted-foreground hover:text-foreground transition-colors"
+                            >
+                              Edit
+                            </button>
+                            <button
+                              onClick={() => handleCancelDining(res.reservationId, res.restaurantName)}
+                              className="text-[0.5625rem] uppercase tracking-[0.12em] font-medium text-destructive/60 hover:text-destructive transition-colors"
+                            >
+                              Cancel Reservation
+                            </button>
+                          </div>
                         </div>
                       </div>
                     ))}

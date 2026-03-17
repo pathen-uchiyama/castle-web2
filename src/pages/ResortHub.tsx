@@ -300,15 +300,23 @@ const ResortHub = () => {
                         <div className="flex items-center gap-3">
                           <span className="text-3xl">{park.icon}</span>
                           <div>
-                            <h3 className="font-display text-2xl text-foreground">{park.name}</h3>
+                            <Link to={`/parks/${park.parkId}`} className="hover:text-[hsl(var(--gold-dark))] transition-colors duration-300">
+                              <h3 className="font-display text-2xl text-foreground">{park.name}</h3>
+                            </Link>
                             <p className="font-editorial text-sm text-muted-foreground">{park.tagline} · {park.size} · Est. {park.opened}</p>
                           </div>
                         </div>
-                         <span className={`px-3 py-1 rounded-md text-[0.5625rem] uppercase tracking-[0.12em] border ${
-                           park.type === "water-park" ? "bg-[hsl(200,70%,50%,0.1)] text-[hsl(200,70%,40%)] border-[hsl(200,70%,50%,0.2)]" : "bg-[hsl(var(--gold)/0.1)] text-[hsl(var(--gold-dark))] border-[hsl(var(--gold)/0.2)]"
-                         }`}>
-                          {park.type === "water-park" ? "Water Park" : "Theme Park"}
-                        </span>
+                        <div className="flex items-center gap-3 shrink-0">
+                          <Link to={`/parks/${park.parkId}`}
+                            className="px-3 py-1.5 rounded-md text-xs uppercase tracking-[0.1em] border border-[hsl(var(--gold)/0.3)] bg-[hsl(var(--gold)/0.06)] text-[hsl(var(--gold-dark))] hover:bg-[hsl(var(--gold)/0.12)] transition-colors font-medium">
+                            View Guide →
+                          </Link>
+                          <span className={`px-3 py-1 rounded-md text-xs uppercase tracking-[0.1em] border ${
+                            park.type === "water-park" ? "bg-[hsl(200,70%,50%,0.1)] text-[hsl(200,70%,40%)] border-[hsl(200,70%,50%,0.2)]" : "bg-[hsl(var(--gold)/0.1)] text-[hsl(var(--gold-dark))] border-[hsl(var(--gold)/0.2)]"
+                          }`}>
+                            {park.type === "water-park" ? "Water Park" : "Theme Park"}
+                          </span>
+                        </div>
                       </div>
 
                       <p className="font-editorial text-sm text-foreground/80 leading-relaxed mb-6 max-w-3xl">{park.description}</p>

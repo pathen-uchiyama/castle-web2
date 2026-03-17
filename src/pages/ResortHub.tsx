@@ -758,14 +758,14 @@ const ResortHub = () => {
                         <p className="font-editorial text-sm text-foreground/80 leading-relaxed mb-3">{t.description}</p>
                         <div className="flex flex-wrap gap-4 mb-3">
                           <div>
-                            <p className="text-[0.4375rem] uppercase tracking-[0.12em] text-muted-foreground mb-1">Cost</p>
+                            <p className="text-[0.5625rem] uppercase tracking-[0.12em] text-muted-foreground mb-1">Cost</p>
                             <p className="font-display text-sm text-foreground">{t.cost}</p>
                           </div>
                           <div className="flex-1">
-                            <p className="text-[0.4375rem] uppercase tracking-[0.12em] text-muted-foreground mb-1">Serves</p>
+                            <p className="text-[0.5625rem] uppercase tracking-[0.12em] text-muted-foreground mb-1">Serves</p>
                             <div className="flex flex-wrap gap-1">
                               {t.servesAreas.map(a => (
-                                <span key={a} className="text-[0.5rem] px-2 py-0.5 rounded-md bg-muted text-muted-foreground border border-border">{a}</span>
+                                <span key={a} className="text-xs px-2 py-0.5 rounded-md bg-muted text-muted-foreground border border-border">{a}</span>
                               ))}
                             </div>
                           </div>

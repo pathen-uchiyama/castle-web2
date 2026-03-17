@@ -54,12 +54,12 @@ const Footer = () => (
               </Link>
             </li>
             <li>
-              <Link to="/privacy#ccpa" className="font-editorial text-sm text-muted-foreground hover:text-foreground transition-colors duration-300">
-                CCPA / CPRA Notice
+              <Link to="/privacy-ca" className="font-editorial text-sm text-muted-foreground hover:text-foreground transition-colors duration-300">
+                California Privacy Notice
               </Link>
             </li>
             <li>
-              <Link to="/privacy#do-not-sell" className="font-editorial text-sm text-muted-foreground hover:text-foreground transition-colors duration-300">
+              <Link to="/do-not-sell" className="font-editorial text-sm text-muted-foreground hover:text-foreground transition-colors duration-300">
                 Do Not Sell My Info
               </Link>
             </li>

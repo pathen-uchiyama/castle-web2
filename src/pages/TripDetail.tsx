@@ -625,13 +625,14 @@ const BookedTripDetail = ({ trip }: { trip: BookedTrip }) => {
 
   const hasAnyOverlaps = Object.keys(overlapMap).length > 0;
 
-  const handleBookDining = (venue: DiningVenue, data: { date: string; time: string; partySize: number; notes: string }) => {
+  const handleBookDining = (venue: DiningVenue, data: { date: string; time: string; timeRangeEnd?: string; partySize: number; notes: string; monitoringActive: boolean }) => {
     const newRes: DiningReservation = {
       reservationId: `din-pending-${Date.now()}`,
       restaurantName: venue.name,
       parkOrResort: venue.parkOrResort,
       date: data.date,
       time: data.time,
+      timeRangeEnd: data.timeRangeEnd,
       partySize: data.partySize,
       confirmationNumber: "Pending",
       cuisine: venue.cuisine,
@@ -639,14 +640,20 @@ const BookedTripDetail = ({ trip }: { trip: BookedTrip }) => {
       notes: data.notes || undefined,
       dietaryFlags: venue.dietaryAccommodations.length > 0 ? venue.dietaryAccommodations.slice(0, 2) : undefined,
       status: "pending",
+      monitoringActive: data.monitoringActive,
     };
     setPendingDining(prev => [...prev, newRes]);
     setBookingModal(null);
     setDiningSubTab("reservations");
-    toast({ title: "Reservation added", description: `${venue.name} added as pending. Update with confirmation once booked.` });
+    toast({
+      title: data.monitoringActive ? "📡 Monitoring started" : "Reservation added",
+      description: data.monitoringActive
+        ? `${venue.name} added as pending. We're watching for availability on ${data.date}${data.timeRangeEnd ? ` (${data.time} – ${data.timeRangeEnd})` : ` at ${data.time}`} for ${data.partySize}.`
+        : `${venue.name} added as pending. Update with confirmation once booked.`,
+    });
   };
 
-  const handleBookExperience = (venue: ExperienceVenue, data: { date: string; time: string; partySize: number; notes: string }) => {
+  const handleBookExperience = (venue: ExperienceVenue, data: { date: string; time: string; timeRangeEnd?: string; partySize: number; notes: string; monitoringActive: boolean }) => {
     const newExp: BookedExperience = {
       experienceId: `exp-pending-${Date.now()}`,
       experienceName: venue.name,
@@ -654,16 +661,23 @@ const BookedTripDetail = ({ trip }: { trip: BookedTrip }) => {
       parkOrResort: venue.parkOrResort,
       date: data.date,
       time: data.time,
+      timeRangeEnd: data.timeRangeEnd,
       duration: venue.duration,
       partySize: data.partySize,
       confirmationNumber: "Pending",
       notes: data.notes || undefined,
       status: "pending",
+      monitoringActive: data.monitoringActive,
     };
     setPendingExperiences(prev => [...prev, newExp]);
     setBookingModal(null);
     setExperienceSubTab("reservations");
-    toast({ title: "Experience added", description: `${venue.name} added as pending. Update with confirmation once booked.` });
+    toast({
+      title: data.monitoringActive ? "📡 Monitoring started" : "Experience added",
+      description: data.monitoringActive
+        ? `${venue.name} added as pending. Monitoring for availability on ${data.date}${data.timeRangeEnd ? ` (${data.time} – ${data.timeRangeEnd})` : ` at ${data.time}`}.`
+        : `${venue.name} added as pending. Update with confirmation once booked.`,
+    });
   };
 
   const handleSetAlert = (type: "dining" | "experience", venueName: string, opensDate: string, note: string) => {

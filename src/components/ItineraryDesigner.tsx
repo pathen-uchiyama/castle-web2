@@ -1131,18 +1131,13 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
                           📋 Check-in {checkinTime}m
                         </span>
                       )}
-                      {wait > 0 && (
-                        <span className="flex items-center gap-0.5 px-2 py-1 bg-[hsl(var(--destructive)/0.06)] text-[0.5625rem] text-destructive font-medium" style={{ borderRadius: 0 }}>
-                          ⏱ Wait {wait}m
-                        </span>
-                      )}
                       <span className={`flex items-center gap-0.5 px-2 py-1 text-[0.5625rem] font-medium ${
                         isMeal ? "bg-[hsl(var(--gold)/0.08)] text-[hsl(var(--gold-dark))]" :
                         isExperience ? "bg-[hsl(280,30%,55%,0.08)] text-[hsl(280,30%,45%)]" :
                         isBreak ? "bg-[hsl(var(--muted))] text-[hsl(var(--ink-light))]" :
                         "bg-[hsl(var(--ink))]/5 text-[hsl(var(--ink))]"
                       }`} style={{ borderRadius: 0 }}>
-                        {isBreak ? "⏸" : isMeal ? "🍽" : isExperience ? "🎭" : "🎢"} {item.duration}m
+                        {isBreak ? "⏸" : isMeal ? "🍽" : isExperience ? "🎭" : "🎢"} {item.duration}m ride
                       </span>
                       {item.llType && item.llType !== "none" && (
                         <span className="px-2 py-1 text-[0.5rem] uppercase tracking-[0.08em] bg-[hsl(var(--accent))] text-[hsl(var(--accent-foreground))] border border-[hsl(var(--border))]" style={{ borderRadius: 0 }}>
@@ -1151,18 +1146,8 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
                       )}
                     </div>
 
-                    {/* Visual time bar */}
-                    <div className="mt-1.5 flex h-1.5 overflow-hidden bg-[#F9F7F2]">
-                      {strollerTime > 0 && <div className="bg-[hsl(var(--gold)/0.3)]" style={{ width: `${(strollerTime / totalBlockMin) * 100}%` }} />}
-                      {checkinTime > 0 && <div className="bg-[hsl(280,30%,55%,0.3)]" style={{ width: `${(checkinTime / totalBlockMin) * 100}%` }} />}
-                      {wait > 0 && <div className="bg-destructive/25" style={{ width: `${(wait / totalBlockMin) * 100}%` }} />}
-                      <div className={`${
-                        isMeal ? "bg-[hsl(var(--gold)/0.4)]" :
-                        isExperience ? "bg-[hsl(280,30%,55%,0.4)]" :
-                        isBreak ? "bg-[hsl(var(--ink-light))]/20" :
-                        "bg-[hsl(var(--ink))]/20"
-                      }`} style={{ width: `${(item.duration / totalBlockMin) * 100}%` }} />
-                    </div>
+                    {/* Separator line */}
+                    <div className="mt-2 h-px bg-[hsl(var(--border))]" />
 
                     {item.notes && (
                       <p className="font-sans text-xs text-[hsl(var(--ink-light))] mt-2 italic" style={{ letterSpacing: "-0.02em" }}>{item.notes}</p>
@@ -1545,17 +1530,11 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
                       </span>
                     </div>
 
-                    {/* Time breakdown bar */}
-                    <div className="w-full mt-2 flex items-center gap-2">
-                      <div className="flex-1 flex h-2.5 overflow-hidden bg-[#F9F7F2]">
-                        <div className="bg-destructive/25" style={{ width: `${(estWait / totalBlockEst) * 100}%` }} />
-                        <div className="bg-[hsl(var(--ink))]/10" style={{ width: `${(rideDur / totalBlockEst) * 100}%` }} />
-                      </div>
-                      <div className="flex items-center gap-1.5 shrink-0">
-                        <span className="text-[0.5625rem] text-destructive font-medium">⏱ {estWait}m</span>
-                        <span className="text-[hsl(var(--ink-light))]/30 text-[0.5625rem]">·</span>
-                        <span className="text-[0.5625rem] text-[hsl(var(--ink))] font-medium">🎢 {rideDur}m</span>
-                      </div>
+                    {/* Time info */}
+                    <div className="w-full mt-2 pt-2 border-t border-[hsl(var(--border))] flex items-center gap-2">
+                      <span className="text-[0.5625rem] text-destructive font-medium">⏱ {estWait}m wait</span>
+                      <span className="text-[hsl(var(--ink-light))]/30 text-[0.5625rem]">·</span>
+                      <span className="text-[0.5625rem] text-[hsl(var(--ink))] font-medium">🎢 {rideDur}m ride</span>
                     </div>
 
                     {/* Zone badge + Early Access badge */}

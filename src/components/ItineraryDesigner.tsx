@@ -802,15 +802,59 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
             })}
           </Reorder.Group>
 
-          {/* End of day marker */}
-          {ribbon.length > 0 && (
-            <div className="flex items-center gap-2 mt-4 ml-4">
-              <div className="flex-1 border-t-2 border-[hsl(var(--ink))]" />
-              <span className="px-3 py-1.5 bg-[hsl(var(--ink))] text-[#F9F7F2] text-xs uppercase tracking-[0.12em] font-medium" style={{ borderRadius: 0 }}>
-                🚗 End of Day · {ribbon.length > 0 ? formatMin(ribbon[ribbon.length - 1].endMin) : leavePark}
-              </span>
-            </div>
-          )}
+          {/* Remaining time until park close + planned departure */}
+          {ribbon.length > 0 && (() => {
+            const lastEnd = ribbon[ribbon.length - 1].endMin;
+            const lastZone = ribbon[ribbon.length - 1].item.zone;
+            const remainingMin = Math.max(0, leaveMin - lastEnd);
+            const remainingHeight = remainingMin >= 10 ? Math.max(60, Math.min(remainingMin * 1.2, 220)) : 0;
+
+            return (
+              <>
+                {/* Gap until park close */}
+                {remainingMin >= 10 && (
+                  <div
+                    className={`my-1 border-2 border-dashed flex flex-col items-center justify-center transition-colors duration-200 ${
+                      dropTargetIdx === ribbon.length
+                        ? "border-[hsl(var(--gold))] bg-[hsl(var(--gold)/0.12)]"
+                        : "border-[hsl(var(--gold)/0.35)] bg-[hsl(var(--gold)/0.04)]"
+                    }`}
+                    style={{ borderRadius: 0, minHeight: `${remainingHeight}px` }}
+                    onDragOver={(e) => { e.preventDefault(); setDropTargetIdx(ribbon.length); }}
+                    onDragLeave={() => setDropTargetIdx(null)}
+                    onDrop={(e) => handleDropOnZone(e, ribbon.length)}
+                  >
+                    <div className="flex items-center gap-2 mb-1">
+                      <span className="text-xl">⏳</span>
+                      <span className="font-display text-lg text-[hsl(var(--gold-dark))] font-bold">{remainingMin}m open</span>
+                    </div>
+                    <p className="text-xs text-[hsl(var(--ink-light))]">
+                      ~{Math.floor(remainingMin / 25)} rides could fit · {formatMin(lastEnd)} → {formatMin(leaveMin)}
+                    </p>
+                    {lastZone && (
+                      <span className="mt-1.5 text-[0.5625rem] uppercase tracking-[0.1em] px-2.5 py-1 bg-[hsl(var(--gold)/0.12)] text-[hsl(var(--gold-dark))]" style={{ borderRadius: 0 }}>
+                        📍 Near {zoneLabel(lastZone)} · Drag here to fill
+                      </span>
+                    )}
+                  </div>
+                )}
+
+                {/* Planned departure waypoint */}
+                <div className="flex items-center gap-3 mt-2 p-3 bg-[hsl(var(--ink)/0.04)] border border-dashed border-[hsl(var(--ink)/0.15)]" style={{ borderRadius: 0 }}>
+                  <div className="text-center shrink-0 w-16">
+                    <span className="font-display text-sm text-[hsl(var(--ink-light))] font-bold leading-none">{leavePark}</span>
+                    <span className="text-[0.5rem] text-[hsl(var(--ink-light))]/50 block">Planned</span>
+                  </div>
+                  <div className="border-l border-[hsl(var(--ink)/0.15)] pl-3 flex-1">
+                    <p className="font-display text-sm text-[hsl(var(--ink-light))]">🚗 Planned Departure</p>
+                    <p className="text-[0.625rem] text-[hsl(var(--ink-light))]/60 mt-0.5">
+                      Park closes at {leavePark} · Head toward exit for transport
+                    </p>
+                  </div>
+                </div>
+              </>
+            );
+          })()}
 
           {/* Quick-add strip */}
           {!isLocked && (

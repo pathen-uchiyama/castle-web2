@@ -141,15 +141,33 @@ const premiumOptions = [
 ];
 
 const wdwParks = [
-  { id: "mk", label: "Magic Kingdom" },
-  { id: "epcot", label: "EPCOT" },
-  { id: "hs", label: "Hollywood Studios" },
-  { id: "ak", label: "Animal Kingdom" },
+  { id: "mk", label: "Magic Kingdom", icon: "🏰" },
+  { id: "epcot", label: "EPCOT", icon: "🌐" },
+  { id: "hs", label: "Hollywood Studios", icon: "🎬" },
+  { id: "ak", label: "Animal Kingdom", icon: "🌿" },
+  { id: "typhoon", label: "Typhoon Lagoon", icon: "🌊" },
+  { id: "blizzard", label: "Blizzard Beach", icon: "❄️" },
+];
+
+const wdwNonParkDays = [
+  { id: "rest", label: "Rest Day", icon: "😴", desc: "Resort pool, spa, or Downtown Disney" },
+  { id: "travel-arrive", label: "Arrival Day", icon: "✈️", desc: "Travel + settle in at resort" },
+  { id: "travel-depart", label: "Departure Day", icon: "🧳", desc: "Pack up + travel home" },
+  { id: "resort", label: "Resort Day", icon: "🏊", desc: "Pool, dining, mini golf, resort hopping" },
+  { id: "springs", label: "Disney Springs", icon: "🛍", desc: "Shopping, dining, entertainment" },
 ];
 
 const dlrParks = [
-  { id: "dl", label: "Disneyland Park" },
-  { id: "dca", label: "California Adventure" },
+  { id: "dl", label: "Disneyland Park", icon: "🏰" },
+  { id: "dca", label: "California Adventure", icon: "🎡" },
+];
+
+const dlrNonParkDays = [
+  { id: "rest", label: "Rest Day", icon: "😴", desc: "Hotel pool & relax" },
+  { id: "travel-arrive", label: "Arrival Day", icon: "✈️", desc: "Travel + settle in" },
+  { id: "travel-depart", label: "Departure Day", icon: "🧳", desc: "Pack up + travel home" },
+  { id: "resort", label: "Resort Day", icon: "🏊", desc: "Hotel, pool, Downtown Disney" },
+  { id: "downtown", label: "Downtown Disney", icon: "🛍", desc: "Shopping & dining district" },
 ];
 
 const relationshipOptions = ["Self", "Spouse", "Child", "Parent", "Friend", "Relative"];

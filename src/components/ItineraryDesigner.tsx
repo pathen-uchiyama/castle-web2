@@ -770,6 +770,55 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
             </div>
           </div>
 
+          {/* Early Access Window — shows eligible rides when early entry is on and no rides are in the window yet */}
+          {hasEarlyEntry && (() => {
+            const earlyWindowEnd = baseRopeDropMin; // regular park open
+            const earlyWindowStart = ropeDropMin; // 30 min before
+            const earlyRidesInWindow = ribbon.filter(ri => ri.startMin < earlyWindowEnd);
+            const earlyAccessAttractions = selectedParks
+              .flatMap(p => allParkAttractions[p] || [])
+              .filter(a => a.rules.includes("EARLY MORNING ACCESS") && !a.isClosed && !itinerary.some(i => i.attractionId === a.id));
+            
+            // Show the early access helper when no rides are placed in that window
+            if (earlyRidesInWindow.length === 0 && earlyAccessAttractions.length > 0) {
+              return (
+                <motion.div
+                  initial={{ opacity: 0, y: -8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="mb-3 p-4 bg-[hsl(var(--gold)/0.08)] border-2 border-dashed border-[hsl(var(--gold)/0.4)]"
+                  style={{ borderRadius: 0 }}
+                >
+                  <div className="flex items-center gap-2 mb-2">
+                    <span className="text-base">✨</span>
+                    <span className="font-display text-sm text-[hsl(var(--gold-dark))] font-bold uppercase tracking-[0.08em]">
+                      Early Access Window · {formatMin(earlyWindowStart)} – {formatMin(earlyWindowEnd)}
+                    </span>
+                    <span className="text-[0.5625rem] text-[hsl(var(--gold-dark))]/60 ml-auto">30 min · Low waits</span>
+                  </div>
+                  <p className="text-[0.625rem] text-[hsl(var(--ink-light))] mb-3">
+                    Tap to add a ride to your early entry window — expect 5-15 min waits on headliners
+                  </p>
+                  <div className="flex flex-wrap gap-1.5">
+                    {earlyAccessAttractions.slice(0, 6).map(a => (
+                      <button
+                        key={a.id}
+                        onClick={() => addToItinerary(a)}
+                        disabled={isLocked}
+                        className="flex items-center gap-1.5 px-3 py-2 bg-white border border-[hsl(var(--gold)/0.3)] text-[hsl(var(--ink))] hover:border-[hsl(var(--gold))] hover:bg-[hsl(var(--gold)/0.06)] transition-all duration-200"
+                        style={{ borderRadius: 0, boxShadow: "0 4px 12px rgba(26,26,27,0.04)" }}
+                      >
+                        <Plus className="w-3 h-3 text-[hsl(var(--gold-dark))]" />
+                        <span className="text-[0.625rem] font-display font-medium">{a.name}</span>
+                        <span className="text-[0.5rem] text-[hsl(var(--ink-light))]">~{defaultWaitByCategory[a.waitCategory] || 15}m</span>
+                      </button>
+                    ))}
+                  </div>
+                </motion.div>
+              );
+            }
+            return null;
+          })()}
+
           {/* The Ribbon — Reorder list */}
           <Reorder.Group
             axis="y"

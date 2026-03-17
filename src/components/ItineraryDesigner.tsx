@@ -150,7 +150,8 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
 
   const [ropeDrop, setRopeDrop] = useState("7:30 AM");
   const [leavePark, setLeavePark] = useState("10:00 PM");
-  const [hasEarlyEntry, setHasEarlyEntry] = useState(true); // Resort guests get 30 min early entry
+  const [hasEarlyEntry, setHasEarlyEntry] = useState(true);
+  const [hasExtendedHours, setHasExtendedHours] = useState(false); // Deluxe resort guests get +2 hrs
 
   /* ── Stroller toggle ───────────────────────────────────────────── */
   const activeMembers = useMemo(

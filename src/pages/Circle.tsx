@@ -9,6 +9,8 @@ import headerCircle from "@/assets/header-circle.jpg";
 import type { PartyMember, RideSensitivity } from "@/data/types";
 
 const calcAge = (bd?: string) => { if (!bd) return undefined; const d = new Date(bd); const now = new Date(); let a = now.getFullYear() - d.getFullYear(); if (now.getMonth() < d.getMonth() || (now.getMonth() === d.getMonth() && now.getDate() < d.getDate())) a--; return a; };
+
+const ALL_SENSITIVITIES: { id: RideSensitivity; label: string; icon: string }[] = [
   { id: "thrill-rides", label: "Thrill Rides", icon: "🎢" },
   { id: "spinning", label: "Spinning", icon: "🌀" },
   { id: "dark-rides", label: "Dark Rides", icon: "🌑" },

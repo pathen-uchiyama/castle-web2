@@ -334,7 +334,15 @@ const TripWizard = ({ open, onClose, onComplete }: TripWizardProps) => {
     }
     // When moving to park schedule page, sync the schedule
     if (currentStep === 2) syncSchedule();
-    if (isLast) { onClose(); return; }
+    if (isLast) {
+      // Generate a trip ID from the adventure title
+      const tripId = data.adventureTitle
+        ? data.adventureTitle.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "")
+        : `trip-${Date.now()}`;
+      onClose();
+      if (onComplete) onComplete(tripId);
+      return;
+    }
     setCurrentStep((s) => s + 1);
   };
   const handleBack = () => { if (!isFirst) setCurrentStep((s) => s - 1); };

@@ -863,6 +863,12 @@ const BookedTripDetail = ({ trip }: { trip: BookedTrip }) => {
   const [confirmedExpCancelled, setConfirmedExpCancelled] = useState<string[]>([]);
   const [bookingModal, setBookingModal] = useState<{ type: "dining" | "experience"; venue: DiningVenue | ExperienceVenue } | null>(null);
   const [alertModal, setAlertModal] = useState<{ type: "dining" | "experience"; venueName: string; opensDate: string } | null>(null);
+  const [editModal, setEditModal] = useState<{
+    type: "dining" | "experience";
+    isConfirmed: boolean;
+    itemId: string;
+    currentData: EditModalProps["currentData"];
+  } | null>(null);
   const { destination, tripName, countdownDays, travelLegs, diningReservations, bookedExperiences, diningVenues, experienceVenues } = trip;
   const { partySurvey } = mockData;
 

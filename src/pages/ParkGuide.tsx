@@ -301,6 +301,98 @@ const NewsCard = ({ item }: { item: ParkNewsItem }) => {
   );
 };
 
+// ── Dining Card Component ──
+const DiningCard = ({ restaurant: r }: { restaurant: ResortRestaurant }) => {
+  const [expanded, setExpanded] = useState(false);
+  const serviceIcons: Record<string, string> = {
+    "table-service": "🍽️", "quick-service": "🥡", "signature": "✨", "character-dining": "👸",
+    "snack": "🍿", "lounge": "🍸", "buffet": "🍛", "dinner-show": "🎭", "food-truck": "🚚",
+    "kiosk": "☕", "prix-fixe": "🎩",
+  };
+  const difficultyColors: Record<string, string> = {
+    easy: "hsl(142, 60%, 38%)", moderate: "hsl(var(--gold-dark))", hard: "hsl(25, 85%, 50%)", legendary: "hsl(var(--destructive))",
+  };
+
+  return (
+    <div
+      className="border border-border bg-card rounded-lg shadow-[var(--shadow-soft)] hover:shadow-[var(--shadow-hover)] transition-all duration-500 cursor-pointer group overflow-hidden"
+      onClick={() => setExpanded(!expanded)}
+    >
+      <div className="p-5">
+        <div className="flex items-start justify-between gap-3 mb-2">
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center gap-2 mb-1 flex-wrap">
+              <span className="text-lg">{serviceIcons[r.serviceType] || "🍽️"}</span>
+              <h3 className="font-display text-lg text-foreground group-hover:text-[hsl(var(--gold-dark))] transition-colors duration-500">{r.name}</h3>
+              {r.characterDining && <span className="text-xs px-2 py-0.5 rounded-full bg-[hsl(var(--gold)/0.1)] text-[hsl(var(--gold-dark))] border border-[hsl(var(--gold)/0.2)]">👸 Character Dining</span>}
+            </div>
+            <p className="text-sm text-muted-foreground">{r.locationArea} · {r.cuisine}</p>
+          </div>
+          <div className="flex items-center gap-1.5 shrink-0 flex-wrap justify-end">
+            <span className="px-2 py-1 rounded-lg text-sm font-display text-[hsl(var(--gold-dark))]">{r.priceRange}</span>
+            {r.requiresReservation && (
+              <span className="px-2 py-1 rounded-lg text-xs uppercase tracking-[0.08em] border border-border font-medium" style={{ color: difficultyColors[r.reservationDifficulty] }}>
+                {r.reservationDifficulty}
+              </span>
+            )}
+          </div>
+        </div>
+
+        {/* Dietary accommodations */}
+        {r.dietaryAccommodations.length > 0 && (
+          <div className="flex gap-1.5 flex-wrap mb-3">
+            {r.dietaryAccommodations.map((d) => (
+              <span key={d} className="inline-flex items-center text-xs px-2 py-0.5 rounded-full border border-[hsl(142,60%,45%,0.25)] bg-[hsl(142,60%,45%,0.06)] text-[hsl(142,60%,35%)]">
+                🥬 {d}
+              </span>
+            ))}
+          </div>
+        )}
+
+        <p className="font-editorial text-sm text-foreground/80 leading-relaxed mb-3">{r.description}</p>
+
+        <div className="flex flex-wrap gap-2 items-center">
+          <span className="text-xs text-muted-foreground">{r.mealPeriods.map((m) => m.charAt(0).toUpperCase() + m.slice(1)).join(" · ")}</span>
+          {r.rating > 0 && (
+            <span className="text-xs text-[hsl(var(--gold-dark))]">★ {r.rating} ({r.reviewCount.toLocaleString()})</span>
+          )}
+          {r.kidFriendly && <span className="text-xs px-2 py-0.5 bg-muted text-muted-foreground border border-border rounded-lg">👶 Kid-Friendly</span>}
+        </div>
+      </div>
+
+      <AnimatePresence>
+        {expanded && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.3, ease }}
+            className="overflow-hidden"
+          >
+            <div className="px-5 pb-5 pt-2 border-t border-border/50 space-y-3">
+              {r.signatureItems.length > 0 && (
+                <div>
+                  <p className="label-text mb-1.5">Signature Items</p>
+                  <div className="flex flex-wrap gap-1.5">
+                    {r.signatureItems.map((item) => (
+                      <span key={item} className="text-xs px-2.5 py-1 bg-[hsl(var(--gold)/0.06)] text-foreground border border-[hsl(var(--gold)/0.15)] rounded-lg">{item}</span>
+                    ))}
+                  </div>
+                </div>
+              )}
+              <div className="pl-3 border-l-2 border-[hsl(var(--gold)/0.3)]">
+                <p className="font-editorial text-sm text-muted-foreground italic">💡 {r.insiderTip}</p>
+              </div>
+              {r.priceNote && <p className="font-editorial text-xs text-muted-foreground">{r.priceNote}</p>}
+              {r.dressCode && <p className="font-editorial text-xs text-muted-foreground">👔 {r.dressCode}</p>}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+};
+
 const ParkGuidePage = ({ parkGuides }: ParkGuidePageProps) => {
   const { parkId } = useParams();
   const [activeTab, setActiveTab] = useState("intel");

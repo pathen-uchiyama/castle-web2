@@ -752,46 +752,52 @@ const TripWizard = ({ open, onClose, onComplete, guestName = "" }: TripWizardPro
                                     </div>
                                   )}
 
-                                  {/* Theme parks */}
-                                  <p className="mb-1.5" style={{ fontFamily: brand.font.body, fontSize: "0.5625rem", color: brand.slate, textTransform: "uppercase", letterSpacing: "0.15em" }}>Theme Parks</p>
+                                  {/* Theme parks — multi-select for park hopping */}
+                                  <p className="mb-1.5" style={{ fontFamily: brand.font.body, fontSize: "0.5625rem", color: brand.slate, textTransform: "uppercase", letterSpacing: "0.15em" }}>Theme Parks (select multiple to park-hop)</p>
                                   <div className="grid grid-cols-2 gap-2 mb-3">
-                                    {parks.map((park) => (
-                                      <button
-                                        key={park.id}
-                                        onClick={() => setParkForDay(ps.date, park.id)}
-                                        className="px-3 py-2.5 text-xs transition-all duration-300 text-left flex items-center gap-2"
-                                        style={{
-                                          fontFamily: brand.font.body,
-                                          fontWeight: 500,
-                                          background: ps.parkId === park.id ? brand.lapis : "transparent",
-                                          color: ps.parkId === park.id ? brand.cream : brand.slate,
-                                          border: `1px solid ${ps.parkId === park.id ? brand.lapis : brand.border}`,
-                                        }}
-                                      >
-                                        <span>{park.icon}</span> {park.label}
-                                      </button>
-                                    ))}
+                                    {parks.map((park) => {
+                                      const active = ps.parkIds.includes(park.id);
+                                      return (
+                                        <button
+                                          key={park.id}
+                                          onClick={() => toggleParkForDay(ps.date, park.id)}
+                                          className="px-3 py-2.5 text-xs transition-all duration-300 text-left flex items-center gap-2"
+                                          style={{
+                                            fontFamily: brand.font.body,
+                                            fontWeight: 500,
+                                            background: active ? brand.lapis : "transparent",
+                                            color: active ? brand.cream : brand.slate,
+                                            border: `1px solid ${active ? brand.lapis : brand.border}`,
+                                          }}
+                                        >
+                                          <span>{park.icon}</span> {park.label}
+                                        </button>
+                                      );
+                                    })}
                                   </div>
 
                                   {/* Non-park options */}
-                                  <p className="mb-1.5" style={{ fontFamily: brand.font.body, fontSize: "0.5625rem", color: brand.slate, textTransform: "uppercase", letterSpacing: "0.15em" }}>Non-Park Days</p>
+                                  <p className="mb-1.5" style={{ fontFamily: brand.font.body, fontSize: "0.5625rem", color: brand.slate, textTransform: "uppercase", letterSpacing: "0.15em" }}>Non-Park Day</p>
                                   <div className="grid grid-cols-2 gap-2">
-                                    {nonParkDays.map((opt) => (
-                                      <button
-                                        key={opt.id}
-                                        onClick={() => setParkForDay(ps.date, opt.id)}
-                                        className="px-3 py-2 text-xs transition-all duration-300 text-left flex items-center gap-2"
-                                        style={{
-                                          fontFamily: brand.font.body,
-                                          fontWeight: 500,
-                                          background: ps.parkId === opt.id ? brand.goldDark : "transparent",
-                                          color: ps.parkId === opt.id ? brand.cream : brand.slate,
-                                          border: `1px solid ${ps.parkId === opt.id ? brand.goldDark : brand.border}`,
-                                        }}
-                                      >
-                                        <span>{opt.icon}</span> {opt.label}
-                                      </button>
-                                    ))}
+                                    {nonParkDays.map((opt) => {
+                                      const active = ps.parkIds.includes(opt.id);
+                                      return (
+                                        <button
+                                          key={opt.id}
+                                          onClick={() => toggleParkForDay(ps.date, opt.id)}
+                                          className="px-3 py-2 text-xs transition-all duration-300 text-left flex items-center gap-2"
+                                          style={{
+                                            fontFamily: brand.font.body,
+                                            fontWeight: 500,
+                                            background: active ? brand.goldDark : "transparent",
+                                            color: active ? brand.cream : brand.slate,
+                                            border: `1px solid ${active ? brand.goldDark : brand.border}`,
+                                          }}
+                                        >
+                                          <span>{opt.icon}</span> {opt.label}
+                                        </button>
+                                      );
+                                    })}
                                   </div>
                                 </div>
                               );

@@ -60,7 +60,7 @@ const App = () => (
           <Route path="/survey/:tripId/:memberId" element={<Survey />} />
           <Route path="/memories" element={<Memories tripMemories={mockData.tripMemories} />} />
           <Route path="/memories/:tripId" element={<Memories tripMemories={mockData.tripMemories} />} />
-          <Route path="/circle" element={<Circle partyMembers={mockData.partyMembers} />} />
+          <Route path="/circle" element={<Circle partyMembers={mockData.partyMembers} guestName={mockData.guestName} />} />
           <Route path="/account" element={<Account account={mockData.account} />} />
           <Route path="/guides" element={<GuidesLanding />} />
           <Route path="/parks/:parkId" element={<ParkGuidePage parkGuides={mockData.parkGuides} />} />

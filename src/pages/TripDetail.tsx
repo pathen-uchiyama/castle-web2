@@ -1270,8 +1270,16 @@ const BookedTripDetail = ({ trip }: { trip: BookedTrip }) => {
                             </p>
                           </div>
                         )}
-                        <div className="mt-3 pt-2 border-t border-border/50">
+                        <div className="mt-3 pt-2 border-t border-border/50 flex items-center justify-between">
                           <p className="font-editorial text-[0.625rem] text-muted-foreground/50 italic">Add confirmation # once booked</p>
+                          <div className="flex items-center gap-3">
+                            <button
+                              onClick={() => handleRemovePendingDining(res.reservationId, res.restaurantName)}
+                              className="text-[0.5625rem] uppercase tracking-[0.12em] font-medium text-destructive/60 hover:text-destructive transition-colors"
+                            >
+                              Remove
+                            </button>
+                          </div>
                         </div>
                       </div>
                     ))}

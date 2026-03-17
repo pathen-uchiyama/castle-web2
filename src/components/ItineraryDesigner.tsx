@@ -1391,36 +1391,13 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
               </div>
 
               {/* Footer */}
-              <div className="px-6 pb-5 flex justify-between items-center">
+              <div className="px-6 pb-5 flex justify-end items-center">
                 <button
                   onClick={() => setScheduledPlacement(null)}
                   className="px-4 py-2 text-[0.625rem] uppercase tracking-[0.12em] text-[hsl(var(--ink-light))] border border-[hsl(var(--border))] hover:border-[hsl(var(--ink))]/30 transition-all duration-200"
                   style={{ borderRadius: 0 }}
                 >
                   Cancel
-                </button>
-                <button
-                  onClick={() => {
-                    // Add without scheduled time (manual placement)
-                    const a = scheduledPlacement.attraction;
-                    const estWait = a.waitCategory ? (defaultWaitByCategory[a.waitCategory] || 15) : 15;
-                    setItinerary(prev => [...prev, {
-                      id: `it-${Date.now()}`,
-                      attractionId: a.id,
-                      name: a.name,
-                      type: a.type,
-                      duration: parseInt(a.duration) || DURATION_DEFAULTS[a.type] || 20,
-                      waitTime: estWait,
-                      zone: a.zone,
-                      llType: a.llType,
-                      waitCategory: a.waitCategory,
-                    }]);
-                    setScheduledPlacement(null);
-                  }}
-                  className="px-4 py-2 text-[0.625rem] uppercase tracking-[0.12em] text-[hsl(var(--ink-light))] hover:text-[hsl(var(--ink))] transition-all duration-200"
-                  style={{ borderRadius: 0 }}
-                >
-                  Skip — Add to End
                 </button>
               </div>
             </motion.div>

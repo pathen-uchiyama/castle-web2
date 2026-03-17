@@ -727,11 +727,36 @@ const BookedTripDetail = ({ trip }: { trip: BookedTrip }) => {
 
           {diningSubTab === "discover" && (
             <>
-              <motion.div {...fade(0.05)} className="mb-10 border border-[hsl(var(--gold)/0.3)] bg-[hsl(var(--gold)/0.04)] p-4 flex items-center gap-3">
-                <span className="text-lg">⏰</span>
-                <p className="font-editorial text-sm text-muted-foreground">
-                  <span className="text-foreground font-medium">Booking windows open 60 days before arrival</span> for most table-service restaurants. Set your alarm for 6 AM ET on your window day — popular spots fill within seconds.
-                </p>
+              <motion.div {...fade(0.05)} className="mb-10 border border-[hsl(var(--gold)/0.3)] bg-[hsl(var(--gold)/0.04)] p-4 flex items-start gap-3">
+                <span className="text-lg mt-0.5">⏰</span>
+                <div className="flex-1">
+                  <p className="font-editorial text-sm text-muted-foreground mb-3">
+                    <span className="text-foreground font-medium">Booking windows open 60 days before arrival</span> for most table-service restaurants. Popular spots fill within seconds.
+                  </p>
+                  <div className="flex flex-wrap gap-2">
+                    <button
+                      onClick={() => toast({ title: "🔔 Notifications enabled", description: "We'll alert you when each restaurant's booking window opens." })}
+                      className="px-4 py-2 text-[0.5625rem] tracking-[0.12em] uppercase font-medium bg-foreground text-background hover:opacity-90 transition-opacity"
+                    >
+                      🔔 Notify Me When Windows Open
+                    </button>
+                    {mockData.account.subscription.planName === "Sovereign" ? (
+                      <button
+                        onClick={() => toast({ title: "👑 Concierge Mode", description: "Select restaurants below and we'll book them the moment windows open." })}
+                        className="px-4 py-2 text-[0.5625rem] tracking-[0.12em] uppercase font-medium bg-[hsl(var(--gold))] text-background hover:opacity-90 transition-opacity"
+                      >
+                        ✨ Book For Me (Sovereign)
+                      </button>
+                    ) : (
+                      <button
+                        onClick={() => toast({ title: "✨ Sovereign Concierge", description: "Upgrade to Sovereign ($29.95/yr) and we'll book your dining reservations automatically." })}
+                        className="px-4 py-2 text-[0.5625rem] tracking-[0.12em] uppercase font-medium text-[hsl(var(--gold-dark))] border border-[hsl(var(--gold)/0.4)] hover:bg-[hsl(var(--gold)/0.08)] transition-colors"
+                      >
+                        ✨ Book For Me — Upgrade
+                      </button>
+                    )}
+                  </div>
+                </div>
               </motion.div>
 
               <div className="space-y-6">

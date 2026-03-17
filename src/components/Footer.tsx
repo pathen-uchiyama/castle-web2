@@ -68,6 +68,11 @@ const Footer = () => (
                 </a>
               </li>
             ))}
+            <li>
+              <a href="mailto:support@castlecompanion.com" className="font-editorial text-sm text-muted-foreground hover:text-foreground transition-colors duration-300">
+                support@castlecompanion.com
+              </a>
+            </li>
           </ul>
         </div>
       </div>

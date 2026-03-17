@@ -469,7 +469,7 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
       return;
     }
     const estWait = attraction.waitCategory ? (defaultWaitByCategory[attraction.waitCategory] || 15) : 15;
-    setItinerary(prev => [...prev, {
+    const newItem: ItineraryItem = {
       id: `it-${Date.now()}`,
       attractionId: attraction.id,
       name: attraction.name,
@@ -479,8 +479,19 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
       zone: attraction.zone,
       llType: attraction.llType,
       waitCategory: attraction.waitCategory,
-    }]);
-  }, [isLocked]);
+    };
+    // Check for conflict with fixed anchors
+    const conflict = wouldConflictWithAnchor(itinerary, newItem, ropeDropMin, hasStroller);
+    if (conflict.conflicts) {
+      toast({
+        title: "⚠️ Reservation Conflict",
+        description: `Adding ${attraction.name} would push into your ${conflict.anchorName} reservation at ${conflict.anchorTime}. Remove a ride or pick a shorter one to fit.`,
+        variant: "destructive",
+      });
+      return;
+    }
+    setItinerary(prev => [...prev, newItem]);
+  }, [isLocked, itinerary, ropeDropMin, hasStroller]);
 
   /** Add a ride specifically into the early access window — inserts at the right position with reduced waits */
   const addToEarlyAccess = useCallback((attraction: ParkAttraction) => {

@@ -335,6 +335,7 @@ export const magicKingdomAttractions: ParkAttraction[] = [
     rules: [],
     warnings: ["LOUD NOISES"],
     zone: "main-street",
+    scheduledTimes: ["9:00 PM"],
   },
   {
     id: "mk-laugh-floor", name: "Monsters Inc. Laugh Floor", parkId: "mk", type: "show", rating: 4.3,

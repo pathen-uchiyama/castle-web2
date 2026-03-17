@@ -110,9 +110,10 @@ const arrivalOptions = [
 ];
 
 const midDayOptions = [
-  { id: "power-through", label: "Power Through", desc: "No scheduled breaks." },
-  { id: "hotel-break", label: "Hotel Break", desc: "Nap or recharge at resort." },
-  { id: "pool-cooldown", label: "Pool / Cool-Down", desc: "Afternoon swim & relax." },
+  { id: "power-through", label: "Power Through", desc: "No scheduled breaks — push from open to close." },
+  { id: "hotel-break", label: "Hotel Break", desc: "Return to resort mid-afternoon to nap, recharge, and come back refreshed." },
+  { id: "pool-cooldown", label: "Pool / Cool-Down", desc: "Head to the resort pool for an afternoon swim & relax before round two." },
+  { id: "indoor-ac", label: "Indoor / AC Strategy", desc: "Stay in-park but stick to air-conditioned rides, shows, and restaurants during peak heat (12–3 PM)." },
 ];
 
 const focusOptions = [

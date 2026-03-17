@@ -268,6 +268,7 @@ const TripWizard = ({ open, onClose }: TripWizardProps) => {
   const isFirst = currentStep === 0;
 
   const parks = data.resort === "dlr" ? dlrParks : wdwParks;
+  const nonParkDays = data.resort === "dlr" ? dlrNonParkDays : wdwNonParkDays;
 
   // Generate trip days when dates change
   const tripDays = useMemo(() => {

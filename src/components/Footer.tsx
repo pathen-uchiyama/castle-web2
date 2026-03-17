@@ -8,7 +8,10 @@ const Footer = () => (
       <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-16">
         {/* Brand */}
         <div className="md:col-span-1">
-          <p className="font-display text-lg text-foreground mb-3">Castle Companion ✨</p>
+          <p className="mb-3 uppercase tracking-[0.12em] text-[0.85rem] leading-none flex items-baseline gap-[0.35em]">
+            <span className="font-display font-bold text-foreground">Castle</span>
+            <span className="font-display font-light text-gold">Companion</span>
+          </p>
           <p className="font-editorial text-sm text-muted-foreground leading-relaxed">
             Be there for the magic — together.
           </p>

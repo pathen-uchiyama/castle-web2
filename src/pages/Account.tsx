@@ -72,6 +72,16 @@ const Account = ({ account }: AccountProps) => {
   const [profileData, setProfileData] = useState({
     guestName: account.guestName,
     email: account.email,
+    birthday: account.birthday || "",
+  });
+
+  // Travel profile (favorites, accessibility, sensory)
+  const [editingTravel, setEditingTravel] = useState(false);
+  const [travelData, setTravelData] = useState({
+    favoriteCharacter: account.favoriteCharacter || "",
+    favoriteRide: account.favoriteRide || "",
+    accessibilityNeeds: account.accessibilityNeeds || [] as string[],
+    sensoryNotes: account.sensoryNotes || "",
   });
 
   // Health profile
@@ -103,9 +113,10 @@ const Account = ({ account }: AccountProps) => {
 
   const { subscription } = account;
 
-  const profileFields = [
-    { label: "Name", key: "guestName" as const, value: profileData.guestName, editable: true },
-    { label: "Email", key: "email" as const, value: profileData.email, editable: true },
+  const profileFields: { label: string; key: "guestName" | "email" | "birthday" | null; value: string; editable: boolean }[] = [
+    { label: "Name", key: "guestName", value: profileData.guestName, editable: true },
+    { label: "Email", key: "email", value: profileData.email, editable: true },
+    { label: "Birthday", key: "birthday", value: profileData.birthday || "—", editable: true },
     { label: "Member since", key: null, value: account.memberSince, editable: false },
     { label: "Adventures completed", key: null, value: String(account.adventuresCompleted), editable: false },
   ];
@@ -269,7 +280,7 @@ const Account = ({ account }: AccountProps) => {
               {editingProfile ? (
                 <>
                   <button onClick={handleProfileSave} className="link-editorial font-editorial text-sm text-[hsl(var(--gold-dark))] cursor-pointer hover:text-foreground transition-colors">Save changes</button>
-                  <button onClick={() => { setEditingProfile(false); setProfileData({ guestName: account.guestName, email: account.email }); }} className="link-editorial font-editorial text-sm text-muted-foreground cursor-pointer hover:text-foreground transition-colors">Cancel</button>
+                  <button onClick={() => { setEditingProfile(false); setProfileData({ guestName: account.guestName, email: account.email, birthday: account.birthday || "" }); }} className="link-editorial font-editorial text-sm text-muted-foreground cursor-pointer hover:text-foreground transition-colors">Cancel</button>
                 </>
               ) : (
                 <button onClick={() => setEditingProfile(true)} className="link-editorial font-editorial text-sm text-foreground cursor-pointer">Edit profile</button>
@@ -387,6 +398,142 @@ const Account = ({ account }: AccountProps) => {
                 </>
               ) : (
                 <button onClick={() => setEditingHealth(true)} className="link-editorial font-editorial text-sm text-foreground cursor-pointer">Edit health profile</button>
+              )}
+            </div>
+          </motion.div>
+
+          {/* ═══ TRAVEL PROFILE (Favorites, Accessibility, Sensory) ═══ */}
+          <motion.div {...fade(0.2)} className="mt-16">
+            <p className="label-text mb-4 tracking-[0.25em]">Travel Profile</p>
+            <p className="font-editorial text-sm text-muted-foreground mb-8">
+              These fields are synced with your profile in The Circle — changes here update your Circle profile automatically.
+            </p>
+
+            <div className="space-y-6">
+              {/* Favorite Character */}
+              <div className="flex items-baseline justify-between border-b border-border pb-4">
+                <p className="label-text">Favorite Character</p>
+                {editingTravel ? (
+                  <input
+                    type="text"
+                    value={travelData.favoriteCharacter}
+                    onChange={(e) => setTravelData((prev) => ({ ...prev, favoriteCharacter: e.target.value }))}
+                    className="font-editorial text-base text-foreground bg-transparent border-b border-[hsl(var(--gold))] outline-none text-right w-48 focus:border-[hsl(var(--gold-dark))] transition-colors"
+                  />
+                ) : (
+                  <p className="font-editorial text-base text-foreground">{travelData.favoriteCharacter || "—"}</p>
+                )}
+              </div>
+
+              {/* Favorite Ride */}
+              <div className="flex items-baseline justify-between border-b border-border pb-4">
+                <p className="label-text">Favorite Ride</p>
+                {editingTravel ? (
+                  <input
+                    type="text"
+                    value={travelData.favoriteRide}
+                    onChange={(e) => setTravelData((prev) => ({ ...prev, favoriteRide: e.target.value }))}
+                    className="font-editorial text-base text-foreground bg-transparent border-b border-[hsl(var(--gold))] outline-none text-right w-48 focus:border-[hsl(var(--gold-dark))] transition-colors"
+                  />
+                ) : (
+                  <p className="font-editorial text-base text-foreground">{travelData.favoriteRide || "—"}</p>
+                )}
+              </div>
+
+              {/* Accessibility Needs */}
+              <div className="border-b border-border pb-6">
+                <p className="label-text mb-3">Accessibility & Safety Needs</p>
+                <p className="font-editorial text-xs text-muted-foreground mb-4 leading-relaxed">
+                  Select anything that applies so we can flag rides and experiences accordingly.
+                </p>
+                {editingTravel ? (
+                  <div className="space-y-4">
+                    {["Accommodation", "Sensory", "Physical", "Medical"].map((category) => {
+                      const ACCESSIBILITY_OPTIONS = [
+                        { id: "das", label: "DAS (Disability Access Service)", category: "Accommodation" },
+                        { id: "wheelchair", label: "Wheelchair / ECV needed", category: "Accommodation" },
+                        { id: "avoid-strobes", label: "Avoid strobe lights / flashing", category: "Sensory" },
+                        { id: "avoid-loud", label: "Avoid prolonged loud environments", category: "Sensory" },
+                        { id: "avoid-dark", label: "Avoid dark enclosed spaces", category: "Sensory" },
+                        { id: "avoid-drops", label: "Avoid sudden drops", category: "Physical" },
+                        { id: "avoid-spinning", label: "Avoid spinning rides", category: "Physical" },
+                        { id: "avoid-motion-sim", label: "Avoid motion simulators", category: "Physical" },
+                        { id: "avoid-heights", label: "Avoid extreme heights", category: "Physical" },
+                        { id: "avoid-water", label: "Avoid water rides (getting wet)", category: "Physical" },
+                        { id: "seizure-risk", label: "Seizure precautions", category: "Medical" },
+                        { id: "heat-sensitive", label: "Heat sensitivity — needs frequent breaks", category: "Medical" },
+                        { id: "mobility-limited", label: "Limited mobility / stamina", category: "Medical" },
+                        { id: "anxiety-crowds", label: "Anxiety in large crowds", category: "Medical" },
+                        { id: "service-animal", label: "Traveling with service animal", category: "Accommodation" },
+                      ];
+                      const catOptions = ACCESSIBILITY_OPTIONS.filter((o) => o.category === category);
+                      return (
+                        <div key={category}>
+                          <p className="text-[0.5625rem] uppercase tracking-[0.15em] text-muted-foreground mb-2 font-medium">{category}</p>
+                          <div className="flex flex-wrap gap-2">
+                            {catOptions.map((opt) => {
+                              const checked = travelData.accessibilityNeeds.includes(opt.id);
+                              return (
+                                <button
+                                  key={opt.id}
+                                  onClick={() => setTravelData((prev) => ({
+                                    ...prev,
+                                    accessibilityNeeds: checked
+                                      ? prev.accessibilityNeeds.filter((n) => n !== opt.id)
+                                      : [...prev.accessibilityNeeds, opt.id],
+                                  }))}
+                                  className={`px-3 py-1.5 rounded-full text-sm font-medium transition-all duration-300 cursor-pointer border ${
+                                    checked
+                                      ? "bg-[hsl(var(--destructive)/0.1)] border-[hsl(var(--destructive)/0.35)] text-destructive"
+                                      : "bg-card border-border text-muted-foreground hover:border-[hsl(var(--gold))]/40"
+                                  }`}
+                                >
+                                  {checked ? "✓ " : ""}{opt.label}
+                                </button>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                ) : travelData.accessibilityNeeds.length > 0 ? (
+                  <div className="flex flex-wrap gap-2">
+                    {travelData.accessibilityNeeds.map((needId) => (
+                      <span key={needId} className="px-3 py-1 text-[0.625rem] uppercase tracking-[0.1em] rounded-md" style={{ background: "hsl(var(--destructive) / 0.08)", color: "hsl(var(--destructive))", border: "1px solid hsl(var(--destructive) / 0.2)" }}>
+                        {needId}
+                      </span>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="font-editorial text-sm text-muted-foreground/40">None selected</p>
+                )}
+              </div>
+
+              {/* Sensory Notes */}
+              <div className="border-b border-border pb-4">
+                <p className="label-text mb-2">Sensory Notes</p>
+                {editingTravel ? (
+                  <textarea
+                    value={travelData.sensoryNotes}
+                    onChange={(e) => setTravelData((prev) => ({ ...prev, sensoryNotes: e.target.value }))}
+                    placeholder="Any sensory considerations for planning..."
+                    className="font-editorial text-sm text-foreground bg-transparent border border-border rounded-lg outline-none w-full p-3 min-h-[80px] focus:border-[hsl(var(--gold))] transition-colors resize-none"
+                  />
+                ) : (
+                  <p className="font-editorial text-sm text-muted-foreground">{travelData.sensoryNotes || "None"}</p>
+                )}
+              </div>
+            </div>
+
+            <div className="mt-8 flex gap-8">
+              {editingTravel ? (
+                <>
+                  <button onClick={() => { setEditingTravel(false); toast.success("Travel profile updated."); }} className="link-editorial font-editorial text-sm text-[hsl(var(--gold-dark))] cursor-pointer hover:text-foreground transition-colors">Save travel profile</button>
+                  <button onClick={() => { setEditingTravel(false); setTravelData({ favoriteCharacter: account.favoriteCharacter || "", favoriteRide: account.favoriteRide || "", accessibilityNeeds: account.accessibilityNeeds || [], sensoryNotes: account.sensoryNotes || "" }); }} className="link-editorial font-editorial text-sm text-muted-foreground cursor-pointer hover:text-foreground transition-colors">Cancel</button>
+                </>
+              ) : (
+                <button onClick={() => setEditingTravel(true)} className="link-editorial font-editorial text-sm text-foreground cursor-pointer">Edit travel profile</button>
               )}
             </div>
           </motion.div>

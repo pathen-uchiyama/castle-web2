@@ -50,8 +50,12 @@ export interface PartyMember {
   birthday?: string;
   heightInches?: number;
   dietaryRestrictions?: string[];
+  allergies?: string[];
+  dasHolder?: boolean;
+  medicalNotes?: string;
   sensoryNotes?: string;
   accessibilityNeeds?: string[];
+  rideSensitivities?: RideSensitivity[];
   favoriteCharacter?: string;
   favoriteRide?: string;
   thrillTolerance?: "low" | "moderate" | "high";
@@ -265,6 +269,11 @@ export interface AccountProfile {
   email: string;
   memberSince: string;
   adventuresCompleted: number;
+  birthday?: string;
+  favoriteCharacter?: string;
+  favoriteRide?: string;
+  accessibilityNeeds?: string[];
+  sensoryNotes?: string;
   subscription: Subscription;
   preferences: Preference[];
   healthProfile: GuestHealthProfile;

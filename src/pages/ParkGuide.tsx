@@ -10,10 +10,11 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { cn } from "@/lib/utils";
 import type { ParkGuide, ParkDaySchedule, ParkHours } from "@/data/types";
 import { mockData } from "@/data/mockData";
-import { wdwParks, type ParkOverview, type ParkAttraction, type AttractionWarning } from "@/data/resortEncyclopedia";
-import { dlrParks } from "@/data/dlrEncyclopedia";
+import { wdwParks, type ParkOverview, type ParkAttraction, type AttractionWarning, type ResortRestaurant, wdwRestaurants } from "@/data/resortEncyclopedia";
+import { dlrParks, dlrRestaurants } from "@/data/dlrEncyclopedia";
 import { wdwEncyclopediaAttractions, dlrEncyclopediaAttractions } from "@/data/encyclopediaAttractions";
 import { parkNewsItems, type ParkNewsItem, type ParkNewsCategory } from "@/data/parkNewsData";
+import { UtensilsCrossed } from "lucide-react";
 
 const ease: [number, number, number, number] = [0.19, 1, 0.22, 1];
 const fade = (delay = 0) => ({

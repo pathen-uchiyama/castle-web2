@@ -43,7 +43,7 @@ const Navigation = () => {
           }}
         />
         <Link to="/" className="relative z-10 flex items-center gap-1.5">
-          <img src={isHome ? ccLogoDark : ccLogoLight} alt="Castle Companion" className="h-9 w-auto transition-all duration-500 opacity-90 hover:opacity-100" />
+          <img src={isHome ? ccLogoDark : ccLogoLight} alt="Castle Companion" className={`h-9 w-auto transition-all duration-500 opacity-90 hover:opacity-100 ${isHome ? "drop-shadow-[0_0_6px_hsla(42,64%,50%,0.4)] brightness-110" : ""}`} />
           <span className={`font-display-bold text-[1.05rem] tracking-[-0.04em] leading-none transition-colors duration-500 hidden sm:inline ${isHome ? "text-white/90 hover:text-white" : "text-foreground/90 hover:text-foreground"}`}>
             Castle Companion
           </span>

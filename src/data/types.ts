@@ -108,11 +108,13 @@ export interface BookedExperience {
   parkOrResort: string;
   date: string;
   time: string;
+  timeRangeEnd?: string;
   duration?: string;
   partySize: number;
   confirmationNumber: string;
   notes?: string;
   status: "confirmed" | "pending" | "cancelled";
+  monitoringActive?: boolean;
 }
 
 /* ─── Discovery / Research Types ────────────────────────────────── */

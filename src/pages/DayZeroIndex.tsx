@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import FloatingAnchor from "@/components/FloatingAnchor";
 import Footer from "@/components/Footer";
 import TripWizard from "@/components/TripWizard";
+import { mockData } from "@/data/mockData";
 
 const ease: [number, number, number, number] = [0.19, 1, 0.22, 1];
 
@@ -216,7 +217,7 @@ const DayZeroIndex = () => {
       <FloatingAnchor waiting />
 
       {/* ═══ TRIP WIZARD — Full-screen concierge ═══ */}
-      <TripWizard open={wizardOpen} onClose={() => setWizardOpen(false)} onComplete={(tripId) => navigate(`/trip/${tripId}`)} />
+      <TripWizard open={wizardOpen} onClose={() => setWizardOpen(false)} onComplete={(tripId) => navigate(`/trip/${tripId}`)} guestName={mockData.guestName} />
     </div>
   );
 };

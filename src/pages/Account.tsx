@@ -72,7 +72,7 @@ const Account = ({ account }: AccountProps) => {
   const [profileData, setProfileData] = useState({
     guestName: account.guestName,
     email: account.email,
-    birthday: account.birthday || "",
+    birthdate: account.birthdate || "",
   });
 
   // Travel profile (favorites, accessibility, sensory)

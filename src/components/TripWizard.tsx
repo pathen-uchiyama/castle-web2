@@ -74,6 +74,7 @@ interface WizardData {
 interface TripWizardProps {
   open: boolean;
   onClose: () => void;
+  onComplete?: (tripId: string) => void;
 }
 
 /* ─── Step Definitions ─── */

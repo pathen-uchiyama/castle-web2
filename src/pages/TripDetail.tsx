@@ -1323,6 +1323,11 @@ const BookedTripDetail = ({ trip }: { trip: BookedTrip }) => {
             opensDate={alertModal.opensDate}
             onClose={() => setAlertModal(null)}
             onSetAlert={(note) => handleSetAlert(alertModal.type, alertModal.venueName, alertModal.opensDate, note)}
+            onBookForMe={(prefs) => {
+              setAlerts(prev => [...prev, { id: `alert-${Date.now()}`, venueName: alertModal.venueName, type: alertModal.type, opensDate: alertModal.opensDate, note: prefs, isConcierge: true }]);
+              setAlertModal(null);
+              toast({ title: "👑 Concierge Request Submitted", description: `We'll book ${alertModal.venueName} for you when the window opens.` });
+            }}
           />
         )}
       </AnimatePresence>

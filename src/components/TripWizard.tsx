@@ -234,7 +234,7 @@ const ToggleCard = ({ active, onClick, label, desc, cost }: { active: boolean; o
 );
 
 /* ─── Main Component ─── */
-const TripWizard = ({ open, onClose }: TripWizardProps) => {
+const TripWizard = ({ open, onClose, onComplete }: TripWizardProps) => {
   const [currentStep, setCurrentStep] = useState(0);
   const [data, setData] = useState<WizardData>({
     adventureTitle: "",

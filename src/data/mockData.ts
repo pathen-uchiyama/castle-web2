@@ -617,7 +617,9 @@ export const mockData: AppData = {
   partyMembers: [
     {
       memberId: "P", name: "Patchen", role: "Trip Captain", initial: "P", adventureCount: 12,
-      age: 38, birthday: "June 15", heightInches: 72, dietaryRestrictions: [],
+      age: 38, birthday: "June 15", heightInches: 72, dietaryRestrictions: ["Gluten-free"],
+      allergies: ["Tree nuts"], dasHolder: false, medicalNotes: "",
+      rideSensitivities: ["spinning", "drops"],
       favoriteCharacter: "Goofy", favoriteRide: "Rise of the Resistance",
       thrillTolerance: "high", magicStatus: ["Annual Passholder", "DVC Member"],
       notes: "Prefers rope drop strategy. Comfortable with all thrill rides.",

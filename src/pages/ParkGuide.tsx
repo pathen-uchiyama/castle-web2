@@ -10,10 +10,11 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { cn } from "@/lib/utils";
 import type { ParkGuide, ParkDaySchedule, ParkHours } from "@/data/types";
 import { mockData } from "@/data/mockData";
-import { wdwParks, type ParkOverview, type ParkAttraction, type AttractionWarning } from "@/data/resortEncyclopedia";
-import { dlrParks } from "@/data/dlrEncyclopedia";
+import { wdwParks, type ParkOverview, type ParkAttraction, type AttractionWarning, type ResortRestaurant, wdwRestaurants } from "@/data/resortEncyclopedia";
+import { dlrParks, dlrRestaurants } from "@/data/dlrEncyclopedia";
 import { wdwEncyclopediaAttractions, dlrEncyclopediaAttractions } from "@/data/encyclopediaAttractions";
 import { parkNewsItems, type ParkNewsItem, type ParkNewsCategory } from "@/data/parkNewsData";
+import { UtensilsCrossed } from "lucide-react";
 
 const ease: [number, number, number, number] = [0.19, 1, 0.22, 1];
 const fade = (delay = 0) => ({
@@ -300,6 +301,98 @@ const NewsCard = ({ item }: { item: ParkNewsItem }) => {
   );
 };
 
+// ── Dining Card Component ──
+const DiningCard = ({ restaurant: r }: { restaurant: ResortRestaurant }) => {
+  const [expanded, setExpanded] = useState(false);
+  const serviceIcons: Record<string, string> = {
+    "table-service": "🍽️", "quick-service": "🥡", "signature": "✨", "character-dining": "👸",
+    "snack": "🍿", "lounge": "🍸", "buffet": "🍛", "dinner-show": "🎭", "food-truck": "🚚",
+    "kiosk": "☕", "prix-fixe": "🎩",
+  };
+  const difficultyColors: Record<string, string> = {
+    easy: "hsl(142, 60%, 38%)", moderate: "hsl(var(--gold-dark))", hard: "hsl(25, 85%, 50%)", legendary: "hsl(var(--destructive))",
+  };
+
+  return (
+    <div
+      className="border border-border bg-card rounded-lg shadow-[var(--shadow-soft)] hover:shadow-[var(--shadow-hover)] transition-all duration-500 cursor-pointer group overflow-hidden"
+      onClick={() => setExpanded(!expanded)}
+    >
+      <div className="p-5">
+        <div className="flex items-start justify-between gap-3 mb-2">
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center gap-2 mb-1 flex-wrap">
+              <span className="text-lg">{serviceIcons[r.serviceType] || "🍽️"}</span>
+              <h3 className="font-display text-lg text-foreground group-hover:text-[hsl(var(--gold-dark))] transition-colors duration-500">{r.name}</h3>
+              {r.characterDining && <span className="text-xs px-2 py-0.5 rounded-full bg-[hsl(var(--gold)/0.1)] text-[hsl(var(--gold-dark))] border border-[hsl(var(--gold)/0.2)]">👸 Character Dining</span>}
+            </div>
+            <p className="text-sm text-muted-foreground">{r.locationArea} · {r.cuisine}</p>
+          </div>
+          <div className="flex items-center gap-1.5 shrink-0 flex-wrap justify-end">
+            <span className="px-2 py-1 rounded-lg text-sm font-display text-[hsl(var(--gold-dark))]">{r.priceRange}</span>
+            {r.requiresReservation && (
+              <span className="px-2 py-1 rounded-lg text-xs uppercase tracking-[0.08em] border border-border font-medium" style={{ color: difficultyColors[r.reservationDifficulty] }}>
+                {r.reservationDifficulty}
+              </span>
+            )}
+          </div>
+        </div>
+
+        {/* Dietary accommodations */}
+        {r.dietaryAccommodations.length > 0 && (
+          <div className="flex gap-1.5 flex-wrap mb-3">
+            {r.dietaryAccommodations.map((d) => (
+              <span key={d} className="inline-flex items-center text-xs px-2 py-0.5 rounded-full border border-[hsl(142,60%,45%,0.25)] bg-[hsl(142,60%,45%,0.06)] text-[hsl(142,60%,35%)]">
+                🥬 {d}
+              </span>
+            ))}
+          </div>
+        )}
+
+        <p className="font-editorial text-sm text-foreground/80 leading-relaxed mb-3">{r.description}</p>
+
+        <div className="flex flex-wrap gap-2 items-center">
+          <span className="text-xs text-muted-foreground">{r.mealPeriods.map((m) => m.charAt(0).toUpperCase() + m.slice(1)).join(" · ")}</span>
+          {r.rating > 0 && (
+            <span className="text-xs text-[hsl(var(--gold-dark))]">★ {r.rating} ({r.reviewCount.toLocaleString()})</span>
+          )}
+          {r.kidFriendly && <span className="text-xs px-2 py-0.5 bg-muted text-muted-foreground border border-border rounded-lg">👶 Kid-Friendly</span>}
+        </div>
+      </div>
+
+      <AnimatePresence>
+        {expanded && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.3, ease }}
+            className="overflow-hidden"
+          >
+            <div className="px-5 pb-5 pt-2 border-t border-border/50 space-y-3">
+              {r.signatureItems.length > 0 && (
+                <div>
+                  <p className="label-text mb-1.5">Signature Items</p>
+                  <div className="flex flex-wrap gap-1.5">
+                    {r.signatureItems.map((item) => (
+                      <span key={item} className="text-xs px-2.5 py-1 bg-[hsl(var(--gold)/0.06)] text-foreground border border-[hsl(var(--gold)/0.15)] rounded-lg">{item}</span>
+                    ))}
+                  </div>
+                </div>
+              )}
+              <div className="pl-3 border-l-2 border-[hsl(var(--gold)/0.3)]">
+                <p className="font-editorial text-sm text-muted-foreground italic">💡 {r.insiderTip}</p>
+              </div>
+              {r.priceNote && <p className="font-editorial text-xs text-muted-foreground">{r.priceNote}</p>}
+              {r.dressCode && <p className="font-editorial text-xs text-muted-foreground">👔 {r.dressCode}</p>}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+};
+
 const ParkGuidePage = ({ parkGuides }: ParkGuidePageProps) => {
   const { parkId } = useParams();
   const [activeTab, setActiveTab] = useState("intel");
@@ -324,6 +417,24 @@ const ParkGuidePage = ({ parkGuides }: ParkGuidePageProps) => {
   const permanentChanges = parkNews.filter((n) => n.category === "closing-permanently" || n.category === "re-theming");
   const newOpenings = parkNews.filter((n) => n.category === "opening-soon");
   const underConstruction = parkNews.filter((n) => n.category === "under-construction");
+
+  // Restaurant data — map parkId to locationName used in restaurant data
+  const parkIdToLocationName: Record<string, string[]> = {
+    mk: ["Magic Kingdom"],
+    epcot: ["EPCOT"],
+    hs: ["Hollywood Studios"],
+    ak: ["Animal Kingdom"],
+    dl: ["Disneyland"],
+    dca: ["Disney California Adventure", "California Adventure"],
+  };
+  const allRestaurants = [...wdwRestaurants, ...dlrRestaurants];
+  const parkRestaurants: ResortRestaurant[] = useMemo(() => {
+    if (!park) return [];
+    const locationNames = parkIdToLocationName[park.parkId] || [];
+    return allRestaurants.filter((r) =>
+      locationNames.some((name) => r.locationName.includes(name))
+    );
+  }, [park]);
 
   // Attraction type filters
   const attractionTypes = useMemo(() => {
@@ -442,50 +553,122 @@ const ParkGuidePage = ({ parkGuides }: ParkGuidePageProps) => {
       {/* ═══ PARK INTEL TAB ═══ */}
       {activeTab === "intel" && (
         <>
-          {/* Resort Benefits */}
-          <section className="px-8 lg:px-16 py-12 bg-[hsl(var(--warm))]">
-            <motion.div {...fade()}>
-              <p className="label-text mb-4 tracking-[0.2em]">Resort Guest Benefits</p>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                <div className="border border-[hsl(var(--gold)/0.3)] bg-[hsl(var(--gold)/0.04)] rounded-lg p-5 shadow-[var(--shadow-soft)]">
-                  <div className="flex items-center gap-2.5 mb-3">
-                    <span className="text-xl">✨</span>
-                    <h4 className="font-display text-base text-foreground">Early Theme Park Entry</h4>
-                  </div>
-                  <p className="font-editorial text-sm text-muted-foreground leading-relaxed mb-3">
-                    Enter the park <strong className="text-foreground">30 minutes before</strong> regular opening.
-                  </p>
-                  {displayHours.earlyEntry && (
-                    <p className="font-display text-sm text-[hsl(var(--gold-dark))]">🕐 {displayHours.earlyEntry}</p>
-                  )}
-                </div>
-                <div className="border border-[hsl(280,30%,55%,0.25)] bg-[hsl(280,30%,55%,0.03)] rounded-lg p-5 shadow-[var(--shadow-soft)]">
-                  <div className="flex items-center gap-2.5 mb-3">
-                    <span className="text-xl">🌙</span>
-                    <h4 className="font-display text-base text-foreground">Extended Evening Hours</h4>
-                  </div>
-                  <p className="font-editorial text-sm text-muted-foreground leading-relaxed mb-3">
-                    Stay <strong className="text-foreground">2 extra hours</strong> after park close.
-                  </p>
-                  {displayHours.extendedEvening && (
-                    <p className="font-display text-sm text-[hsl(280,30%,45%)]">🕐 {displayHours.extendedEvening}</p>
-                  )}
-                </div>
-                <div className="border border-border bg-card rounded-lg p-5 shadow-[var(--shadow-soft)]">
-                  <div className="flex items-center gap-2.5 mb-3">
-                    <span className="text-xl">⚡</span>
-                    <h4 className="font-display text-base text-foreground">Operating Hours</h4>
-                  </div>
-                  <p className="font-display text-lg text-foreground">{displayHours.regular}</p>
-                </div>
-              </div>
-            </motion.div>
-          </section>
-
-          {/* Must-Do, Insider Tips & Lands */}
+          {/* ═══ PARK OVERVIEW ═══ */}
           {encyclopediaPark && (
             <section className="px-8 lg:px-16 py-12 lg:py-16 border-b border-border">
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-16">
+              <motion.div {...fade()}>
+                <p className="label-text mb-2 tracking-[0.25em]">Park Overview</p>
+                <h2 className="font-display text-3xl sm:text-4xl text-foreground leading-[1.08] mb-4">{encyclopediaPark.tagline}</h2>
+                <p className="font-editorial text-lg text-muted-foreground leading-relaxed mb-10 max-w-3xl">
+                  {encyclopediaPark.description}
+                </p>
+              </motion.div>
+
+              {/* Quick facts grid */}
+              <motion.div {...fade(0.05)} className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-10">
+                <div className="border border-border bg-card rounded-lg p-5 shadow-[var(--shadow-soft)]">
+                  <p className="label-text mb-2">Opened</p>
+                  <p className="font-display text-lg text-foreground">{encyclopediaPark.opened}</p>
+                </div>
+                <div className="border border-border bg-card rounded-lg p-5 shadow-[var(--shadow-soft)]">
+                  <p className="label-text mb-2">Size</p>
+                  <p className="font-display text-lg text-foreground">{encyclopediaPark.size}</p>
+                </div>
+                <div className="border border-border bg-card rounded-lg p-5 shadow-[var(--shadow-soft)]">
+                  <p className="label-text mb-2">Attractions</p>
+                  <p className="font-display text-lg text-foreground">{encyclopediaPark.attractionCount}</p>
+                </div>
+                <div className="border border-border bg-card rounded-lg p-5 shadow-[var(--shadow-soft)]">
+                  <p className="label-text mb-2">Dining</p>
+                  <p className="font-display text-lg text-foreground">{encyclopediaPark.diningCount}+ venues</p>
+                </div>
+              </motion.div>
+
+              {/* Known For */}
+              <motion.div {...fade(0.1)} className="mb-10">
+                <p className="label-text mb-4">Known For</p>
+                <div className="flex flex-wrap gap-2">
+                  {encyclopediaPark.knownFor.map((item) => (
+                    <span key={item} className="px-4 py-2 rounded-lg text-sm font-editorial text-foreground bg-[hsl(var(--gold)/0.06)] border border-[hsl(var(--gold)/0.15)]">
+                      {item}
+                    </span>
+                  ))}
+                </div>
+              </motion.div>
+
+              {/* Operating Hours + Benefits */}
+              <motion.div {...fade(0.15)}>
+                <p className="label-text mb-4 tracking-[0.2em]">Hours & Guest Benefits</p>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                  <div className="border border-border bg-card rounded-lg p-5 shadow-[var(--shadow-soft)]">
+                    <div className="flex items-center gap-2.5 mb-3">
+                      <span className="text-xl">⚡</span>
+                      <h4 className="font-display text-base text-foreground">Operating Hours</h4>
+                    </div>
+                    <p className="font-display text-lg text-foreground">{displayHours.regular}</p>
+                  </div>
+                  <div className="border border-[hsl(var(--gold)/0.3)] bg-[hsl(var(--gold)/0.04)] rounded-lg p-5 shadow-[var(--shadow-soft)]">
+                    <div className="flex items-center gap-2.5 mb-3">
+                      <span className="text-xl">✨</span>
+                      <h4 className="font-display text-base text-foreground">Early Theme Park Entry</h4>
+                    </div>
+                    <p className="font-editorial text-sm text-muted-foreground leading-relaxed mb-2">30 minutes before opening for resort guests.</p>
+                    {displayHours.earlyEntry && (
+                      <p className="font-display text-sm text-[hsl(var(--gold-dark))]">🕐 {displayHours.earlyEntry}</p>
+                    )}
+                  </div>
+                  <div className="border border-[hsl(280,30%,55%,0.25)] bg-[hsl(280,30%,55%,0.03)] rounded-lg p-5 shadow-[var(--shadow-soft)]">
+                    <div className="flex items-center gap-2.5 mb-3">
+                      <span className="text-xl">🌙</span>
+                      <h4 className="font-display text-base text-foreground">Extended Evening Hours</h4>
+                    </div>
+                    <p className="font-editorial text-sm text-muted-foreground leading-relaxed mb-2">2 extra hours for Deluxe Resort guests.</p>
+                    {displayHours.extendedEvening && (
+                      <p className="font-display text-sm text-[hsl(280,30%,45%)]">🕐 {displayHours.extendedEvening}</p>
+                    )}
+                  </div>
+                </div>
+              </motion.div>
+            </section>
+          )}
+
+          {/* ═══ THEMED LANDS ═══ */}
+          {encyclopediaPark && (
+            <section className="px-8 lg:px-16 py-12 lg:py-16 border-b border-border bg-[hsl(var(--warm))]">
+              <motion.div {...fade()}>
+                <p className="label-text mb-2 tracking-[0.25em]">Explore the Park</p>
+                <h2 className="font-display text-3xl text-foreground leading-[1.08] mb-4">Themed Lands</h2>
+                <p className="font-editorial text-muted-foreground mb-8 max-w-2xl">
+                  {park.parkName} is divided into {encyclopediaPark.lands.length} immersive themed lands, each with its own rides, dining, and atmosphere.
+                </p>
+              </motion.div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                {encyclopediaPark.lands.map((land, i) => (
+                  <motion.div key={land.name} {...fade(i * 0.05)}>
+                    <div className="border border-border bg-card rounded-lg p-6 shadow-[var(--shadow-soft)] h-full">
+                      <h4 className="font-display text-xl text-foreground mb-2">{land.name}</h4>
+                      <p className="font-editorial text-sm text-muted-foreground leading-relaxed mb-3">{land.description}</p>
+                      {land.iconicAttraction && (
+                        <p className="text-sm text-[hsl(var(--gold-dark))] font-medium">⭐ {land.iconicAttraction}</p>
+                      )}
+                      {/* Show attractions count for this land */}
+                      {(() => {
+                        const landAttractions = encyclopediaAttractions.filter((a) => a.land.includes(land.name) || land.name.includes(a.land.split(" —")[0]));
+                        return landAttractions.length > 0 ? (
+                          <p className="text-xs text-muted-foreground mt-2">{landAttractions.length} attraction{landAttractions.length > 1 ? "s" : ""} in this land</p>
+                        ) : null;
+                      })()}
+                    </div>
+                  </motion.div>
+                ))}
+              </div>
+            </section>
+          )}
+
+          {/* Must-Do & Insider Tips */}
+          {encyclopediaPark && (
+            <section className="px-8 lg:px-16 py-12 lg:py-16 border-b border-border">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
                 <motion.div {...fade()}>
                   <p className="label-text mb-6">Must-Do Experiences ⭐</p>
                   <div className="space-y-2">
@@ -509,27 +692,36 @@ const ParkGuidePage = ({ parkGuides }: ParkGuidePageProps) => {
                   </div>
                 </motion.div>
               </div>
+            </section>
+          )}
 
-              <motion.div {...fade(0.15)}>
-                <p className="label-text mb-6">Themed Lands 🗺️</p>
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {encyclopediaPark.lands.map((land) => (
-                    <div key={land.name} className="border border-border bg-card rounded-lg p-5 shadow-[var(--shadow-soft)]">
-                      <h4 className="font-display text-lg text-foreground mb-2">{land.name}</h4>
-                      <p className="font-editorial text-sm text-muted-foreground mb-2">{land.description}</p>
-                      {land.iconicAttraction && (
-                        <p className="text-sm text-[hsl(var(--gold-dark))] font-medium">⭐ {land.iconicAttraction}</p>
-                      )}
-                    </div>
-                  ))}
+          {/* ═══ DINING DIRECTORY ═══ */}
+          {parkRestaurants.length > 0 && (
+            <section className="px-8 lg:px-16 py-12 lg:py-16 border-b border-border bg-[hsl(var(--warm))]">
+              <motion.div {...fade()}>
+                <div className="flex items-center gap-3 mb-2">
+                  <UtensilsCrossed className="w-5 h-5 text-[hsl(var(--gold-dark))]" />
+                  <p className="label-text tracking-[0.25em]">Dining</p>
                 </div>
+                <h2 className="font-display text-3xl text-foreground leading-[1.08] mb-4">Where to Eat</h2>
+                <p className="font-editorial text-muted-foreground mb-10 max-w-2xl">
+                  Every restaurant, café, and quick-service spot at {park.parkName} — with dietary accommodations, reservation difficulty, and insider tips.
+                </p>
               </motion.div>
+
+              <div className="space-y-4">
+                {parkRestaurants.map((r, i) => (
+                  <motion.div key={r.restaurantId} {...fade(Math.min(i * 0.03, 0.3))}>
+                    <DiningCard restaurant={r} />
+                  </motion.div>
+                ))}
+              </div>
             </section>
           )}
 
           {/* ═══ PARK STATUS & NEWS ═══ */}
           {parkNews.length > 0 && (
-            <section className="px-8 lg:px-16 py-12 lg:py-16 border-b border-border bg-[hsl(var(--warm))]">
+            <section className="px-8 lg:px-16 py-12 lg:py-16 border-b border-border">
               <motion.div {...fade()}>
                 <p className="label-text mb-2 tracking-[0.25em]">Park Status & News</p>
                 <h2 className="font-display text-3xl text-foreground leading-[1.08] mb-4">What's Changing</h2>
@@ -538,7 +730,6 @@ const ParkGuidePage = ({ parkGuides }: ParkGuidePageProps) => {
                 </p>
               </motion.div>
 
-              {/* Closures & Refurbishments */}
               {closures.length > 0 && (
                 <motion.div {...fade(0.05)} className="mb-10">
                   <div className="flex items-center gap-2 mb-4">
@@ -551,7 +742,6 @@ const ParkGuidePage = ({ parkGuides }: ParkGuidePageProps) => {
                 </motion.div>
               )}
 
-              {/* Permanent Changes */}
               {permanentChanges.length > 0 && (
                 <motion.div {...fade(0.1)} className="mb-10">
                   <div className="flex items-center gap-2 mb-4">
@@ -564,7 +754,6 @@ const ParkGuidePage = ({ parkGuides }: ParkGuidePageProps) => {
                 </motion.div>
               )}
 
-              {/* Opening Soon */}
               {newOpenings.length > 0 && (
                 <motion.div {...fade(0.15)} className="mb-10">
                   <div className="flex items-center gap-2 mb-4">
@@ -577,7 +766,6 @@ const ParkGuidePage = ({ parkGuides }: ParkGuidePageProps) => {
                 </motion.div>
               )}
 
-              {/* Under Construction */}
               {underConstruction.length > 0 && (
                 <motion.div {...fade(0.2)}>
                   <div className="flex items-center gap-2 mb-4">
@@ -593,7 +781,7 @@ const ParkGuidePage = ({ parkGuides }: ParkGuidePageProps) => {
           )}
 
           {/* ═══ FULL ATTRACTION DIRECTORY ═══ */}
-          <section className="px-8 lg:px-16 py-16 lg:py-24">
+          <section className="px-8 lg:px-16 py-16 lg:py-24 bg-[hsl(var(--warm))]">
             <motion.div {...fade()}>
               <p className="label-text mb-2 tracking-[0.25em]">Complete Directory</p>
               <h2 className="font-display text-3xl text-foreground leading-[1.08] mb-4">Every Experience</h2>

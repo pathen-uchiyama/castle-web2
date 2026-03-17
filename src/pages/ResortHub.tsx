@@ -652,10 +652,10 @@ const ResortHub = () => {
                         </div>
                         <div className="text-right shrink-0 ml-4">
                           <StarRating rating={r.rating} />
-                          <p className="text-[0.5rem] text-muted-foreground">{r.reviewCount.toLocaleString()} reviews</p>
+                          <p className="text-xs text-muted-foreground">{r.reviewCount.toLocaleString()} reviews</p>
                           <div className="flex items-center gap-2 mt-1 justify-end">
                             <span className="font-display text-sm text-foreground">{r.priceRange}</span>
-                            <span className="px-2 py-0.5 text-[0.4375rem] uppercase tracking-[0.08em] bg-muted text-muted-foreground border border-border">
+                            <span className="px-2 py-0.5 text-[0.5625rem] uppercase tracking-[0.08em] bg-muted text-muted-foreground border border-border">
                               {serviceLabels[r.serviceType]}
                             </span>
                           </div>
@@ -663,17 +663,17 @@ const ResortHub = () => {
                       </div>
                       <div className="flex flex-wrap gap-1.5 mt-2">
                         {r.mealPeriods.map(m => (
-                          <span key={m} className="text-[0.4375rem] uppercase tracking-[0.08em] px-2 py-0.5 bg-[hsl(var(--gold)/0.06)] text-[hsl(var(--gold-dark))] border border-[hsl(var(--gold)/0.1)]">{m}</span>
+                          <span key={m} className="text-[0.5625rem] uppercase tracking-[0.08em] px-2 py-0.5 bg-[hsl(var(--gold)/0.06)] text-[hsl(var(--gold-dark))] border border-[hsl(var(--gold)/0.1)]">{m}</span>
                         ))}
                         {r.requiresReservation && (
-                          <span className={`text-[0.4375rem] uppercase tracking-[0.08em] px-2 py-0.5 border ${
+                          <span className={`text-[0.5625rem] uppercase tracking-[0.08em] px-2 py-0.5 border ${
                             r.reservationDifficulty === "legendary" || r.reservationDifficulty === "hard"
                               ? "bg-[hsl(var(--destructive)/0.06)] text-destructive border-[hsl(var(--destructive)/0.15)]"
                               : "bg-muted text-muted-foreground border-border"
                           }`}>📋 {r.reservationDifficulty} to book</span>
                         )}
                         {!r.requiresReservation && (
-                          <span className="text-[0.4375rem] uppercase tracking-[0.08em] px-2 py-0.5 bg-[hsl(142,60%,45%,0.08)] text-[hsl(142,60%,35%)] border border-[hsl(142,60%,45%,0.15)]">✓ No reservation needed</span>
+                          <span className="text-[0.5625rem] uppercase tracking-[0.08em] px-2 py-0.5 bg-[hsl(142,60%,45%,0.08)] text-[hsl(142,60%,35%)] border border-[hsl(142,60%,45%,0.15)]">✓ No reservation needed</span>
                         )}
                         <ChevronDown className={`w-3 h-3 text-muted-foreground ml-auto transition-transform ${isExpanded ? "rotate-180" : ""}`} />
                       </div>

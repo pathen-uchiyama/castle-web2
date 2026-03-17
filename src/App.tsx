@@ -67,7 +67,8 @@ const App = () => (
           <Route path="/guides" element={<GuidesLanding />} />
           <Route path="/parks/:parkId" element={<ParkGuidePage parkGuides={mockData.parkGuides} />} />
           <Route path="/resort/:resortId" element={<ResortHub />} />
-          <Route path="*" element={<NotFound />} />
+          <Route path="/terms" element={<Terms />} />
+          <Route path="/privacy" element={<Privacy />} />
         </Routes>
       </BrowserRouter>
     </TooltipProvider>

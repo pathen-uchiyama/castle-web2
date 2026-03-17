@@ -937,6 +937,55 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
                   Extended Evening Hours (Deluxe Resort)
                 </span>
               </div>
+
+              {/* Mid-Day Break Strategy */}
+              <div className="mt-3 pt-3 border-t border-[hsl(var(--border))]">
+                <span className="text-[0.5625rem] uppercase tracking-[0.12em] text-[hsl(var(--ink-light))] block mb-2">Mid-Day Break Strategy</span>
+                <div className="grid grid-cols-2 gap-1.5">
+                  {([
+                    { id: "none" as const, label: "Power Through", icon: "💪" },
+                    { id: "hotel" as const, label: "Hotel Break", icon: "🏨" },
+                    { id: "pool" as const, label: "Pool Cool-Down", icon: "🏊" },
+                    { id: "indoor-ac" as const, label: "Indoor / AC", icon: "❄️" },
+                  ]).map(opt => (
+                    <button
+                      key={opt.id}
+                      onClick={() => {
+                        // Remove any existing mid-day break item
+                        setItinerary(prev => prev.filter(i => i.id !== "midday-break"));
+                        setMidDayBreak(opt.id);
+                        if (opt.id !== "none") {
+                          const config = midDayBreakConfig[opt.id]!;
+                          // Schedule at noon (720 min from midnight)
+                          const breakItem: ItineraryItem = {
+                            id: "midday-break",
+                            name: config.label,
+                            type: config.type,
+                            duration: config.duration,
+                            notes: config.desc,
+                            scheduledStartMin: 720, // 12:00 PM
+                            isConfirmed: false,
+                          };
+                          setItinerary(prev => [...prev, breakItem]);
+                        }
+                      }}
+                      className={`px-2.5 py-2 text-[0.625rem] font-display font-medium transition-all duration-200 text-left ${
+                        midDayBreak === opt.id
+                          ? "bg-[hsl(var(--gold)/0.12)] text-[hsl(var(--gold-dark))] border border-[hsl(var(--gold)/0.4)]"
+                          : "bg-[hsl(var(--muted))] text-[hsl(var(--ink-light))] border border-transparent hover:border-[hsl(var(--border))]"
+                      }`}
+                      style={{ borderRadius: 0 }}
+                    >
+                      {opt.icon} {opt.label}
+                    </button>
+                  ))}
+                </div>
+                {midDayBreak !== "none" && midDayBreakConfig[midDayBreak] && (
+                  <p className="text-[0.5625rem] text-[hsl(var(--ink-light))] mt-1.5 italic">
+                    {midDayBreakConfig[midDayBreak]!.desc}
+                  </p>
+                )}
+              </div>
             </div>
           </div>
 

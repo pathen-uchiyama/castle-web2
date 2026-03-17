@@ -366,9 +366,9 @@ const ResortHub = () => {
                           {park.lands.map(land => (
                             <div key={land.name} className="border border-border bg-[hsl(var(--warm))] rounded-lg p-3">
                               <p className="font-display text-sm text-foreground mb-0.5">{land.name}</p>
-                              <p className="font-editorial text-[0.625rem] text-muted-foreground">{land.description}</p>
+                              <p className="font-editorial text-xs text-muted-foreground">{land.description}</p>
                               {land.iconicAttraction && (
-                                <p className="text-[0.5rem] text-[hsl(var(--gold-dark))] mt-1">⭐ {land.iconicAttraction}</p>
+                                <p className="text-xs text-[hsl(var(--gold-dark))] mt-1">⭐ {land.iconicAttraction}</p>
                               )}
                             </div>
                           ))}

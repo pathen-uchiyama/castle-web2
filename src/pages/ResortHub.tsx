@@ -324,17 +324,17 @@ const ResortHub = () => {
                       {/* Hours */}
                       <div className="flex flex-wrap gap-3 mb-6">
                         <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-muted border border-border">
-                          <Clock className="w-3 h-3 text-muted-foreground" />
-                          <span className="text-[0.5625rem] text-foreground font-medium">{park.operatingHours.regular}</span>
+                          <Clock className="w-3.5 h-3.5 text-muted-foreground" />
+                          <span className="text-xs text-foreground font-medium">{park.operatingHours.regular}</span>
                         </div>
                         <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-[hsl(var(--gold)/0.06)] border border-[hsl(var(--gold)/0.2)]">
-                          <span className="text-[0.5rem]">⭐</span>
-                          <span className="text-[0.5625rem] text-[hsl(var(--gold-dark))] font-medium">Early Entry: {park.operatingHours.earlyEntry}</span>
+                          <span className="text-xs">⭐</span>
+                          <span className="text-xs text-[hsl(var(--gold-dark))] font-medium">Early Entry: {park.operatingHours.earlyEntry}</span>
                         </div>
                         {park.operatingHours.extendedEvening && (
                           <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-foreground/5 border border-border">
-                            <span className="text-[0.5rem]">🌙</span>
-                            <span className="text-[0.5625rem] text-foreground font-medium">Extended: {park.operatingHours.extendedEvening}</span>
+                            <span className="text-xs">🌙</span>
+                            <span className="text-xs text-foreground font-medium">Extended: {park.operatingHours.extendedEvening}</span>
                           </div>
                         )}
                       </div>

@@ -86,6 +86,7 @@ export interface DiningReservation {
   parkOrResort: string;
   date: string;
   time: string;
+  timeRangeEnd?: string;
   partySize: number;
   confirmationNumber: string;
   cuisine: string;
@@ -93,6 +94,7 @@ export interface DiningReservation {
   notes?: string;
   dietaryFlags?: string[];
   status: "confirmed" | "pending" | "cancelled";
+  monitoringActive?: boolean;
   /** Links this dining to a scheduled show (e.g. dessert party → fireworks) */
   linkedShowId?: string;
 }
@@ -106,11 +108,13 @@ export interface BookedExperience {
   parkOrResort: string;
   date: string;
   time: string;
+  timeRangeEnd?: string;
   duration?: string;
   partySize: number;
   confirmationNumber: string;
   notes?: string;
   status: "confirmed" | "pending" | "cancelled";
+  monitoringActive?: boolean;
 }
 
 /* ─── Discovery / Research Types ────────────────────────────────── */
@@ -180,6 +184,8 @@ export interface BookedTrip {
   tripId: string;
   destination: string;
   tripName: string;
+  startDate: string;
+  endDate: string;
   countdownDays: number;
   partySize: number;
   description: string;

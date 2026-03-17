@@ -146,21 +146,59 @@ const tabs = [
   { id: "prep", label: "Prep & Checklists" },
 ];
 
+/* ─── Time slot helpers ──────────────────────────────────────────── */
+const TIME_SLOTS = (() => {
+  const slots: { value: string; label: string }[] = [];
+  for (let h = 7; h <= 22; h++) {
+    for (const m of [0, 30]) {
+      const hour12 = h > 12 ? h - 12 : h === 0 ? 12 : h;
+      const ampm = h >= 12 ? "PM" : "AM";
+      const label = `${hour12}:${m === 0 ? "00" : "30"} ${ampm}`;
+      const value = `${hour12}:${m === 0 ? "00" : "30"} ${ampm}`;
+      slots.push({ value, label });
+    }
+  }
+  return slots;
+})();
+
 /* ─── Booking Modal ─────────────────────────────────────────────── */
 
 interface BookingModalProps {
   type: "dining" | "experience";
   venueName: string;
   venueLocation: string;
+  tripStartDate: string;
+  tripEndDate: string;
+  tripName: string;
   onClose: () => void;
-  onBook: (data: { date: string; time: string; partySize: number; notes: string }) => void;
+  onBook: (data: { date: string; time: string; timeRangeEnd?: string; partySize: number; notes: string; monitoringActive: boolean }) => void;
 }
 
-const BookingModal = ({ type, venueName, venueLocation, onClose, onBook }: BookingModalProps) => {
-  const [date, setDate] = useState("");
-  const [time, setTime] = useState("");
+const BookingModal = ({ type, venueName, venueLocation, tripStartDate, tripEndDate, tripName, onClose, onBook }: BookingModalProps) => {
+  // Build trip day options
+  const tripDays = useMemo(() => {
+    const days: { value: string; label: string }[] = [];
+    const start = new Date(tripStartDate + "T12:00:00");
+    const end = new Date(tripEndDate + "T12:00:00");
+    const cur = new Date(start);
+    while (cur <= end) {
+      const iso = cur.toISOString().split("T")[0];
+      const dayName = cur.toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" });
+      days.push({ value: iso, label: dayName });
+      cur.setDate(cur.getDate() + 1);
+    }
+    return days;
+  }, [tripStartDate, tripEndDate]);
+
+  const [date, setDate] = useState(tripDays[0]?.value || "");
+  const [timeStart, setTimeStart] = useState("");
+  const [timeEnd, setTimeEnd] = useState("");
+  const [useRange, setUseRange] = useState(false);
   const [partySize, setPartySize] = useState(4);
   const [notes, setNotes] = useState("");
+  const [enableMonitoring, setEnableMonitoring] = useState(true);
+
+  const canSubmit = date && timeStart;
 
   return (
     <motion.div
@@ -171,7 +209,7 @@ const BookingModal = ({ type, venueName, venueLocation, onClose, onBook }: Booki
       <motion.div
         initial={{ opacity: 0, y: 20, scale: 0.97 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: 20, scale: 0.97 }}
         transition={{ duration: 0.3 }}
-        className="w-full max-w-md bg-card border border-border rounded-lg shadow-lg"
+        className="w-full max-w-md bg-card border border-border rounded-lg shadow-lg max-h-[90vh] overflow-y-auto"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="p-6 border-b border-border">
@@ -184,31 +222,155 @@ const BookingModal = ({ type, venueName, venueLocation, onClose, onBook }: Booki
             <button onClick={onClose} className="text-muted-foreground hover:text-foreground transition-colors">✕</button>
           </div>
         </div>
-        <div className="p-6 space-y-4">
+        <div className="p-6 space-y-5">
+          {/* Trip date context */}
+          <div className="p-3 bg-[hsl(var(--gold)/0.04)] border border-[hsl(var(--gold)/0.15)] rounded-lg">
+            <p className="font-editorial text-xs text-muted-foreground">📅 <span className="text-foreground font-medium">{tripName}</span> · {tripDays[0]?.label} – {tripDays[tripDays.length - 1]?.label}</p>
+          </div>
+
+          {/* Date — trip days only */}
           <div>
             <label className="label-text mb-2 block">Date</label>
-            <input type="date" value={date} onChange={(e) => setDate(e.target.value)} className="w-full border border-border bg-background rounded-md px-3 py-2 font-editorial text-sm text-foreground focus:outline-none focus:border-[hsl(var(--gold))] transition-colors" />
-          </div>
-          <div>
-            <label className="label-text mb-2 block">Time</label>
-            <input type="time" value={time} onChange={(e) => setTime(e.target.value)} className="w-full border border-border bg-background rounded-md px-3 py-2 font-editorial text-sm text-foreground focus:outline-none focus:border-[hsl(var(--gold))] transition-colors" />
-          </div>
-          <div>
-            <label className="label-text mb-2 block">Party Size</label>
-            <div className="flex gap-2">
-              {[1,2,3,4,5,6].map(n => (
-                <button key={n} onClick={() => setPartySize(n)} className={`w-10 h-10 rounded-md border text-sm font-display transition-all duration-200 ${partySize === n ? "bg-foreground text-background border-foreground" : "border-border text-muted-foreground hover:border-foreground/30"}`}>{n}</button>
+            <div className="flex gap-1.5 flex-wrap">
+              {tripDays.map((d) => (
+                <button
+                  key={d.value}
+                  onClick={() => setDate(d.value)}
+                  className={`px-3 py-2 rounded-lg text-xs font-display transition-all duration-200 border ${
+                    date === d.value
+                      ? "bg-foreground text-background border-foreground"
+                      : "border-border text-muted-foreground hover:border-foreground/30"
+                  }`}
+                >
+                  {d.label}
+                </button>
               ))}
             </div>
           </div>
+
+          {/* Time — dropdown with optional range */}
+          <div>
+            <div className="flex items-center justify-between mb-2">
+              <label className="label-text">{useRange ? "Desired Time Range" : "Preferred Time"}</label>
+              <button
+                onClick={() => setUseRange(!useRange)}
+                className="text-[0.5625rem] uppercase tracking-[0.12em] text-[hsl(var(--gold-dark))] hover:text-foreground transition-colors"
+              >
+                {useRange ? "← Exact time" : "Set a range →"}
+              </button>
+            </div>
+            <div className="flex gap-2 items-center">
+              <select
+                value={timeStart}
+                onChange={(e) => setTimeStart(e.target.value)}
+                className="flex-1 border border-border bg-background rounded-lg px-3 py-2.5 font-editorial text-sm text-foreground focus:outline-none focus:border-[hsl(var(--gold))] transition-colors appearance-none cursor-pointer"
+              >
+                <option value="">{useRange ? "Earliest" : "Select time"}</option>
+                {TIME_SLOTS.map((s) => (
+                  <option key={s.value} value={s.value}>{s.label}</option>
+                ))}
+              </select>
+              {useRange && (
+                <>
+                  <span className="text-muted-foreground text-sm">to</span>
+                  <select
+                    value={timeEnd}
+                    onChange={(e) => setTimeEnd(e.target.value)}
+                    className="flex-1 border border-border bg-background rounded-lg px-3 py-2.5 font-editorial text-sm text-foreground focus:outline-none focus:border-[hsl(var(--gold))] transition-colors appearance-none cursor-pointer"
+                  >
+                    <option value="">Latest</option>
+                    {TIME_SLOTS.filter((s) => {
+                      if (!timeStart) return true;
+                      const startIdx = TIME_SLOTS.findIndex((t) => t.value === timeStart);
+                      const curIdx = TIME_SLOTS.findIndex((t) => t.value === s.value);
+                      return curIdx > startIdx;
+                    }).map((s) => (
+                      <option key={s.value} value={s.value}>{s.label}</option>
+                    ))}
+                  </select>
+                </>
+              )}
+            </div>
+            {useRange && (
+              <p className="font-editorial text-[0.625rem] text-muted-foreground mt-1.5 italic">
+                💡 A range improves your chances for hard-to-get reservations. We'll monitor for any opening in this window.
+              </p>
+            )}
+          </div>
+
+          {/* Party Size */}
+          <div>
+            <label className="label-text mb-2 block">Party Size</label>
+            <div className="flex gap-2">
+              {[1, 2, 3, 4, 5, 6, 7, 8].map((n) => (
+                <button
+                  key={n}
+                  onClick={() => setPartySize(n)}
+                  className={`w-9 h-9 rounded-lg border text-sm font-display transition-all duration-200 ${
+                    partySize === n
+                      ? "bg-foreground text-background border-foreground"
+                      : "border-border text-muted-foreground hover:border-foreground/30"
+                  }`}
+                >
+                  {n}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Notes */}
           <div>
             <label className="label-text mb-2 block">Notes (optional)</label>
-            <textarea value={notes} onChange={(e) => setNotes(e.target.value)} placeholder="Special requests, dietary needs..." rows={2} className="w-full border border-border bg-background rounded-md px-3 py-2 font-editorial text-sm text-foreground focus:outline-none focus:border-[hsl(var(--gold))] transition-colors resize-none" />
+            <textarea
+              value={notes}
+              onChange={(e) => setNotes(e.target.value)}
+              placeholder="Special requests, dietary needs, seating preference..."
+              rows={2}
+              className="w-full border border-border bg-background rounded-lg px-3 py-2 font-editorial text-sm text-foreground focus:outline-none focus:border-[hsl(var(--gold))] transition-colors resize-none"
+            />
+          </div>
+
+          {/* Monitoring toggle */}
+          <div
+            className={`flex items-start gap-3 p-4 rounded-lg border cursor-pointer transition-all duration-300 ${
+              enableMonitoring
+                ? "border-[hsl(var(--gold)/0.4)] bg-[hsl(var(--gold)/0.04)]"
+                : "border-border bg-muted/20"
+            }`}
+            onClick={() => setEnableMonitoring(!enableMonitoring)}
+          >
+            <div className={`w-5 h-5 rounded-md border-2 flex items-center justify-center shrink-0 mt-0.5 transition-all duration-200 ${
+              enableMonitoring ? "border-[hsl(var(--gold))] bg-[hsl(var(--gold))]" : "border-border"
+            }`}>
+              {enableMonitoring && <span className="text-background text-xs font-bold">✓</span>}
+            </div>
+            <div>
+              <p className="font-display text-sm text-foreground">🔍 Enable Availability Monitoring</p>
+              <p className="font-editorial text-xs text-muted-foreground mt-0.5 leading-relaxed">
+                We'll watch for openings matching your date{useRange ? ", time range" : ""}, and party size — and notify you instantly when a slot opens.
+              </p>
+            </div>
           </div>
         </div>
+
         <div className="p-6 border-t border-border flex gap-3">
-          <button onClick={() => { if (date && time) onBook({ date, time, partySize, notes }); }} className="flex-1 px-6 py-3 rounded-lg text-[0.625rem] tracking-[0.15em] uppercase font-medium bg-foreground text-background transition-opacity duration-300 hover:opacity-90 disabled:opacity-40" disabled={!date || !time}>
-            Add as Pending
+          <button
+            onClick={() => {
+              if (canSubmit) {
+                onBook({
+                  date,
+                  time: timeStart,
+                  timeRangeEnd: useRange && timeEnd ? timeEnd : undefined,
+                  partySize,
+                  notes,
+                  monitoringActive: enableMonitoring,
+                });
+              }
+            }}
+            className="flex-1 px-6 py-3 rounded-lg text-[0.625rem] tracking-[0.15em] uppercase font-medium bg-foreground text-background transition-opacity duration-300 hover:opacity-90 disabled:opacity-40"
+            disabled={!canSubmit}
+          >
+            {enableMonitoring ? "📡 Add & Start Monitoring" : "Add as Pending"}
           </button>
           <button onClick={onClose} className="px-6 py-3 rounded-lg text-[0.625rem] tracking-[0.15em] uppercase font-medium text-muted-foreground border border-border hover:border-foreground/30 transition-all duration-300">
             Cancel
@@ -463,13 +625,14 @@ const BookedTripDetail = ({ trip }: { trip: BookedTrip }) => {
 
   const hasAnyOverlaps = Object.keys(overlapMap).length > 0;
 
-  const handleBookDining = (venue: DiningVenue, data: { date: string; time: string; partySize: number; notes: string }) => {
+  const handleBookDining = (venue: DiningVenue, data: { date: string; time: string; timeRangeEnd?: string; partySize: number; notes: string; monitoringActive: boolean }) => {
     const newRes: DiningReservation = {
       reservationId: `din-pending-${Date.now()}`,
       restaurantName: venue.name,
       parkOrResort: venue.parkOrResort,
       date: data.date,
       time: data.time,
+      timeRangeEnd: data.timeRangeEnd,
       partySize: data.partySize,
       confirmationNumber: "Pending",
       cuisine: venue.cuisine,
@@ -477,14 +640,20 @@ const BookedTripDetail = ({ trip }: { trip: BookedTrip }) => {
       notes: data.notes || undefined,
       dietaryFlags: venue.dietaryAccommodations.length > 0 ? venue.dietaryAccommodations.slice(0, 2) : undefined,
       status: "pending",
+      monitoringActive: data.monitoringActive,
     };
     setPendingDining(prev => [...prev, newRes]);
     setBookingModal(null);
     setDiningSubTab("reservations");
-    toast({ title: "Reservation added", description: `${venue.name} added as pending. Update with confirmation once booked.` });
+    toast({
+      title: data.monitoringActive ? "📡 Monitoring started" : "Reservation added",
+      description: data.monitoringActive
+        ? `${venue.name} added as pending. We're watching for availability on ${data.date}${data.timeRangeEnd ? ` (${data.time} – ${data.timeRangeEnd})` : ` at ${data.time}`} for ${data.partySize}.`
+        : `${venue.name} added as pending. Update with confirmation once booked.`,
+    });
   };
 
-  const handleBookExperience = (venue: ExperienceVenue, data: { date: string; time: string; partySize: number; notes: string }) => {
+  const handleBookExperience = (venue: ExperienceVenue, data: { date: string; time: string; timeRangeEnd?: string; partySize: number; notes: string; monitoringActive: boolean }) => {
     const newExp: BookedExperience = {
       experienceId: `exp-pending-${Date.now()}`,
       experienceName: venue.name,
@@ -492,16 +661,23 @@ const BookedTripDetail = ({ trip }: { trip: BookedTrip }) => {
       parkOrResort: venue.parkOrResort,
       date: data.date,
       time: data.time,
+      timeRangeEnd: data.timeRangeEnd,
       duration: venue.duration,
       partySize: data.partySize,
       confirmationNumber: "Pending",
       notes: data.notes || undefined,
       status: "pending",
+      monitoringActive: data.monitoringActive,
     };
     setPendingExperiences(prev => [...prev, newExp]);
     setBookingModal(null);
     setExperienceSubTab("reservations");
-    toast({ title: "Experience added", description: `${venue.name} added as pending. Update with confirmation once booked.` });
+    toast({
+      title: data.monitoringActive ? "📡 Monitoring started" : "Experience added",
+      description: data.monitoringActive
+        ? `${venue.name} added as pending. Monitoring for availability on ${data.date}${data.timeRangeEnd ? ` (${data.time} – ${data.timeRangeEnd})` : ` at ${data.time}`}.`
+        : `${venue.name} added as pending. Update with confirmation once booked.`,
+    });
   };
 
   const handleSetAlert = (type: "dining" | "experience", venueName: string, opensDate: string, note: string) => {
@@ -907,20 +1083,35 @@ const BookedTripDetail = ({ trip }: { trip: BookedTrip }) => {
                   </p>
                   <div className="space-y-3">
                     {allDiningReservations.filter(d => d.status === "pending").map((res) => (
-                      <div key={res.reservationId} className="border border-dashed border-border bg-card rounded-lg p-4 transition-shadow duration-500 hover:shadow-[var(--shadow-hover)]">
+                      <div key={res.reservationId} className={`border bg-card rounded-lg p-4 transition-shadow duration-500 hover:shadow-[var(--shadow-hover)] ${res.monitoringActive ? "border-[hsl(var(--gold)/0.4)]" : "border-dashed border-border"}`}>
                         <div className="flex items-start justify-between mb-2">
                           <div className="flex items-center gap-2">
                             <span className="text-lg">{mealIcons[res.mealType]}</span>
                             <h4 className="font-display text-foreground">{res.restaurantName}</h4>
                           </div>
-                           <span className="px-2 py-0.5 rounded-md text-[0.5625rem] uppercase tracking-[0.12em] font-medium border" style={{ background: statusColors.pending.bg, color: statusColors.pending.text, borderColor: statusColors.pending.border }}>Pending</span>
+                          <div className="flex items-center gap-2">
+                            {res.monitoringActive && (
+                              <span className="px-2 py-0.5 rounded-md text-[0.5625rem] uppercase tracking-[0.12em] font-medium border border-[hsl(var(--gold)/0.3)] bg-[hsl(var(--gold)/0.08)] text-[hsl(var(--gold-dark))]">📡 Monitoring</span>
+                            )}
+                            <span className="px-2 py-0.5 rounded-md text-[0.5625rem] uppercase tracking-[0.12em] font-medium border" style={{ background: statusColors.pending.bg, color: statusColors.pending.text, borderColor: statusColors.pending.border }}>Pending</span>
+                          </div>
                         </div>
                         <p className="font-editorial text-xs text-muted-foreground mb-2">{res.parkOrResort} · {res.cuisine}</p>
                         <div className="flex flex-wrap gap-4 text-xs">
-                          <span className="font-editorial text-foreground">{res.date} · {res.time}</span>
+                          <span className="font-editorial text-foreground">
+                            {res.date} · {res.time}{res.timeRangeEnd ? ` – ${res.timeRangeEnd}` : ""}
+                          </span>
                           <span className="font-editorial text-muted-foreground">Party of {res.partySize}</span>
                         </div>
                         {res.notes && <p className="font-editorial text-xs text-muted-foreground/60 italic mt-2">{res.notes}</p>}
+                        {res.monitoringActive && (
+                          <div className="mt-2 flex items-start gap-2 px-3 py-2 rounded-lg bg-[hsl(var(--gold)/0.04)] border border-[hsl(var(--gold)/0.15)]">
+                            <span className="text-xs shrink-0">🔍</span>
+                            <p className="font-editorial text-[0.625rem] text-muted-foreground leading-relaxed">
+                              Actively scanning for availability{res.timeRangeEnd ? ` between ${res.time} – ${res.timeRangeEnd}` : ` at ${res.time}`} for a party of {res.partySize}. You'll be notified when a slot opens.
+                            </p>
+                          </div>
+                        )}
                         {overlapMap[res.reservationId] && (
                            <div className="mt-2 flex items-start gap-2 px-2 py-1.5 rounded-md bg-[hsl(var(--destructive)/0.04)] border border-[hsl(var(--destructive)/0.15)]">
                             <span className="text-xs shrink-0">⚠️</span>
@@ -1162,21 +1353,36 @@ const BookedTripDetail = ({ trip }: { trip: BookedTrip }) => {
                   </p>
                   <div className="space-y-3">
                     {allBookedExperiences.filter(e => e.status === "pending").map((exp) => (
-                      <div key={exp.experienceId} className="border border-dashed border-border bg-card p-4 transition-shadow duration-500 hover:shadow-[var(--shadow-hover)]">
+                      <div key={exp.experienceId} className={`border bg-card p-4 transition-shadow duration-500 hover:shadow-[var(--shadow-hover)] ${exp.monitoringActive ? "border-[hsl(var(--gold)/0.4)]" : "border-dashed border-border"}`}>
                         <div className="flex items-start justify-between mb-2">
                           <div className="flex items-center gap-2">
                             <span className="text-lg">{experienceIcons[exp.category]}</span>
                             <h4 className="font-display text-foreground">{exp.experienceName}</h4>
                           </div>
-                          <span className="px-2 py-0.5 text-[0.5625rem] uppercase tracking-[0.12em] font-medium border" style={{ background: statusColors.pending.bg, color: statusColors.pending.text, borderColor: statusColors.pending.border }}>Pending</span>
+                          <div className="flex items-center gap-2">
+                            {exp.monitoringActive && (
+                              <span className="px-2 py-0.5 rounded-md text-[0.5625rem] uppercase tracking-[0.12em] font-medium border border-[hsl(var(--gold)/0.3)] bg-[hsl(var(--gold)/0.08)] text-[hsl(var(--gold-dark))]">📡 Monitoring</span>
+                            )}
+                            <span className="px-2 py-0.5 text-[0.5625rem] uppercase tracking-[0.12em] font-medium border" style={{ background: statusColors.pending.bg, color: statusColors.pending.text, borderColor: statusColors.pending.border }}>Pending</span>
+                          </div>
                         </div>
                         <p className="font-editorial text-xs text-muted-foreground mb-2">{exp.parkOrResort} · {experienceLabels[exp.category]}</p>
                         <div className="flex flex-wrap gap-4 text-xs">
-                          <span className="font-editorial text-foreground">{exp.date} · {exp.time}</span>
+                          <span className="font-editorial text-foreground">
+                            {exp.date} · {exp.time}{exp.timeRangeEnd ? ` – ${exp.timeRangeEnd}` : ""}
+                          </span>
                           {exp.duration && <span className="font-editorial text-muted-foreground">⏱ {exp.duration}</span>}
                           <span className="font-editorial text-muted-foreground">Party of {exp.partySize}</span>
                         </div>
                         {exp.notes && <p className="font-editorial text-xs text-muted-foreground/60 italic mt-2">{exp.notes}</p>}
+                        {exp.monitoringActive && (
+                          <div className="mt-2 flex items-start gap-2 px-3 py-2 rounded-lg bg-[hsl(var(--gold)/0.04)] border border-[hsl(var(--gold)/0.15)]">
+                            <span className="text-xs shrink-0">🔍</span>
+                            <p className="font-editorial text-[0.625rem] text-muted-foreground leading-relaxed">
+                              Actively scanning for availability{exp.timeRangeEnd ? ` between ${exp.time} – ${exp.timeRangeEnd}` : ` at ${exp.time}`} for a party of {exp.partySize}.
+                            </p>
+                          </div>
+                        )}
                         {overlapMap[exp.experienceId] && (
                           <div className="mt-2 flex items-start gap-2 px-2 py-1.5 bg-[hsl(var(--destructive)/0.04)] border border-[hsl(var(--destructive)/0.15)]">
                             <span className="text-xs shrink-0">⚠️</span>
@@ -1357,6 +1563,9 @@ const BookedTripDetail = ({ trip }: { trip: BookedTrip }) => {
             type={bookingModal.type}
             venueName={bookingModal.venue.name}
             venueLocation={bookingModal.venue.parkOrResort}
+            tripStartDate={trip.startDate}
+            tripEndDate={trip.endDate}
+            tripName={trip.tripName}
             onClose={() => setBookingModal(null)}
             onBook={(data) => {
               if (bookingModal.type === "dining") {

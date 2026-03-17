@@ -516,14 +516,6 @@ const TripWizard = ({ open, onClose, onComplete }: TripWizardProps) => {
                       </motion.div>
 
                       {/* Additional travelers */}
-                      {data.partyMembers.length === 0 && (
-                        <div className="text-center py-6" style={{ border: `1px dashed ${brand.border}`, background: "transparent" }}>
-                          <p style={{ fontFamily: brand.font.display, fontWeight: 400, color: brand.lapis, fontSize: "1rem", marginBottom: "0.5rem" }}>Solo adventure?</p>
-                          <p style={{ fontFamily: brand.font.body, fontSize: "0.8125rem", color: brand.slate, marginBottom: "0.25rem" }}>
-                            No problem — continue as a solo trip, or add travel companions below.
-                          </p>
-                        </div>
-                      )}
 
                       {data.partyMembers.map((member, idx) => (
                         <motion.div

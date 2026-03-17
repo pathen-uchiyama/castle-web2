@@ -72,6 +72,16 @@ const Account = ({ account }: AccountProps) => {
   const [profileData, setProfileData] = useState({
     guestName: account.guestName,
     email: account.email,
+    birthday: account.birthday || "",
+  });
+
+  // Travel profile (favorites, accessibility, sensory)
+  const [editingTravel, setEditingTravel] = useState(false);
+  const [travelData, setTravelData] = useState({
+    favoriteCharacter: account.favoriteCharacter || "",
+    favoriteRide: account.favoriteRide || "",
+    accessibilityNeeds: account.accessibilityNeeds || [] as string[],
+    sensoryNotes: account.sensoryNotes || "",
   });
 
   // Health profile

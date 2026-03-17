@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import { useState } from "react";
 import { Lock } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import FloatingAnchor from "@/components/FloatingAnchor";
 import Footer from "@/components/Footer";
 import TripWizard from "@/components/TripWizard";

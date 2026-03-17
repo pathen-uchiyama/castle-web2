@@ -276,10 +276,10 @@ const TripWizard = ({ open, onClose, onComplete, guestName = "" }: TripWizardPro
   // Sync park schedule when dates change
   const syncSchedule = useCallback(() => {
     if (tripDays.length === 0) return;
-    const existing = new Map(data.parkSchedule.map((ps) => [ps.date, ps.parkId]));
+    const existing = new Map(data.parkSchedule.map((ps) => [ps.date, ps.parkIds]));
     const newSchedule = tripDays.map((d) => {
       const iso = format(d, "yyyy-MM-dd");
-      return { date: iso, parkId: existing.get(iso) ?? null };
+      return { date: iso, parkIds: existing.get(iso) ?? [] };
     });
     set("parkSchedule", newSchedule);
   }, [tripDays, data.parkSchedule, set]);

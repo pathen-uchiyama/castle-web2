@@ -873,38 +873,48 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
                   {/* Gap analysis between items */}
                   {(() => {
                     const nextRi = ribbon[idx + 1];
-                    const gapMin = nextRi ? nextRi.startMin - endMin - (nextRi.walkBuffer || 0) : 0;
+                    const gapMin = nextRi ? nextRi.startMin - endMin : 0;
                     const currentZone = item.zone;
                     
-                    // Proportional height: minimum 48px, scales with gap size
-                    const gapHeight = gapMin >= 10 ? Math.max(48, Math.min(gapMin * 1.5, 180)) : 0;
-                    
-                    return gapMin >= 10 ? (
-                      <div
-                        className={`my-1 border-2 border-dashed flex flex-col items-center justify-center transition-colors duration-200 ${
-                          dropTargetIdx === idx + 1
-                            ? "border-[hsl(var(--gold))] bg-[hsl(var(--gold)/0.12)]"
-                            : "border-[hsl(var(--gold)/0.35)] bg-[hsl(var(--gold)/0.04)]"
-                        }`}
-                        style={{ borderRadius: 0, minHeight: `${gapHeight}px` }}
-                        onDragOver={(e) => { e.preventDefault(); setDropTargetIdx(idx + 1); }}
-                        onDragLeave={() => setDropTargetIdx(null)}
-                        onDrop={(e) => handleDropOnZone(e, idx + 1)}
-                      >
-                        <div className="flex items-center gap-2 mb-1">
-                          <span className="text-xl">⏳</span>
-                          <span className="font-display text-lg text-[hsl(var(--gold-dark))] font-bold">{gapMin}m open</span>
+                    // Show gap indicators for any gap >= 5 minutes
+                    if (gapMin >= 5) {
+                      const gapHeight = Math.max(56, Math.min(gapMin * 1.8, 200));
+                      const ridesFit = Math.floor(gapMin / 25);
+                      
+                      return (
+                        <div
+                          className={`my-2 border-2 border-dashed flex flex-col items-center justify-center transition-colors duration-200 ${
+                            dropTargetIdx === idx + 1
+                              ? "border-[hsl(var(--gold))] bg-[hsl(var(--gold)/0.15)]"
+                              : "border-[hsl(var(--gold)/0.4)] bg-[hsl(var(--gold)/0.06)]"
+                          }`}
+                          style={{ borderRadius: "0.75rem", minHeight: `${gapHeight}px` }}
+                          onDragOver={(e) => { e.preventDefault(); setDropTargetIdx(idx + 1); }}
+                          onDragLeave={() => setDropTargetIdx(null)}
+                          onDrop={(e) => handleDropOnZone(e, idx + 1)}
+                        >
+                          <div className="flex items-center gap-2 mb-1.5">
+                            <span className="text-lg">⏳</span>
+                            <span className="font-display text-base text-[hsl(var(--gold-dark))] font-bold">{gapMin}m open</span>
+                          </div>
+                          <p className="text-[0.6875rem] text-[hsl(var(--ink-light))] font-medium">
+                            {formatMin(endMin)} → {formatMin(nextRi.startMin)}
+                          </p>
+                          {ridesFit > 0 && (
+                            <p className="text-[0.625rem] text-[hsl(var(--ink-light))] mt-0.5">
+                              ~{ridesFit} ride{ridesFit > 1 ? "s" : ""} could fit
+                            </p>
+                          )}
+                          {currentZone && (
+                            <span className="mt-2 text-[0.5625rem] uppercase tracking-[0.1em] px-2.5 py-1 bg-[hsl(var(--gold)/0.12)] text-[hsl(var(--gold-dark))]" style={{ borderRadius: "0.5rem" }}>
+                              📍 Near {zoneLabel(currentZone)} · Drag here to fill
+                            </span>
+                          )}
                         </div>
-                        <p className="text-xs text-[hsl(var(--ink-light))]">
-                          ~{Math.floor(gapMin / 25)} rides could fit · {formatMin(endMin)} → {formatMin(nextRi ? nextRi.startMin : endMin + gapMin)}
-                        </p>
-                        {currentZone && (
-                          <span className="mt-1.5 text-[0.5625rem] uppercase tracking-[0.1em] px-2.5 py-1 bg-[hsl(var(--gold)/0.12)] text-[hsl(var(--gold-dark))]" style={{ borderRadius: 0 }}>
-                            📍 Near {zoneLabel(currentZone)} · Drag here to fill
-                          </span>
-                        )}
-                      </div>
-                    ) : (
+                      );
+                    }
+                    
+                    return (
                       <DropZone
                         idx={idx + 1}
                         isActive={dropTargetIdx === idx + 1}
@@ -931,25 +941,30 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
                 {/* Gap until park close */}
                 {remainingMin >= 10 && (
                   <div
-                    className={`my-1 border-2 border-dashed flex flex-col items-center justify-center transition-colors duration-200 ${
+                    className={`my-2 border-2 border-dashed flex flex-col items-center justify-center transition-colors duration-200 ${
                       dropTargetIdx === ribbon.length
-                        ? "border-[hsl(var(--gold))] bg-[hsl(var(--gold)/0.12)]"
-                        : "border-[hsl(var(--gold)/0.35)] bg-[hsl(var(--gold)/0.04)]"
+                        ? "border-[hsl(var(--gold))] bg-[hsl(var(--gold)/0.15)]"
+                        : "border-[hsl(var(--gold)/0.4)] bg-[hsl(var(--gold)/0.06)]"
                     }`}
-                    style={{ borderRadius: 0, minHeight: `${remainingHeight}px` }}
+                    style={{ borderRadius: "0.75rem", minHeight: `${remainingHeight}px` }}
                     onDragOver={(e) => { e.preventDefault(); setDropTargetIdx(ribbon.length); }}
                     onDragLeave={() => setDropTargetIdx(null)}
                     onDrop={(e) => handleDropOnZone(e, ribbon.length)}
                   >
-                    <div className="flex items-center gap-2 mb-1">
-                      <span className="text-xl">⏳</span>
-                      <span className="font-display text-lg text-[hsl(var(--gold-dark))] font-bold">{remainingMin}m open</span>
+                    <div className="flex items-center gap-2 mb-1.5">
+                      <span className="text-lg">⏳</span>
+                      <span className="font-display text-base text-[hsl(var(--gold-dark))] font-bold">{remainingMin}m open</span>
                     </div>
-                    <p className="text-xs text-[hsl(var(--ink-light))]">
-                      ~{Math.floor(remainingMin / 25)} rides could fit · {formatMin(lastEnd)} → {formatMin(leaveMin)}
+                    <p className="text-[0.6875rem] text-[hsl(var(--ink-light))] font-medium">
+                      {formatMin(lastEnd)} → {formatMin(leaveMin)}
                     </p>
+                    {Math.floor(remainingMin / 25) > 0 && (
+                      <p className="text-[0.625rem] text-[hsl(var(--ink-light))] mt-0.5">
+                        ~{Math.floor(remainingMin / 25)} ride{Math.floor(remainingMin / 25) > 1 ? "s" : ""} could fit
+                      </p>
+                    )}
                     {lastZone && (
-                      <span className="mt-1.5 text-[0.5625rem] uppercase tracking-[0.1em] px-2.5 py-1 bg-[hsl(var(--gold)/0.12)] text-[hsl(var(--gold-dark))]" style={{ borderRadius: 0 }}>
+                      <span className="mt-2 text-[0.5625rem] uppercase tracking-[0.1em] px-2.5 py-1 bg-[hsl(var(--gold)/0.12)] text-[hsl(var(--gold-dark))]" style={{ borderRadius: "0.5rem" }}>
                         📍 Near {zoneLabel(lastZone)} · Drag here to fill
                       </span>
                     )}

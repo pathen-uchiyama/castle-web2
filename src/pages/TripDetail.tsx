@@ -2066,6 +2066,18 @@ const BookedTripDetail = ({ trip }: { trip: BookedTrip }) => {
             }}
           />
         )}
+        {editModal && (
+          <EditModal
+            type={editModal.type}
+            isConfirmed={editModal.isConfirmed}
+            currentData={editModal.currentData}
+            tripStartDate={trip.startDate}
+            tripEndDate={trip.endDate}
+            tripName={trip.tripName}
+            onClose={() => setEditModal(null)}
+            onSave={handleEditSave}
+          />
+        )}
       </AnimatePresence>
     </div>
   );

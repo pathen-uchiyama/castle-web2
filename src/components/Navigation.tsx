@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { motion, useScroll, useTransform, AnimatePresence } from "framer-motion";
+import { motion, useScroll, useTransform, useMotionValueEvent, AnimatePresence } from "framer-motion";
 import { Link, useLocation } from "react-router-dom";
 import ccLogoLight from "@/assets/cc-logo-light.png";
 import ccLogoDark from "@/assets/cc-logo-dark.png";
@@ -18,6 +18,14 @@ const Navigation = () => {
   const location = useLocation();
   const isHome = location.pathname === "/";
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+
+  useMotionValueEvent(bgOpacity, "change", (v) => {
+    setScrolled(v > 0.5);
+  });
+
+  // On home: before scroll = light logo + lapis/gold; after scroll (dark bg) = dark logo + gold/white
+  const homeScrolled = isHome && scrolled;
 
   // Match /guides, /resort/*, and /parks/* for Park Guides active state
   const isGuideActive = (path: string) => {
@@ -43,10 +51,14 @@ const Navigation = () => {
           }}
         />
         <Link to="/" className="relative z-10 flex items-center gap-2.5">
-          <img src={ccLogoLight} alt="Castle Companion" className={`h-[2.375rem] w-auto transition-all duration-500 ${isHome ? "drop-shadow-[0_0_6px_hsla(42,64%,50%,0.4)] brightness-110" : ""}`} />
+          <img
+            src={homeScrolled ? ccLogoDark : ccLogoLight}
+            alt="Castle Companion"
+            className={`h-[2.375rem] w-auto transition-all duration-500 ${isHome ? "drop-shadow-[0_0_6px_hsla(42,64%,50%,0.4)] brightness-110" : ""}`}
+          />
           <span className="brand-wordmark hidden sm:inline-flex items-baseline gap-[0.3em]">
-            <span className={isHome ? "brand-castle-dark" : "brand-castle"}>Castle</span>
-            <span className={isHome ? "brand-companion-dark" : "brand-companion"}>Companion</span>
+            <span className={homeScrolled ? "brand-castle-gold" : (isHome ? "brand-castle" : "brand-castle")}>{`Castle`}</span>
+            <span className={homeScrolled ? "brand-companion-dark" : (isHome ? "brand-companion" : "brand-companion")}>{`Companion`}</span>
           </span>
         </Link>
         <div className="relative z-10 hidden md:flex items-center gap-7 lg:gap-9">

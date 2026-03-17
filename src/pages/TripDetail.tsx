@@ -1855,6 +1855,15 @@ const BookedTripDetail = ({ trip }: { trip: BookedTrip }) => {
                           <p className="font-editorial text-[0.625rem] text-muted-foreground/50 italic">Add confirmation # once booked</p>
                           <div className="flex items-center gap-3">
                             <button
+                              onClick={() => setEditModal({
+                                type: "experience", isConfirmed: false, itemId: exp.experienceId,
+                                currentData: { name: exp.experienceName, location: exp.parkOrResort, date: exp.date, time: exp.time, timeRangeEnd: exp.timeRangeEnd, partySize: exp.partySize, notes: exp.notes }
+                              })}
+                              className="text-[0.5625rem] uppercase tracking-[0.12em] font-medium text-muted-foreground hover:text-foreground transition-colors"
+                            >
+                              Edit
+                            </button>
+                            <button
                               onClick={() => handleRemovePendingExperience(exp.experienceId, exp.experienceName)}
                               className="text-[0.5625rem] uppercase tracking-[0.12em] font-medium text-destructive/60 hover:text-destructive transition-colors"
                             >

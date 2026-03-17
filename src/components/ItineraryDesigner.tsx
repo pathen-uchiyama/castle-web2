@@ -1118,13 +1118,35 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
                       </div>
                     )}
 
-                    {/* Scheduled times badge */}
+                    {/* Scheduled times badge — prominent for timed events */}
                     {attraction.scheduledTimes && attraction.scheduledTimes.length > 0 && (
-                      <div className="flex items-center gap-1.5 mt-2 px-2.5 py-1.5 bg-[hsl(280,30%,55%,0.06)] border border-[hsl(280,30%,55%,0.2)]" style={{ borderRadius: 0 }}>
-                        <CalendarClock className="w-3.5 h-3.5 text-[hsl(280,30%,55%)] shrink-0" />
-                        <span className="text-[0.625rem] text-[hsl(280,30%,45%)] font-medium">
-                          Showtimes: {attraction.scheduledTimes.join(" · ")}
-                        </span>
+                      <div className="mt-2 px-3 py-2.5 bg-[hsl(280,30%,55%,0.06)] border border-[hsl(280,30%,55%,0.25)]" style={{ borderRadius: 0 }}>
+                        <div className="flex items-center gap-1.5 mb-2">
+                          <CalendarClock className="w-3.5 h-3.5 text-[hsl(280,30%,55%)] shrink-0" />
+                          <span className="text-[0.625rem] text-[hsl(280,30%,45%)] font-semibold uppercase tracking-[0.1em]">
+                            {attraction.scheduledTimes.length <= 3 ? "Limited Showtimes" : "Showtimes"}
+                          </span>
+                        </div>
+                        <div className="flex flex-wrap gap-1.5">
+                          {attraction.scheduledTimes.map(t => {
+                            const tMin = toMinutes(t);
+                            const alreadyBooked = ribbon.some(ri => ri.item.scheduledStartMin === tMin && ri.item.attractionId === attraction.id);
+                            return (
+                              <span key={t} className={`inline-flex items-center gap-1 px-2.5 py-1 text-[0.6875rem] font-display font-bold ${
+                                alreadyBooked
+                                  ? "bg-[hsl(var(--muted))] text-[hsl(var(--ink-light))] line-through"
+                                  : "bg-[hsl(280,30%,55%,0.12)] text-[hsl(280,30%,45%)]"
+                              }`} style={{ borderRadius: 0 }}>
+                                🕐 {t}
+                              </span>
+                            );
+                          })}
+                        </div>
+                        {attraction.scheduledTimes.length <= 3 && (
+                          <p className="text-[0.5625rem] text-[hsl(280,30%,50%,0.7)] mt-1.5 italic">
+                            Only {attraction.scheduledTimes.length} offering{attraction.scheduledTimes.length > 1 ? "s" : ""} — must be scheduled at a listed time
+                          </p>
+                        )}
                       </div>
                     )}
 
@@ -1369,36 +1391,13 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
               </div>
 
               {/* Footer */}
-              <div className="px-6 pb-5 flex justify-between items-center">
+              <div className="px-6 pb-5 flex justify-end items-center">
                 <button
                   onClick={() => setScheduledPlacement(null)}
                   className="px-4 py-2 text-[0.625rem] uppercase tracking-[0.12em] text-[hsl(var(--ink-light))] border border-[hsl(var(--border))] hover:border-[hsl(var(--ink))]/30 transition-all duration-200"
                   style={{ borderRadius: 0 }}
                 >
                   Cancel
-                </button>
-                <button
-                  onClick={() => {
-                    // Add without scheduled time (manual placement)
-                    const a = scheduledPlacement.attraction;
-                    const estWait = a.waitCategory ? (defaultWaitByCategory[a.waitCategory] || 15) : 15;
-                    setItinerary(prev => [...prev, {
-                      id: `it-${Date.now()}`,
-                      attractionId: a.id,
-                      name: a.name,
-                      type: a.type,
-                      duration: parseInt(a.duration) || DURATION_DEFAULTS[a.type] || 20,
-                      waitTime: estWait,
-                      zone: a.zone,
-                      llType: a.llType,
-                      waitCategory: a.waitCategory,
-                    }]);
-                    setScheduledPlacement(null);
-                  }}
-                  className="px-4 py-2 text-[0.625rem] uppercase tracking-[0.12em] text-[hsl(var(--ink-light))] hover:text-[hsl(var(--ink))] transition-all duration-200"
-                  style={{ borderRadius: 0 }}
-                >
-                  Skip — Add to End
                 </button>
               </div>
             </motion.div>

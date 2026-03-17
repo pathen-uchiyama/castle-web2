@@ -216,7 +216,7 @@ const DayZeroIndex = () => {
       <FloatingAnchor waiting />
 
       {/* ═══ TRIP WIZARD — Full-screen concierge ═══ */}
-      <TripWizard open={wizardOpen} onClose={() => setWizardOpen(false)} onComplete={(tripId) => navigate(`/trip/${tripId}`)} />
+      <TripWizard open={wizardOpen} onClose={() => setWizardOpen(false)} onComplete={(tripId) => navigate(`/trip/${tripId}`)} guestName={mockData.guestName} />
     </div>
   );
 };

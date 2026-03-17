@@ -266,8 +266,9 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
     [partyMembers, groupMembers]
   );
 
+  const getAge = (bd?: string) => { if (!bd) return undefined; const d = new Date(bd); const now = new Date(); let a = now.getFullYear() - d.getFullYear(); if (now.getMonth() < d.getMonth() || (now.getMonth() === d.getMonth() && now.getDate() < d.getDate())) a--; return a; };
   const autoDetectStroller = useMemo(
-    () => activeMembers.some(m => m.age !== undefined && m.age <= 7),
+    () => activeMembers.some(m => { const a = getAge(m.birthdate); return a !== undefined && a <= 7; }),
     [activeMembers]
   );
 
@@ -1379,8 +1380,8 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
                     const ridesFit = Math.floor(actualFreeTime / 25);
                     
                     // Party context for short-gap suggestions
-                    const hasToddlers = activeMembers.some(m => m.age !== undefined && m.age <= 4);
-                    const hasYoungKids = activeMembers.some(m => m.age !== undefined && m.age <= 7);
+                    const hasToddlers = activeMembers.some(m => { const a = getAge(m.birthdate); return a !== undefined && a <= 4; });
+                    const hasYoungKids = activeMembers.some(m => { const a = getAge(m.birthdate); return a !== undefined && a <= 7; });
                     const partySize = activeMembers.length;
                     
                     const suggestions: string[] = [];

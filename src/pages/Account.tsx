@@ -72,7 +72,7 @@ const Account = ({ account }: AccountProps) => {
   const [profileData, setProfileData] = useState({
     guestName: account.guestName,
     email: account.email,
-    birthday: account.birthday || "",
+    birthdate: account.birthdate || "",
   });
 
   // Travel profile (favorites, accessibility, sensory)
@@ -113,10 +113,14 @@ const Account = ({ account }: AccountProps) => {
 
   const { subscription } = account;
 
-  const profileFields: { label: string; key: "guestName" | "email" | "birthday" | null; value: string; editable: boolean }[] = [
+  const calcAge = (bd?: string) => { if (!bd) return undefined; const d = new Date(bd); const now = new Date(); let a = now.getFullYear() - d.getFullYear(); if (now.getMonth() < d.getMonth() || (now.getMonth() === d.getMonth() && now.getDate() < d.getDate())) a--; return a; };
+  const formatBirthdate = (bd?: string) => { if (!bd) return "—"; const d = new Date(bd); return d.toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" }); };
+
+  const profileFields: { label: string; key: "guestName" | "email" | "birthdate" | null; value: string; editable: boolean; inputType?: string }[] = [
     { label: "Name", key: "guestName", value: profileData.guestName, editable: true },
     { label: "Email", key: "email", value: profileData.email, editable: true },
-    { label: "Birthday", key: "birthday", value: profileData.birthday || "—", editable: true },
+    { label: "Birthdate", key: "birthdate", value: formatBirthdate(profileData.birthdate), editable: true, inputType: "date" },
+    { label: "Age", key: null, value: calcAge(profileData.birthdate) ? `${calcAge(profileData.birthdate)} years` : "—", editable: false },
     { label: "Member since", key: null, value: account.memberSince, editable: false },
     { label: "Adventures completed", key: null, value: String(account.adventuresCompleted), editable: false },
   ];
@@ -265,7 +269,7 @@ const Account = ({ account }: AccountProps) => {
                   <p className="label-text">{item.label}</p>
                   {editingProfile && item.editable && item.key ? (
                     <input
-                      type={item.key === "email" ? "email" : "text"}
+                      type={item.inputType || (item.key === "email" ? "email" : "text")}
                       value={profileData[item.key]}
                       onChange={(e) => setProfileData((prev) => ({ ...prev, [item.key!]: e.target.value }))}
                       className="font-editorial text-base text-foreground bg-transparent border-b border-[hsl(var(--gold))] outline-none text-right w-48 focus:border-[hsl(var(--gold-dark))] transition-colors"
@@ -280,7 +284,7 @@ const Account = ({ account }: AccountProps) => {
               {editingProfile ? (
                 <>
                   <button onClick={handleProfileSave} className="link-editorial font-editorial text-sm text-[hsl(var(--gold-dark))] cursor-pointer hover:text-foreground transition-colors">Save changes</button>
-                  <button onClick={() => { setEditingProfile(false); setProfileData({ guestName: account.guestName, email: account.email, birthday: account.birthday || "" }); }} className="link-editorial font-editorial text-sm text-muted-foreground cursor-pointer hover:text-foreground transition-colors">Cancel</button>
+                  <button onClick={() => { setEditingProfile(false); setProfileData({ guestName: account.guestName, email: account.email, birthdate: account.birthdate || "" }); }} className="link-editorial font-editorial text-sm text-muted-foreground cursor-pointer hover:text-foreground transition-colors">Cancel</button>
                 </>
               ) : (
                 <button onClick={() => setEditingProfile(true)} className="link-editorial font-editorial text-sm text-foreground cursor-pointer">Edit profile</button>
@@ -296,23 +300,6 @@ const Account = ({ account }: AccountProps) => {
             </p>
 
             <div className="space-y-6">
-              {/* Age */}
-              <div className="flex items-baseline justify-between border-b border-border pb-4">
-                <p className="label-text">Age</p>
-                {editingHealth ? (
-                  <input
-                    type="number"
-                    min={1}
-                    max={120}
-                    value={healthData.age || ""}
-                    onChange={(e) => setHealthData((prev) => ({ ...prev, age: Number(e.target.value) || undefined }))}
-                    className="font-editorial text-base text-foreground bg-transparent border-b border-[hsl(var(--gold))] outline-none text-right w-20 focus:border-[hsl(var(--gold-dark))] transition-colors"
-                  />
-                ) : (
-                  <p className="font-editorial text-base text-foreground">{healthData.age ? `${healthData.age} years` : "—"}</p>
-                )}
-              </div>
-
               {/* Height */}
               <div className="flex items-baseline justify-between border-b border-border pb-4">
                 <p className="label-text">Height</p>

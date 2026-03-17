@@ -46,8 +46,7 @@ export interface PartyMember {
   role: string;
   initial: string;
   adventureCount: number;
-  age?: number;
-  birthday?: string;
+  birthdate?: string; // ISO date string e.g. "1988-06-15"
   heightInches?: number;
   dietaryRestrictions?: string[];
   allergies?: string[];
@@ -242,7 +241,6 @@ export interface Preference {
 export type RideSensitivity = "thrill-rides" | "spinning" | "dark-rides" | "drops" | "loud-noises" | "quick-starts" | "heights" | "motion-simulation";
 
 export interface GuestHealthProfile {
-  age?: number;
   heightInches?: number;
   allergies: string[];
   dietaryRestrictions: string[];
@@ -269,7 +267,7 @@ export interface AccountProfile {
   email: string;
   memberSince: string;
   adventuresCompleted: number;
-  birthday?: string;
+  birthdate?: string; // ISO date string
   favoriteCharacter?: string;
   favoriteRide?: string;
   accessibilityNeeds?: string[];

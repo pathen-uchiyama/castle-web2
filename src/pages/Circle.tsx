@@ -8,6 +8,8 @@ import SparkleField from "@/components/SparkleField";
 import headerCircle from "@/assets/header-circle.jpg";
 import type { PartyMember, RideSensitivity } from "@/data/types";
 
+const calcAge = (bd?: string) => { if (!bd) return undefined; const d = new Date(bd); const now = new Date(); let a = now.getFullYear() - d.getFullYear(); if (now.getMonth() < d.getMonth() || (now.getMonth() === d.getMonth() && now.getDate() < d.getDate())) a--; return a; };
+
 const ALL_SENSITIVITIES: { id: RideSensitivity; label: string; icon: string }[] = [
   { id: "thrill-rides", label: "Thrill Rides", icon: "🎢" },
   { id: "spinning", label: "Spinning", icon: "🌀" },
@@ -266,10 +268,10 @@ const Circle = ({ partyMembers, guestName }: CircleProps) => {
                     </button>
                     <div className="flex items-center gap-3 sm:gap-6">
                       <div className="hidden sm:flex gap-6">
-                        {member.age && (
+                        {member.birthdate && (
                           <div className="text-right">
                             <p className="label-text">Age</p>
-                            <p className="font-display text-sm text-foreground">{member.age}</p>
+                            <p className="font-display text-sm text-foreground">{calcAge(member.birthdate)}</p>
                           </div>
                         )}
                         {member.heightInches && (
@@ -400,21 +402,12 @@ const Circle = ({ partyMembers, guestName }: CircleProps) => {
                                 </select>
                               </div>
                               <div>
-                                <label className="label-text mb-2 block">Age</label>
+                                <label className="label-text mb-2 block">Birthdate</label>
                                 <input
-                                  type="number"
-                                  value={member.age ?? ""}
-                                  onChange={(e) => handleFieldChange(member.memberId, "age", e.target.value ? Number(e.target.value) : undefined)}
-                                   className="w-full px-4 py-2.5 rounded-md text-sm bg-background border border-border text-foreground focus:outline-none focus:border-[hsl(var(--gold))] transition-colors"
-                                />
-                              </div>
-                              <div>
-                                <label className="label-text mb-2 block">Birthday</label>
-                                <input
-                                  value={member.birthday ?? ""}
-                                  onChange={(e) => handleFieldChange(member.memberId, "birthday", e.target.value)}
-                                  placeholder="e.g. June 15"
-                                  className="w-full px-4 py-2.5 rounded-md text-sm bg-background border border-border text-foreground placeholder:text-muted-foreground/40 focus:outline-none focus:border-[hsl(var(--gold))] transition-colors"
+                                  type="date"
+                                  value={member.birthdate ?? ""}
+                                  onChange={(e) => handleFieldChange(member.memberId, "birthdate", e.target.value || undefined)}
+                                  className="w-full px-4 py-2.5 rounded-md text-sm bg-background border border-border text-foreground focus:outline-none focus:border-[hsl(var(--gold))] transition-colors"
                                 />
                               </div>
                               <div>
@@ -629,8 +622,8 @@ const Circle = ({ partyMembers, guestName }: CircleProps) => {
                               {/* Column 1: Vitals */}
                               <div className="space-y-5">
                                 <p className="label-text mb-4 tracking-[0.2em]">Vitals</p>
-                                <ProfileField label="Age" value={member.age ? `${member.age} years old` : undefined} />
-                                <ProfileField label="Birthday" value={member.birthday} />
+                                <ProfileField label="Age" value={member.birthdate ? `${calcAge(member.birthdate)} years old` : undefined} />
+                                <ProfileField label="Birthdate" value={member.birthdate ? new Date(member.birthdate).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" }) : undefined} />
                                 <ProfileField label="Height" value={member.heightInches ? formatHeight(member.heightInches) : undefined} />
                                 <ProfileField label="Thrill Tolerance" value={member.thrillTolerance ? thrillLabels[member.thrillTolerance] : undefined} />
                                 {member.magicStatus && member.magicStatus.length > 0 && (

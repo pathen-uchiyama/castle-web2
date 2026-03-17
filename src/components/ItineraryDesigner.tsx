@@ -318,8 +318,9 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
   /* ── Computed ribbon ───────────────────────────────────────────── */
   const baseRopeDropMin = toMinutes(ropeDrop);
   const ropeDropMin = hasEarlyEntry ? baseRopeDropMin - 30 : baseRopeDropMin;
-  const baseLeaveMin = toMinutes(leavePark);
-  const leaveMin = hasExtendedHours ? baseLeaveMin + 120 : baseLeaveMin;
+  const parkCloseMin = toMinutes(leavePark);
+  const extendedCloseMin = parkCloseMin + 120;
+  const leaveMin = hasExtendedHours ? extendedCloseMin : parkCloseMin;
 
   const ribbon = useMemo(
     () => computeRibbon(itinerary, ropeDropMin, hasStroller),

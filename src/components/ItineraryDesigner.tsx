@@ -266,8 +266,9 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
     [partyMembers, groupMembers]
   );
 
+  const getAge = (bd?: string) => { if (!bd) return undefined; const d = new Date(bd); const now = new Date(); let a = now.getFullYear() - d.getFullYear(); if (now.getMonth() < d.getMonth() || (now.getMonth() === d.getMonth() && now.getDate() < d.getDate())) a--; return a; };
   const autoDetectStroller = useMemo(
-    () => activeMembers.some(m => m.age !== undefined && m.age <= 7),
+    () => activeMembers.some(m => { const a = getAge(m.birthdate); return a !== undefined && a <= 7; }),
     [activeMembers]
   );
 

@@ -822,11 +822,40 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
               ? Math.min(earlyWindowTotal, earlyRidesInWindow[earlyRidesInWindow.length - 1].endMin - earlyWindowStart)
               : 0;
             const earlyTimeLeft = Math.max(0, earlyWindowTotal - earlyTimeUsed);
+            
+            // Get the zone of the last ride in the early window for proximity sorting
+            const lastEarlyZone = earlyRidesInWindow.length > 0 
+              ? earlyRidesInWindow[earlyRidesInWindow.length - 1].item.zone 
+              : undefined;
+            
             const earlyAccessAttractions = selectedParks
               .flatMap(p => allParkAttractions[p] || [])
-              .filter(a => a.rules.includes("EARLY MORNING ACCESS") && !a.isClosed && !itinerary.some(i => i.attractionId === a.id));
+              .filter(a => a.rules.includes("EARLY MORNING ACCESS") && !a.isClosed && !itinerary.some(i => i.attractionId === a.id))
+              .map(a => {
+                const earlyWait = a.waitCategory ? (earlyAccessWaitByCategory[a.waitCategory] || 5) : 5;
+                const rideDur = parseInt(a.duration) || DURATION_DEFAULTS[a.type] || 20;
+                const totalTime = earlyWait + rideDur;
+                const walkToRide = lastEarlyZone ? getWalkBuffer(lastEarlyZone as ParkZone, a.zone as ParkZone, hasStroller) : 0;
+                const totalWithWalk = totalTime + (earlyRidesInWindow.length > 0 ? walkToRide : 0);
+                const fitsWithWalk = totalWithWalk <= earlyTimeLeft;
+                const isSameZone = lastEarlyZone ? a.zone === lastEarlyZone : false;
+                const isNearby = walkToRide <= 6;
+                return { attraction: a, earlyWait, rideDur, totalTime, fitsWithWalk, walkToRide, totalWithWalk, isSameZone, isNearby };
+              })
+              .sort((a, b) => {
+                if (a.fitsWithWalk !== b.fitsWithWalk) return a.fitsWithWalk ? -1 : 1;
+                if (earlyRidesInWindow.length > 0) {
+                  if (a.isSameZone !== b.isSameZone) return a.isSameZone ? -1 : 1;
+                  if (a.isNearby !== b.isNearby) return a.isNearby ? -1 : 1;
+                  return a.totalWithWalk - b.totalWithWalk;
+                }
+                return b.attraction.rating - a.attraction.rating;
+              });
             
             if (earlyAccessAttractions.length > 0 || earlyRidesInWindow.length > 0) {
+              const fittingRides = earlyAccessAttractions.filter(a => a.fitsWithWalk);
+              const nonFittingRides = earlyAccessAttractions.filter(a => !a.fitsWithWalk);
+              
               return (
                 <motion.div
                   initial={{ opacity: 0, y: -8 }}
@@ -863,53 +892,91 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
                     </p>
                   ) : (
                     <>
-                      <p className="text-[0.625rem] text-[hsl(var(--ink-light))] mb-3">
+                      <p className="text-[0.625rem] text-[hsl(var(--ink-light))] mb-2">
                         {earlyRidesInWindow.length === 0 
                           ? "Pick 1-2 headliners — you won't have time for all of them"
-                          : `Room for ${Math.floor(earlyTimeLeft / 12) > 0 ? Math.floor(earlyTimeLeft / 12) : "maybe 1 more"} ride${Math.floor(earlyTimeLeft / 12) > 1 ? "s" : ""}`
+                          : fittingRides.length > 0
+                          ? `${fittingRides.length} ride${fittingRides.length > 1 ? "s" : ""} can fill your remaining ${earlyTimeLeft}m`
+                          : "No more rides fit in the remaining time"
                         }
                       </p>
-                      <div className="space-y-1.5">
-                        {earlyAccessAttractions.slice(0, 6).map(a => {
-                          const earlyWait = a.waitCategory ? (earlyAccessWaitByCategory[a.waitCategory] || 5) : 5;
-                          const rideDur = parseInt(a.duration) || DURATION_DEFAULTS[a.type] || 20;
-                          const totalTime = earlyWait + rideDur;
-                          const fitsInWindow = totalTime <= earlyTimeLeft;
-                          
-                          return (
+                      
+                      {/* Zone context when rides are already placed */}
+                      {earlyRidesInWindow.length > 0 && lastEarlyZone && fittingRides.some(r => r.isSameZone || r.isNearby) && (
+                        <p className="text-[0.5625rem] uppercase tracking-[0.1em] text-[hsl(var(--gold-dark))] font-medium flex items-center gap-1.5 mb-2">
+                          📍 Sorted by proximity to {zoneLabel(lastEarlyZone)}
+                        </p>
+                      )}
+                      
+                      {/* Rides that fit */}
+                      {fittingRides.length > 0 && (
+                        <div className="space-y-1.5 mb-2">
+                          {fittingRides.map(({ attraction: a, earlyWait, rideDur, totalTime, walkToRide, totalWithWalk, isSameZone, isNearby }) => (
                             <button
                               key={a.id}
                               onClick={() => addToEarlyAccess(a)}
-                              disabled={isLocked || !fitsInWindow}
-                              className={`w-full flex items-center gap-2 px-3 py-2.5 bg-white border text-left transition-all duration-200 ${
-                                fitsInWindow 
-                                  ? "border-[hsl(var(--gold)/0.3)] hover:border-[hsl(var(--gold))] hover:bg-[hsl(var(--gold)/0.04)]"
-                                  : "border-[hsl(var(--border))] opacity-40 cursor-not-allowed"
-                              }`}
+                              disabled={isLocked}
+                              className="w-full flex items-center gap-2 px-3 py-2.5 bg-white border border-[hsl(var(--gold)/0.3)] text-left transition-all duration-200 hover:border-[hsl(var(--gold))] hover:bg-[hsl(var(--gold)/0.04)]"
                               style={{ borderRadius: 0, boxShadow: "0 4px 12px rgba(26,26,27,0.04)" }}
                             >
                               <Plus className="w-3 h-3 text-[hsl(var(--gold-dark))] shrink-0" />
-                              <span className="text-[0.6875rem] font-display font-medium text-[hsl(var(--ink))] flex-1 truncate">{a.name}</span>
-                              <div className="flex items-center gap-2 shrink-0">
+                              <div className="flex-1 min-w-0">
+                                <div className="flex items-center gap-1.5">
+                                  <span className="text-[0.6875rem] font-display font-medium text-[hsl(var(--ink))] truncate">{a.name}</span>
+                                  {isSameZone && earlyRidesInWindow.length > 0 && (
+                                    <span className="px-1.5 py-0.5 text-[0.5rem] bg-[hsl(140,40%,45%,0.1)] text-[hsl(140,40%,35%)] font-semibold uppercase tracking-[0.08em] shrink-0" style={{ borderRadius: 0 }}>
+                                      Same zone ✓
+                                    </span>
+                                  )}
+                                  {!isSameZone && isNearby && earlyRidesInWindow.length > 0 && (
+                                    <span className="px-1.5 py-0.5 text-[0.5rem] bg-[hsl(var(--gold)/0.1)] text-[hsl(var(--gold-dark))] font-medium uppercase tracking-[0.08em] shrink-0" style={{ borderRadius: 0 }}>
+                                      {walkToRide}m walk
+                                    </span>
+                                  )}
+                                  {!isSameZone && !isNearby && earlyRidesInWindow.length > 0 && (
+                                    <span className="px-1.5 py-0.5 text-[0.5rem] bg-[hsl(var(--ink))]/5 text-[hsl(var(--ink-light))] font-medium uppercase tracking-[0.08em] shrink-0" style={{ borderRadius: 0 }}>
+                                      🚶 {walkToRide}m away
+                                    </span>
+                                  )}
+                                </div>
+                                {earlyRidesInWindow.length > 0 && walkToRide > 0 && !isSameZone && (
+                                  <span className="text-[0.5rem] text-[hsl(var(--ink-light))]/60">
+                                    {walkToRide}m walk + {earlyWait}m wait + {rideDur}m ride
+                                  </span>
+                                )}
+                              </div>
+                              <div className="flex items-center gap-1.5 shrink-0">
                                 <span className="px-1.5 py-0.5 text-[0.5625rem] bg-[hsl(var(--gold)/0.1)] text-[hsl(var(--gold-dark))] font-medium" style={{ borderRadius: 0 }}>
-                                  ⏱ {earlyWait}m wait
+                                  ⏱ {earlyWait}m
                                 </span>
                                 <span className="px-1.5 py-0.5 text-[0.5625rem] bg-[hsl(var(--ink))]/5 text-[hsl(var(--ink))] font-medium" style={{ borderRadius: 0 }}>
-                                  🎢 {rideDur}m ride
+                                  🎢 {rideDur}m
                                 </span>
-                                <span className={`px-1.5 py-0.5 text-[0.5625rem] font-bold ${
-                                  fitsInWindow ? "bg-[hsl(var(--gold)/0.15)] text-[hsl(var(--gold-dark))]" : "bg-destructive/10 text-destructive"
-                                }`} style={{ borderRadius: 0 }}>
-                                  {totalTime}m total
+                                <span className="px-1.5 py-0.5 text-[0.5625rem] font-bold bg-[hsl(var(--gold)/0.15)] text-[hsl(var(--gold-dark))]" style={{ borderRadius: 0 }}>
+                                  {earlyRidesInWindow.length > 0 ? `${totalWithWalk}m` : `${totalTime}m`}
                                 </span>
                               </div>
-                              {!fitsInWindow && (
-                                <span className="text-[0.5rem] text-destructive shrink-0">Won't fit</span>
-                              )}
                             </button>
-                          );
-                        })}
-                      </div>
+                          ))}
+                        </div>
+                      )}
+                      
+                      {/* Rides that don't fit — dimmed */}
+                      {nonFittingRides.length > 0 && (
+                        <div className={`${fittingRides.length > 0 ? "mt-2 pt-2 border-t border-[hsl(var(--gold)/0.15)]" : ""}`}>
+                          <p className="text-[0.5rem] uppercase tracking-[0.1em] text-[hsl(var(--ink-light))]/50 mb-1.5">
+                            {fittingRides.length > 0 ? `Won't fit in remaining ${earlyTimeLeft}m` : `These need more than ${earlyTimeLeft}m`}
+                          </p>
+                          <div className="space-y-1">
+                            {nonFittingRides.slice(0, 4).map(({ attraction: a, totalWithWalk }) => (
+                              <div key={a.id} className="flex items-center gap-2 px-3 py-1.5 opacity-35">
+                                <span className="text-[0.625rem] text-[hsl(var(--ink-light))] truncate flex-1">{a.name}</span>
+                                <span className="text-[0.5rem] text-destructive">{totalWithWalk}m needed</span>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
                     </>
                   )}
                 </motion.div>

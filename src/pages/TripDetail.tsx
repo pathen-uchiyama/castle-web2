@@ -1207,6 +1207,16 @@ const BookedTripDetail = ({ trip }: { trip: BookedTrip }) => {
                             </div>
                           </div>
                         )}
+                        {/* Cancel confirmed */}
+                        <div className="mt-3 pt-2 border-t border-border/50 flex items-center justify-between">
+                          <span className="font-editorial text-[0.625rem] text-muted-foreground/50">#{res.confirmationNumber}</span>
+                          <button
+                            onClick={() => handleCancelDining(res.reservationId, res.restaurantName)}
+                            className="text-[0.5625rem] uppercase tracking-[0.12em] font-medium text-destructive/60 hover:text-destructive transition-colors"
+                          >
+                            Cancel Reservation
+                          </button>
+                        </div>
                       </div>
                     ))}
                     {allDiningReservations.filter(d => d.status === "confirmed").length === 0 && (

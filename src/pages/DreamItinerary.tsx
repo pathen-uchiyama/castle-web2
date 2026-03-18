@@ -491,8 +491,11 @@ const DreamItinerary = () => {
     );
   }
 
-  const day = plan[currentDay];
-  const totalDreamsUsed = plan.reduce((sum, d) => sum + d.blocks.filter(b => b.dreamMatch).length, 0);
+  const day = displayPlan[currentDay];
+  const totalDreamsUsed = displayPlan.reduce((sum, d) => sum + d.blocks.filter(b => b.dreamMatch).length, 0);
+  const isParkDay = !["✈️", "🧳", "🏊"].includes(day.parkEmoji);
+  const totalLLRecs = day.blocks.filter(b => b.lightningLane).length;
+  const totalILLRecs = day.blocks.filter(b => b.lightningLane?.type === "ILL").length;
 
   return (
     <div className="min-h-screen bg-background">

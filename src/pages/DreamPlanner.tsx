@@ -5,7 +5,8 @@ import { ArrowRight, ArrowLeft, Sparkles, Users, MapPin, Calendar, Utensils, Sta
 import Footer from "@/components/Footer";
 
 /* ── Types ── */
-type Step = "welcome" | "who" | "when" | "where" | "vibe" | "dining" | "dreams" | "preview";
+type Resort = "wdw" | "dlr" | null;
+type Step = "welcome" | "who" | "when" | "resort" | "where" | "vibe" | "dining" | "dreams" | "preview";
 
 interface TravelerInfo {
   adults: number;
@@ -22,9 +23,13 @@ interface TripDates {
 interface ParkChoice {
   id: string;
   name: string;
+  resort: "wdw" | "dlr";
   tagline: string;
   emoji: string;
   selected: boolean;
+  highlights: string[];
+  bestFor: string;
+  mustDo: string;
 }
 
 interface VibeChoice {
@@ -48,11 +53,14 @@ interface DreamItem {
   emoji: string;
   category: string;
   selected: boolean;
+  why: string;
+  park: string;
+  resort: "wdw" | "dlr" | "both";
 }
 
 const ease: [number, number, number, number] = [0.19, 1, 0.22, 1];
 
-const stepOrder: Step[] = ["welcome", "who", "when", "where", "vibe", "dining", "dreams", "preview"];
+const stepOrder: Step[] = ["welcome", "who", "when", "resort", "where", "vibe", "dining", "dreams", "preview"];
 
 const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 const durations = [
@@ -62,13 +70,49 @@ const durations = [
   { days: 10, label: "Grand Adventure", sub: "10 days" },
 ];
 
-const initialParks: ParkChoice[] = [
-  { id: "mk", name: "Magic Kingdom", tagline: "The storybook heart of it all", emoji: "🏰", selected: false },
-  { id: "epcot", name: "EPCOT", tagline: "Innovation, world culture & festivals", emoji: "🌍", selected: false },
-  { id: "hs", name: "Hollywood Studios", tagline: "Star Wars, Toy Story & thrills", emoji: "🎬", selected: false },
-  { id: "ak", name: "Animal Kingdom", tagline: "Pandora, safaris & nature", emoji: "🦁", selected: false },
-  { id: "dl", name: "Disneyland", tagline: "Walt's original dream", emoji: "✨", selected: false },
-  { id: "dca", name: "California Adventure", tagline: "Pixar, Marvel & Radiator Springs", emoji: "🎡", selected: false },
+const allParks: ParkChoice[] = [
+  {
+    id: "mk", name: "Magic Kingdom", resort: "wdw", emoji: "🏰", selected: false,
+    tagline: "The storybook heart of Walt Disney World",
+    highlights: ["Cinderella Castle", "Space Mountain", "Haunted Mansion", "Happily Ever After fireworks"],
+    bestFor: "First-timers, families with kids of any age, classic Disney magic",
+    mustDo: "Watch the fireworks from Main Street U.S.A. — it's a once-in-a-lifetime feeling.",
+  },
+  {
+    id: "epcot", name: "EPCOT", resort: "wdw", emoji: "🌍", selected: false,
+    tagline: "World culture, festivals, innovation & incredible food",
+    highlights: ["World Showcase (11 countries to explore)", "Guardians of the Galaxy coaster", "Frozen Ever After", "Food & Wine Festival"],
+    bestFor: "Foodies, adults, couples, older kids who love exploring cultures",
+    mustDo: "Walk the World Showcase — each country has unique food, drinks, and entertainment.",
+  },
+  {
+    id: "hs", name: "Hollywood Studios", resort: "wdw", emoji: "🎬", selected: false,
+    tagline: "Star Wars, Toy Story, and the biggest thrills at WDW",
+    highlights: ["Star Wars: Galaxy's Edge", "Rise of the Resistance", "Tower of Terror", "Toy Story Land"],
+    bestFor: "Star Wars fans, thrill seekers, movie lovers",
+    mustDo: "Rise of the Resistance is widely considered the best ride Disney has ever built.",
+  },
+  {
+    id: "ak", name: "Animal Kingdom", resort: "wdw", emoji: "🦁", selected: false,
+    tagline: "Pandora, real safaris, and breathtaking nature",
+    highlights: ["Avatar Flight of Passage", "Kilimanjaro Safaris", "Pandora (glows at night)", "Expedition Everest"],
+    bestFor: "Nature lovers, Avatar fans, families wanting something different",
+    mustDo: "Visit Pandora after dark — the bioluminescent plants are absolutely magical.",
+  },
+  {
+    id: "dl", name: "Disneyland Park", resort: "dlr", emoji: "✨", selected: false,
+    tagline: "Walt's original park — where it all started in 1955",
+    highlights: ["Matterhorn Bobsleds", "Pirates of the Caribbean", "Indiana Jones Adventure", "Fantasmic!"],
+    bestFor: "First-timers, Disney history lovers, families — it's the most charming park",
+    mustDo: "Walk through Sleeping Beauty Castle — it's intimate and magical unlike anything at WDW.",
+  },
+  {
+    id: "dca", name: "Disney California Adventure", resort: "dlr", emoji: "🎡", selected: false,
+    tagline: "Pixar, Marvel, incredible rides, and the best food at Disneyland Resort",
+    highlights: ["Radiator Springs Racers", "Incredicoaster", "Web Slingers", "Cars Land at night"],
+    bestFor: "Thrill seekers, Pixar fans, foodies who want great quick-service options",
+    mustDo: "See Cars Land after sunset — the neon glow turns it into a real-life Radiator Springs.",
+  },
 ];
 
 const initialVibes: VibeChoice[] = [
@@ -89,23 +133,31 @@ const initialDining: DiningPref[] = [
   { id: "flexible", label: "Mix of Everything", emoji: "🎯", selected: false },
 ];
 
-const initialDreams: DreamItem[] = [
-  { id: "castle-photo", label: "Castle Photo at Sunrise", emoji: "🏰", category: "Moments", selected: false },
-  { id: "fireworks", label: "Watch Fireworks from Main Street", emoji: "🎆", category: "Moments", selected: false },
-  { id: "space-mountain", label: "Ride Space Mountain", emoji: "🚀", category: "Rides", selected: false },
-  { id: "rise-resistance", label: "Star Wars: Rise of the Resistance", emoji: "⚔️", category: "Rides", selected: false },
-  { id: "flight-passage", label: "Avatar Flight of Passage", emoji: "🌊", category: "Rides", selected: false },
-  { id: "tron", label: "TRON Lightcycle / Run", emoji: "💡", category: "Rides", selected: false },
-  { id: "guardians", label: "Guardians of the Galaxy", emoji: "🌌", category: "Rides", selected: false },
-  { id: "be-our-guest", label: "Dine at Be Our Guest", emoji: "🥀", category: "Dining", selected: false },
-  { id: "ohana", label: "Breakfast at 'Ohana", emoji: "🌺", category: "Dining", selected: false },
-  { id: "dole-whip", label: "Get a Dole Whip", emoji: "🍍", category: "Snacks", selected: false },
-  { id: "churro", label: "Eat a Churro", emoji: "🍩", category: "Snacks", selected: false },
-  { id: "meet-mickey", label: "Meet Mickey Mouse", emoji: "🐭", category: "Characters", selected: false },
-  { id: "galaxy-edge", label: "Explore Galaxy's Edge", emoji: "🌟", category: "Lands", selected: false },
-  { id: "pandora", label: "Walk Through Pandora at Night", emoji: "🌙", category: "Lands", selected: false },
-  { id: "pool-day", label: "Resort Pool Day", emoji: "🏊", category: "Relaxation", selected: false },
-  { id: "disney-springs", label: "Disney Springs Shopping", emoji: "🛍️", category: "Extras", selected: false },
+const allDreams: DreamItem[] = [
+  // WDW
+  { id: "castle-photo", label: "Castle Photo at Sunrise", emoji: "🏰", category: "Moments", selected: false, resort: "wdw", park: "Magic Kingdom", why: "The park opens early for resort guests — you can get a photo in front of Cinderella Castle with almost no one around." },
+  { id: "fireworks", label: "Happily Ever After Fireworks", emoji: "🎆", category: "Moments", selected: false, resort: "wdw", park: "Magic Kingdom", why: "Projections on the castle + fireworks + music — many people say it's the most emotional Disney experience." },
+  { id: "space-mountain", label: "Ride Space Mountain", emoji: "🚀", category: "Rides", selected: false, resort: "wdw", park: "Magic Kingdom", why: "A classic indoor roller coaster in near-total darkness. Not too intense — great for first-time thrill riders." },
+  { id: "rise-resistance", label: "Rise of the Resistance", emoji: "⚔️", category: "Rides", selected: false, resort: "wdw", park: "Hollywood Studios", why: "Widely considered the best ride ever built. You're captured by the First Order in a fully immersive 18-minute experience." },
+  { id: "flight-passage", label: "Avatar Flight of Passage", emoji: "🌊", category: "Rides", selected: false, resort: "wdw", park: "Animal Kingdom", why: "You ride on the back of a banshee over Pandora. The wind, mist, and scents make it feel shockingly real." },
+  { id: "tron", label: "TRON Lightcycle / Run", emoji: "💡", category: "Rides", selected: false, resort: "wdw", park: "Magic Kingdom", why: "Disney's fastest coaster — you lean forward on a motorcycle-style vehicle and launch into the Grid." },
+  { id: "guardians", label: "Guardians of the Galaxy: Cosmic Rewind", emoji: "🌌", category: "Rides", selected: false, resort: "wdw", park: "EPCOT", why: "The first reverse-launch Disney coaster. Each ride plays a different classic rock song — it's a total blast." },
+  { id: "be-our-guest", label: "Dine at Be Our Guest", emoji: "🥀", category: "Dining", selected: false, resort: "wdw", park: "Magic Kingdom", why: "Eat inside Beast's Castle. Three themed rooms including the magical West Wing with a enchanted rose. Book early — it sells out fast." },
+  { id: "ohana", label: "Breakfast at 'Ohana", emoji: "🌺", category: "Dining", selected: false, resort: "wdw", park: "Polynesian Resort", why: "All-you-can-eat Hawaiian breakfast with Stitch and Lilo visiting your table. The pog juice and macadamia pancakes are legendary." },
+  { id: "space-220", label: "Lunch at Space 220", emoji: "🚀", category: "Dining", selected: false, resort: "wdw", park: "EPCOT", why: "You take an elevator 'to space' and dine in a space station overlooking Earth. The simulated views are jaw-dropping." },
+  { id: "dole-whip", label: "Get a Dole Whip", emoji: "🍍", category: "Snacks", selected: false, resort: "both", park: "Magic Kingdom / Disneyland", why: "Pineapple soft-serve — the #1 fan-favorite Disney snack. Available at Aloha Isle. Best on a hot day." },
+  { id: "churro", label: "Eat a Churro", emoji: "🥖", category: "Snacks", selected: false, resort: "both", park: "All parks", why: "Warm, cinnamon-sugar perfection. Disney churros hit different — seasonal flavors appear around holidays." },
+  { id: "meet-mickey", label: "Meet Mickey Mouse", emoji: "🐭", category: "Characters", selected: false, resort: "both", park: "Magic Kingdom / Disneyland", why: "A face-to-face moment with the mouse himself. He talks and interacts now — magical for kids and adults alike." },
+  { id: "galaxy-edge", label: "Explore Galaxy's Edge", emoji: "🌟", category: "Lands", selected: false, resort: "both", park: "Hollywood Studios / Disneyland", why: "Walk through the planet Batuu — build a custom lightsaber ($250, but unforgettable), mix blue/green milk, and fly the Millennium Falcon." },
+  { id: "pandora", label: "Pandora at Night", emoji: "🌙", category: "Lands", selected: false, resort: "wdw", park: "Animal Kingdom", why: "The entire land glows with bioluminescent plants after dark. Walk through slowly — it's one of Disney's most beautiful environments." },
+  { id: "world-showcase", label: "Eat Around the World", emoji: "🌎", category: "Dining", selected: false, resort: "wdw", park: "EPCOT", why: "11 countries, each with authentic food and drinks. Split small plates across Mexico, Japan, France, and more — the ultimate food crawl." },
+  { id: "pool-day", label: "Resort Pool Day", emoji: "🏊", category: "Relaxation", selected: false, resort: "both", park: "Your Resort", why: "Disney resort pools have slides, lazy rivers, and poolside bars. A mid-trip rest day makes the other park days SO much better." },
+  { id: "disney-springs", label: "Disney Springs / Downtown Disney", emoji: "🛍️", category: "Extras", selected: false, resort: "both", park: "No ticket needed", why: "Free-admission shopping, dining, and entertainment. Great for a rest day evening — World of Disney is the biggest Disney store anywhere." },
+  // DLR-specific
+  { id: "radiator-springs", label: "Radiator Springs Racers", emoji: "🏎️", category: "Rides", selected: false, resort: "dlr", park: "California Adventure", why: "Race through the desert at 40mph past stunning animatronics. Often called the best ride at Disneyland Resort." },
+  { id: "cars-land-night", label: "See Cars Land at Night", emoji: "🌃", category: "Moments", selected: false, resort: "dlr", park: "California Adventure", why: "The neon signs light up Route 66 — it feels like you stepped into the movie. One of Disney's most photogenic spots." },
+  { id: "indiana-jones", label: "Indiana Jones Adventure", emoji: "🏺", category: "Rides", selected: false, resort: "dlr", park: "Disneyland", why: "A thrilling jeep ride through a cursed temple. Unique to Disneyland — you can't ride this at WDW." },
+  { id: "fantasmic-dl", label: "Watch Fantasmic!", emoji: "🐉", category: "Moments", selected: false, resort: "dlr", park: "Disneyland", why: "A spectacular water, fire, and projection show on the Rivers of America. The dragon finale is breathtaking." },
 ];
 
 /* ── Component ── */

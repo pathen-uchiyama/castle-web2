@@ -165,10 +165,11 @@ const DreamPlanner = () => {
   const [step, setStep] = useState<Step>("welcome");
   const [travelers, setTravelers] = useState<TravelerInfo>({ adults: 2, kids: 0, kidAges: "", firstTime: null });
   const [dates, setDates] = useState<TripDates>({ month: "", duration: 5 });
-  const [parks, setParks] = useState<ParkChoice[]>(initialParks);
+  const [selectedResort, setSelectedResort] = useState<Resort>(null);
+  const [parks, setParks] = useState<ParkChoice[]>(allParks);
   const [vibes, setVibes] = useState<VibeChoice[]>(initialVibes);
   const [dining, setDining] = useState<DiningPref[]>(initialDining);
-  const [dreams, setDreams] = useState<DreamItem[]>(initialDreams);
+  const [dreams, setDreams] = useState<DreamItem[]>(allDreams);
 
   const currentIndex = stepOrder.indexOf(step);
   const progress = ((currentIndex) / (stepOrder.length - 1)) * 100;
@@ -181,6 +182,16 @@ const DreamPlanner = () => {
     const i = stepOrder.indexOf(step);
     if (i > 0) setStep(stepOrder[i - 1]);
   };
+
+  // When resort changes, reset park selections and filter dreams
+  const handleResortChange = (resort: Resort) => {
+    setSelectedResort(resort);
+    setParks(allParks.map(p => ({ ...p, selected: false })));
+    setDreams(allDreams.map(d => ({ ...d, selected: false })));
+  };
+
+  const visibleParks = parks.filter(p => p.resort === selectedResort);
+  const visibleDreams = dreams.filter(d => d.resort === selectedResort || d.resort === "both");
 
   const togglePark = (id: string) => setParks(p => p.map(pk => pk.id === id ? { ...pk, selected: !pk.selected } : pk));
   const toggleVibe = (id: string) => setVibes(v => v.map(vb => vb.id === id ? { ...vb, selected: !vb.selected } : vb));

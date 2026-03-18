@@ -723,13 +723,13 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
       {/* ═══════════════════════════════════════════════════════════════
           HEADER
          ═══════════════════════════════════════════════════════════════ */}
-      <div className="px-6 lg:px-10 pt-8 pb-6">
+      <div className="px-6 lg:px-10 pt-8 pb-2">
         <div className="flex items-end justify-between mb-5">
           <div>
             <p className="text-[0.5625rem] uppercase tracking-[0.2em] text-[hsl(var(--ink-light))] font-medium mb-2" style={{ letterSpacing: "0.2em" }}>Intended Itinerary</p>
             <h2 className="font-display text-3xl text-[hsl(var(--ink))] leading-[1.05]">{trip.tripName}</h2>
             <p className="font-sans text-sm text-[hsl(var(--ink-light))] mt-1" style={{ letterSpacing: "-0.02em" }}>
-              {selectedParks.map(p => parkLabels[p] || p).join(" · ")} · {ropeDrop} → {leavePark}
+              {currentDay?.label} · {selectedParks.map(p => parkLabels[p] || p).join(" · ")} · {ropeDrop} → {leavePark}
             </p>
           </div>
           <div className="flex gap-2">

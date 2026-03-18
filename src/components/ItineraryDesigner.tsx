@@ -875,6 +875,8 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
         </div>
       </div>
 
+      {/* ═══════════════════════════════════════════════════════════════
+          GROUP MEMBERS — collapsible
          ═══════════════════════════════════════════════════════════════ */}
       <Collapsible open={groupOpen} onOpenChange={setGroupOpen}>
         <div className="border-y border-[hsl(var(--border))] bg-white" style={{ boxShadow: "0 10px 30px rgba(26,26,27,0.05)" }}>

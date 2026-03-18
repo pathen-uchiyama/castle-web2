@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
   ArrowLeft, ArrowRight, Sun, Sunset, Moon, Clock, MapPin, Utensils, Star,
   Sparkles, ChevronRight, Info, Zap, Heart, Camera, Coffee,
-  ShoppingBag, Music, Ticket
+  ShoppingBag, Music, Ticket, Check
 } from "lucide-react";
 import Footer from "@/components/Footer";
 

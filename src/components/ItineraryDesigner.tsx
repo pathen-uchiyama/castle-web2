@@ -2150,7 +2150,6 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
             )}
           </div>
         </div>
-      </div>
       </div>}
 
       {/* ═══════════════════════════════════════════════════════════════

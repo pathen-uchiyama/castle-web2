@@ -2151,6 +2151,7 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
           </div>
         </div>
       </div>
+      </div>}
 
       {/* ═══════════════════════════════════════════════════════════════
           SCHEDULED SHOW PLACEMENT MODAL

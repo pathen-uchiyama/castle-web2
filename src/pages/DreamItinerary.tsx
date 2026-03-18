@@ -4,11 +4,18 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
   ArrowLeft, ArrowRight, Sun, Sunset, Moon, Clock, MapPin, Utensils, Star,
   Sparkles, ChevronRight, Info, Zap, Heart, Camera, Coffee,
-  ShoppingBag, Music, Ticket
+  ShoppingBag, Music, Ticket, Check
 } from "lucide-react";
 import Footer from "@/components/Footer";
 
 /* ── Types ── */
+interface LightningLaneRec {
+  type: "LL" | "ILL";
+  cost?: string;
+  reason: string;
+  savings: string; // e.g. "Save 45–70 min"
+}
+
 interface ItineraryBlock {
   time: string;
   title: string;
@@ -20,6 +27,7 @@ interface ItineraryBlock {
   vibeMatch?: string[];
   dreamMatch?: boolean;
   intensity: "low" | "moderate" | "high";
+  lightningLane?: LightningLaneRec;
 }
 
 interface ItineraryDay {
@@ -124,13 +132,13 @@ function generateFullPlan(data: WizardData): ItineraryDay[] {
   const parkActivities: Record<string, { rides: ItineraryBlock[]; dining: ItineraryBlock[]; shows: ItineraryBlock[]; explore: ItineraryBlock[] }> = {
     mk: {
       rides: [
-        { time: "09:00", title: "Space Mountain", location: "Tomorrowland", duration: "30 min", category: "ride", why: "Best experienced first thing — lines balloon to 90+ minutes by midday. The darkness and speed make it thrilling without being scary.", intensity: "high", insiderTip: "Ride in the back row for the most intense experience." },
-        { time: "09:30", title: "TRON Lightcycle / Run", location: "Tomorrowland", duration: "25 min", category: "ride", why: "Disney's fastest coaster and a virtual queue favorite. Riding at rope drop means no wait and the LED canopy still glows in the morning light.", intensity: "high", insiderTip: "Store everything in the free lockers — no bags or loose items allowed on the ride." },
-        { time: "10:00", title: "Big Thunder Mountain Railroad", location: "Frontierland", duration: "25 min", category: "ride", why: "The 'wildest ride in the wilderness' — exciting enough for thrill-seekers but gentle enough for most kids. Lines stay moderate all day.", intensity: "moderate", insiderTip: "Ride at night for a completely different experience — the darkness adds magic." },
+        { time: "09:00", title: "Space Mountain", location: "Tomorrowland", duration: "30 min", category: "ride", why: "Best experienced first thing — lines balloon to 90+ minutes by midday. The darkness and speed make it thrilling without being scary.", intensity: "high", insiderTip: "Ride in the back row for the most intense experience.", lightningLane: { type: "LL", reason: "Standby averages 60–90 min midday. LL typically saves 45–70 min, making it one of the best value picks in MK.", savings: "Save 45–70 min" } },
+        { time: "09:30", title: "TRON Lightcycle / Run", location: "Tomorrowland", duration: "25 min", category: "ride", why: "Disney's fastest coaster and a virtual queue favorite. Riding at rope drop means no wait and the LED canopy still glows in the morning light.", intensity: "high", insiderTip: "Store everything in the free lockers — no bags or loose items allowed on the ride.", lightningLane: { type: "ILL", cost: "$20–25", reason: "TRON is one of MK's hardest-to-ride attractions. Virtual queue slots vanish in seconds. The ILL purchase guarantees a ride without the stress.", savings: "Save 60–100 min" } },
+        { time: "10:00", title: "Big Thunder Mountain Railroad", location: "Frontierland", duration: "25 min", category: "ride", why: "The 'wildest ride in the wilderness' — exciting enough for thrill-seekers but gentle enough for most kids. Lines stay moderate all day.", intensity: "moderate", insiderTip: "Ride at night for a completely different experience — the darkness adds magic.", lightningLane: { type: "LL", reason: "Consistently 40–55 min standby. LL drops it to a walk-on most of the day.", savings: "Save 35–50 min" } },
         { time: "10:30", title: "Pirates of the Caribbean", location: "Adventureland", duration: "20 min", category: "ride", why: "A classic Walt-era boat ride through pirate scenes. Perfect AC break. Lines move fast even when they look long.", intensity: "low", insiderTip: "The queue itself is gorgeous — don't rush through it." },
-        { time: "11:00", title: "Haunted Mansion", location: "Liberty Square", duration: "25 min", category: "ride", why: "999 happy haunts and one of Disney's most beloved attractions. More whimsical than scary — kids usually love it.", intensity: "low", insiderTip: "Look for the engagement ring embedded in the concrete outside." },
-        { time: "11:30", title: "Jungle Cruise", location: "Adventureland", duration: "25 min", category: "ride", why: "Recently updated with new scenes and jokes. Your skipper makes or breaks the experience — it's live comedy on water.", intensity: "low", insiderTip: "The right side of the boat gets slightly better views." },
-        { time: "14:00", title: "Seven Dwarfs Mine Train", location: "Fantasyland", duration: "20 min", category: "ride", why: "The most popular ride in Magic Kingdom — the swaying mine carts and Snow White scenes are enchanting. Lightning Lane recommended.", intensity: "moderate", insiderTip: "If you can only splurge on one Lightning Lane, make it this one." },
+        { time: "11:00", title: "Haunted Mansion", location: "Liberty Square", duration: "25 min", category: "ride", why: "999 happy haunts and one of Disney's most beloved attractions. More whimsical than scary — kids usually love it.", intensity: "low", insiderTip: "Look for the engagement ring embedded in the concrete outside.", lightningLane: { type: "LL", reason: "Wait times spike 30–50 min on busy days. LL saves meaningful time and keeps your momentum going.", savings: "Save 25–40 min" } },
+        { time: "11:30", title: "Jungle Cruise", location: "Adventureland", duration: "25 min", category: "ride", why: "Recently updated with new scenes and jokes. Your skipper makes or breaks the experience — it's live comedy on water.", intensity: "low", insiderTip: "The right side of the boat gets slightly better views.", lightningLane: { type: "LL", reason: "Afternoon waits hit 45–60 min. LL keeps this classic in your plan without eating your afternoon.", savings: "Save 30–50 min" } },
+        { time: "14:00", title: "Seven Dwarfs Mine Train", location: "Fantasyland", duration: "20 min", category: "ride", why: "The most popular ride in Magic Kingdom — the swaying mine carts and Snow White scenes are enchanting. Lightning Lane recommended.", intensity: "moderate", insiderTip: "If you can only splurge on one Lightning Lane, make it this one.", lightningLane: { type: "ILL", cost: "$15–20", reason: "The single longest standby wait in MK — routinely 80–120 min. ILL is the #1 recommended purchase at Magic Kingdom. Without it, this ride eats 2 hours.", savings: "Save 70–110 min" } },
         { time: "15:00", title: "Buzz Lightyear's Space Ranger Spin", location: "Tomorrowland", duration: "20 min", category: "ride", why: "Interactive shooting gallery ride — great for competitive families. Lines are usually manageable in the afternoon.", intensity: "low" },
         { time: "16:00", title: "it's a small world", location: "Fantasyland", duration: "15 min", category: "ride", why: "A must-do at least once. The air conditioning alone is worth it on a hot day, and the singing is genuinely charming.", intensity: "low" },
       ],
@@ -151,11 +159,11 @@ function generateFullPlan(data: WizardData): ItineraryDay[] {
     },
     epcot: {
       rides: [
-        { time: "09:00", title: "Guardians of the Galaxy: Cosmic Rewind", location: "World Discovery", duration: "30 min", category: "ride", why: "The first reverse-launch Disney coaster — each ride plays a different classic rock song. Virtual queue fills up fast, so rope drop is your best bet.", intensity: "high", insiderTip: "You can't choose your song, but every one is a banger. The reverse launch is unforgettable." },
-        { time: "09:30", title: "Test Track", location: "World Discovery", duration: "25 min", category: "ride", why: "Design your own car and test it at 65mph on an outdoor track. The speed at the end is genuinely thrilling.", intensity: "moderate", insiderTip: "Design your car for speed — it makes the results more fun to watch." },
-        { time: "10:00", title: "Frozen Ever After", location: "World Showcase (Norway)", duration: "20 min", category: "ride", why: "A charming boat ride through Arendelle with Elsa, Anna, and incredible animatronics. Lines are worst at midday — go early or late.", intensity: "low", insiderTip: "The bakery next door (Kringla Bakeri) has the best school bread in Disney — grab some after." },
-        { time: "10:30", title: "Remy's Ratatouille Adventure", location: "World Showcase (France)", duration: "25 min", category: "ride", why: "You shrink to rat-size and scurry through Gusteau's kitchen. The trackless ride system makes every ride feel different.", intensity: "low" },
-        { time: "11:00", title: "Soarin' Around the World", location: "World Nature", duration: "25 min", category: "ride", why: "A hang-gliding simulator over world landmarks — the scents of each scene (orange groves, ocean mist) make it incredibly immersive.", intensity: "low", insiderTip: "Request row B1 for the center, top position — best view with no feet dangling above you." },
+        { time: "09:00", title: "Guardians of the Galaxy: Cosmic Rewind", location: "World Discovery", duration: "30 min", category: "ride", why: "The first reverse-launch Disney coaster — each ride plays a different classic rock song. Virtual queue fills up fast, so rope drop is your best bet.", intensity: "high", insiderTip: "You can't choose your song, but every one is a banger. The reverse launch is unforgettable.", lightningLane: { type: "ILL", cost: "$18–22", reason: "Virtual queue slots vanish within minutes. Without ILL, many guests don't ride at all. This is the #1 ILL purchase at EPCOT.", savings: "Save 60–90 min" } },
+        { time: "09:30", title: "Test Track", location: "World Discovery", duration: "25 min", category: "ride", why: "Design your own car and test it at 65mph on an outdoor track. The speed at the end is genuinely thrilling.", intensity: "moderate", insiderTip: "Design your car for speed — it makes the results more fun to watch.", lightningLane: { type: "LL", reason: "Standby averages 50–75 min. LL is a solid value pick here — the line barely moves during design phase.", savings: "Save 40–60 min" } },
+        { time: "10:00", title: "Frozen Ever After", location: "World Showcase (Norway)", duration: "20 min", category: "ride", why: "A charming boat ride through Arendelle with Elsa, Anna, and incredible animatronics. Lines are worst at midday — go early or late.", intensity: "low", insiderTip: "The bakery next door (Kringla Bakeri) has the best school bread in Disney — grab some after.", lightningLane: { type: "LL", reason: "Frozen fans keep this at 45–65 min all day. LL lets you skip straight to Arendelle.", savings: "Save 35–55 min" } },
+        { time: "10:30", title: "Remy's Ratatouille Adventure", location: "World Showcase (France)", duration: "25 min", category: "ride", why: "You shrink to rat-size and scurry through Gusteau's kitchen. The trackless ride system makes every ride feel different.", intensity: "low", lightningLane: { type: "LL", reason: "Newer ride with consistent 40–55 min waits. LL makes this an easy add to your World Showcase stroll.", savings: "Save 30–45 min" } },
+        { time: "11:00", title: "Soarin' Around the World", location: "World Nature", duration: "25 min", category: "ride", why: "A hang-gliding simulator over world landmarks — the scents of each scene (orange groves, ocean mist) make it incredibly immersive.", intensity: "low", insiderTip: "Request row B1 for the center, top position — best view with no feet dangling above you.", lightningLane: { type: "LL", reason: "Averages 45–60 min standby. LL is a great pick, especially since row position matters — you skip the worst of the queue.", savings: "Save 35–50 min" } },
       ],
       dining: [
         { time: "12:00", title: "Lunch at Space 220", location: "World Discovery", duration: "90 min", category: "dining", why: "Take an 'elevator to space' and dine overlooking Earth from a simulated space station. The views rotate in real-time. The food is upscale American — but you're here for the experience.", intensity: "low", insiderTip: "The lounge is walk-up (no reservation needed) and cheaper — same views, smaller plates.", vibeMatch: ["foodie"], dreamMatch: true },
@@ -170,11 +178,11 @@ function generateFullPlan(data: WizardData): ItineraryDay[] {
     },
     hs: {
       rides: [
-        { time: "09:00", title: "Rise of the Resistance", location: "Star Wars: Galaxy's Edge", duration: "40 min", category: "ride", why: "Widely considered the best ride ever built. An 18-minute experience where you're captured by the First Order — multiple ride systems, practical effects, and a jaw-dropping scale.", intensity: "moderate", insiderTip: "Go at rope drop. Lightning Lane is $20-25 but worth every penny if you don't want to wait 90+ min.", dreamMatch: true },
-        { time: "09:45", title: "Millennium Falcon: Smugglers Run", location: "Star Wars: Galaxy's Edge", duration: "25 min", category: "ride", why: "You literally fly the Falcon. The pilot seats control the ship in real-time. Even non-Star Wars fans love this.", intensity: "moderate", insiderTip: "Ask for PILOT position — the other roles (gunner/engineer) are less exciting." },
-        { time: "10:30", title: "Tower of Terror", location: "Sunset Boulevard", duration: "25 min", category: "ride", why: "A haunted hotel elevator that drops you multiple times in randomized patterns. The storytelling is world-class — the queue alone is worth experiencing.", intensity: "high", insiderTip: "Each ride has a slightly different drop sequence — you never know exactly when it'll fall." },
-        { time: "11:00", title: "Slinky Dog Dash", location: "Toy Story Land", duration: "25 min", category: "ride", why: "A family coaster where you're toy-sized in Andy's backyard. The theming is delightful and the ride is smooth enough for nervous riders.", intensity: "moderate", insiderTip: "Wait times peak at midday — ride early morning or after 6pm." },
-        { time: "11:30", title: "Rock 'n' Roller Coaster", location: "Sunset Boulevard", duration: "20 min", category: "ride", why: "A 0-to-60mph launch in 2.8 seconds with inversions — all set to Aerosmith. Disney's most intense coaster.", intensity: "high" },
+        { time: "09:00", title: "Rise of the Resistance", location: "Star Wars: Galaxy's Edge", duration: "40 min", category: "ride", why: "Widely considered the best ride ever built. An 18-minute experience where you're captured by the First Order — multiple ride systems, practical effects, and a jaw-dropping scale.", intensity: "moderate", insiderTip: "Go at rope drop. Lightning Lane is $20-25 but worth every penny if you don't want to wait 90+ min.", dreamMatch: true, lightningLane: { type: "ILL", cost: "$20–25", reason: "The most in-demand ride at WDW. Standby routinely hits 90–150 min. ILL is the single best purchase you can make across all 4 parks.", savings: "Save 70–120 min" } },
+        { time: "09:45", title: "Millennium Falcon: Smugglers Run", location: "Star Wars: Galaxy's Edge", duration: "25 min", category: "ride", why: "You literally fly the Falcon. The pilot seats control the ship in real-time. Even non-Star Wars fans love this.", intensity: "moderate", insiderTip: "Ask for PILOT position — the other roles (gunner/engineer) are less exciting.", lightningLane: { type: "LL", reason: "Standby 35–55 min. LL is a nice convenience pick but not essential — prioritize other LL selections first.", savings: "Save 25–45 min" } },
+        { time: "10:30", title: "Tower of Terror", location: "Sunset Boulevard", duration: "25 min", category: "ride", why: "A haunted hotel elevator that drops you multiple times in randomized patterns. The storytelling is world-class — the queue alone is worth experiencing.", intensity: "high", insiderTip: "Each ride has a slightly different drop sequence — you never know exactly when it'll fall.", lightningLane: { type: "LL", reason: "Consistently 50–75 min standby. One of the best LL picks at HS — high wait, high reward.", savings: "Save 40–60 min" } },
+        { time: "11:00", title: "Slinky Dog Dash", location: "Toy Story Land", duration: "25 min", category: "ride", why: "A family coaster where you're toy-sized in Andy's backyard. The theming is delightful and the ride is smooth enough for nervous riders.", intensity: "moderate", insiderTip: "Wait times peak at midday — ride early morning or after 6pm.", lightningLane: { type: "LL", reason: "Averages 60–85 min standby — highest LL value in Toy Story Land. Without it, Slinky eats a big chunk of your day.", savings: "Save 45–70 min" } },
+        { time: "11:30", title: "Rock 'n' Roller Coaster", location: "Sunset Boulevard", duration: "20 min", category: "ride", why: "A 0-to-60mph launch in 2.8 seconds with inversions — all set to Aerosmith. Disney's most intense coaster.", intensity: "high", lightningLane: { type: "LL", reason: "40–60 min standby on average. LL makes this a quick thrill without losing park time.", savings: "Save 30–50 min" } },
       ],
       dining: [
         { time: "12:30", title: "Lunch at Docking Bay 7", location: "Star Wars: Galaxy's Edge", duration: "45 min", category: "dining", why: "Quick-service dining inside a cargo bay. The Endorian Tip-Yip (fried chicken) is excellent, and eating in Galaxy's Edge keeps you immersed in the Star Wars world.", intensity: "low", insiderTip: "Portions are generous — consider splitting the Felucian Kefta & Hummus Garden Spread." },
@@ -190,10 +198,10 @@ function generateFullPlan(data: WizardData): ItineraryDay[] {
     },
     ak: {
       rides: [
-        { time: "09:00", title: "Avatar Flight of Passage", location: "Pandora", duration: "30 min", category: "ride", why: "Ride a banshee over Pandora — wind in your face, mist in the air, scents of the forest. Consistently rated the #1 ride in all of Walt Disney World.", intensity: "moderate", insiderTip: "Rope drop is ESSENTIAL — this ride hits 120+ minute waits by 10am.", dreamMatch: true },
-        { time: "09:45", title: "Na'vi River Journey", location: "Pandora", duration: "20 min", category: "ride", why: "A peaceful boat ride through bioluminescent Pandora forests. The Shaman animatronic at the end is the most advanced Disney has ever built.", intensity: "low" },
-        { time: "10:30", title: "Kilimanjaro Safaris", location: "Africa", duration: "25 min", category: "ride", why: "A real African safari with live animals — giraffes, elephants, lions, hippos. Every ride is different because the animals move freely. Morning = most active animals.", intensity: "low", insiderTip: "Morning rides see the most animal activity. Sit on the LEFT side for closer views.", dreamMatch: true },
-        { time: "11:30", title: "Expedition Everest", location: "Asia", duration: "20 min", category: "ride", why: "A roller coaster through the Himalayas that goes BACKWARDS through a Yeti encounter. Excellent theming and a great moderate thrill.", intensity: "high" },
+        { time: "09:00", title: "Avatar Flight of Passage", location: "Pandora", duration: "30 min", category: "ride", why: "Ride a banshee over Pandora — wind in your face, mist in the air, scents of the forest. Consistently rated the #1 ride in all of Walt Disney World.", intensity: "moderate", insiderTip: "Rope drop is ESSENTIAL — this ride hits 120+ minute waits by 10am.", dreamMatch: true, lightningLane: { type: "ILL", cost: "$15–20", reason: "The longest average wait at WDW — 90–150 min is normal. ILL is strongly recommended. Without it, you're giving up 2+ hours of your Animal Kingdom day.", savings: "Save 80–130 min" } },
+        { time: "09:45", title: "Na'vi River Journey", location: "Pandora", duration: "20 min", category: "ride", why: "A peaceful boat ride through bioluminescent Pandora forests. The Shaman animatronic at the end is the most advanced Disney has ever built.", intensity: "low", lightningLane: { type: "LL", reason: "Standby 40–60 min. LL saves solid time on an otherwise slow-loading boat ride.", savings: "Save 30–50 min" } },
+        { time: "10:30", title: "Kilimanjaro Safaris", location: "Africa", duration: "25 min", category: "ride", why: "A real African safari with live animals — giraffes, elephants, lions, hippos. Every ride is different because the animals move freely. Morning = most active animals.", intensity: "low", insiderTip: "Morning rides see the most animal activity. Sit on the LEFT side for closer views.", dreamMatch: true, lightningLane: { type: "LL", reason: "Morning waits hit 40–55 min when animals are most active. LL lets you time it right without sacrificing your early window.", savings: "Save 30–45 min" } },
+        { time: "11:30", title: "Expedition Everest", location: "Asia", duration: "20 min", category: "ride", why: "A roller coaster through the Himalayas that goes BACKWARDS through a Yeti encounter. Excellent theming and a great moderate thrill.", intensity: "high", lightningLane: { type: "LL", reason: "Averages 35–55 min standby. A good LL pick — the backwards section alone makes it worth not waiting.", savings: "Save 25–45 min" } },
         { time: "14:00", title: "Dinosaur", location: "DinoLand U.S.A.", duration: "20 min", category: "ride", why: "A dark, intense time-travel ride to save a dinosaur. More jarring than it looks — the animatronic carnotaurus is genuinely startling.", intensity: "moderate" },
       ],
       dining: [
@@ -210,11 +218,11 @@ function generateFullPlan(data: WizardData): ItineraryDay[] {
     },
     dl: {
       rides: [
-        { time: "09:00", title: "Indiana Jones Adventure", location: "Adventureland", duration: "25 min", category: "ride", why: "A thrilling jeep ride through a cursed temple — exclusive to Disneyland. The practical effects and massive snake animatronic are incredible.", intensity: "moderate", insiderTip: "The queue has a decoder card hidden near the entrance — find it and translate the ancient script on the walls.", dreamMatch: true },
-        { time: "09:30", title: "Matterhorn Bobsleds", location: "Fantasyland", duration: "20 min", category: "ride", why: "The world's first tubular steel roller coaster — an icon since 1959. The Abominable Snowman lurks inside the mountain.", intensity: "moderate" },
+        { time: "09:00", title: "Indiana Jones Adventure", location: "Adventureland", duration: "25 min", category: "ride", why: "A thrilling jeep ride through a cursed temple — exclusive to Disneyland. The practical effects and massive snake animatronic are incredible.", intensity: "moderate", insiderTip: "The queue has a decoder card hidden near the entrance — find it and translate the ancient script on the walls.", dreamMatch: true, lightningLane: { type: "LL", reason: "DLR's busiest ride — 50–80 min standby is standard. LL is essential here; the single-rider line is also a good backup.", savings: "Save 40–65 min" } },
+        { time: "09:30", title: "Matterhorn Bobsleds", location: "Fantasyland", duration: "20 min", category: "ride", why: "The world's first tubular steel roller coaster — an icon since 1959. The Abominable Snowman lurks inside the mountain.", intensity: "moderate", lightningLane: { type: "LL", reason: "Averages 40–55 min standby. The ride is short, so LL keeps the ratio of fun-to-wait in your favor.", savings: "Save 30–45 min" } },
         { time: "10:00", title: "Pirates of the Caribbean", location: "New Orleans Square", duration: "20 min", category: "ride", why: "The ORIGINAL — longer and more elaborate than the WDW version. Walt personally oversaw this one. The bayou scene at the start is pure atmosphere.", intensity: "low" },
         { time: "10:30", title: "Haunted Mansion", location: "New Orleans Square", duration: "20 min", category: "ride", why: "The Disneyland version has a unique nightmare-before-Christmas overlay during Halloween season. Year-round, it's eerie perfection.", intensity: "low" },
-        { time: "11:00", title: "Space Mountain", location: "Tomorrowland", duration: "20 min", category: "ride", why: "Disneyland's version is smoother and more immersive than WDW's. A must-ride classic in near-total darkness.", intensity: "moderate" },
+        { time: "11:00", title: "Space Mountain", location: "Tomorrowland", duration: "20 min", category: "ride", why: "Disneyland's version is smoother and more immersive than WDW's. A must-ride classic in near-total darkness.", intensity: "moderate", lightningLane: { type: "LL", reason: "35–55 min standby. LL makes this a quick stop on your Tomorrowland loop.", savings: "Save 25–45 min" } },
       ],
       dining: [
         { time: "12:00", title: "Lunch at Café Orléans", location: "New Orleans Square", duration: "60 min", category: "dining", why: "Sit on a wrought-iron balcony overlooking the Rivers of America. The pommes frites (three-cheese monte cristo battered fries) are legendary.", intensity: "low", insiderTip: "Ask for patio seating — it's one of the most charming dining spots in any Disney park." },
@@ -228,10 +236,10 @@ function generateFullPlan(data: WizardData): ItineraryDay[] {
     },
     dca: {
       rides: [
-        { time: "09:00", title: "Radiator Springs Racers", location: "Cars Land", duration: "25 min", category: "ride", why: "Race through the desert at 40mph past stunning animatronics of Lightning McQueen and Mater. Often called the best ride at Disneyland Resort.", intensity: "moderate", insiderTip: "Rope drop or Lightning Lane — midday waits hit 90+ minutes.", dreamMatch: true },
-        { time: "09:30", title: "WEB SLINGERS: A Spider-Man Adventure", location: "Avengers Campus", duration: "20 min", category: "ride", why: "Shoot webs from your hands (no controller needed) to capture spider-bots. The motion tracking technology is remarkably responsive.", intensity: "low" },
-        { time: "10:00", title: "Incredicoaster", location: "Pixar Pier", duration: "20 min", category: "ride", why: "A fast, long California Screamin' coaster re-themed to The Incredibles. Goes 0-55mph with a full loop. The best pure coaster at the resort.", intensity: "high" },
-        { time: "10:30", title: "Guardians of the Galaxy – Mission: BREAKOUT!", location: "Avengers Campus", duration: "20 min", category: "ride", why: "A randomized drop tower with Rocket Raccoon narrating. Six different ride profiles mean no two experiences are the same.", intensity: "high" },
+        { time: "09:00", title: "Radiator Springs Racers", location: "Cars Land", duration: "25 min", category: "ride", why: "Race through the desert at 40mph past stunning animatronics of Lightning McQueen and Mater. Often called the best ride at Disneyland Resort.", intensity: "moderate", insiderTip: "Rope drop or Lightning Lane — midday waits hit 90+ minutes.", dreamMatch: true, lightningLane: { type: "ILL", cost: "$20–25", reason: "DCA's most popular ride with 70–120 min waits. ILL is the top purchase at Disneyland Resort — without it, you may wait 2 hours.", savings: "Save 60–100 min" } },
+        { time: "09:30", title: "WEB SLINGERS: A Spider-Man Adventure", location: "Avengers Campus", duration: "20 min", category: "ride", why: "Shoot webs from your hands (no controller needed) to capture spider-bots. The motion tracking technology is remarkably responsive.", intensity: "low", lightningLane: { type: "LL", reason: "Averages 40–55 min standby. LL keeps your Avengers Campus time efficient.", savings: "Save 30–45 min" } },
+        { time: "10:00", title: "Incredicoaster", location: "Pixar Pier", duration: "20 min", category: "ride", why: "A fast, long California Screamin' coaster re-themed to The Incredibles. Goes 0-55mph with a full loop. The best pure coaster at the resort.", intensity: "high", lightningLane: { type: "LL", reason: "35–50 min standby. LL is a solid pick for thrill-seekers — you'll want to re-ride this one.", savings: "Save 25–40 min" } },
+        { time: "10:30", title: "Guardians of the Galaxy – Mission: BREAKOUT!", location: "Avengers Campus", duration: "20 min", category: "ride", why: "A randomized drop tower with Rocket Raccoon narrating. Six different ride profiles mean no two experiences are the same.", intensity: "high", lightningLane: { type: "LL", reason: "40–60 min standby on busy days. LL saves meaningful time on a ride with high replay value.", savings: "Save 30–50 min" } },
       ],
       dining: [
         { time: "12:00", title: "Lunch at Lamplight Lounge", location: "Pixar Pier", duration: "75 min", category: "dining", why: "Waterfront dining with Pixar art covering every surface. The lobster nachos are a must-order. Request a patio table for boardwalk views.", intensity: "low", vibeMatch: ["foodie"], insiderTip: "The downstairs lounge is walk-up only — same menu, shorter wait, incredible views." },
@@ -436,11 +444,39 @@ const DreamItinerary = () => {
   const wizardData = location.state as WizardData | null;
   const [currentDay, setCurrentDay] = useState(0);
   const [expandedBlock, setExpandedBlock] = useState<number | null>(null);
+  const [parkOverrides, setParkOverrides] = useState<Record<number, string>>({});
+  const [showParkSwap, setShowParkSwap] = useState<number | null>(null);
+
+  // Available parks for swapping (from wizard selections)
+  const availableParks = wizardData?.selectedParks || [];
 
   const plan = useMemo(() => {
     if (!wizardData) return [];
-    return generateFullPlan(wizardData);
+    // Apply park overrides to wizard data
+    const modifiedData = { ...wizardData };
+    return generateFullPlan(modifiedData);
   }, [wizardData]);
+
+  // Apply park overrides to plan for display
+  const displayPlan = useMemo(() => {
+    if (!plan.length || !wizardData) return plan;
+    return plan.map((day, i) => {
+      const overrideParkId = parkOverrides[i];
+      if (!overrideParkId || ["✈️", "🧳", "🏊"].includes(day.parkEmoji)) return day;
+      const newPark = availableParks.find(p => p.id === overrideParkId);
+      if (!newPark || newPark.name === day.parkName) return day;
+      // Regenerate this day with the new park
+      const regenerated = generateFullPlan({
+        ...wizardData,
+        selectedParks: [newPark],
+        dates: { ...wizardData.dates, duration: 1 },
+      });
+      if (regenerated.length > 0) {
+        return { ...regenerated[0], dayNumber: day.dayNumber, label: day.label };
+      }
+      return day;
+    });
+  }, [plan, parkOverrides, wizardData, availableParks]);
 
   if (!wizardData || plan.length === 0) {
     return (
@@ -455,8 +491,11 @@ const DreamItinerary = () => {
     );
   }
 
-  const day = plan[currentDay];
-  const totalDreamsUsed = plan.reduce((sum, d) => sum + d.blocks.filter(b => b.dreamMatch).length, 0);
+  const day = displayPlan[currentDay];
+  const totalDreamsUsed = displayPlan.reduce((sum, d) => sum + d.blocks.filter(b => b.dreamMatch).length, 0);
+  const isParkDay = !["✈️", "🧳", "🏊"].includes(day.parkEmoji);
+  const totalLLRecs = day.blocks.filter(b => b.lightningLane).length;
+  const totalILLRecs = day.blocks.filter(b => b.lightningLane?.type === "ILL").length;
 
   return (
     <div className="min-h-screen bg-background">
@@ -484,10 +523,10 @@ const DreamItinerary = () => {
         {/* Day navigation */}
         <div className="max-w-6xl mx-auto px-6 pb-0">
           <div className="flex gap-1 overflow-x-auto scrollbar-hide pb-0">
-            {plan.map((d, i) => (
+            {displayPlan.map((d, i) => (
               <button
                 key={i}
-                onClick={() => { setCurrentDay(i); setExpandedBlock(null); }}
+                onClick={() => { setCurrentDay(i); setExpandedBlock(null); setShowParkSwap(null); }}
                 className={`flex-shrink-0 px-4 py-2.5 rounded-t-lg font-editorial text-xs transition-all duration-300 border-b-2 ${currentDay === i
                   ? "bg-card border-gold text-foreground shadow-soft"
                   : "bg-transparent border-transparent text-muted-foreground hover:text-foreground hover:bg-muted/50"
@@ -518,10 +557,48 @@ const DreamItinerary = () => {
             <div className="mb-8">
               <div className="flex items-center gap-3 mb-2">
                 <span className="text-3xl">{day.parkEmoji}</span>
-                <div>
+                <div className="flex-1">
                   <p className="label-text text-gold">{day.label}</p>
                   <h2 className="font-display text-2xl text-foreground">{day.parkName}</h2>
                 </div>
+                {/* Park swap button */}
+                {isParkDay && availableParks.length > 1 && (
+                  <div className="relative">
+                    <button
+                      onClick={() => setShowParkSwap(showParkSwap === currentDay ? null : currentDay)}
+                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-border bg-card hover:bg-muted/50 font-editorial text-xs text-muted-foreground hover:text-foreground transition-colors"
+                    >
+                      <ArrowRight className="w-3 h-3 rotate-90" /> Change Park
+                    </button>
+                    {showParkSwap === currentDay && (
+                      <motion.div
+                        initial={{ opacity: 0, y: -4 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="absolute right-0 top-full mt-1 z-20 bg-card border border-border rounded-lg shadow-soft p-2 min-w-[200px]"
+                      >
+                        {availableParks.map(p => (
+                          <button
+                            key={p.id}
+                            onClick={() => {
+                              setParkOverrides(prev => ({ ...prev, [currentDay]: p.id }));
+                              setShowParkSwap(null);
+                              setExpandedBlock(null);
+                            }}
+                            className={`w-full text-left px-3 py-2 rounded-md font-editorial text-xs transition-colors flex items-center gap-2 ${
+                              day.parkName === p.name
+                                ? "bg-gold/10 text-gold"
+                                : "text-foreground hover:bg-muted/50"
+                            }`}
+                          >
+                            <span>{p.emoji}</span>
+                            <span>{p.name}</span>
+                            {day.parkName === p.name && <Check className="w-3 h-3 ml-auto" />}
+                          </button>
+                        ))}
+                      </motion.div>
+                    )}
+                  </div>
+                )}
               </div>
               <p className="font-editorial text-sm text-muted-foreground italic mt-1">"{day.theme}"</p>
 
@@ -543,6 +620,25 @@ const DreamItinerary = () => {
                     <div>
                       <p className="font-editorial text-xs font-medium text-foreground mb-1">Opening Strategy</p>
                       <p className="font-editorial text-xs text-muted-foreground leading-relaxed">{day.openingStrategy}</p>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Lightning Lane summary for the day */}
+              {totalLLRecs > 0 && (
+                <div className="mt-3 rounded-lg bg-sunshine/5 border border-sunshine/15 p-4">
+                  <div className="flex items-start gap-2.5">
+                    <Zap className="w-4 h-4 text-sunshine mt-0.5 shrink-0" />
+                    <div>
+                      <p className="font-editorial text-xs font-medium text-foreground mb-1">
+                        Lightning Lane Recommendations
+                      </p>
+                      <p className="font-editorial text-xs text-muted-foreground leading-relaxed">
+                        We recommend <span className="text-foreground font-medium">{totalLLRecs} rides</span> for Lightning Lane today
+                        {totalILLRecs > 0 && <>, including <span className="text-foreground font-medium">{totalILLRecs} paid Individual LL</span> (ILL) purchase{totalILLRecs > 1 ? "s" : ""}</>}.
+                        {" "}Look for the <span className="inline-flex items-center gap-0.5 px-1 py-0 rounded bg-sunshine/10 text-sunshine text-[0.6rem]"><Zap className="w-2 h-2" />LL</span> badges on rides below — expand each for time savings and cost details.
+                      </p>
                     </div>
                   </div>
                 </div>
@@ -608,6 +704,17 @@ const DreamItinerary = () => {
                                   <Sparkles className="w-2.5 h-2.5" /> Dream List
                                 </span>
                               )}
+                              {block.lightningLane && (
+                                <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[0.6rem] font-editorial ${
+                                  block.lightningLane.type === "ILL"
+                                    ? "bg-sunshine/15 text-sunshine border border-sunshine/20"
+                                    : "bg-sunshine/8 text-sunshine"
+                                }`}>
+                                  <Zap className="w-2.5 h-2.5" />
+                                  {block.lightningLane.type === "ILL" ? `ILL ${block.lightningLane.cost}` : "LL"}
+                                  <span className="opacity-70">· {block.lightningLane.savings}</span>
+                                </span>
+                              )}
                             </div>
                             <p className="font-display text-sm text-foreground">{block.title}</p>
                             <p className="font-editorial text-xs text-muted-foreground mt-0.5">{block.location} · {block.duration}</p>
@@ -652,6 +759,22 @@ const DreamItinerary = () => {
                                   </div>
                                 )}
 
+                                {/* Lightning Lane recommendation */}
+                                {block.lightningLane && (
+                                  <div className="flex items-start gap-2">
+                                    <div className="w-5 h-5 rounded-md bg-sunshine/10 flex items-center justify-center shrink-0 mt-0.5">
+                                      <Zap className="w-3 h-3 text-sunshine" />
+                                    </div>
+                                    <div>
+                                      <p className="font-editorial text-[0.65rem] font-medium text-foreground mb-0.5">
+                                        {block.lightningLane.type === "ILL" ? `Individual Lightning Lane (${block.lightningLane.cost})` : "Lightning Lane (included with LL Multi Pass)"}
+                                      </p>
+                                      <p className="font-editorial text-xs text-muted-foreground leading-relaxed">{block.lightningLane.reason}</p>
+                                      <p className="font-editorial text-[0.65rem] text-sunshine font-medium mt-1">⚡ {block.lightningLane.savings} vs standby</p>
+                                    </div>
+                                  </div>
+                                )}
+
                                 {/* Intensity + vibe match */}
                                 <div className="flex items-center gap-2 flex-wrap">
                                   <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[0.6rem] font-editorial"
@@ -683,11 +806,12 @@ const DreamItinerary = () => {
             </div>
 
             {/* Day summary stats */}
-            <div className="mt-8 grid grid-cols-3 gap-3">
+            <div className="mt-8 grid grid-cols-2 sm:grid-cols-4 gap-3">
               {[
                 { label: "Activities", value: day.blocks.length, icon: <Ticket className="w-3.5 h-3.5 text-sky" /> },
                 { label: "Dream Items", value: day.blocks.filter(b => b.dreamMatch).length, icon: <Heart className="w-3.5 h-3.5 text-lavender" /> },
                 { label: "Meals & Snacks", value: day.blocks.filter(b => b.category === "dining" || b.category === "snack").length, icon: <Utensils className="w-3.5 h-3.5 text-coral" /> },
+                { label: "LL Picks", value: totalLLRecs, icon: <Zap className="w-3.5 h-3.5 text-sunshine" /> },
               ].map(stat => (
                 <div key={stat.label} className="rounded-lg border border-border bg-card p-4 text-center shadow-soft">
                   <div className="flex items-center justify-center gap-1.5 mb-1">{stat.icon}<span className="label-text text-[0.6rem]">{stat.label}</span></div>

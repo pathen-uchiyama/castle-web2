@@ -1857,7 +1857,7 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
 
           {/* Park toggle + search */}
           <div className="flex items-center gap-2 mb-3">
-            {availableParks.map(parkId => (
+            {(currentDayParks.length > 0 ? currentDayParks : availableParks).map(parkId => (
               <button key={parkId} onClick={() => togglePark(parkId)}
                 className={`px-2.5 py-1 text-[0.5rem] uppercase tracking-[0.1em] border transition-all duration-300 ${
                   selectedParks.includes(parkId)

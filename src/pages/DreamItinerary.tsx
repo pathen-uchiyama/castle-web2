@@ -806,11 +806,12 @@ const DreamItinerary = () => {
             </div>
 
             {/* Day summary stats */}
-            <div className="mt-8 grid grid-cols-3 gap-3">
+            <div className="mt-8 grid grid-cols-2 sm:grid-cols-4 gap-3">
               {[
                 { label: "Activities", value: day.blocks.length, icon: <Ticket className="w-3.5 h-3.5 text-sky" /> },
                 { label: "Dream Items", value: day.blocks.filter(b => b.dreamMatch).length, icon: <Heart className="w-3.5 h-3.5 text-lavender" /> },
                 { label: "Meals & Snacks", value: day.blocks.filter(b => b.category === "dining" || b.category === "snack").length, icon: <Utensils className="w-3.5 h-3.5 text-coral" /> },
+                { label: "LL Picks", value: totalLLRecs, icon: <Zap className="w-3.5 h-3.5 text-sunshine" /> },
               ].map(stat => (
                 <div key={stat.label} className="rounded-lg border border-border bg-card p-4 text-center shadow-soft">
                   <div className="flex items-center justify-center gap-1.5 mb-1">{stat.icon}<span className="label-text text-[0.6rem]">{stat.label}</span></div>

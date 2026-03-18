@@ -20,6 +20,7 @@ import Terms from "./pages/Terms";
 import Privacy from "./pages/Privacy";
 import PrivacyCa from "./pages/PrivacyCa";
 import DoNotSell from "./pages/DoNotSell";
+import DreamPlanner from "./pages/DreamPlanner";
 import NotFound from "./pages/NotFound";
 import { mockData } from "./data/mockData";
 
@@ -73,6 +74,7 @@ const App = () => (
           <Route path="/privacy" element={<Privacy />} />
           <Route path="/privacy-ca" element={<PrivacyCa />} />
           <Route path="/do-not-sell" element={<DoNotSell />} />
+          <Route path="/dream-planner" element={<DreamPlanner />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>

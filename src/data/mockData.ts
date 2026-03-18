@@ -443,6 +443,17 @@ export const mockData: AppData = {
         tags: ["Character", "Interactive", "Free"],
       },
     ],
+
+    parkSchedule: [
+      { date: "2026-03-21", parkIds: ["travel-arrive"] },
+      { date: "2026-03-22", parkIds: ["mk"] },
+      { date: "2026-03-23", parkIds: ["epcot"] },
+      { date: "2026-03-24", parkIds: ["hs"] },
+      { date: "2026-03-25", parkIds: ["mk"] },
+      { date: "2026-03-26", parkIds: ["ak"] },
+      { date: "2026-03-27", parkIds: ["epcot", "mk"] },
+      { date: "2026-03-28", parkIds: ["travel-depart"] },
+    ],
   },
 
   futureTrips: [

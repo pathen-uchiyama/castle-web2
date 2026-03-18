@@ -183,6 +183,11 @@ export interface PackingItem {
   totalCount: number;
 }
 
+export interface ParkDayAssignment {
+  date: string; // ISO date string
+  parkIds: string[]; // park ids or non-park activity ids (e.g. "travel-arrive", "non-park")
+}
+
 export interface BookedTrip {
   tripId: string;
   destination: string;
@@ -204,6 +209,7 @@ export interface BookedTrip {
   bookedExperiences: BookedExperience[];
   diningVenues: DiningVenue[];
   experienceVenues: ExperienceVenue[];
+  parkSchedule?: ParkDayAssignment[];
 }
 
 export interface FutureTrip {

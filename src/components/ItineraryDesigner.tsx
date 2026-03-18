@@ -866,23 +866,42 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
               const isActive = i === currentDayIndex;
               const dayItems = allDayItineraries[i] || [];
               const hasItems = dayItems.length > 0;
+              const dayParkIds = getDayParkIds(i);
+              const dayIsNonPark = dayParkIds.length === 0 || dayParkIds.every(id => nonParkIds.has(id));
+              const dayNonPark = dayParkIds.find(id => nonParkIds.has(id));
+              const dayParkLabelsArr = dayParkIds.filter(id => !nonParkIds.has(id)).map(id => parkLabels[id] || id);
+              const daySubLabel = dayIsNonPark
+                ? (dayNonPark ? nonParkLabels[dayNonPark]?.emoji || "🌴" : "—")
+                : dayParkLabelsArr.length <= 2
+                  ? dayParkLabelsArr.join(" · ")
+                  : `${dayParkLabelsArr.length} parks`;
+
               return (
                 <button
                   key={day.index}
-                  onClick={() => setCurrentDayIndex(i)}
-                  className={`relative shrink-0 px-4 py-2.5 transition-all duration-300 group ${
+                  onClick={() => {
+                    setCurrentDayIndex(i);
+                    const parks = getDayParkIds(i).filter(id => !nonParkIds.has(id));
+                    if (parks.length > 0) setSelectedParks(parks);
+                  }}
+                  className={`relative shrink-0 px-4 py-3 transition-all duration-300 group ${
                     isActive
                       ? "bg-[hsl(var(--ink))] text-[#F9F7F2]"
-                      : "text-[hsl(var(--ink-light))] hover:bg-[hsl(var(--muted))]"
+                      : dayIsNonPark
+                        ? "text-[hsl(var(--ink-light))]/60 hover:bg-[hsl(var(--muted))]"
+                        : "text-[hsl(var(--ink-light))] hover:bg-[hsl(var(--muted))]"
                   }`}
                   style={{ borderRadius: 0 }}
                 >
                   <div className="flex flex-col items-center gap-0.5">
-                    <span className={`text-[0.5625rem] uppercase tracking-[0.12em] font-medium ${isActive ? "" : ""}`}>
+                    <span className="text-[0.5625rem] uppercase tracking-[0.12em] font-medium">
                       Day {i + 1}
                     </span>
-                    <span className={`text-[0.625rem] ${isActive ? "text-[#F9F7F2]/70" : "text-[hsl(var(--ink-light))]/60"}`} style={{ letterSpacing: "-0.02em" }}>
+                    <span className={`text-[0.625rem] ${isActive ? "text-[#F9F7F2]/70" : ""}`} style={{ letterSpacing: "-0.02em" }}>
                       {day.shortLabel}
+                    </span>
+                    <span className={`text-[0.5rem] mt-0.5 ${isActive ? "text-[hsl(var(--gold-light))]" : "text-[hsl(var(--ink-light))]/50"}`} style={{ letterSpacing: "-0.01em" }}>
+                      {daySubLabel}
                     </span>
                   </div>
                   {hasItems && !isActive && (

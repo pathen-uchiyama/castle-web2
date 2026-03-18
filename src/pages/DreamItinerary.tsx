@@ -526,7 +526,7 @@ const DreamItinerary = () => {
             {displayPlan.map((d, i) => (
               <button
                 key={i}
-                onClick={() => { setCurrentDay(i); setExpandedBlock(null); }}
+                onClick={() => { setCurrentDay(i); setExpandedBlock(null); setShowParkSwap(null); }}
                 className={`flex-shrink-0 px-4 py-2.5 rounded-t-lg font-editorial text-xs transition-all duration-300 border-b-2 ${currentDay === i
                   ? "bg-card border-gold text-foreground shadow-soft"
                   : "bg-transparent border-transparent text-muted-foreground hover:text-foreground hover:bg-muted/50"

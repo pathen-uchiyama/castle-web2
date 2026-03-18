@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { ArrowRight, ArrowLeft, Sparkles, Users, MapPin, Calendar, Utensils, Star, Check, Sun, Moon } from "lucide-react";
 import Footer from "@/components/Footer";
 

@@ -655,28 +655,39 @@ const DreamPlanner = () => {
                 <div>
                   <h2 className="font-display text-2xl sm:text-3xl text-foreground mb-2">The dream list</h2>
                   <p className="font-editorial text-sm text-muted-foreground">
-                    What moments would make this trip unforgettable? Pick everything that excites you — we'll weave them into your days.
+                    What would make this trip unforgettable? Tap anything that excites you — we'll weave them into your plan.
                   </p>
                 </div>
 
                 {["Moments", "Rides", "Dining", "Snacks", "Characters", "Lands", "Relaxation", "Extras"].map(cat => {
-                  const items = dreams.filter(d => d.category === cat);
+                  const items = visibleDreams.filter(d => d.category === cat);
                   if (items.length === 0) return null;
                   return (
                     <div key={cat}>
                       <p className="label-text mb-3">{cat}</p>
-                      <div className="flex flex-wrap gap-2">
+                      <div className="space-y-2">
                         {items.map(dream => (
                           <button
                             key={dream.id}
                             onClick={() => toggleDream(dream.id)}
-                            className={`inline-flex items-center gap-1.5 px-4 py-2.5 rounded-lg border font-editorial text-sm transition-all duration-300 ${dream.selected
-                              ? "border-[hsl(var(--gold))] bg-[hsl(var(--gold)/0.08)] text-foreground shadow-[var(--shadow-soft)]"
-                              : "border-border bg-card text-muted-foreground hover:border-[hsl(var(--gold)/0.3)]"
+                            className={`w-full rounded-lg border p-4 text-left transition-all duration-300 relative ${dream.selected
+                              ? "border-[hsl(var(--gold))] bg-[hsl(var(--gold)/0.06)] shadow-[var(--shadow-soft)]"
+                              : "border-border bg-card hover:border-[hsl(var(--gold)/0.3)]"
                             }`}
                           >
-                            <span>{dream.emoji}</span>
-                            <span>{dream.label}</span>
+                            {dream.selected && (
+                              <div className="absolute top-3 right-3 w-5 h-5 rounded-full bg-[hsl(var(--gold))] flex items-center justify-center">
+                                <Check className="w-3 h-3 text-white" />
+                              </div>
+                            )}
+                            <div className="flex items-start gap-3">
+                              <span className="text-xl mt-0.5 shrink-0">{dream.emoji}</span>
+                              <div className="flex-1 min-w-0 pr-6">
+                                <p className="font-editorial text-sm text-foreground font-medium">{dream.label}</p>
+                                <p className="font-editorial text-xs text-muted-foreground/70 mt-0.5">{dream.park}</p>
+                                <p className="font-editorial text-xs text-muted-foreground mt-1.5 leading-relaxed">{dream.why}</p>
+                              </div>
+                            </div>
                           </button>
                         ))}
                       </div>

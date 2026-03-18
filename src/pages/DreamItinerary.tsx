@@ -9,6 +9,13 @@ import {
 import Footer from "@/components/Footer";
 
 /* ── Types ── */
+interface LightningLaneRec {
+  type: "LL" | "ILL";
+  cost?: string;
+  reason: string;
+  savings: string; // e.g. "Save 45–70 min"
+}
+
 interface ItineraryBlock {
   time: string;
   title: string;
@@ -20,6 +27,7 @@ interface ItineraryBlock {
   vibeMatch?: string[];
   dreamMatch?: boolean;
   intensity: "low" | "moderate" | "high";
+  lightningLane?: LightningLaneRec;
 }
 
 interface ItineraryDay {

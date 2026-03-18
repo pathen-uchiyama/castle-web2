@@ -66,6 +66,7 @@ const months = ["January", "February", "March", "April", "May", "June", "July", 
 const durations = [
   { days: 3, label: "Long Weekend", sub: "3 days" },
   { days: 5, label: "Classic Trip", sub: "5 days" },
+  { days: 6, label: "Extended Classic", sub: "6 days" },
   { days: 7, label: "Full Week", sub: "7 days" },
   { days: 10, label: "Grand Adventure", sub: "10 days" },
 ];

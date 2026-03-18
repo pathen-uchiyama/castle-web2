@@ -448,35 +448,141 @@ const DreamPlanner = () => {
               </motion.div>
             )}
 
-            {/* ── WHERE ── */}
-            {step === "where" && (
-              <motion.div key="where" {...slideAnim} className="space-y-8">
+            {/* ── RESORT ── */}
+            {step === "resort" && (
+              <motion.div key="resort" {...slideAnim} className="space-y-8">
                 <div>
-                  <h2 className="font-display text-2xl sm:text-3xl text-foreground mb-2">Which parks are calling you?</h2>
-                  <p className="font-editorial text-sm text-muted-foreground">Pick as many as you'd like — we'll help you spread them across your days.</p>
+                  <h2 className="font-display text-2xl sm:text-3xl text-foreground mb-2">Where are you headed?</h2>
+                  <p className="font-editorial text-sm text-muted-foreground">
+                    Disney has two resorts in the US — each is a completely different vacation.
+                  </p>
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  {parks.map(park => (
+                <div className="grid grid-cols-1 gap-4">
+                  {([
+                    {
+                      id: "wdw" as const,
+                      name: "Walt Disney World",
+                      location: "Orlando, Florida",
+                      emoji: "🏰",
+                      desc: "4 theme parks, 2 water parks, 25+ resorts, and Disney Springs. The full-scale Disney vacation — most people spend 5–10 days here.",
+                      parks: "Magic Kingdom · EPCOT · Hollywood Studios · Animal Kingdom",
+                      bestFor: "First-timers who want the full Disney experience, families with kids, Star Wars & Avatar fans",
+                    },
+                    {
+                      id: "dlr" as const,
+                      name: "Disneyland Resort",
+                      location: "Anaheim, California",
+                      emoji: "✨",
+                      desc: "2 theme parks side-by-side, walkable from hotels. Walt's original park — more intimate and charming. Perfect for a 3–5 day trip.",
+                      parks: "Disneyland Park · Disney California Adventure",
+                      bestFor: "Shorter trips, west coast travelers, nostalgia seekers, people who love a cozy, walkable resort",
+                    },
+                  ]).map(resort => (
+                    <button
+                      key={resort.id}
+                      onClick={() => handleResortChange(resort.id)}
+                      className={`rounded-lg border p-6 text-left transition-all duration-300 relative ${selectedResort === resort.id
+                        ? "border-[hsl(var(--gold))] bg-[hsl(var(--gold)/0.06)] shadow-[var(--shadow-soft)]"
+                        : "border-border bg-card hover:border-[hsl(var(--gold)/0.3)]"
+                      }`}
+                    >
+                      {selectedResort === resort.id && (
+                        <div className="absolute top-4 right-4 w-5 h-5 rounded-full bg-[hsl(var(--gold))] flex items-center justify-center">
+                          <Check className="w-3 h-3 text-white" />
+                        </div>
+                      )}
+                      <div className="flex items-start gap-4">
+                        <span className="text-3xl mt-0.5">{resort.emoji}</span>
+                        <div className="flex-1">
+                          <p className="font-display text-lg text-foreground">{resort.name}</p>
+                          <p className="font-editorial text-xs text-[hsl(var(--gold))] mb-2">{resort.location}</p>
+                          <p className="font-editorial text-sm text-muted-foreground leading-relaxed mb-3">{resort.desc}</p>
+                          <p className="font-editorial text-xs text-muted-foreground/70 mb-1">
+                            <strong className="text-foreground/70">Parks:</strong> {resort.parks}
+                          </p>
+                          <p className="font-editorial text-xs text-muted-foreground/70">
+                            <strong className="text-foreground/70">Best for:</strong> {resort.bestFor}
+                          </p>
+                        </div>
+                      </div>
+                    </button>
+                  ))}
+                </div>
+
+                {travelers.firstTime && (
+                  <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="rounded-lg bg-[hsl(var(--sky)/0.06)] border border-[hsl(var(--sky)/0.15)] p-4">
+                    <p className="font-editorial text-xs text-[hsl(var(--sky))]">
+                      💡 <strong>First-timer tip:</strong> Walt Disney World is the most popular choice for a first trip — 4 parks means more variety, and there's enough to fill a full week without repeating anything.
+                    </p>
+                  </motion.div>
+                )}
+              </motion.div>
+            )}
+
+            {/* ── WHERE ── */}
+            {step === "where" && (
+              <motion.div key="where" {...slideAnim} className="space-y-6">
+                <div>
+                  <h2 className="font-display text-2xl sm:text-3xl text-foreground mb-2">
+                    {selectedResort === "wdw" ? "Which WDW parks?" : "Which Disneyland parks?"}
+                  </h2>
+                  <p className="font-editorial text-sm text-muted-foreground">
+                    {selectedResort === "wdw"
+                      ? "Each park is a full day (or more). Pick the ones that excite you — we'll help you plan each day."
+                      : "Both parks are right next to each other — you can even park hop between them in the same day."
+                    }
+                  </p>
+                </div>
+
+                <div className="space-y-4">
+                  {visibleParks.map(park => (
                     <button
                       key={park.id}
                       onClick={() => togglePark(park.id)}
-                      className={`rounded-lg border p-5 text-left transition-all duration-300 relative overflow-hidden ${park.selected
+                      className={`w-full rounded-lg border p-6 text-left transition-all duration-300 relative overflow-hidden ${park.selected
                         ? "border-[hsl(var(--gold))] bg-[hsl(var(--gold)/0.06)] shadow-[var(--shadow-soft)]"
                         : "border-border bg-card hover:border-[hsl(var(--gold)/0.3)]"
                       }`}
                     >
                       {park.selected && (
-                        <div className="absolute top-3 right-3 w-5 h-5 rounded-full bg-[hsl(var(--gold))] flex items-center justify-center">
+                        <div className="absolute top-4 right-4 w-5 h-5 rounded-full bg-[hsl(var(--gold))] flex items-center justify-center">
                           <Check className="w-3 h-3 text-white" />
                         </div>
                       )}
-                      <span className="text-2xl mb-2 block">{park.emoji}</span>
-                      <p className="font-display text-base text-foreground">{park.name}</p>
-                      <p className="font-editorial text-xs text-muted-foreground mt-1">{park.tagline}</p>
+                      <div className="flex items-start gap-4">
+                        <span className="text-3xl mt-0.5">{park.emoji}</span>
+                        <div className="flex-1 min-w-0">
+                          <p className="font-display text-lg text-foreground">{park.name}</p>
+                          <p className="font-editorial text-sm text-muted-foreground mt-0.5 leading-relaxed">{park.tagline}</p>
+                          
+                          <div className="mt-3 flex flex-wrap gap-1.5">
+                            {park.highlights.map(h => (
+                              <span key={h} className="inline-block px-2.5 py-1 rounded-md bg-muted text-[0.625rem] text-muted-foreground font-editorial">
+                                {h}
+                              </span>
+                            ))}
+                          </div>
+
+                          <p className="font-editorial text-xs text-muted-foreground/70 mt-3">
+                            <strong className="text-foreground/70">Best for:</strong> {park.bestFor}
+                          </p>
+                          <p className="font-editorial text-xs text-[hsl(var(--gold))] mt-1.5 italic">
+                            ✨ {park.mustDo}
+                          </p>
+                        </div>
+                      </div>
                     </button>
                   ))}
                 </div>
+
+                {selectedResort === "wdw" && visibleParks.filter(p => p.selected).length === 4 && (
+                  <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="rounded-lg bg-[hsl(var(--mint)/0.06)] border border-[hsl(var(--mint)/0.15)] p-4">
+                    <p className="font-editorial text-xs text-[hsl(var(--mint))]">
+                      🎉 <strong>All four parks!</strong> For a full WDW experience, we recommend at least 5–7 days so you don't feel rushed.
+                    </p>
+                  </motion.div>
+                )}
               </motion.div>
             )}
 

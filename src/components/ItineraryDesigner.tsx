@@ -261,6 +261,26 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
   const currentDay = tripDays[currentDayIndex] || tripDays[0];
   const dayNavRef = useRef<HTMLDivElement>(null);
 
+  /* ── Per-day park assignments from trip schedule ────────────────── */
+  const nonParkIds = new Set(["travel-arrive", "travel-depart", "non-park"]);
+  const nonParkLabels: Record<string, { label: string; emoji: string }> = {
+    "travel-arrive": { label: "Arrival Day", emoji: "✈️" },
+    "travel-depart": { label: "Departure Day", emoji: "🧳" },
+    "non-park": { label: "Non-Park Day", emoji: "🌴" },
+  };
+
+  const getDayParkIds = useCallback((dayIdx: number): string[] => {
+    const day = tripDays[dayIdx];
+    if (!day || !trip.parkSchedule) return ["mk"];
+    const assignment = trip.parkSchedule.find(ps => ps.date === day.dateStr);
+    return assignment?.parkIds || [];
+  }, [tripDays, trip.parkSchedule]);
+
+  const currentDayParkIds = getDayParkIds(currentDayIndex);
+  const isParkDay = currentDayParkIds.length > 0 && !currentDayParkIds.every(id => nonParkIds.has(id));
+  const currentDayParks = currentDayParkIds.filter(id => !nonParkIds.has(id));
+  const currentDayNonPark = currentDayParkIds.find(id => nonParkIds.has(id));
+
   /* ── Parse "March 22" style dates to ISO for matching ──────────── */
   const parseMockDate = useCallback((dateStr: string): string | null => {
     const year = new Date(trip.startDate).getFullYear();
@@ -282,7 +302,7 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
   };
 
   const availableParks = Object.keys(allParkAttractions);
-  const [selectedParks, setSelectedParks] = useState<string[]>(["mk"]);
+  const [selectedParks, setSelectedParks] = useState<string[]>(currentDayParks.length > 0 ? currentDayParks : ["mk"]);
   const [researchCategory, setResearchCategory] = useState<AttractionType | "all">("all");
   const [searchQuery, setSearchQuery] = useState("");
 

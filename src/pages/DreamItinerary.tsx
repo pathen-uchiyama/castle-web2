@@ -523,7 +523,7 @@ const DreamItinerary = () => {
         {/* Day navigation */}
         <div className="max-w-6xl mx-auto px-6 pb-0">
           <div className="flex gap-1 overflow-x-auto scrollbar-hide pb-0">
-            {plan.map((d, i) => (
+            {displayPlan.map((d, i) => (
               <button
                 key={i}
                 onClick={() => { setCurrentDay(i); setExpandedBlock(null); }}

@@ -20,6 +20,7 @@ import Terms from "./pages/Terms";
 import Privacy from "./pages/Privacy";
 import PrivacyCa from "./pages/PrivacyCa";
 import DoNotSell from "./pages/DoNotSell";
+import DreamPlanner from "./pages/DreamPlanner";
 import NotFound from "./pages/NotFound";
 import { mockData } from "./data/mockData";
 

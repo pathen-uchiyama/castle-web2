@@ -444,11 +444,39 @@ const DreamItinerary = () => {
   const wizardData = location.state as WizardData | null;
   const [currentDay, setCurrentDay] = useState(0);
   const [expandedBlock, setExpandedBlock] = useState<number | null>(null);
+  const [parkOverrides, setParkOverrides] = useState<Record<number, string>>({});
+  const [showParkSwap, setShowParkSwap] = useState<number | null>(null);
+
+  // Available parks for swapping (from wizard selections)
+  const availableParks = wizardData?.selectedParks || [];
 
   const plan = useMemo(() => {
     if (!wizardData) return [];
-    return generateFullPlan(wizardData);
+    // Apply park overrides to wizard data
+    const modifiedData = { ...wizardData };
+    return generateFullPlan(modifiedData);
   }, [wizardData]);
+
+  // Apply park overrides to plan for display
+  const displayPlan = useMemo(() => {
+    if (!plan.length || !wizardData) return plan;
+    return plan.map((day, i) => {
+      const overrideParkId = parkOverrides[i];
+      if (!overrideParkId || ["✈️", "🧳", "🏊"].includes(day.parkEmoji)) return day;
+      const newPark = availableParks.find(p => p.id === overrideParkId);
+      if (!newPark || newPark.name === day.parkName) return day;
+      // Regenerate this day with the new park
+      const regenerated = generateFullPlan({
+        ...wizardData,
+        selectedParks: [newPark],
+        dates: { ...wizardData.dates, duration: 1 },
+      });
+      if (regenerated.length > 0) {
+        return { ...regenerated[0], dayNumber: day.dayNumber, label: day.label };
+      }
+      return day;
+    });
+  }, [plan, parkOverrides, wizardData, availableParks]);
 
   if (!wizardData || plan.length === 0) {
     return (

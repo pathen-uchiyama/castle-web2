@@ -208,6 +208,7 @@ const DreamPlanner = () => {
       case "welcome": return true;
       case "who": return travelers.adults > 0 && travelers.firstTime !== null;
       case "when": return dates.month !== "" && dates.duration > 0;
+      case "resort": return selectedResort !== null;
       case "where": return selectedParks.length > 0;
       case "vibe": return selectedVibes.length > 0;
       case "dining": return selectedDining.length > 0;
@@ -221,6 +222,7 @@ const DreamPlanner = () => {
       case "welcome": return "";
       case "who": return "Your Party";
       case "when": return "Timing";
+      case "resort": return "Destination";
       case "where": return "Parks";
       case "vibe": return "Style";
       case "dining": return "Dining";

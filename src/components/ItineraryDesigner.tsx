@@ -837,7 +837,44 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
       </div>
 
       {/* ═══════════════════════════════════════════════════════════════
-          GROUP MEMBERS — collapsible
+          DAY NAVIGATION
+         ═══════════════════════════════════════════════════════════════ */}
+      <div className="border-y border-[hsl(var(--border))] bg-white" style={{ boxShadow: "0 10px 30px rgba(26,26,27,0.05)" }}>
+        <div className="px-6 lg:px-10 py-2">
+          <div ref={dayNavRef} className="flex items-center gap-1 overflow-x-auto" style={{ scrollbarWidth: "none" }}>
+            {tripDays.map((day, i) => {
+              const isActive = i === currentDayIndex;
+              const dayItems = allDayItineraries[i] || [];
+              const hasItems = dayItems.length > 0;
+              return (
+                <button
+                  key={day.index}
+                  onClick={() => setCurrentDayIndex(i)}
+                  className={`relative shrink-0 px-4 py-2.5 transition-all duration-300 group ${
+                    isActive
+                      ? "bg-[hsl(var(--ink))] text-[#F9F7F2]"
+                      : "text-[hsl(var(--ink-light))] hover:bg-[hsl(var(--muted))]"
+                  }`}
+                  style={{ borderRadius: 0 }}
+                >
+                  <div className="flex flex-col items-center gap-0.5">
+                    <span className={`text-[0.5625rem] uppercase tracking-[0.12em] font-medium ${isActive ? "" : ""}`}>
+                      Day {i + 1}
+                    </span>
+                    <span className={`text-[0.625rem] ${isActive ? "text-[#F9F7F2]/70" : "text-[hsl(var(--ink-light))]/60"}`} style={{ letterSpacing: "-0.02em" }}>
+                      {day.shortLabel}
+                    </span>
+                  </div>
+                  {hasItems && !isActive && (
+                    <span className="absolute top-1.5 right-1.5 w-1.5 h-1.5 bg-[hsl(var(--gold))]" style={{ borderRadius: 0 }} />
+                  )}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      </div>
+
          ═══════════════════════════════════════════════════════════════ */}
       <Collapsible open={groupOpen} onOpenChange={setGroupOpen}>
         <div className="border-y border-[hsl(var(--border))] bg-white" style={{ boxShadow: "0 10px 30px rgba(26,26,27,0.05)" }}>

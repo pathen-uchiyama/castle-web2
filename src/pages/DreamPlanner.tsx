@@ -162,6 +162,7 @@ const allDreams: DreamItem[] = [
 
 /* ── Component ── */
 const DreamPlanner = () => {
+  const navigate = useNavigate();
   const [step, setStep] = useState<Step>("welcome");
   const [travelers, setTravelers] = useState<TravelerInfo>({ adults: 2, kids: 0, kidAges: "", firstTime: null });
   const [dates, setDates] = useState<TripDates>({ month: "", duration: 5 });

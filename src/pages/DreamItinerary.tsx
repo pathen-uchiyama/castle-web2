@@ -2,9 +2,9 @@ import { useState, useMemo } from "react";
 import { useLocation, Link, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import {
-  ArrowLeft, Sun, Sunset, Moon, Clock, MapPin, Utensils, Star,
+  ArrowLeft, ArrowRight, Sun, Sunset, Moon, Clock, MapPin, Utensils, Star,
   Sparkles, ChevronRight, Info, Zap, Heart, Camera, Coffee,
-  TreePine, ShoppingBag, Music, Ticket
+  ShoppingBag, Music, Ticket
 } from "lucide-react";
 import Footer from "@/components/Footer";
 

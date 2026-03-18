@@ -261,6 +261,26 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
   const currentDay = tripDays[currentDayIndex] || tripDays[0];
   const dayNavRef = useRef<HTMLDivElement>(null);
 
+  /* ── Per-day park assignments from trip schedule ────────────────── */
+  const nonParkIds = new Set(["travel-arrive", "travel-depart", "non-park"]);
+  const nonParkLabels: Record<string, { label: string; emoji: string }> = {
+    "travel-arrive": { label: "Arrival Day", emoji: "✈️" },
+    "travel-depart": { label: "Departure Day", emoji: "🧳" },
+    "non-park": { label: "Non-Park Day", emoji: "🌴" },
+  };
+
+  const getDayParkIds = useCallback((dayIdx: number): string[] => {
+    const day = tripDays[dayIdx];
+    if (!day || !trip.parkSchedule) return ["mk"];
+    const assignment = trip.parkSchedule.find(ps => ps.date === day.dateStr);
+    return assignment?.parkIds || [];
+  }, [tripDays, trip.parkSchedule]);
+
+  const currentDayParkIds = getDayParkIds(currentDayIndex);
+  const isParkDay = currentDayParkIds.length > 0 && !currentDayParkIds.every(id => nonParkIds.has(id));
+  const currentDayParks = currentDayParkIds.filter(id => !nonParkIds.has(id));
+  const currentDayNonPark = currentDayParkIds.find(id => nonParkIds.has(id));
+
   /* ── Parse "March 22" style dates to ISO for matching ──────────── */
   const parseMockDate = useCallback((dateStr: string): string | null => {
     const year = new Date(trip.startDate).getFullYear();
@@ -282,7 +302,7 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
   };
 
   const availableParks = Object.keys(allParkAttractions);
-  const [selectedParks, setSelectedParks] = useState<string[]>(["mk"]);
+  const [selectedParks, setSelectedParks] = useState<string[]>(currentDayParks.length > 0 ? currentDayParks : ["mk"]);
   const [researchCategory, setResearchCategory] = useState<AttractionType | "all">("all");
   const [searchQuery, setSearchQuery] = useState("");
 
@@ -729,9 +749,13 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
             <p className="text-[0.5625rem] uppercase tracking-[0.2em] text-[hsl(var(--ink-light))] font-medium mb-2" style={{ letterSpacing: "0.2em" }}>Intended Itinerary</p>
             <h2 className="font-display text-3xl text-[hsl(var(--ink))] leading-[1.05]">{trip.tripName}</h2>
             <p className="font-sans text-sm text-[hsl(var(--ink-light))] mt-1" style={{ letterSpacing: "-0.02em" }}>
-              {currentDay?.label} · {selectedParks.map(p => parkLabels[p] || p).join(" · ")} · {ropeDrop} → {leavePark}
+              {currentDay?.label} · {isParkDay
+                ? `${selectedParks.map(p => parkLabels[p] || p).join(" · ")} · ${ropeDrop} → ${leavePark}`
+                : currentDayNonPark ? nonParkLabels[currentDayNonPark]?.label || "Non-Park Day" : "No park assigned"
+              }
             </p>
           </div>
+          {isParkDay && (
           <div className="flex gap-2">
             <button className="flex items-center gap-1.5 px-4 py-2 text-[0.5625rem] tracking-[0.12em] uppercase font-medium bg-[hsl(var(--ink))] text-[#F9F7F2] hover:opacity-90 transition-opacity duration-300" style={{ borderRadius: 0 }}>
               <Sparkles className="w-3 h-3" />
@@ -748,9 +772,11 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
               {isLocked ? "Unlock Plan" : "Lock Plan"}
             </button>
           </div>
+          )}
         </div>
 
-        {/* 4 widget cards — Sovereign sharp corners + boutique shadows */}
+        {/* 4 widget cards — park days only */}
+        {isParkDay && (
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
           <div className="bg-white p-4 flex items-center gap-3" style={{ borderRadius: 0, boxShadow: "0 10px 30px rgba(26,26,27,0.05)" }}>
             <span className="text-2xl">⛅</span>
@@ -834,6 +860,7 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
             </div>
           </div>
         </div>
+        )}
       </div>
 
       {/* ═══════════════════════════════════════════════════════════════
@@ -846,23 +873,42 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
               const isActive = i === currentDayIndex;
               const dayItems = allDayItineraries[i] || [];
               const hasItems = dayItems.length > 0;
+              const dayParkIds = getDayParkIds(i);
+              const dayIsNonPark = dayParkIds.length === 0 || dayParkIds.every(id => nonParkIds.has(id));
+              const dayNonPark = dayParkIds.find(id => nonParkIds.has(id));
+              const dayParkLabelsArr = dayParkIds.filter(id => !nonParkIds.has(id)).map(id => parkLabels[id] || id);
+              const daySubLabel = dayIsNonPark
+                ? (dayNonPark ? nonParkLabels[dayNonPark]?.emoji || "🌴" : "—")
+                : dayParkLabelsArr.length <= 2
+                  ? dayParkLabelsArr.join(" · ")
+                  : `${dayParkLabelsArr.length} parks`;
+
               return (
                 <button
                   key={day.index}
-                  onClick={() => setCurrentDayIndex(i)}
-                  className={`relative shrink-0 px-4 py-2.5 transition-all duration-300 group ${
+                  onClick={() => {
+                    setCurrentDayIndex(i);
+                    const parks = getDayParkIds(i).filter(id => !nonParkIds.has(id));
+                    if (parks.length > 0) setSelectedParks(parks);
+                  }}
+                  className={`relative shrink-0 px-4 py-3 transition-all duration-300 group ${
                     isActive
                       ? "bg-[hsl(var(--ink))] text-[#F9F7F2]"
-                      : "text-[hsl(var(--ink-light))] hover:bg-[hsl(var(--muted))]"
+                      : dayIsNonPark
+                        ? "text-[hsl(var(--ink-light))]/60 hover:bg-[hsl(var(--muted))]"
+                        : "text-[hsl(var(--ink-light))] hover:bg-[hsl(var(--muted))]"
                   }`}
                   style={{ borderRadius: 0 }}
                 >
                   <div className="flex flex-col items-center gap-0.5">
-                    <span className={`text-[0.5625rem] uppercase tracking-[0.12em] font-medium ${isActive ? "" : ""}`}>
+                    <span className="text-[0.5625rem] uppercase tracking-[0.12em] font-medium">
                       Day {i + 1}
                     </span>
-                    <span className={`text-[0.625rem] ${isActive ? "text-[#F9F7F2]/70" : "text-[hsl(var(--ink-light))]/60"}`} style={{ letterSpacing: "-0.02em" }}>
+                    <span className={`text-[0.625rem] ${isActive ? "text-[#F9F7F2]/70" : ""}`} style={{ letterSpacing: "-0.02em" }}>
                       {day.shortLabel}
+                    </span>
+                    <span className={`text-[0.5rem] mt-0.5 ${isActive ? "text-[hsl(var(--gold-light))]" : "text-[hsl(var(--ink-light))]/50"}`} style={{ letterSpacing: "-0.01em" }}>
+                      {daySubLabel}
                     </span>
                   </div>
                   {hasItems && !isActive && (
@@ -924,9 +970,43 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
       </Collapsible>
 
       {/* ═══════════════════════════════════════════════════════════════
-          TWO-COLUMN: RIBBON + RESEARCH
+          NON-PARK DAY VIEW
          ═══════════════════════════════════════════════════════════════ */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 relative">
+      {!isParkDay && (
+        <div className="px-6 lg:px-10 py-16 text-center">
+          <div className="max-w-md mx-auto">
+            <span className="text-5xl mb-4 block">{currentDayNonPark ? nonParkLabels[currentDayNonPark]?.emoji || "🌴" : "🌴"}</span>
+            <h3 className="font-display text-2xl text-[hsl(var(--ink))] mb-2">
+              {currentDayNonPark ? nonParkLabels[currentDayNonPark]?.label || "Non-Park Day" : "Non-Park Day"}
+            </h3>
+            <p className="font-sans text-sm text-[hsl(var(--ink-light))] mb-6" style={{ letterSpacing: "-0.02em" }}>
+              {currentDayNonPark === "travel-arrive"
+                ? "Travel day — settle in at the resort, grab dinner at Disney Springs, and rest up for the magic ahead."
+                : currentDayNonPark === "travel-depart"
+                  ? "Pack up and head out. Maybe one last breakfast or a quick run to the gift shops."
+                  : "Resort pool day, Disney Springs, spa, golf — whatever recharges you for the next park day."}
+            </p>
+            <div className="grid grid-cols-2 gap-3 max-w-xs mx-auto">
+              {[
+                { emoji: "🍽", label: "Resort Dining" },
+                { emoji: "🏊", label: "Pool Time" },
+                { emoji: "🛍️", label: "Disney Springs" },
+                { emoji: "😴", label: "Rest & Recharge" },
+              ].map(item => (
+                <div key={item.label} className="bg-white p-3 text-center" style={{ borderRadius: 0, boxShadow: "0 10px 30px rgba(26,26,27,0.05)" }}>
+                  <span className="text-xl block mb-1">{item.emoji}</span>
+                  <span className="text-[0.5625rem] uppercase tracking-[0.1em] text-[hsl(var(--ink-light))]">{item.label}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ═══════════════════════════════════════════════════════════════
+          TWO-COLUMN: RIBBON + RESEARCH (park days only)
+         ═══════════════════════════════════════════════════════════════ */}
+      {isParkDay && <div className="grid grid-cols-1 lg:grid-cols-2 relative">
 
         {/* ─── LEFT: The Ribbon ────────────────────────────────────── */}
         <div className="px-6 lg:px-10 py-8 border-r border-[hsl(var(--border))]">
@@ -1777,7 +1857,7 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
 
           {/* Park toggle + search */}
           <div className="flex items-center gap-2 mb-3">
-            {availableParks.map(parkId => (
+            {(currentDayParks.length > 0 ? currentDayParks : availableParks).map(parkId => (
               <button key={parkId} onClick={() => togglePark(parkId)}
                 className={`px-2.5 py-1 text-[0.5rem] uppercase tracking-[0.1em] border transition-all duration-300 ${
                   selectedParks.includes(parkId)
@@ -2077,7 +2157,7 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
             )}
           </div>
         </div>
-      </div>
+      </div>}
 
       {/* ═══════════════════════════════════════════════════════════════
           SCHEDULED SHOW PLACEMENT MODAL

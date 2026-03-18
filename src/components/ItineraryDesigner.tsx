@@ -770,7 +770,8 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
           </div>
         </div>
 
-        {/* 4 widget cards — Sovereign sharp corners + boutique shadows */}
+        {/* 4 widget cards — park days only */}
+        {isParkDay && (
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
           <div className="bg-white p-4 flex items-center gap-3" style={{ borderRadius: 0, boxShadow: "0 10px 30px rgba(26,26,27,0.05)" }}>
             <span className="text-2xl">⛅</span>
@@ -854,6 +855,7 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
             </div>
           </div>
         </div>
+        )}
       </div>
 
       {/* ═══════════════════════════════════════════════════════════════

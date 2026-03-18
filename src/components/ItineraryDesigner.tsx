@@ -233,6 +233,42 @@ function wouldConflictWithAnchor(
 
 const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExperiences, surveyResponses = [] }: DesignerProps) => {
 
+  /* ── Trip days ─────────────────────────────────────────────────── */
+  const tripDays = useMemo(() => {
+    const start = new Date(trip.startDate + "T00:00:00");
+    const end = new Date(trip.endDate + "T00:00:00");
+    const days: { index: number; date: Date; label: string; shortLabel: string; dateStr: string }[] = [];
+    const cur = new Date(start);
+    let idx = 0;
+    while (cur <= end) {
+      const d = new Date(cur);
+      const dayName = d.toLocaleDateString("en-US", { weekday: "short" });
+      const monthDay = d.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+      days.push({
+        index: idx,
+        date: d,
+        label: `${dayName}, ${monthDay}`,
+        shortLabel: `${dayName} ${d.getDate()}`,
+        dateStr: d.toISOString().split("T")[0],
+      });
+      cur.setDate(cur.getDate() + 1);
+      idx++;
+    }
+    return days;
+  }, [trip.startDate, trip.endDate]);
+
+  const [currentDayIndex, setCurrentDayIndex] = useState(0);
+  const currentDay = tripDays[currentDayIndex] || tripDays[0];
+  const dayNavRef = useRef<HTMLDivElement>(null);
+
+  /* ── Parse "March 22" style dates to ISO for matching ──────────── */
+  const parseMockDate = useCallback((dateStr: string): string | null => {
+    const year = new Date(trip.startDate).getFullYear();
+    const d = new Date(`${dateStr}, ${year}`);
+    if (isNaN(d.getTime())) return null;
+    return d.toISOString().split("T")[0];
+  }, [trip.startDate]);
+
   /* ── State ──────────────────────────────────────────────────────── */
   const [pacing, setPacing] = useState("Moderate");
   const [focus, setFocus] = useState("Classic Magic");
@@ -274,11 +310,16 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
 
   const [hasStroller, setHasStroller] = useState(autoDetectStroller);
 
-  // Seed itinerary with confirmed bookings
-  const seededBookings = useMemo((): ItineraryItem[] => {
-    const items: ItineraryItem[] = [];
+  // Seed itineraries per day with confirmed bookings for that day
+  const seededByDay = useMemo((): Record<number, ItineraryItem[]> => {
+    const result: Record<number, ItineraryItem[]> = {};
+    tripDays.forEach(day => { result[day.index] = []; });
+
     diningReservations.forEach(d => {
-      // All dining reservations are pinned to their booked time
+      const isoDate = parseMockDate(d.date);
+      const dayIdx = tripDays.findIndex(td => td.dateStr === isoDate);
+      const targetIdx = dayIdx >= 0 ? dayIdx : 0;
+
       const diningTimeMin = toMinutes(d.time);
       const scheduledStartMin = diningTimeMin >= 0 ? diningTimeMin : undefined;
       let linkedNote = "";
@@ -293,7 +334,7 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
         }
       }
       const mealLabel = d.mealType === "breakfast" ? "🌅 Breakfast" : d.mealType === "lunch" ? "☀️ Lunch" : d.mealType === "snack" ? "🍿 Snack" : "🌙 Dinner";
-      items.push({
+      result[targetIdx].push({
         id: `booked-${d.reservationId}`,
         name: d.restaurantName,
         type: "meal",
@@ -304,8 +345,13 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
         zone: zone as ParkZone | undefined,
       });
     });
+
     bookedExperiences.forEach(e => {
-      items.push({
+      const isoDate = parseMockDate(e.date);
+      const dayIdx = tripDays.findIndex(td => td.dateStr === isoDate);
+      const targetIdx = dayIdx >= 0 ? dayIdx : 0;
+
+      result[targetIdx].push({
         id: `booked-${e.experienceId}`,
         name: e.experienceName,
         type: "show",
@@ -314,16 +360,31 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
         notes: e.status === "confirmed" ? `✓ CONFIRMED · ${e.confirmationNumber}` : "PENDING",
       });
     });
-    // Sort seeded items by scheduledStartMin so linked dining lands in the right order
-    return items.sort((a, b) => {
-      if (a.scheduledStartMin !== undefined && b.scheduledStartMin !== undefined) return a.scheduledStartMin - b.scheduledStartMin;
-      if (a.scheduledStartMin !== undefined) return -1;
-      if (b.scheduledStartMin !== undefined) return 1;
-      return 0;
-    });
-  }, [diningReservations, bookedExperiences]);
 
-  const [itinerary, setItinerary] = useState<ItineraryItem[]>(seededBookings);
+    // Sort each day's items by scheduledStartMin
+    Object.keys(result).forEach(k => {
+      result[Number(k)].sort((a, b) => {
+        if (a.scheduledStartMin !== undefined && b.scheduledStartMin !== undefined) return a.scheduledStartMin - b.scheduledStartMin;
+        if (a.scheduledStartMin !== undefined) return -1;
+        if (b.scheduledStartMin !== undefined) return 1;
+        return 0;
+      });
+    });
+
+    return result;
+  }, [diningReservations, bookedExperiences, tripDays, parseMockDate]);
+
+  const [allDayItineraries, setAllDayItineraries] = useState<Record<number, ItineraryItem[]>>(seededByDay);
+
+  // Derived current-day itinerary
+  const itinerary = allDayItineraries[currentDayIndex] || [];
+  const setItinerary = useCallback((updater: ItineraryItem[] | ((prev: ItineraryItem[]) => ItineraryItem[])) => {
+    setAllDayItineraries(prev => ({
+      ...prev,
+      [currentDayIndex]: typeof updater === "function" ? updater(prev[currentDayIndex] || []) : updater,
+    }));
+  }, [currentDayIndex]);
+
   const [isLocked, setIsLocked] = useState(false);
 
   /* ── Drop zone for research drag ───────────────────────────────── */

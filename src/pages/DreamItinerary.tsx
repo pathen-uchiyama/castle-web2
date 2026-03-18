@@ -759,6 +759,22 @@ const DreamItinerary = () => {
                                   </div>
                                 )}
 
+                                {/* Lightning Lane recommendation */}
+                                {block.lightningLane && (
+                                  <div className="flex items-start gap-2">
+                                    <div className="w-5 h-5 rounded-md bg-sunshine/10 flex items-center justify-center shrink-0 mt-0.5">
+                                      <Zap className="w-3 h-3 text-sunshine" />
+                                    </div>
+                                    <div>
+                                      <p className="font-editorial text-[0.65rem] font-medium text-foreground mb-0.5">
+                                        {block.lightningLane.type === "ILL" ? `Individual Lightning Lane (${block.lightningLane.cost})` : "Lightning Lane (included with LL Multi Pass)"}
+                                      </p>
+                                      <p className="font-editorial text-xs text-muted-foreground leading-relaxed">{block.lightningLane.reason}</p>
+                                      <p className="font-editorial text-[0.65rem] text-sunshine font-medium mt-1">⚡ {block.lightningLane.savings} vs standby</p>
+                                    </div>
+                                  </div>
+                                )}
+
                                 {/* Intensity + vibe match */}
                                 <div className="flex items-center gap-2 flex-wrap">
                                   <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[0.6rem] font-editorial"

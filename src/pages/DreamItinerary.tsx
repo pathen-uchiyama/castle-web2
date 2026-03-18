@@ -557,10 +557,48 @@ const DreamItinerary = () => {
             <div className="mb-8">
               <div className="flex items-center gap-3 mb-2">
                 <span className="text-3xl">{day.parkEmoji}</span>
-                <div>
+                <div className="flex-1">
                   <p className="label-text text-gold">{day.label}</p>
                   <h2 className="font-display text-2xl text-foreground">{day.parkName}</h2>
                 </div>
+                {/* Park swap button */}
+                {isParkDay && availableParks.length > 1 && (
+                  <div className="relative">
+                    <button
+                      onClick={() => setShowParkSwap(showParkSwap === currentDay ? null : currentDay)}
+                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-border bg-card hover:bg-muted/50 font-editorial text-xs text-muted-foreground hover:text-foreground transition-colors"
+                    >
+                      <ArrowRight className="w-3 h-3 rotate-90" /> Change Park
+                    </button>
+                    {showParkSwap === currentDay && (
+                      <motion.div
+                        initial={{ opacity: 0, y: -4 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="absolute right-0 top-full mt-1 z-20 bg-card border border-border rounded-lg shadow-soft p-2 min-w-[200px]"
+                      >
+                        {availableParks.map(p => (
+                          <button
+                            key={p.id}
+                            onClick={() => {
+                              setParkOverrides(prev => ({ ...prev, [currentDay]: p.id }));
+                              setShowParkSwap(null);
+                              setExpandedBlock(null);
+                            }}
+                            className={`w-full text-left px-3 py-2 rounded-md font-editorial text-xs transition-colors flex items-center gap-2 ${
+                              day.parkName === p.name
+                                ? "bg-gold/10 text-gold"
+                                : "text-foreground hover:bg-muted/50"
+                            }`}
+                          >
+                            <span>{p.emoji}</span>
+                            <span>{p.name}</span>
+                            {day.parkName === p.name && <Check className="w-3 h-3 ml-auto" />}
+                          </button>
+                        ))}
+                      </motion.div>
+                    )}
+                  </div>
+                )}
               </div>
               <p className="font-editorial text-sm text-muted-foreground italic mt-1">"{day.theme}"</p>
 
@@ -582,6 +620,25 @@ const DreamItinerary = () => {
                     <div>
                       <p className="font-editorial text-xs font-medium text-foreground mb-1">Opening Strategy</p>
                       <p className="font-editorial text-xs text-muted-foreground leading-relaxed">{day.openingStrategy}</p>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Lightning Lane summary for the day */}
+              {totalLLRecs > 0 && (
+                <div className="mt-3 rounded-lg bg-sunshine/5 border border-sunshine/15 p-4">
+                  <div className="flex items-start gap-2.5">
+                    <Zap className="w-4 h-4 text-sunshine mt-0.5 shrink-0" />
+                    <div>
+                      <p className="font-editorial text-xs font-medium text-foreground mb-1">
+                        Lightning Lane Recommendations
+                      </p>
+                      <p className="font-editorial text-xs text-muted-foreground leading-relaxed">
+                        We recommend <span className="text-foreground font-medium">{totalLLRecs} rides</span> for Lightning Lane today
+                        {totalILLRecs > 0 && <>, including <span className="text-foreground font-medium">{totalILLRecs} paid Individual LL</span> (ILL) purchase{totalILLRecs > 1 ? "s" : ""}</>}.
+                        {" "}Look for the <span className="inline-flex items-center gap-0.5 px-1 py-0 rounded bg-sunshine/10 text-sunshine text-[0.6rem]"><Zap className="w-2 h-2" />LL</span> badges on rides below — expand each for time savings and cost details.
+                      </p>
                     </div>
                   </div>
                 </div>

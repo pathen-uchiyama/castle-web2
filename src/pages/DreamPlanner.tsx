@@ -5,7 +5,8 @@ import { ArrowRight, ArrowLeft, Sparkles, Users, MapPin, Calendar, Utensils, Sta
 import Footer from "@/components/Footer";
 
 /* ── Types ── */
-type Step = "welcome" | "who" | "when" | "where" | "vibe" | "dining" | "dreams" | "preview";
+type Resort = "wdw" | "dlr" | null;
+type Step = "welcome" | "who" | "when" | "resort" | "where" | "vibe" | "dining" | "dreams" | "preview";
 
 interface TravelerInfo {
   adults: number;
@@ -22,9 +23,13 @@ interface TripDates {
 interface ParkChoice {
   id: string;
   name: string;
+  resort: "wdw" | "dlr";
   tagline: string;
   emoji: string;
   selected: boolean;
+  highlights: string[];
+  bestFor: string;
+  mustDo: string;
 }
 
 interface VibeChoice {
@@ -48,11 +53,14 @@ interface DreamItem {
   emoji: string;
   category: string;
   selected: boolean;
+  why: string;
+  park: string;
+  resort: "wdw" | "dlr" | "both";
 }
 
 const ease: [number, number, number, number] = [0.19, 1, 0.22, 1];
 
-const stepOrder: Step[] = ["welcome", "who", "when", "where", "vibe", "dining", "dreams", "preview"];
+const stepOrder: Step[] = ["welcome", "who", "when", "resort", "where", "vibe", "dining", "dreams", "preview"];
 
 const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 const durations = [
@@ -62,13 +70,49 @@ const durations = [
   { days: 10, label: "Grand Adventure", sub: "10 days" },
 ];
 
-const initialParks: ParkChoice[] = [
-  { id: "mk", name: "Magic Kingdom", tagline: "The storybook heart of it all", emoji: "🏰", selected: false },
-  { id: "epcot", name: "EPCOT", tagline: "Innovation, world culture & festivals", emoji: "🌍", selected: false },
-  { id: "hs", name: "Hollywood Studios", tagline: "Star Wars, Toy Story & thrills", emoji: "🎬", selected: false },
-  { id: "ak", name: "Animal Kingdom", tagline: "Pandora, safaris & nature", emoji: "🦁", selected: false },
-  { id: "dl", name: "Disneyland", tagline: "Walt's original dream", emoji: "✨", selected: false },
-  { id: "dca", name: "California Adventure", tagline: "Pixar, Marvel & Radiator Springs", emoji: "🎡", selected: false },
+const allParks: ParkChoice[] = [
+  {
+    id: "mk", name: "Magic Kingdom", resort: "wdw", emoji: "🏰", selected: false,
+    tagline: "The storybook heart of Walt Disney World",
+    highlights: ["Cinderella Castle", "Space Mountain", "Haunted Mansion", "Happily Ever After fireworks"],
+    bestFor: "First-timers, families with kids of any age, classic Disney magic",
+    mustDo: "Watch the fireworks from Main Street U.S.A. — it's a once-in-a-lifetime feeling.",
+  },
+  {
+    id: "epcot", name: "EPCOT", resort: "wdw", emoji: "🌍", selected: false,
+    tagline: "World culture, festivals, innovation & incredible food",
+    highlights: ["World Showcase (11 countries to explore)", "Guardians of the Galaxy coaster", "Frozen Ever After", "Food & Wine Festival"],
+    bestFor: "Foodies, adults, couples, older kids who love exploring cultures",
+    mustDo: "Walk the World Showcase — each country has unique food, drinks, and entertainment.",
+  },
+  {
+    id: "hs", name: "Hollywood Studios", resort: "wdw", emoji: "🎬", selected: false,
+    tagline: "Star Wars, Toy Story, and the biggest thrills at WDW",
+    highlights: ["Star Wars: Galaxy's Edge", "Rise of the Resistance", "Tower of Terror", "Toy Story Land"],
+    bestFor: "Star Wars fans, thrill seekers, movie lovers",
+    mustDo: "Rise of the Resistance is widely considered the best ride Disney has ever built.",
+  },
+  {
+    id: "ak", name: "Animal Kingdom", resort: "wdw", emoji: "🦁", selected: false,
+    tagline: "Pandora, real safaris, and breathtaking nature",
+    highlights: ["Avatar Flight of Passage", "Kilimanjaro Safaris", "Pandora (glows at night)", "Expedition Everest"],
+    bestFor: "Nature lovers, Avatar fans, families wanting something different",
+    mustDo: "Visit Pandora after dark — the bioluminescent plants are absolutely magical.",
+  },
+  {
+    id: "dl", name: "Disneyland Park", resort: "dlr", emoji: "✨", selected: false,
+    tagline: "Walt's original park — where it all started in 1955",
+    highlights: ["Matterhorn Bobsleds", "Pirates of the Caribbean", "Indiana Jones Adventure", "Fantasmic!"],
+    bestFor: "First-timers, Disney history lovers, families — it's the most charming park",
+    mustDo: "Walk through Sleeping Beauty Castle — it's intimate and magical unlike anything at WDW.",
+  },
+  {
+    id: "dca", name: "Disney California Adventure", resort: "dlr", emoji: "🎡", selected: false,
+    tagline: "Pixar, Marvel, incredible rides, and the best food at Disneyland Resort",
+    highlights: ["Radiator Springs Racers", "Incredicoaster", "Web Slingers", "Cars Land at night"],
+    bestFor: "Thrill seekers, Pixar fans, foodies who want great quick-service options",
+    mustDo: "See Cars Land after sunset — the neon glow turns it into a real-life Radiator Springs.",
+  },
 ];
 
 const initialVibes: VibeChoice[] = [
@@ -89,23 +133,31 @@ const initialDining: DiningPref[] = [
   { id: "flexible", label: "Mix of Everything", emoji: "🎯", selected: false },
 ];
 
-const initialDreams: DreamItem[] = [
-  { id: "castle-photo", label: "Castle Photo at Sunrise", emoji: "🏰", category: "Moments", selected: false },
-  { id: "fireworks", label: "Watch Fireworks from Main Street", emoji: "🎆", category: "Moments", selected: false },
-  { id: "space-mountain", label: "Ride Space Mountain", emoji: "🚀", category: "Rides", selected: false },
-  { id: "rise-resistance", label: "Star Wars: Rise of the Resistance", emoji: "⚔️", category: "Rides", selected: false },
-  { id: "flight-passage", label: "Avatar Flight of Passage", emoji: "🌊", category: "Rides", selected: false },
-  { id: "tron", label: "TRON Lightcycle / Run", emoji: "💡", category: "Rides", selected: false },
-  { id: "guardians", label: "Guardians of the Galaxy", emoji: "🌌", category: "Rides", selected: false },
-  { id: "be-our-guest", label: "Dine at Be Our Guest", emoji: "🥀", category: "Dining", selected: false },
-  { id: "ohana", label: "Breakfast at 'Ohana", emoji: "🌺", category: "Dining", selected: false },
-  { id: "dole-whip", label: "Get a Dole Whip", emoji: "🍍", category: "Snacks", selected: false },
-  { id: "churro", label: "Eat a Churro", emoji: "🍩", category: "Snacks", selected: false },
-  { id: "meet-mickey", label: "Meet Mickey Mouse", emoji: "🐭", category: "Characters", selected: false },
-  { id: "galaxy-edge", label: "Explore Galaxy's Edge", emoji: "🌟", category: "Lands", selected: false },
-  { id: "pandora", label: "Walk Through Pandora at Night", emoji: "🌙", category: "Lands", selected: false },
-  { id: "pool-day", label: "Resort Pool Day", emoji: "🏊", category: "Relaxation", selected: false },
-  { id: "disney-springs", label: "Disney Springs Shopping", emoji: "🛍️", category: "Extras", selected: false },
+const allDreams: DreamItem[] = [
+  // WDW
+  { id: "castle-photo", label: "Castle Photo at Sunrise", emoji: "🏰", category: "Moments", selected: false, resort: "wdw", park: "Magic Kingdom", why: "The park opens early for resort guests — you can get a photo in front of Cinderella Castle with almost no one around." },
+  { id: "fireworks", label: "Happily Ever After Fireworks", emoji: "🎆", category: "Moments", selected: false, resort: "wdw", park: "Magic Kingdom", why: "Projections on the castle + fireworks + music — many people say it's the most emotional Disney experience." },
+  { id: "space-mountain", label: "Ride Space Mountain", emoji: "🚀", category: "Rides", selected: false, resort: "wdw", park: "Magic Kingdom", why: "A classic indoor roller coaster in near-total darkness. Not too intense — great for first-time thrill riders." },
+  { id: "rise-resistance", label: "Rise of the Resistance", emoji: "⚔️", category: "Rides", selected: false, resort: "wdw", park: "Hollywood Studios", why: "Widely considered the best ride ever built. You're captured by the First Order in a fully immersive 18-minute experience." },
+  { id: "flight-passage", label: "Avatar Flight of Passage", emoji: "🌊", category: "Rides", selected: false, resort: "wdw", park: "Animal Kingdom", why: "You ride on the back of a banshee over Pandora. The wind, mist, and scents make it feel shockingly real." },
+  { id: "tron", label: "TRON Lightcycle / Run", emoji: "💡", category: "Rides", selected: false, resort: "wdw", park: "Magic Kingdom", why: "Disney's fastest coaster — you lean forward on a motorcycle-style vehicle and launch into the Grid." },
+  { id: "guardians", label: "Guardians of the Galaxy: Cosmic Rewind", emoji: "🌌", category: "Rides", selected: false, resort: "wdw", park: "EPCOT", why: "The first reverse-launch Disney coaster. Each ride plays a different classic rock song — it's a total blast." },
+  { id: "be-our-guest", label: "Dine at Be Our Guest", emoji: "🥀", category: "Dining", selected: false, resort: "wdw", park: "Magic Kingdom", why: "Eat inside Beast's Castle. Three themed rooms including the magical West Wing with a enchanted rose. Book early — it sells out fast." },
+  { id: "ohana", label: "Breakfast at 'Ohana", emoji: "🌺", category: "Dining", selected: false, resort: "wdw", park: "Polynesian Resort", why: "All-you-can-eat Hawaiian breakfast with Stitch and Lilo visiting your table. The pog juice and macadamia pancakes are legendary." },
+  { id: "space-220", label: "Lunch at Space 220", emoji: "🚀", category: "Dining", selected: false, resort: "wdw", park: "EPCOT", why: "You take an elevator 'to space' and dine in a space station overlooking Earth. The simulated views are jaw-dropping." },
+  { id: "dole-whip", label: "Get a Dole Whip", emoji: "🍍", category: "Snacks", selected: false, resort: "both", park: "Magic Kingdom / Disneyland", why: "Pineapple soft-serve — the #1 fan-favorite Disney snack. Available at Aloha Isle. Best on a hot day." },
+  { id: "churro", label: "Eat a Churro", emoji: "🥖", category: "Snacks", selected: false, resort: "both", park: "All parks", why: "Warm, cinnamon-sugar perfection. Disney churros hit different — seasonal flavors appear around holidays." },
+  { id: "meet-mickey", label: "Meet Mickey Mouse", emoji: "🐭", category: "Characters", selected: false, resort: "both", park: "Magic Kingdom / Disneyland", why: "A face-to-face moment with the mouse himself. He talks and interacts now — magical for kids and adults alike." },
+  { id: "galaxy-edge", label: "Explore Galaxy's Edge", emoji: "🌟", category: "Lands", selected: false, resort: "both", park: "Hollywood Studios / Disneyland", why: "Walk through the planet Batuu — build a custom lightsaber ($250, but unforgettable), mix blue/green milk, and fly the Millennium Falcon." },
+  { id: "pandora", label: "Pandora at Night", emoji: "🌙", category: "Lands", selected: false, resort: "wdw", park: "Animal Kingdom", why: "The entire land glows with bioluminescent plants after dark. Walk through slowly — it's one of Disney's most beautiful environments." },
+  { id: "world-showcase", label: "Eat Around the World", emoji: "🌎", category: "Dining", selected: false, resort: "wdw", park: "EPCOT", why: "11 countries, each with authentic food and drinks. Split small plates across Mexico, Japan, France, and more — the ultimate food crawl." },
+  { id: "pool-day", label: "Resort Pool Day", emoji: "🏊", category: "Relaxation", selected: false, resort: "both", park: "Your Resort", why: "Disney resort pools have slides, lazy rivers, and poolside bars. A mid-trip rest day makes the other park days SO much better." },
+  { id: "disney-springs", label: "Disney Springs / Downtown Disney", emoji: "🛍️", category: "Extras", selected: false, resort: "both", park: "No ticket needed", why: "Free-admission shopping, dining, and entertainment. Great for a rest day evening — World of Disney is the biggest Disney store anywhere." },
+  // DLR-specific
+  { id: "radiator-springs", label: "Radiator Springs Racers", emoji: "🏎️", category: "Rides", selected: false, resort: "dlr", park: "California Adventure", why: "Race through the desert at 40mph past stunning animatronics. Often called the best ride at Disneyland Resort." },
+  { id: "cars-land-night", label: "See Cars Land at Night", emoji: "🌃", category: "Moments", selected: false, resort: "dlr", park: "California Adventure", why: "The neon signs light up Route 66 — it feels like you stepped into the movie. One of Disney's most photogenic spots." },
+  { id: "indiana-jones", label: "Indiana Jones Adventure", emoji: "🏺", category: "Rides", selected: false, resort: "dlr", park: "Disneyland", why: "A thrilling jeep ride through a cursed temple. Unique to Disneyland — you can't ride this at WDW." },
+  { id: "fantasmic-dl", label: "Watch Fantasmic!", emoji: "🐉", category: "Moments", selected: false, resort: "dlr", park: "Disneyland", why: "A spectacular water, fire, and projection show on the Rivers of America. The dragon finale is breathtaking." },
 ];
 
 /* ── Component ── */
@@ -113,10 +165,11 @@ const DreamPlanner = () => {
   const [step, setStep] = useState<Step>("welcome");
   const [travelers, setTravelers] = useState<TravelerInfo>({ adults: 2, kids: 0, kidAges: "", firstTime: null });
   const [dates, setDates] = useState<TripDates>({ month: "", duration: 5 });
-  const [parks, setParks] = useState<ParkChoice[]>(initialParks);
+  const [selectedResort, setSelectedResort] = useState<Resort>(null);
+  const [parks, setParks] = useState<ParkChoice[]>(allParks);
   const [vibes, setVibes] = useState<VibeChoice[]>(initialVibes);
   const [dining, setDining] = useState<DiningPref[]>(initialDining);
-  const [dreams, setDreams] = useState<DreamItem[]>(initialDreams);
+  const [dreams, setDreams] = useState<DreamItem[]>(allDreams);
 
   const currentIndex = stepOrder.indexOf(step);
   const progress = ((currentIndex) / (stepOrder.length - 1)) * 100;
@@ -129,6 +182,16 @@ const DreamPlanner = () => {
     const i = stepOrder.indexOf(step);
     if (i > 0) setStep(stepOrder[i - 1]);
   };
+
+  // When resort changes, reset park selections and filter dreams
+  const handleResortChange = (resort: Resort) => {
+    setSelectedResort(resort);
+    setParks(allParks.map(p => ({ ...p, selected: false })));
+    setDreams(allDreams.map(d => ({ ...d, selected: false })));
+  };
+
+  const visibleParks = parks.filter(p => p.resort === selectedResort);
+  const visibleDreams = dreams.filter(d => d.resort === selectedResort || d.resort === "both");
 
   const togglePark = (id: string) => setParks(p => p.map(pk => pk.id === id ? { ...pk, selected: !pk.selected } : pk));
   const toggleVibe = (id: string) => setVibes(v => v.map(vb => vb.id === id ? { ...vb, selected: !vb.selected } : vb));
@@ -145,6 +208,7 @@ const DreamPlanner = () => {
       case "welcome": return true;
       case "who": return travelers.adults > 0 && travelers.firstTime !== null;
       case "when": return dates.month !== "" && dates.duration > 0;
+      case "resort": return selectedResort !== null;
       case "where": return selectedParks.length > 0;
       case "vibe": return selectedVibes.length > 0;
       case "dining": return selectedDining.length > 0;
@@ -158,6 +222,7 @@ const DreamPlanner = () => {
       case "welcome": return "";
       case "who": return "Your Party";
       case "when": return "Timing";
+      case "resort": return "Destination";
       case "where": return "Parks";
       case "vibe": return "Style";
       case "dining": return "Dining";
@@ -383,35 +448,141 @@ const DreamPlanner = () => {
               </motion.div>
             )}
 
-            {/* ── WHERE ── */}
-            {step === "where" && (
-              <motion.div key="where" {...slideAnim} className="space-y-8">
+            {/* ── RESORT ── */}
+            {step === "resort" && (
+              <motion.div key="resort" {...slideAnim} className="space-y-8">
                 <div>
-                  <h2 className="font-display text-2xl sm:text-3xl text-foreground mb-2">Which parks are calling you?</h2>
-                  <p className="font-editorial text-sm text-muted-foreground">Pick as many as you'd like — we'll help you spread them across your days.</p>
+                  <h2 className="font-display text-2xl sm:text-3xl text-foreground mb-2">Where are you headed?</h2>
+                  <p className="font-editorial text-sm text-muted-foreground">
+                    Disney has two resorts in the US — each is a completely different vacation.
+                  </p>
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  {parks.map(park => (
+                <div className="grid grid-cols-1 gap-4">
+                  {([
+                    {
+                      id: "wdw" as const,
+                      name: "Walt Disney World",
+                      location: "Orlando, Florida",
+                      emoji: "🏰",
+                      desc: "4 theme parks, 2 water parks, 25+ resorts, and Disney Springs. The full-scale Disney vacation — most people spend 5–10 days here.",
+                      parks: "Magic Kingdom · EPCOT · Hollywood Studios · Animal Kingdom",
+                      bestFor: "First-timers who want the full Disney experience, families with kids, Star Wars & Avatar fans",
+                    },
+                    {
+                      id: "dlr" as const,
+                      name: "Disneyland Resort",
+                      location: "Anaheim, California",
+                      emoji: "✨",
+                      desc: "2 theme parks side-by-side, walkable from hotels. Walt's original park — more intimate and charming. Perfect for a 3–5 day trip.",
+                      parks: "Disneyland Park · Disney California Adventure",
+                      bestFor: "Shorter trips, west coast travelers, nostalgia seekers, people who love a cozy, walkable resort",
+                    },
+                  ]).map(resort => (
+                    <button
+                      key={resort.id}
+                      onClick={() => handleResortChange(resort.id)}
+                      className={`rounded-lg border p-6 text-left transition-all duration-300 relative ${selectedResort === resort.id
+                        ? "border-[hsl(var(--gold))] bg-[hsl(var(--gold)/0.06)] shadow-[var(--shadow-soft)]"
+                        : "border-border bg-card hover:border-[hsl(var(--gold)/0.3)]"
+                      }`}
+                    >
+                      {selectedResort === resort.id && (
+                        <div className="absolute top-4 right-4 w-5 h-5 rounded-full bg-[hsl(var(--gold))] flex items-center justify-center">
+                          <Check className="w-3 h-3 text-white" />
+                        </div>
+                      )}
+                      <div className="flex items-start gap-4">
+                        <span className="text-3xl mt-0.5">{resort.emoji}</span>
+                        <div className="flex-1">
+                          <p className="font-display text-lg text-foreground">{resort.name}</p>
+                          <p className="font-editorial text-xs text-[hsl(var(--gold))] mb-2">{resort.location}</p>
+                          <p className="font-editorial text-sm text-muted-foreground leading-relaxed mb-3">{resort.desc}</p>
+                          <p className="font-editorial text-xs text-muted-foreground/70 mb-1">
+                            <strong className="text-foreground/70">Parks:</strong> {resort.parks}
+                          </p>
+                          <p className="font-editorial text-xs text-muted-foreground/70">
+                            <strong className="text-foreground/70">Best for:</strong> {resort.bestFor}
+                          </p>
+                        </div>
+                      </div>
+                    </button>
+                  ))}
+                </div>
+
+                {travelers.firstTime && (
+                  <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="rounded-lg bg-[hsl(var(--sky)/0.06)] border border-[hsl(var(--sky)/0.15)] p-4">
+                    <p className="font-editorial text-xs text-[hsl(var(--sky))]">
+                      💡 <strong>First-timer tip:</strong> Walt Disney World is the most popular choice for a first trip — 4 parks means more variety, and there's enough to fill a full week without repeating anything.
+                    </p>
+                  </motion.div>
+                )}
+              </motion.div>
+            )}
+
+            {/* ── WHERE ── */}
+            {step === "where" && (
+              <motion.div key="where" {...slideAnim} className="space-y-6">
+                <div>
+                  <h2 className="font-display text-2xl sm:text-3xl text-foreground mb-2">
+                    {selectedResort === "wdw" ? "Which WDW parks?" : "Which Disneyland parks?"}
+                  </h2>
+                  <p className="font-editorial text-sm text-muted-foreground">
+                    {selectedResort === "wdw"
+                      ? "Each park is a full day (or more). Pick the ones that excite you — we'll help you plan each day."
+                      : "Both parks are right next to each other — you can even park hop between them in the same day."
+                    }
+                  </p>
+                </div>
+
+                <div className="space-y-4">
+                  {visibleParks.map(park => (
                     <button
                       key={park.id}
                       onClick={() => togglePark(park.id)}
-                      className={`rounded-lg border p-5 text-left transition-all duration-300 relative overflow-hidden ${park.selected
+                      className={`w-full rounded-lg border p-6 text-left transition-all duration-300 relative overflow-hidden ${park.selected
                         ? "border-[hsl(var(--gold))] bg-[hsl(var(--gold)/0.06)] shadow-[var(--shadow-soft)]"
                         : "border-border bg-card hover:border-[hsl(var(--gold)/0.3)]"
                       }`}
                     >
                       {park.selected && (
-                        <div className="absolute top-3 right-3 w-5 h-5 rounded-full bg-[hsl(var(--gold))] flex items-center justify-center">
+                        <div className="absolute top-4 right-4 w-5 h-5 rounded-full bg-[hsl(var(--gold))] flex items-center justify-center">
                           <Check className="w-3 h-3 text-white" />
                         </div>
                       )}
-                      <span className="text-2xl mb-2 block">{park.emoji}</span>
-                      <p className="font-display text-base text-foreground">{park.name}</p>
-                      <p className="font-editorial text-xs text-muted-foreground mt-1">{park.tagline}</p>
+                      <div className="flex items-start gap-4">
+                        <span className="text-3xl mt-0.5">{park.emoji}</span>
+                        <div className="flex-1 min-w-0">
+                          <p className="font-display text-lg text-foreground">{park.name}</p>
+                          <p className="font-editorial text-sm text-muted-foreground mt-0.5 leading-relaxed">{park.tagline}</p>
+                          
+                          <div className="mt-3 flex flex-wrap gap-1.5">
+                            {park.highlights.map(h => (
+                              <span key={h} className="inline-block px-2.5 py-1 rounded-md bg-muted text-[0.625rem] text-muted-foreground font-editorial">
+                                {h}
+                              </span>
+                            ))}
+                          </div>
+
+                          <p className="font-editorial text-xs text-muted-foreground/70 mt-3">
+                            <strong className="text-foreground/70">Best for:</strong> {park.bestFor}
+                          </p>
+                          <p className="font-editorial text-xs text-[hsl(var(--gold))] mt-1.5 italic">
+                            ✨ {park.mustDo}
+                          </p>
+                        </div>
+                      </div>
                     </button>
                   ))}
                 </div>
+
+                {selectedResort === "wdw" && visibleParks.filter(p => p.selected).length === 4 && (
+                  <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="rounded-lg bg-[hsl(var(--mint)/0.06)] border border-[hsl(var(--mint)/0.15)] p-4">
+                    <p className="font-editorial text-xs text-[hsl(var(--mint))]">
+                      🎉 <strong>All four parks!</strong> For a full WDW experience, we recommend at least 5–7 days so you don't feel rushed.
+                    </p>
+                  </motion.div>
+                )}
               </motion.div>
             )}
 
@@ -484,28 +655,39 @@ const DreamPlanner = () => {
                 <div>
                   <h2 className="font-display text-2xl sm:text-3xl text-foreground mb-2">The dream list</h2>
                   <p className="font-editorial text-sm text-muted-foreground">
-                    What moments would make this trip unforgettable? Pick everything that excites you — we'll weave them into your days.
+                    What would make this trip unforgettable? Tap anything that excites you — we'll weave them into your plan.
                   </p>
                 </div>
 
                 {["Moments", "Rides", "Dining", "Snacks", "Characters", "Lands", "Relaxation", "Extras"].map(cat => {
-                  const items = dreams.filter(d => d.category === cat);
+                  const items = visibleDreams.filter(d => d.category === cat);
                   if (items.length === 0) return null;
                   return (
                     <div key={cat}>
                       <p className="label-text mb-3">{cat}</p>
-                      <div className="flex flex-wrap gap-2">
+                      <div className="space-y-2">
                         {items.map(dream => (
                           <button
                             key={dream.id}
                             onClick={() => toggleDream(dream.id)}
-                            className={`inline-flex items-center gap-1.5 px-4 py-2.5 rounded-lg border font-editorial text-sm transition-all duration-300 ${dream.selected
-                              ? "border-[hsl(var(--gold))] bg-[hsl(var(--gold)/0.08)] text-foreground shadow-[var(--shadow-soft)]"
-                              : "border-border bg-card text-muted-foreground hover:border-[hsl(var(--gold)/0.3)]"
+                            className={`w-full rounded-lg border p-4 text-left transition-all duration-300 relative ${dream.selected
+                              ? "border-[hsl(var(--gold))] bg-[hsl(var(--gold)/0.06)] shadow-[var(--shadow-soft)]"
+                              : "border-border bg-card hover:border-[hsl(var(--gold)/0.3)]"
                             }`}
                           >
-                            <span>{dream.emoji}</span>
-                            <span>{dream.label}</span>
+                            {dream.selected && (
+                              <div className="absolute top-3 right-3 w-5 h-5 rounded-full bg-[hsl(var(--gold))] flex items-center justify-center">
+                                <Check className="w-3 h-3 text-white" />
+                              </div>
+                            )}
+                            <div className="flex items-start gap-3">
+                              <span className="text-xl mt-0.5 shrink-0">{dream.emoji}</span>
+                              <div className="flex-1 min-w-0 pr-6">
+                                <p className="font-editorial text-sm text-foreground font-medium">{dream.label}</p>
+                                <p className="font-editorial text-xs text-muted-foreground/70 mt-0.5">{dream.park}</p>
+                                <p className="font-editorial text-xs text-muted-foreground mt-1.5 leading-relaxed">{dream.why}</p>
+                              </div>
+                            </div>
                           </button>
                         ))}
                       </div>

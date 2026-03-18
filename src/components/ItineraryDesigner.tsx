@@ -963,9 +963,43 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
       </Collapsible>
 
       {/* ═══════════════════════════════════════════════════════════════
-          TWO-COLUMN: RIBBON + RESEARCH
+          NON-PARK DAY VIEW
          ═══════════════════════════════════════════════════════════════ */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 relative">
+      {!isParkDay && (
+        <div className="px-6 lg:px-10 py-16 text-center">
+          <div className="max-w-md mx-auto">
+            <span className="text-5xl mb-4 block">{currentDayNonPark ? nonParkLabels[currentDayNonPark]?.emoji || "🌴" : "🌴"}</span>
+            <h3 className="font-display text-2xl text-[hsl(var(--ink))] mb-2">
+              {currentDayNonPark ? nonParkLabels[currentDayNonPark]?.label || "Non-Park Day" : "Non-Park Day"}
+            </h3>
+            <p className="font-sans text-sm text-[hsl(var(--ink-light))] mb-6" style={{ letterSpacing: "-0.02em" }}>
+              {currentDayNonPark === "travel-arrive"
+                ? "Travel day — settle in at the resort, grab dinner at Disney Springs, and rest up for the magic ahead."
+                : currentDayNonPark === "travel-depart"
+                  ? "Pack up and head out. Maybe one last breakfast or a quick run to the gift shops."
+                  : "Resort pool day, Disney Springs, spa, golf — whatever recharges you for the next park day."}
+            </p>
+            <div className="grid grid-cols-2 gap-3 max-w-xs mx-auto">
+              {[
+                { emoji: "🍽", label: "Resort Dining" },
+                { emoji: "🏊", label: "Pool Time" },
+                { emoji: "🛍️", label: "Disney Springs" },
+                { emoji: "😴", label: "Rest & Recharge" },
+              ].map(item => (
+                <div key={item.label} className="bg-white p-3 text-center" style={{ borderRadius: 0, boxShadow: "0 10px 30px rgba(26,26,27,0.05)" }}>
+                  <span className="text-xl block mb-1">{item.emoji}</span>
+                  <span className="text-[0.5625rem] uppercase tracking-[0.1em] text-[hsl(var(--ink-light))]">{item.label}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ═══════════════════════════════════════════════════════════════
+          TWO-COLUMN: RIBBON + RESEARCH (park days only)
+         ═══════════════════════════════════════════════════════════════ */}
+      {isParkDay && <div className="grid grid-cols-1 lg:grid-cols-2 relative">
 
         {/* ─── LEFT: The Ribbon ────────────────────────────────────── */}
         <div className="px-6 lg:px-10 py-8 border-r border-[hsl(var(--border))]">

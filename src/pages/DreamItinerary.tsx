@@ -704,6 +704,17 @@ const DreamItinerary = () => {
                                   <Sparkles className="w-2.5 h-2.5" /> Dream List
                                 </span>
                               )}
+                              {block.lightningLane && (
+                                <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[0.6rem] font-editorial ${
+                                  block.lightningLane.type === "ILL"
+                                    ? "bg-sunshine/15 text-sunshine border border-sunshine/20"
+                                    : "bg-sunshine/8 text-sunshine"
+                                }`}>
+                                  <Zap className="w-2.5 h-2.5" />
+                                  {block.lightningLane.type === "ILL" ? `ILL ${block.lightningLane.cost}` : "LL"}
+                                  <span className="opacity-70">· {block.lightningLane.savings}</span>
+                                </span>
+                              )}
                             </div>
                             <p className="font-display text-sm text-foreground">{block.title}</p>
                             <p className="font-editorial text-xs text-muted-foreground mt-0.5">{block.location} · {block.duration}</p>

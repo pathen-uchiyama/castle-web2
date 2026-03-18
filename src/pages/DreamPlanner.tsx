@@ -700,110 +700,49 @@ const DreamPlanner = () => {
 
             {/* ── PREVIEW ── */}
             {step === "preview" && (
-              <motion.div key="preview" {...slideAnim} className="space-y-8">
-                <div className="text-center mb-6">
-                  <motion.div
-                    initial={{ scale: 0 }}
-                    animate={{ scale: 1 }}
-                    transition={{ duration: 0.6, ease }}
-                    className="w-16 h-16 rounded-full bg-[hsl(var(--mint)/0.1)] border border-[hsl(var(--mint)/0.2)] flex items-center justify-center mx-auto mb-4"
-                  >
-                    <Check className="w-7 h-7 text-[hsl(var(--mint))]" />
-                  </motion.div>
-                  <h2 className="font-display text-2xl sm:text-3xl text-foreground mb-2">Your Dream Vacation</h2>
-                  <p className="font-editorial text-sm text-muted-foreground">
-                    {dates.duration} days in {dates.month} · {travelers.adults} adult{travelers.adults > 1 ? "s" : ""}{travelers.kids > 0 ? ` + ${travelers.kids} kid${travelers.kids > 1 ? "s" : ""}` : ""} · {selectedParks.map(p => p.name).join(", ")}
+              <motion.div key="preview" {...slideAnim} className="text-center py-12 space-y-8">
+                <motion.div
+                  initial={{ scale: 0 }}
+                  animate={{ scale: 1 }}
+                  transition={{ duration: 0.6, ease }}
+                  className="w-16 h-16 rounded-full bg-[hsl(var(--mint)/0.1)] border border-[hsl(var(--mint)/0.2)] flex items-center justify-center mx-auto"
+                >
+                  <Check className="w-7 h-7 text-[hsl(var(--mint))]" />
+                </motion.div>
+                <div>
+                  <h2 className="font-display text-2xl sm:text-3xl text-foreground mb-2">Your Dream Plan is Ready!</h2>
+                  <p className="font-editorial text-sm text-muted-foreground max-w-md mx-auto">
+                    We've built a detailed day-by-day itinerary based on your preferences — with insider tips and reasoning for every recommendation.
                   </p>
                 </div>
 
-                {/* Day-by-day plan */}
-                <div className="space-y-4">
-                  {generatePlan().map((day, i) => (
-                    <motion.div
-                      key={day.day}
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: i * 0.1, duration: 0.5, ease }}
-                      className="rounded-lg border border-border bg-card p-6 shadow-[var(--shadow-soft)]"
-                    >
-                      <div className="flex items-center justify-between mb-4">
-                        <div className="flex items-center gap-3">
-                          <span className="text-2xl">{day.emoji}</span>
-                          <div>
-                            <p className="label-text text-[hsl(var(--gold))]">Day {day.day}</p>
-                            <p className="font-display text-lg text-foreground">{day.park}</p>
-                          </div>
-                        </div>
-                      </div>
-                      <div className="grid grid-cols-3 gap-3">
-                        <div className="space-y-1">
-                          <div className="flex items-center gap-1.5">
-                            <Sun className="w-3 h-3 text-[hsl(var(--sunshine))]" />
-                            <span className="label-text text-[0.6rem]">Morning</span>
-                          </div>
-                          <p className="font-editorial text-xs text-muted-foreground leading-relaxed">{day.morning}</p>
-                        </div>
-                        <div className="space-y-1">
-                          <div className="flex items-center gap-1.5">
-                            <MapPin className="w-3 h-3 text-[hsl(var(--coral))]" />
-                            <span className="label-text text-[0.6rem]">Afternoon</span>
-                          </div>
-                          <p className="font-editorial text-xs text-muted-foreground leading-relaxed">{day.afternoon}</p>
-                        </div>
-                        <div className="space-y-1">
-                          <div className="flex items-center gap-1.5">
-                            <Moon className="w-3 h-3 text-[hsl(var(--lavender))]" />
-                            <span className="label-text text-[0.6rem]">Evening</span>
-                          </div>
-                          <p className="font-editorial text-xs text-muted-foreground leading-relaxed">{day.evening}</p>
-                        </div>
-                      </div>
-                    </motion.div>
-                  ))}
-                </div>
-
-                {/* Vibes & dreams summary */}
-                {(selectedVibes.length > 0 || selectedDreams.length > 0) && (
-                  <div className="rounded-lg border border-border bg-card p-6 shadow-[var(--shadow-soft)]">
-                    {selectedVibes.length > 0 && (
-                      <div className="mb-4">
-                        <p className="label-text mb-2">Your Vibe</p>
-                        <div className="flex flex-wrap gap-2">
-                          {selectedVibes.map(v => (
-                            <span key={v.id} className="inline-flex items-center gap-1 px-3 py-1.5 rounded-md bg-[hsl(var(--lavender)/0.08)] border border-[hsl(var(--lavender)/0.15)] font-editorial text-xs text-[hsl(var(--lavender))]">
-                              {v.emoji} {v.label}
-                            </span>
-                          ))}
-                        </div>
-                      </div>
-                    )}
-                    {selectedDreams.length > 0 && (
-                      <div>
-                        <p className="label-text mb-2">Dream List Included</p>
-                        <div className="flex flex-wrap gap-2">
-                          {selectedDreams.map(d => (
-                            <span key={d.id} className="inline-flex items-center gap-1 px-3 py-1.5 rounded-md bg-[hsl(var(--gold)/0.06)] border border-[hsl(var(--gold)/0.15)] font-editorial text-xs text-[hsl(var(--gold))]">
-                              {d.emoji} {d.label}
-                            </span>
-                          ))}
-                        </div>
-                      </div>
-                    )}
+                <div className="rounded-lg border border-border bg-card p-6 shadow-[var(--shadow-soft)] text-left max-w-sm mx-auto space-y-3">
+                  <p className="font-editorial text-xs text-muted-foreground">Your plan includes:</p>
+                  <div className="space-y-2">
+                    <p className="font-editorial text-sm text-foreground">📅 {dates.duration} days · {dates.month}</p>
+                    <p className="font-editorial text-sm text-foreground">👥 {travelers.adults} adult{travelers.adults > 1 ? "s" : ""}{travelers.kids > 0 ? ` + ${travelers.kids} kid${travelers.kids > 1 ? "s" : ""}` : ""}</p>
+                    <p className="font-editorial text-sm text-foreground">🏰 {selectedParks.map(p => p.name).join(", ")}</p>
+                    {selectedDreams.length > 0 && <p className="font-editorial text-sm text-foreground">⭐ {selectedDreams.length} dream list item{selectedDreams.length > 1 ? "s" : ""}</p>}
+                    {selectedVibes.length > 0 && <p className="font-editorial text-sm text-foreground">✨ {selectedVibes.map(v => v.label).join(", ")}</p>}
                   </div>
-                )}
-
-                {/* CTA */}
-                <div className="text-center pt-4">
-                  <Link
-                    to="/adventure"
-                    className="inline-flex items-center gap-2 px-8 py-4 rounded-lg bg-foreground text-background font-editorial text-sm hover:opacity-90 transition-opacity"
-                  >
-                    Create This Trip <ArrowRight className="w-4 h-4" />
-                  </Link>
-                  <p className="font-editorial text-xs text-muted-foreground mt-3">
-                    This will add it to your Trips Hub where you can fine-tune every detail.
-                  </p>
                 </div>
+
+                <button
+                  onClick={() => navigate("/dream-itinerary", {
+                    state: {
+                      travelers,
+                      dates,
+                      selectedResort,
+                      selectedParks: selectedParks.map(p => ({ id: p.id, name: p.name, emoji: p.emoji, tagline: p.tagline })),
+                      selectedVibes: selectedVibes.map(v => ({ id: v.id, label: v.label, emoji: v.emoji })),
+                      selectedDining: selectedDining.map(d => ({ id: d.id, label: d.label, emoji: d.emoji })),
+                      selectedDreams: selectedDreams.map(d => ({ id: d.id, label: d.label, emoji: d.emoji, why: d.why, park: d.park, category: d.category })),
+                    }
+                  })}
+                  className="inline-flex items-center gap-2 px-8 py-4 rounded-lg bg-foreground text-background font-editorial text-sm hover:opacity-90 transition-opacity"
+                >
+                  View My Dream Itinerary <ArrowRight className="w-4 h-4" />
+                </button>
               </motion.div>
             )}
           </AnimatePresence>

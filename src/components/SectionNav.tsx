@@ -22,6 +22,7 @@ const SectionNav = ({ tabs, activeTab, onTabChange, variant = "light" }: Section
       className="flex items-center gap-0.5 overflow-x-auto px-1 py-1"
       style={{
         scrollbarWidth: "none",
+        WebkitOverflowScrolling: "touch",
         background: isLight ? "hsl(var(--muted) / 0.5)" : "hsla(0, 0%, 100%, 0.06)",
         borderRadius: "0.75rem",
         border: isLight ? "1px solid hsl(var(--border) / 0.6)" : "1px solid hsla(0, 0%, 100%, 0.08)",

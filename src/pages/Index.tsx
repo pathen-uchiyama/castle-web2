@@ -70,6 +70,7 @@ const Index = ({
   const parkScrollRef = useRef<HTMLDivElement>(null);
   const [activeParkIdx, setActiveParkIdx] = useState(0);
   const [activeTimelineIdx, setActiveTimelineIdx] = useState(0);
+  const [wizardOpen, setWizardOpen] = useState(false);
   const timelineCardCount = bookedTrip.travelLegs.length + 2; // legs + packing + time recovered
 
   const handleTimelineScroll = useCallback(() => {

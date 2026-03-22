@@ -110,6 +110,12 @@ const SovereignGate = ({
                 Unlock with {tier}
               </button>
 
+              {/* AB 2426 disclosure */}
+              <p className="mt-2 text-xs text-muted-foreground/50 max-w-xs leading-relaxed">
+                This is a license to access digital content, not a permanent purchase.{" "}
+                <Link to="/terms#section-5-3" onClick={(e) => e.stopPropagation()} className="underline hover:text-muted-foreground transition-colors">Terms §5.3</Link>
+              </p>
+
               {/* Secondary link */}
               <Link
                 to="/onboarding"

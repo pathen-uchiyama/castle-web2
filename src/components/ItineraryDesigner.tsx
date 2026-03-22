@@ -39,12 +39,54 @@ interface DesignerProps {
 const quickAdds = [
   { type: "snack" as const, label: "Snack Stop", emoji: "☕", dur: 15 },
   { type: "break" as const, label: "Rest", emoji: "😴", dur: 30 },
-  { type: "break" as const, label: "Bathroom", emoji: "🚻", dur: 10 },
+  { type: "bio-break" as const, label: "Bathroom", emoji: "🚻", dur: 10 },
   { type: "pool" as const, label: "Pool Time", emoji: "🏊", dur: 90 },
   { type: "walk" as const, label: "Walk / Explore", emoji: "🚶", dur: 20 },
   { type: "break" as const, label: "Photo Stop", emoji: "📸", dur: 10 },
   { type: "snack" as const, label: "Water / Refill", emoji: "💧", dur: 5 },
   { type: "meal" as const, label: "Meal", emoji: "🍽", dur: 60 },
+];
+
+/* ─── Type emoji map ─────────────────────────────────────────────── */
+const typeEmoji: Record<string, string> = {
+  ride: "🎢", meal: "🍽️", dining: "🍽️", show: "🎆", break: "☕", "bio-break": "🚻",
+  "stroller-park": "🍼", "stroller-retrieve": "🍼", snack: "☕", pool: "🏊", hotel: "🏨",
+  walk: "🚶", character: "👑", parade: "🎉", seasonal: "✨", "rope-drop": "🏰",
+};
+
+/* ─── CC Recommendation Stars ────────────────────────────────────── */
+const CCStars = ({ score }: { score: number }) => (
+  <div className="flex items-center gap-1">
+    <span className="text-[0.5625rem] uppercase tracking-[0.1em] text-[hsl(var(--gold-dark))] font-medium mr-1">CC Score</span>
+    {Array.from({ length: 5 }, (_, i) => (
+      <Star
+        key={i}
+        className={`w-3.5 h-3.5 ${i < score ? "text-[hsl(var(--gold))] fill-[hsl(var(--gold))]" : "text-[hsl(var(--border))]"}`}
+      />
+    ))}
+  </div>
+);
+
+/* ─── Rich MK mock seed — 15+ items for a full day ───────────────── */
+const mkFullDaySeed: ItineraryItem[] = [
+  { id: "seed-1", attractionId: "mk-tron", name: "TRON Lightcycle / Run", type: "ride", duration: 2, waitTime: 15, zone: "tomorrowland", llType: "ll-single", waitCategory: "ill-required", ccScore: 5, description: "High-speed indoor/outdoor motorcycle-style coaster. Best experienced at rope drop with minimal wait." },
+  { id: "seed-2", attractionId: "mk-space", name: "Space Mountain", type: "ride", duration: 3, waitTime: 25, zone: "tomorrowland", llType: "ll-multi-1", waitCategory: "hard-to-get", ccScore: 4, description: "Classic indoor coaster hurtling through dark cosmos. LL Multi recommended for afternoon visits." },
+  { id: "seed-bio-1", name: "Bio-Break", type: "bio-break", duration: 10, ccScore: 3, description: "Restrooms near Tomorrowland Terrace — typically less crowded than Fantasyland facilities." },
+  { id: "seed-3", attractionId: "mk-buzz", name: "Buzz Lightyear's Space Ranger Spin", type: "ride", duration: 5, waitTime: 15, zone: "tomorrowland", llType: "ll-multi-2", waitCategory: "walk-on-am", ccScore: 3, description: "Interactive shooter ride. Pro tip: aim for the diamond-shaped targets for highest scores." },
+  { id: "seed-4", attractionId: "mk-sdmt", name: "Seven Dwarfs Mine Train", type: "ride", duration: 3, waitTime: 45, zone: "fantasyland", llType: "ll-single", waitCategory: "ill-required", ccScore: 5, description: "Swinging family coaster through the dwarf mine. ILL strongly recommended — saves 70-110 minutes." },
+  { id: "seed-5", attractionId: "mk-peter", name: "Peter Pan's Flight", type: "ride", duration: 3, waitTime: 40, zone: "fantasyland", llType: "ll-multi-2", waitCategory: "hard-to-get", ccScore: 4, description: "Gentle dark ride soaring over London and Neverland. Consistently the longest wait for its ride length." },
+  { id: "seed-meal-1", name: "Lunch — Be Our Guest", type: "meal", duration: 60, zone: "fantasyland", isConfirmed: true, scheduledStartMin: 720, ccScore: 5, description: "Signature dining inside Beast's castle. The Grey Stuff is a must-try. Quick service at lunch, table service at dinner." },
+  { id: "seed-bio-2", name: "Bio-Break", type: "bio-break", duration: 10, ccScore: 3, description: "Restrooms inside Be Our Guest or near Enchanted Tales with Belle — fresher and less trafficked." },
+  { id: "seed-6", attractionId: "mk-haunted", name: "Haunted Mansion", type: "ride", duration: 9, waitTime: 20, zone: "liberty-square", llType: "ll-multi-1", waitCategory: "walk-on", ccScore: 5, description: "999 happy haunts. A must-ride classic — the queue itself is a show. Best in afternoon when other rides are busy." },
+  { id: "seed-7", attractionId: "mk-pirates", name: "Pirates of the Caribbean", type: "ride", duration: 12, waitTime: 15, zone: "adventureland", llType: "ll-multi-2", waitCategory: "walk-on", ccScore: 4, description: "Boat ride through pirate scenes. Cool, dark, and air-conditioned — perfect afternoon escape." },
+  { id: "seed-8", attractionId: "mk-jungle", name: "Jungle Cruise", type: "ride", duration: 10, waitTime: 25, zone: "adventureland", llType: "ll-multi-1", waitCategory: "fast-walk-on", ccScore: 4, description: "Recently reimagined boat tour. Skippers bring the jokes. LL Multi is worth it if wait exceeds 30m." },
+  { id: "seed-rest", name: "Rest Break — Adventureland", type: "break", duration: 30, zone: "adventureland", ccScore: 3, description: "Grab a Dole Whip at Aloha Isle and find shade near the Tiki Room. Great recharge spot." },
+  { id: "seed-snack", name: "Dole Whip at Aloha Isle", type: "snack", duration: 15, zone: "adventureland", ccScore: 5, description: "The iconic pineapple soft serve. Worth every minute in line. Try the Dole Whip float for extra magic." },
+  { id: "seed-bio-3", name: "Bio-Break", type: "bio-break", duration: 10, ccScore: 3, description: "Restrooms near Tiana's Bayou Adventure — recently renovated." },
+  { id: "seed-9", attractionId: "mk-btmr", name: "Big Thunder Mountain Railroad", type: "ride", duration: 4, waitTime: 20, zone: "frontierland", llType: "ll-multi-1", waitCategory: "fast-walk-on", ccScore: 4, description: "The wildest ride in the wilderness! Moderate thrill family coaster. Ride at sunset for the best photo ops." },
+  { id: "seed-meal-2", name: "Dinner — Liberty Tree Tavern", type: "meal", duration: 65, zone: "liberty-square", isConfirmed: true, scheduledStartMin: 1080, ccScore: 4, description: "All-you-care-to-enjoy Thanksgiving feast. Excellent value and the turkey is outstanding. Book 60 days out." },
+  { id: "seed-10", name: "Tiana's Bayou Adventure", type: "ride", duration: 12, waitTime: 60, zone: "frontierland", llType: "ll-single", waitCategory: "ill-required", ccScore: 5, description: "Brand new reimagining of Splash Mountain. Extreme demand — ILL essential. Saves 70+ minutes." },
+  { id: "seed-11", name: "Happily Ever After Fireworks", type: "show", duration: 18, zone: "main-street", scheduledStartMin: 1260, ccScore: 5, description: "The nighttime spectacular. Best viewing from Main Street or the bridge near Tomorrowland. Arrive 30-45 min early for prime spots." },
 ];
 
 /* ─── Thrill icons ───────────────────────────────────────────────── */

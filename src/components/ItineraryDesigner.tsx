@@ -1,4 +1,5 @@
 import { motion, AnimatePresence, Reorder } from "framer-motion";
+import { usePlanningMode } from "@/contexts/PlanningModeContext";
 import { useState, useMemo, useCallback, useRef, useEffect } from "react";
 import { ChevronDown, Plus, X, Search, Star, Lock, Unlock, Sparkles, Clock, Ruler, Zap, Shield, Info, GripVertical, Users, Baby, CalendarClock, ChevronUp } from "lucide-react";
 import { toast } from "@/hooks/use-toast";

@@ -151,6 +151,8 @@ const TripsHub = ({ bookedTrip, futureTrips }: TripsHubProps) => {
             </div>
           </motion.div>
         )}
+        </>
+        )}
       </section>
 
       {/* Plan New Adventure CTA */}

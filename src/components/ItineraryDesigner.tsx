@@ -1,4 +1,5 @@
 import { motion, AnimatePresence, Reorder } from "framer-motion";
+import { usePlanningMode } from "@/contexts/PlanningModeContext";
 import { useState, useMemo, useCallback, useRef, useEffect } from "react";
 import { ChevronDown, Plus, X, Search, Star, Lock, Unlock, Sparkles, Clock, Ruler, Zap, Shield, Info, GripVertical, Users, Baby, CalendarClock, ChevronUp } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
@@ -269,6 +270,163 @@ function wouldConflictWithAnchor(
   
   return { conflicts: false };
 }
+
+/* ═══════════════════════════════════════════════════════════════════
+   CONCIERGE VIEW (Type B) — one card at a time, no data overload
+   ═══════════════════════════════════════════════════════════════════ */
+
+interface ConciergeViewProps {
+  ribbon: RibbonItem[];
+  tripDays: { index: number; date: Date; label: string; shortLabel: string; dateStr: string }[];
+  currentDayIndex: number;
+  setCurrentDayIndex: (i: number) => void;
+  getDayParkIds: (i: number) => string[];
+  dayNavRef: React.RefObject<HTMLDivElement>;
+}
+
+const ConciergeView = ({ ribbon, tripDays, currentDayIndex, setCurrentDayIndex, getDayParkIds, dayNavRef }: ConciergeViewProps) => {
+  const [currentStep, setCurrentStep] = useState(0);
+  const activeItems = ribbon.filter(ri => ["ride", "meal", "dining", "show", "character", "snack", "break", "parade", "seasonal", "rope-drop"].includes(ri.item.type));
+  const current = activeItems[currentStep];
+  const next = activeItems[currentStep + 1];
+  const prev = activeItems[currentStep - 1];
+
+  const nonParkIds = new Set(["travel-arrive", "travel-depart", "non-park"]);
+
+  return (
+    <section className="bg-[hsl(var(--warm))]">
+      {/* Header */}
+      <div className="max-w-5xl mx-auto px-4 sm:px-8 pt-12 pb-6">
+        <div className="flex items-center gap-3 mb-2">
+          <span className="text-2xl">🛎️</span>
+          <div>
+            <p className="label-text tracking-[0.25em]">Concierge Mode</p>
+            <h2 className="font-display text-2xl sm:text-3xl text-foreground leading-tight">Your Day, Step by Step</h2>
+          </div>
+        </div>
+        <p className="font-editorial text-sm text-muted-foreground">Just follow along. We've got it handled.</p>
+      </div>
+
+      {/* Day nav */}
+      <div className="max-w-5xl mx-auto px-4 sm:px-8 pb-4">
+        <div ref={dayNavRef} className="flex gap-2 overflow-x-auto pb-2" style={{ scrollbarWidth: "none" }}>
+          {tripDays.map((day) => {
+            const dayParkIds = getDayParkIds(day.index);
+            const parkDay = dayParkIds.length > 0 && !dayParkIds.every(id => nonParkIds.has(id));
+            return (
+              <button
+                key={day.index}
+                onClick={() => { setCurrentDayIndex(day.index); setCurrentStep(0); }}
+                className={`shrink-0 px-4 py-2.5 rounded-lg text-xs transition-all duration-300 border ${
+                  currentDayIndex === day.index
+                    ? "bg-foreground text-background border-foreground"
+                    : "bg-card text-muted-foreground border-border hover:border-[hsl(var(--gold))]/50"
+                }`}
+                style={{ fontFamily: "Inter, system-ui, sans-serif" }}
+              >
+                <span className="font-medium">{day.shortLabel}</span>
+                {parkDay && <span className="ml-1.5 text-[0.5rem] uppercase">{dayParkIds.filter(id => !nonParkIds.has(id)).map(id => (parkLabels[id] || id).slice(0, 2).toUpperCase()).join("+")}</span>}
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Step counter */}
+      <div className="max-w-5xl mx-auto px-4 sm:px-8 pb-4">
+        <p className="text-muted-foreground" style={{ fontFamily: "Inter, system-ui, sans-serif", fontSize: "0.6875rem" }}>
+          Step {currentStep + 1} of {activeItems.length}
+        </p>
+        <div className="flex gap-1 mt-2">
+          {activeItems.map((_, i) => (
+            <div
+              key={i}
+              className="h-1 flex-1 rounded-full transition-colors duration-300"
+              style={{ backgroundColor: i <= currentStep ? "hsl(var(--gold))" : "hsl(var(--border))" }}
+            />
+          ))}
+        </div>
+      </div>
+
+      {/* Current card */}
+      <div className="max-w-5xl mx-auto px-4 sm:px-8 pb-16">
+        <AnimatePresence mode="wait">
+          {current && (
+            <motion.div
+              key={current.item.id}
+              initial={{ opacity: 0, x: 40 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -40 }}
+              transition={{ duration: 0.35, ease: [0.19, 1, 0.22, 1] }}
+              className="border border-border bg-card rounded-xl p-6 sm:p-8 shadow-[var(--shadow-soft)]"
+            >
+              {/* Type badge */}
+              <div className="flex items-center gap-2 mb-4">
+                <span className="text-2xl">{typeEmoji[current.item.type] || "✨"}</span>
+                <span className="text-xs uppercase tracking-[0.12em] text-muted-foreground font-medium" style={{ fontFamily: "Inter, system-ui, sans-serif" }}>
+                  {current.item.type === "meal" || current.item.type === "dining" ? "Dining" : current.item.type === "ride" ? "Ride" : current.item.type === "show" ? "Show" : current.item.type}
+                </span>
+                {current.item.isConfirmed && (
+                  <span className="text-xs px-2 py-0.5 rounded-lg bg-[hsl(var(--gold)/0.1)] text-[hsl(var(--gold-dark))] border border-[hsl(var(--gold)/0.2)]">Reservation</span>
+                )}
+              </div>
+
+              {/* Name */}
+              <h3 className="font-display text-2xl sm:text-3xl text-foreground leading-tight mb-3">
+                {current.item.name}
+              </h3>
+
+              {/* Description */}
+              {current.item.description && (
+                <p className="font-editorial text-sm text-muted-foreground leading-relaxed mb-6 max-w-lg">
+                  {current.item.description}
+                </p>
+              )}
+
+              {/* Walking to next */}
+              {next && (
+                <div className="border-t border-border pt-4 mt-4">
+                  <p className="text-muted-foreground mb-1" style={{ fontFamily: "Inter, system-ui, sans-serif", fontSize: "0.6875rem" }}>
+                    Up next
+                  </p>
+                  <div className="flex items-center gap-2">
+                    <span className="text-lg">{typeEmoji[next.item.type] || "✨"}</span>
+                    <p className="font-display text-base text-foreground">{next.item.name}</p>
+                    {next.walkBuffer > 0 && (
+                      <span className="text-xs text-muted-foreground ml-auto" style={{ fontFamily: "Inter, system-ui, sans-serif" }}>
+                        🚶 {next.walkBuffer} min walk
+                      </span>
+                    )}
+                  </div>
+                </div>
+              )}
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* Navigation */}
+        <div className="flex items-center justify-between mt-6 gap-4">
+          <button
+            onClick={() => setCurrentStep(Math.max(0, currentStep - 1))}
+            disabled={currentStep === 0}
+            className="px-6 py-3 rounded-lg border border-border text-sm font-medium text-muted-foreground hover:text-foreground hover:border-[hsl(var(--gold))] transition-all disabled:opacity-30 disabled:cursor-not-allowed"
+            style={{ fontFamily: "Inter, system-ui, sans-serif", minHeight: 44 }}
+          >
+            ← Previous
+          </button>
+          <button
+            onClick={() => setCurrentStep(Math.min(activeItems.length - 1, currentStep + 1))}
+            disabled={currentStep >= activeItems.length - 1}
+            className="px-6 py-3 rounded-lg text-sm font-medium bg-foreground text-background hover:opacity-90 transition-opacity disabled:opacity-30 disabled:cursor-not-allowed"
+            style={{ fontFamily: "Inter, system-ui, sans-serif", minHeight: 44 }}
+          >
+            Next Step →
+          </button>
+        </div>
+      </div>
+    </section>
+  );
+};
 
 /* ═══════════════════════════════════════════════════════════════════
    COMPONENT
@@ -822,8 +980,24 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
     return z.split("-").map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(" ");
   };
 
+  const { mode: planningMode } = usePlanningMode();
+
+  /* ── Concierge Mode (Type B) ── */
+  if (planningMode === "concierge") {
+    return (
+      <ConciergeView
+        ribbon={ribbon}
+        tripDays={tripDays}
+        currentDayIndex={currentDayIndex}
+        setCurrentDayIndex={setCurrentDayIndex}
+        getDayParkIds={getDayParkIds}
+        dayNavRef={dayNavRef}
+      />
+    );
+  }
+
   return (
-    <section className="bg-[#F9F7F2]">
+    <section className="bg-[hsl(var(--warm))]">
 
       {/* ═══════════════════════════════════════════════════════════════
           HEADER

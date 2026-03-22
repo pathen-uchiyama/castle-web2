@@ -4,6 +4,7 @@ import { useEffect } from "react";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { PlanningModeProvider } from "@/contexts/PlanningModeContext";
 import Navigation from "@/components/Navigation";
 import Index from "./pages/Index";
 import DayZeroIndex from "./pages/DayZeroIndex";
@@ -40,6 +41,7 @@ const queryClient = new QueryClient();
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
+    <PlanningModeProvider>
     <TooltipProvider>
       <Toaster />
       <Sonner />
@@ -83,6 +85,7 @@ const App = () => (
         </Routes>
       </BrowserRouter>
     </TooltipProvider>
+    </PlanningModeProvider>
   </QueryClientProvider>
 );
 

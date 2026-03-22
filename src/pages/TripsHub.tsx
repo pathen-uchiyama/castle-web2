@@ -4,6 +4,7 @@ import { Link, useNavigate } from "react-router-dom";
 import Footer from "@/components/Footer";
 import SparkleField from "@/components/SparkleField";
 import TripWizard from "@/components/TripWizard";
+import EmptyState from "@/components/EmptyState";
 import type { BookedTrip, FutureTrip } from "@/data/types";
 import { mockData } from "@/data/mockData";
 

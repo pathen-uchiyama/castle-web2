@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import { useState } from "react";
 import type { TripMemory } from "@/data/types";
+import SovereignGate from "@/components/SovereignGate";
 
 const ease: [number, number, number, number] = [0.19, 1, 0.22, 1];
 

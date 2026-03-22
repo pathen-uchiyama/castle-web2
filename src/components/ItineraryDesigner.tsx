@@ -434,6 +434,24 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
       });
     });
 
+    // Merge mock seed data for day 0 if no items exist yet
+    if (Object.values(result).every(arr => arr.length === 0) || (result[0] && result[0].length <= 3)) {
+      // Add the rich MK seed to day 0 (first park day)
+      const firstParkDayIdx = tripDays.findIndex((_, i) => {
+        const pids = trip.parkSchedule?.find(ps => ps.date === tripDays[i]?.dateStr)?.parkIds || [];
+        return pids.some(id => !nonParkIds.has(id));
+      });
+      const seedIdx = firstParkDayIdx >= 0 ? firstParkDayIdx : 0;
+      result[seedIdx] = [...(result[seedIdx] || []), ...mkFullDaySeed.filter(s => !result[seedIdx]?.some(e => e.id === s.id))];
+      // Sort by scheduledStartMin where available
+      result[seedIdx].sort((a, b) => {
+        if (a.scheduledStartMin !== undefined && b.scheduledStartMin !== undefined) return a.scheduledStartMin - b.scheduledStartMin;
+        if (a.scheduledStartMin !== undefined) return -1;
+        if (b.scheduledStartMin !== undefined) return 1;
+        return 0;
+      });
+    }
+
     return result;
   }, [diningReservations, bookedExperiences, tripDays, parseMockDate]);
 
@@ -449,6 +467,30 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
   }, [currentDayIndex]);
 
   const [isLocked, setIsLocked] = useState(false);
+
+  /* ── Expanded ribbon card + per-card locking ───────────────────── */
+  const [expandedRibbonId, setExpandedRibbonId] = useState<string | null>(null);
+  const [editingTimeId, setEditingTimeId] = useState<string | null>(null);
+  const [editTimeValue, setEditTimeValue] = useState("");
+
+  /* ── Add Item drawer ───────────────────────────────────────────── */
+  const [addDrawerOpen, setAddDrawerOpen] = useState(false);
+  const [addDrawerSearch, setAddDrawerSearch] = useState("");
+
+  const toggleItemLock = useCallback((itemId: string) => {
+    setItinerary(prev => prev.map(item =>
+      item.id === itemId ? { ...item, isLocked: !item.isLocked } : item
+    ));
+  }, [setItinerary]);
+
+  const updateItemTime = useCallback((itemId: string, newTimeStr: string) => {
+    const min = toMinutes(newTimeStr);
+    if (min < 0) return;
+    setItinerary(prev => prev.map(item =>
+      item.id === itemId ? { ...item, scheduledStartMin: min } : item
+    ));
+    setEditingTimeId(null);
+  }, [setItinerary]);
 
   /* ── Drop zone for research drag ───────────────────────────────── */
   const [dropTargetIdx, setDropTargetIdx] = useState<number | null>(null);

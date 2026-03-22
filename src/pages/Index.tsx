@@ -219,7 +219,7 @@ const Index = ({
                     whileInView={{ opacity: 1, x: 0 }}
                     viewport={{ once: true }}
                     transition={{ duration: 0.8, delay: i * 0.1, ease }}
-                    className="flex-shrink-0 w-[260px] sm:w-[300px] group cursor-pointer"
+                    className="flex-shrink-0 w-[calc(100vw-4rem)] sm:w-[300px] group cursor-pointer"
                   >
                      <div className="bg-white/10 backdrop-blur-md rounded-lg p-5 h-full hover:bg-white/15 transition-colors duration-500 overflow-hidden">
                       <p className="label-text !text-white/50 mb-3" style={{ fontSize: '0.625rem' }}>{leg.date}</p>

@@ -811,6 +811,10 @@ const AlertModal = ({ venueName, opensDate, onClose, onSetAlert, onBookForMe }: 
                 <button className="px-6 py-2.5 text-[0.625rem] tracking-[0.15em] uppercase font-medium bg-[hsl(var(--gold))] text-background transition-opacity duration-300 hover:opacity-90 rounded-md">
                   Upgrade to Sovereign
                 </button>
+                <p className="mt-2 text-xs text-muted-foreground/50 leading-relaxed">
+                  This is a license to access digital content, not a permanent purchase.{" "}
+                  <a href="/terms#section-5-3" className="underline hover:text-muted-foreground transition-colors">Terms §5.3</a>
+                </p>
               </div>
               <p className="font-editorial text-xs text-muted-foreground text-center">
                 Or use the <strong>"Notify Me"</strong> tab for a free reminder instead.

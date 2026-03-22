@@ -2,6 +2,8 @@ import { useParams, useNavigate } from "react-router-dom";
 import Footer from "@/components/Footer";
 import MemoriesHub from "@/components/memories/MemoriesHub";
 import MemoriesTripDetail from "@/components/memories/MemoriesTripDetail";
+import EmptyState from "@/components/EmptyState";
+import SparkleField from "@/components/SparkleField";
 import type { TripMemory } from "@/data/types";
 
 interface MemoriesProps {

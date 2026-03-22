@@ -392,9 +392,9 @@ const ConciergeView = ({ ribbon, tripDays, currentDayIndex, setCurrentDayIndex, 
                   <div className="flex items-center gap-2">
                     <span className="text-lg">{typeEmoji[next.item.type] || "✨"}</span>
                     <p className="font-display text-base text-foreground">{next.item.name}</p>
-                    {next.walkFromPrev > 0 && (
+                    {next.walkBuffer > 0 && (
                       <span className="text-xs text-muted-foreground ml-auto" style={{ fontFamily: "Inter, system-ui, sans-serif" }}>
-                        🚶 {next.walkFromPrev} min walk
+                        🚶 {next.walkBuffer} min walk
                       </span>
                     )}
                   </div>

@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import { useState } from "react";
 import type { TripMemory } from "@/data/types";
+import SovereignGate from "@/components/SovereignGate";
 
 const ease: [number, number, number, number] = [0.19, 1, 0.22, 1];
 
@@ -108,15 +109,21 @@ const GhostVault = ({ tripMemories, onSelectMemory }: GhostVaultProps) => {
                   </p>
                 </div>
 
-                {/* Ghost badge */}
-                <div className="absolute top-4 right-4">
-                  <span
-                    className="px-2 py-1 text-white/40 border border-white/10 bg-black/20 backdrop-blur-sm"
-                    style={{ fontFamily: "Inter, system-ui, sans-serif", fontSize: "0.5rem", letterSpacing: "0.15em", textTransform: "uppercase" }}
-                  >
-                    Ghost
-                  </span>
-                </div>
+                {/* Ghost badge — gated full-res */}
+                <SovereignGate
+                  tier="Glass Slipper"
+                  feature="Ghost Vault Full Resolution"
+                  description="The Ghost Vault preserves your memories in heirloom quality. Upgrade to unlock full-resolution downloads and archival storage."
+                >
+                  <div className="absolute top-4 right-4">
+                    <span
+                      className="px-2 py-1 text-white/40 border border-white/10 bg-black/20 backdrop-blur-sm"
+                      style={{ fontFamily: "Inter, system-ui, sans-serif", fontSize: "0.5rem", letterSpacing: "0.15em", textTransform: "uppercase" }}
+                    >
+                      Ghost
+                    </span>
+                  </div>
+                </SovereignGate>
               </motion.div>
             );
           })}

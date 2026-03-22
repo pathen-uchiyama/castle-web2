@@ -9,6 +9,7 @@ import editorialDining from "@/assets/editorial-dining.jpg";
 import SparkleField from "@/components/SparkleField";
 import type { BookedTrip, FutureTrip, PackingItem, PreparationItem, ExperienceCategory, BookingDifficulty, CostTier, DiningReservation, BookedExperience, DiningVenue, ExperienceVenue } from "@/data/types";
 import ItineraryDesigner from "@/components/ItineraryDesigner";
+import SovereignGate from "@/components/SovereignGate";
 import { mockData } from "@/data/mockData";
 import { toast } from "@/hooks/use-toast";
 
@@ -1912,13 +1913,83 @@ const BookedTripDetail = ({ trip }: { trip: BookedTrip }) => {
 
       {/* ═══ DESIGNER TAB ═══ */}
       {activeTab === "designer" && (
-        <ItineraryDesigner
-          trip={trip}
-          partyMembers={mockData.partyMembers}
-          diningReservations={allDiningReservations}
-          bookedExperiences={allBookedExperiences}
-          surveyResponses={mockData.partySurvey.responses}
-        />
+        <>
+          <ItineraryDesigner
+            trip={trip}
+            partyMembers={mockData.partyMembers}
+            diningReservations={allDiningReservations}
+            bookedExperiences={allBookedExperiences}
+            surveyResponses={mockData.partySurvey.responses}
+          />
+
+          {/* What If Simulation — gated */}
+          <section className="max-w-5xl mx-auto px-4 sm:px-8 py-12">
+            <SovereignGate
+              tier="Glass Slipper"
+              feature="What If Simulation"
+              description="Run 'What If' simulations to see how different ride orders, dining times, and park strategies affect your wait times and walking distance. Optimize your perfect day."
+            >
+              <div className="border border-[hsl(var(--border))] bg-white p-8 rounded-xl" style={{ boxShadow: "0 10px 30px rgba(26,26,27,0.05)" }}>
+                <div className="flex items-center gap-3 mb-4">
+                  <span className="text-2xl">🔮</span>
+                  <div>
+                    <h3 className="font-display text-xl text-[hsl(var(--ink))] font-bold">"What If" Simulation</h3>
+                    <p className="font-sans text-sm text-[hsl(var(--ink-light))]" style={{ letterSpacing: "-0.02em" }}>
+                      Test alternate itinerary strategies before committing
+                    </p>
+                  </div>
+                </div>
+                <div className="grid grid-cols-3 gap-3">
+                  {["Swap ride order", "Move lunch earlier", "Add a rest break"].map((label) => (
+                    <div key={label} className="px-4 py-3 bg-[hsl(var(--warm))] border border-[hsl(var(--border))] rounded-lg text-center">
+                      <span className="text-xs text-[hsl(var(--ink-light))] font-sans">{label}</span>
+                    </div>
+                  ))}
+                </div>
+                <div className="mt-4 flex items-center gap-4 text-[0.6875rem] text-[hsl(var(--ink-light))]">
+                  <span>📊 Est. savings: <strong className="text-[hsl(var(--gold-dark))]">47 min wait time</strong></span>
+                  <span>🚶 <strong className="text-[hsl(var(--gold-dark))]">0.8 mi less walking</strong></span>
+                </div>
+              </div>
+            </SovereignGate>
+          </section>
+
+          {/* Find & Seek / Grand Quest — gated */}
+          <section className="max-w-5xl mx-auto px-4 sm:px-8 pb-16">
+            <SovereignGate
+              tier="Glass Slipper"
+              feature="The Grand Quest"
+              description="Turn your park day into an adventure game. Find hidden Mickeys, complete scavenger hunts, and unlock achievements as you explore — personalized for your party."
+            >
+              <div className="border border-[hsl(var(--border))] bg-white p-8 rounded-xl" style={{ boxShadow: "0 10px 30px rgba(26,26,27,0.05)" }}>
+                <div className="flex items-center gap-3 mb-4">
+                  <span className="text-2xl">🗺️</span>
+                  <div>
+                    <h3 className="font-display text-xl text-[hsl(var(--ink))] font-bold">Find & Seek — The Grand Quest</h3>
+                    <p className="font-sans text-sm text-[hsl(var(--ink-light))]" style={{ letterSpacing: "-0.02em" }}>
+                      A personalized scavenger hunt woven into your itinerary
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-6 mt-3">
+                  {[
+                    { icon: "🏰", label: "Hidden Mickeys", count: "24 to find" },
+                    { icon: "⭐", label: "Achievements", count: "12 unlockable" },
+                    { icon: "🎯", label: "Quests", count: "6 active" },
+                  ].map((item) => (
+                    <div key={item.label} className="flex items-center gap-2">
+                      <span className="text-lg">{item.icon}</span>
+                      <div>
+                        <span className="font-display text-sm text-[hsl(var(--ink))] font-medium block leading-tight">{item.label}</span>
+                        <span className="text-[0.625rem] text-[hsl(var(--ink-light))]">{item.count}</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </SovereignGate>
+          </section>
+        </>
       )}
 
       {/* ═══ PREP & CHECKLISTS TAB ═══ */}

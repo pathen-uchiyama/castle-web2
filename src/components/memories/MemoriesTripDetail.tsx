@@ -4,6 +4,7 @@ import { ArrowLeft, Award, Share2, Download, ChevronLeft, ChevronRight, ChevronD
 import SectionNav from "@/components/SectionNav";
 import AudioEcho from "./AudioEcho";
 import JoyBlueprint from "./JoyBlueprint";
+import SovereignGate from "@/components/SovereignGate";
 import type { TripMemory } from "@/data/types";
 
 import castleHero from "@/assets/castle-hero.jpg";
@@ -845,7 +846,15 @@ const MemoriesTripDetail = ({ memory, allMemories, onBack }: MemoriesTripDetailP
           {/* THE VAULT — CAROUSEL SCRAPBOOK */}
           {activeTab === "vault" && <DayCarousel memory={memory} />}
 
-          {activeTab === "echoes" && <AudioEcho />}
+          {activeTab === "echoes" && (
+            <SovereignGate
+              tier="Pixie Dust"
+              feature="Audio Echoes"
+              description="Audio Echoes preserves the sounds of your adventure — whispered reactions, delighted screams, and bedtime recaps. Upgrade to unlock the full library."
+            >
+              <AudioEcho />
+            </SovereignGate>
+          )}
           {activeTab === "joy" && <JoyBlueprint tripMemories={allMemories} />}
         </>
       )}

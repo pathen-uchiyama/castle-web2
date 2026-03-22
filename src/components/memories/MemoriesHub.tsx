@@ -67,7 +67,7 @@ const MemoriesHub = ({
           </h2>
 
           {/* Asymmetric editorial grid */}
-          <div className="grid grid-cols-6 gap-3 auto-rows-[220px] sm:auto-rows-[280px]">
+          <div className="grid grid-cols-1 sm:grid-cols-6 gap-3 auto-rows-[220px] sm:auto-rows-[280px]">
             {tripMemories.map((memory, i) => {
               const spans = [
                 "col-span-4 row-span-2",

@@ -256,7 +256,7 @@ const CaptureOverlay = ({ open, onClose }: CaptureOverlayProps) => {
             animate={{ y: 0 }}
             exit={{ y: "100%" }}
             transition={{ type: "spring", damping: 28, stiffness: 300 }}
-            className="fixed inset-x-0 bottom-0 z-[61] max-h-[60vh] sm:max-h-[60vh] max-h-[100vh] overflow-y-auto"
+            className="fixed inset-x-0 bottom-0 z-[61] h-[100dvh] sm:h-auto sm:max-h-[60vh] overflow-y-auto"
           >
             <div
               className="bg-[hsl(var(--warm))] border-t border-[hsl(var(--border))]"

@@ -51,6 +51,16 @@ const TripsHub = ({ bookedTrip, futureTrips }: TripsHubProps) => {
 
       {/* Active Trip Card */}
       <section className="px-8 lg:px-16 py-16 lg:py-24">
+        {futureTrips.length === 0 && !bookedTrip ? (
+          <EmptyState
+            emoji="🗺️"
+            headline="No adventures yet."
+            description="Let's plan your first. Your dream vacation starts with a single tap."
+            ctaLabel="Plan My Dream Vacation"
+            ctaTo="/dream-planner"
+          />
+        ) : (
+        <>
         <motion.div {...fade()}>
           <p className="label-text mb-6">Active Adventure 🎒</p>
           <h2 className="font-display text-4xl sm:text-5xl text-foreground leading-[1.08] mb-4">Your trips at a glance.</h2>

@@ -1,10 +1,11 @@
-import { motion, useScroll, useTransform } from "framer-motion";
+import { motion, useScroll, useTransform, AnimatePresence } from "framer-motion";
 import Footer from "@/components/Footer";
 import { useRef, useState, useEffect, useCallback } from "react";
 import { Link } from "react-router-dom";
 import FloatingAnchor from "@/components/FloatingAnchor";
 import SparkleField from "@/components/SparkleField";
 import EmberTrail from "@/components/EmberTrail";
+import DreamVacationWizard from "@/components/DreamVacationWizard";
 import castleHero from "@/assets/castle-hero.jpg";
 import editorialCalendar from "@/assets/editorial-calendar.jpg";
 import editorialFamilyWalk from "@/assets/editorial-family-walk.jpg";

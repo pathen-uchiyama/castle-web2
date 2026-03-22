@@ -1987,14 +1987,27 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
               <div className="flex items-center gap-2 flex-wrap">
                 {quickAdds.map((qa, i) => (
                   <button key={`${qa.label}-${i}`} onClick={() => addQuickItem(qa.type, qa.label, qa.dur)}
-                    className="flex items-center gap-1.5 px-3 py-2 bg-white border border-dashed border-[hsl(var(--border))] text-[hsl(var(--ink-light))] hover:border-[hsl(var(--ink))]/30 hover:text-[hsl(var(--ink))] transition-all duration-300"
-                    style={{ borderRadius: 0, boxShadow: "0 10px 30px rgba(26,26,27,0.03)" }}>
+                    className="flex items-center gap-1.5 px-3 py-2 bg-white border border-dashed border-[hsl(var(--border))] text-[hsl(var(--ink-light))] hover:border-[hsl(var(--ink))]/30 hover:text-[hsl(var(--ink))] transition-all duration-300 rounded-lg"
+                    style={{ boxShadow: "0 10px 30px rgba(26,26,27,0.03)" }}>
                     <span className="text-sm">{qa.emoji}</span>
                     <span className="text-[0.625rem] uppercase tracking-[0.1em]">{qa.label}</span>
                     <span className="text-[0.5625rem] text-[hsl(var(--ink-light))]/50">{qa.dur}m</span>
                   </button>
                 ))}
               </div>
+            </div>
+          )}
+
+          {/* Floating Add Item button */}
+          {!isLocked && isParkDay && (
+            <div className="sticky bottom-4 flex justify-center mt-6 z-20">
+              <button
+                onClick={() => setAddDrawerOpen(true)}
+                className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-[hsl(var(--ink))] text-white shadow-lg hover:shadow-xl hover:scale-[1.03] transition-all duration-300"
+              >
+                <Plus className="w-4 h-4" />
+                <span className="font-display text-sm font-medium">Add Item</span>
+              </button>
             </div>
           )}
 

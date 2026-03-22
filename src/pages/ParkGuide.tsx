@@ -5,6 +5,7 @@ import { format, parseISO, startOfMonth, endOfMonth, eachDayOfInterval, getDay }
 import { CalendarIcon, Lock, Crown, ChevronLeft, ChevronRight, Search, AlertTriangle, Construction, Sparkles, Ban, Paintbrush, Wrench, Calendar as CalendarIconLucide } from "lucide-react";
 import Footer from "@/components/Footer";
 import ParkCategoryBrowser from "@/components/ParkCategoryBrowser";
+import CrowdCalendar from "@/components/CrowdCalendar";
 import SectionNav from "@/components/SectionNav";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";

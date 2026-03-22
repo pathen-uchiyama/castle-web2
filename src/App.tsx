@@ -22,6 +22,7 @@ import PrivacyCa from "./pages/PrivacyCa";
 import DoNotSell from "./pages/DoNotSell";
 import DreamPlanner from "./pages/DreamPlanner";
 import DreamItinerary from "./pages/DreamItinerary";
+import Onboarding from "./pages/Onboarding";
 import NotFound from "./pages/NotFound";
 import { mockData } from "./data/mockData";
 

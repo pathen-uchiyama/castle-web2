@@ -1,8 +1,9 @@
 import { motion, AnimatePresence, Reorder } from "framer-motion";
-import { useState, useMemo, useCallback, useRef } from "react";
-import { ChevronDown, Plus, X, Search, Star, Lock, Unlock, Sparkles, Clock, Ruler, Zap, Shield, Info, GripVertical, Users, Baby, CalendarClock } from "lucide-react";
+import { useState, useMemo, useCallback, useRef, useEffect } from "react";
+import { ChevronDown, Plus, X, Search, Star, Lock, Unlock, Sparkles, Clock, Ruler, Zap, Shield, Info, GripVertical, Users, Baby, CalendarClock, ChevronUp } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import type { BookedTrip, PartyMember, DiningReservation, BookedExperience } from "@/data/types";
+import { Input } from "@/components/ui/input";
 import {
   allParkAttractions, parkLabels, typeLabels, llLabels, waitLabels,
   crowdImpactLabels, attractionStatusLabels, getWalkBuffer, DURATION_DEFAULTS,

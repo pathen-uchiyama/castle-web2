@@ -4,6 +4,7 @@ import { Link, useParams } from "react-router-dom";
 import { format, parseISO, startOfMonth, endOfMonth, eachDayOfInterval, getDay } from "date-fns";
 import { CalendarIcon, Lock, Crown, ChevronLeft, ChevronRight, Search, AlertTriangle, Construction, Sparkles, Ban, Paintbrush, Wrench, Calendar as CalendarIconLucide } from "lucide-react";
 import Footer from "@/components/Footer";
+import ParkCategoryBrowser from "@/components/ParkCategoryBrowser";
 import SectionNav from "@/components/SectionNav";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";

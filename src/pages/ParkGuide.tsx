@@ -633,6 +633,9 @@ const ParkGuidePage = ({ parkGuides }: ParkGuidePageProps) => {
             </section>
           )}
 
+          {/* ═══ BROWSE BY CATEGORY ═══ */}
+          <ParkCategoryBrowser parkId={park.parkId} parkName={park.parkName} />
+
           {/* ═══ THEMED LANDS — with attraction listings ═══ */}
           {encyclopediaPark && (
             <section className="px-8 lg:px-16 py-12 lg:py-16 border-b border-border bg-[hsl(var(--warm))]">

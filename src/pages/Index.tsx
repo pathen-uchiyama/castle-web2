@@ -597,7 +597,7 @@ const Index = ({
         initial={{ opacity: 0, y: 40 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 1, delay: 2, ease: [0.19, 1, 0.22, 1] }}
-        className="fixed bottom-8 left-1/2 -translate-x-1/2 z-50"
+        className="fixed bottom-20 sm:bottom-8 left-1/2 -translate-x-1/2 z-50"
       >
         <button
           onClick={() => setWizardOpen(true)}

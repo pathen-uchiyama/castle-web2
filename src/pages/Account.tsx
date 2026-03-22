@@ -65,6 +65,49 @@ const cardBrandIcon = (brand: string) => {
   }
 };
 
+/* ── Planning Style Toggle ── */
+const PlanningStyleToggle = () => {
+  const { mode, setMode } = usePlanningMode();
+  const options: { id: PlanningMode; title: string; subtitle: string; icon: string; desc: string }[] = [
+    { id: "strategist", title: "Strategist Mode", subtitle: "Type A", icon: "🧭", desc: "Show me the data. I'll build my own plan." },
+    { id: "concierge", title: "Concierge Mode", subtitle: "Type B", icon: "🛎️", desc: "Just tell me what to do. I trust the plan." },
+  ];
+  return (
+    <motion.div {...fade(0.12)} className="mt-16">
+      <p className="label-text mb-4 tracking-[0.25em]">Planning Style</p>
+      <p className="font-editorial text-sm text-muted-foreground mb-6">
+        Choose how The Designer presents your itinerary.
+      </p>
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        {options.map((opt) => {
+          const isActive = mode === opt.id;
+          return (
+            <button
+              key={opt.id}
+              onClick={() => { setMode(opt.id); toast.success(`Switched to ${opt.title}`); }}
+              className={`relative text-left p-5 rounded-lg border-2 transition-all duration-300 cursor-pointer group ${
+                isActive
+                  ? "border-[hsl(var(--gold))] bg-[hsl(var(--gold)/0.06)] shadow-[var(--shadow-hover)]"
+                  : "border-border bg-card shadow-[var(--shadow-soft)] hover:border-[hsl(var(--gold))]/40"
+              }`}
+            >
+              {isActive && (
+                <div className="absolute top-3 right-3 w-5 h-5 rounded-full bg-[hsl(var(--gold))] flex items-center justify-center">
+                  <span className="text-white text-xs">✓</span>
+                </div>
+              )}
+              <span className="text-2xl block mb-3">{opt.icon}</span>
+              <p className="font-display text-base text-foreground mb-0.5">{opt.title}</p>
+              <p className="text-[0.625rem] uppercase tracking-[0.12em] text-muted-foreground mb-2" style={{ fontFamily: "Inter, system-ui, sans-serif" }}>{opt.subtitle}</p>
+              <p className="font-editorial text-sm text-muted-foreground leading-relaxed italic">"{opt.desc}"</p>
+            </button>
+          );
+        })}
+      </div>
+    </motion.div>
+  );
+};
+
 const Account = ({ account }: AccountProps) => {
   const [activeTab, setActiveTab] = useState("profile");
 

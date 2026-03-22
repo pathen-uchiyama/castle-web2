@@ -262,8 +262,6 @@ const AudioEcho = () => {
                         {formatTime(ct)} / {formatTime(clip.durationSeconds)}
                       </span>
                     </div>
-        </div>
-        )}
 
                   <Volume2 className="w-4 h-4 text-muted-foreground/40 shrink-0 hidden sm:block" />
                 </div>
@@ -271,6 +269,7 @@ const AudioEcho = () => {
             );
           })}
         </div>
+        )}
       </div>
     </section>
   );

@@ -1,8 +1,9 @@
 import { motion, AnimatePresence, Reorder } from "framer-motion";
-import { useState, useMemo, useCallback, useRef } from "react";
-import { ChevronDown, Plus, X, Search, Star, Lock, Unlock, Sparkles, Clock, Ruler, Zap, Shield, Info, GripVertical, Users, Baby, CalendarClock } from "lucide-react";
+import { useState, useMemo, useCallback, useRef, useEffect } from "react";
+import { ChevronDown, Plus, X, Search, Star, Lock, Unlock, Sparkles, Clock, Ruler, Zap, Shield, Info, GripVertical, Users, Baby, CalendarClock, ChevronUp } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import type { BookedTrip, PartyMember, DiningReservation, BookedExperience } from "@/data/types";
+import { Input } from "@/components/ui/input";
 import {
   allParkAttractions, parkLabels, typeLabels, llLabels, waitLabels,
   crowdImpactLabels, attractionStatusLabels, getWalkBuffer, DURATION_DEFAULTS,
@@ -38,12 +39,54 @@ interface DesignerProps {
 const quickAdds = [
   { type: "snack" as const, label: "Snack Stop", emoji: "☕", dur: 15 },
   { type: "break" as const, label: "Rest", emoji: "😴", dur: 30 },
-  { type: "break" as const, label: "Bathroom", emoji: "🚻", dur: 10 },
+  { type: "bio-break" as const, label: "Bathroom", emoji: "🚻", dur: 10 },
   { type: "pool" as const, label: "Pool Time", emoji: "🏊", dur: 90 },
   { type: "walk" as const, label: "Walk / Explore", emoji: "🚶", dur: 20 },
   { type: "break" as const, label: "Photo Stop", emoji: "📸", dur: 10 },
   { type: "snack" as const, label: "Water / Refill", emoji: "💧", dur: 5 },
   { type: "meal" as const, label: "Meal", emoji: "🍽", dur: 60 },
+];
+
+/* ─── Type emoji map ─────────────────────────────────────────────── */
+const typeEmoji: Record<string, string> = {
+  ride: "🎢", meal: "🍽️", dining: "🍽️", show: "🎆", break: "☕", "bio-break": "🚻",
+  "stroller-park": "🍼", "stroller-retrieve": "🍼", snack: "☕", pool: "🏊", hotel: "🏨",
+  walk: "🚶", character: "👑", parade: "🎉", seasonal: "✨", "rope-drop": "🏰",
+};
+
+/* ─── CC Recommendation Stars ────────────────────────────────────── */
+const CCStars = ({ score }: { score: number }) => (
+  <div className="flex items-center gap-1">
+    <span className="text-[0.5625rem] uppercase tracking-[0.1em] text-[hsl(var(--gold-dark))] font-medium mr-1">CC Score</span>
+    {Array.from({ length: 5 }, (_, i) => (
+      <Star
+        key={i}
+        className={`w-3.5 h-3.5 ${i < score ? "text-[hsl(var(--gold))] fill-[hsl(var(--gold))]" : "text-[hsl(var(--border))]"}`}
+      />
+    ))}
+  </div>
+);
+
+/* ─── Rich MK mock seed — 15+ items for a full day ───────────────── */
+const mkFullDaySeed: ItineraryItem[] = [
+  { id: "seed-1", attractionId: "mk-tron", name: "TRON Lightcycle / Run", type: "ride", duration: 2, waitTime: 15, zone: "tomorrowland", llType: "ll-single", waitCategory: "ill-required", ccScore: 5, description: "High-speed indoor/outdoor motorcycle-style coaster. Best experienced at rope drop with minimal wait." },
+  { id: "seed-2", attractionId: "mk-space", name: "Space Mountain", type: "ride", duration: 3, waitTime: 25, zone: "tomorrowland", llType: "ll-multi-1", waitCategory: "hard-to-get", ccScore: 4, description: "Classic indoor coaster hurtling through dark cosmos. LL Multi recommended for afternoon visits." },
+  { id: "seed-bio-1", name: "Bio-Break", type: "bio-break", duration: 10, ccScore: 3, description: "Restrooms near Tomorrowland Terrace — typically less crowded than Fantasyland facilities." },
+  { id: "seed-3", attractionId: "mk-buzz", name: "Buzz Lightyear's Space Ranger Spin", type: "ride", duration: 5, waitTime: 15, zone: "tomorrowland", llType: "ll-multi-2", waitCategory: "walk-on-am", ccScore: 3, description: "Interactive shooter ride. Pro tip: aim for the diamond-shaped targets for highest scores." },
+  { id: "seed-4", attractionId: "mk-sdmt", name: "Seven Dwarfs Mine Train", type: "ride", duration: 3, waitTime: 45, zone: "fantasyland", llType: "ll-single", waitCategory: "ill-required", ccScore: 5, description: "Swinging family coaster through the dwarf mine. ILL strongly recommended — saves 70-110 minutes." },
+  { id: "seed-5", attractionId: "mk-peter", name: "Peter Pan's Flight", type: "ride", duration: 3, waitTime: 40, zone: "fantasyland", llType: "ll-multi-2", waitCategory: "hard-to-get", ccScore: 4, description: "Gentle dark ride soaring over London and Neverland. Consistently the longest wait for its ride length." },
+  { id: "seed-meal-1", name: "Lunch — Be Our Guest", type: "meal", duration: 60, zone: "fantasyland", isConfirmed: true, scheduledStartMin: 720, ccScore: 5, description: "Signature dining inside Beast's castle. The Grey Stuff is a must-try. Quick service at lunch, table service at dinner." },
+  { id: "seed-bio-2", name: "Bio-Break", type: "bio-break", duration: 10, ccScore: 3, description: "Restrooms inside Be Our Guest or near Enchanted Tales with Belle — fresher and less trafficked." },
+  { id: "seed-6", attractionId: "mk-haunted", name: "Haunted Mansion", type: "ride", duration: 9, waitTime: 20, zone: "liberty-square", llType: "ll-multi-1", waitCategory: "walk-on", ccScore: 5, description: "999 happy haunts. A must-ride classic — the queue itself is a show. Best in afternoon when other rides are busy." },
+  { id: "seed-7", attractionId: "mk-pirates", name: "Pirates of the Caribbean", type: "ride", duration: 12, waitTime: 15, zone: "adventureland", llType: "ll-multi-2", waitCategory: "walk-on", ccScore: 4, description: "Boat ride through pirate scenes. Cool, dark, and air-conditioned — perfect afternoon escape." },
+  { id: "seed-8", attractionId: "mk-jungle", name: "Jungle Cruise", type: "ride", duration: 10, waitTime: 25, zone: "adventureland", llType: "ll-multi-1", waitCategory: "fast-walk-on", ccScore: 4, description: "Recently reimagined boat tour. Skippers bring the jokes. LL Multi is worth it if wait exceeds 30m." },
+  { id: "seed-rest", name: "Rest Break — Adventureland", type: "break", duration: 30, zone: "adventureland", ccScore: 3, description: "Grab a Dole Whip at Aloha Isle and find shade near the Tiki Room. Great recharge spot." },
+  { id: "seed-snack", name: "Dole Whip at Aloha Isle", type: "snack", duration: 15, zone: "adventureland", ccScore: 5, description: "The iconic pineapple soft serve. Worth every minute in line. Try the Dole Whip float for extra magic." },
+  { id: "seed-bio-3", name: "Bio-Break", type: "bio-break", duration: 10, ccScore: 3, description: "Restrooms near Tiana's Bayou Adventure — recently renovated." },
+  { id: "seed-9", attractionId: "mk-btmr", name: "Big Thunder Mountain Railroad", type: "ride", duration: 4, waitTime: 20, zone: "frontierland", llType: "ll-multi-1", waitCategory: "fast-walk-on", ccScore: 4, description: "The wildest ride in the wilderness! Moderate thrill family coaster. Ride at sunset for the best photo ops." },
+  { id: "seed-meal-2", name: "Dinner — Liberty Tree Tavern", type: "meal", duration: 65, zone: "liberty-square", isConfirmed: true, scheduledStartMin: 1080, ccScore: 4, description: "All-you-care-to-enjoy Thanksgiving feast. Excellent value and the turkey is outstanding. Book 60 days out." },
+  { id: "seed-10", name: "Tiana's Bayou Adventure", type: "ride", duration: 12, waitTime: 60, zone: "frontierland", llType: "ll-single", waitCategory: "ill-required", ccScore: 5, description: "Brand new reimagining of Splash Mountain. Extreme demand — ILL essential. Saves 70+ minutes." },
+  { id: "seed-11", name: "Happily Ever After Fireworks", type: "show", duration: 18, zone: "main-street", scheduledStartMin: 1260, ccScore: 5, description: "The nighttime spectacular. Best viewing from Main Street or the bridge near Tomorrowland. Arrive 30-45 min early for prime spots." },
 ];
 
 /* ─── Thrill icons ───────────────────────────────────────────────── */
@@ -391,6 +434,24 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
       });
     });
 
+    // Merge mock seed data for day 0 if no items exist yet
+    if (Object.values(result).every(arr => arr.length === 0) || (result[0] && result[0].length <= 3)) {
+      // Add the rich MK seed to day 0 (first park day)
+      const firstParkDayIdx = tripDays.findIndex((_, i) => {
+        const pids = trip.parkSchedule?.find(ps => ps.date === tripDays[i]?.dateStr)?.parkIds || [];
+        return pids.some(id => !nonParkIds.has(id));
+      });
+      const seedIdx = firstParkDayIdx >= 0 ? firstParkDayIdx : 0;
+      result[seedIdx] = [...(result[seedIdx] || []), ...mkFullDaySeed.filter(s => !result[seedIdx]?.some(e => e.id === s.id))];
+      // Sort by scheduledStartMin where available
+      result[seedIdx].sort((a, b) => {
+        if (a.scheduledStartMin !== undefined && b.scheduledStartMin !== undefined) return a.scheduledStartMin - b.scheduledStartMin;
+        if (a.scheduledStartMin !== undefined) return -1;
+        if (b.scheduledStartMin !== undefined) return 1;
+        return 0;
+      });
+    }
+
     return result;
   }, [diningReservations, bookedExperiences, tripDays, parseMockDate]);
 
@@ -406,6 +467,30 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
   }, [currentDayIndex]);
 
   const [isLocked, setIsLocked] = useState(false);
+
+  /* ── Expanded ribbon card + per-card locking ───────────────────── */
+  const [expandedRibbonId, setExpandedRibbonId] = useState<string | null>(null);
+  const [editingTimeId, setEditingTimeId] = useState<string | null>(null);
+  const [editTimeValue, setEditTimeValue] = useState("");
+
+  /* ── Add Item drawer ───────────────────────────────────────────── */
+  const [addDrawerOpen, setAddDrawerOpen] = useState(false);
+  const [addDrawerSearch, setAddDrawerSearch] = useState("");
+
+  const toggleItemLock = useCallback((itemId: string) => {
+    setItinerary(prev => prev.map(item =>
+      item.id === itemId ? { ...item, isLocked: !item.isLocked } : item
+    ));
+  }, [setItinerary]);
+
+  const updateItemTime = useCallback((itemId: string, newTimeStr: string) => {
+    const min = toMinutes(newTimeStr);
+    if (min < 0) return;
+    setItinerary(prev => prev.map(item =>
+      item.id === itemId ? { ...item, scheduledStartMin: min } : item
+    ));
+    setEditingTimeId(null);
+  }, [setItinerary]);
 
   /* ── Drop zone for research drag ───────────────────────────────── */
   const [dropTargetIdx, setDropTargetIdx] = useState<number | null>(null);
@@ -1379,169 +1464,310 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
             return null;
           })()}
 
-          {/* The Ribbon — Reorder list */}
-          <Reorder.Group
-            axis="y"
-            values={itinerary}
-            onReorder={isLocked ? () => {} : setItinerary}
-            className="space-y-0"
-          >
-            {ribbon.map((ri, idx) => {
-              const { item, startMin, endMin, walkBuffer, checkinTime, strollerTime, totalBlockMin } = ri;
-              const isBooked = item.id.startsWith("booked-");
-              const isMeal = item.type === "meal" || item.type === "snack";
-              const isExperience = ["show", "character", "parade", "seasonal"].includes(item.type);
-              const isBreak = ["break", "pool", "hotel", "walk"].includes(item.type);
-              const wait = item.waitTime || 0;
+          {/* The Ribbon — Visual Timeline Spine */}
+          <div className="relative">
+            {/* 2px vertical spine line */}
+            <div className="absolute left-[31px] top-0 bottom-0 w-[2px] bg-[hsl(var(--ink-light))]/15" />
 
-              return (
-                <Reorder.Item
-                  key={item.id}
-                  value={item}
-                  dragListener={!isLocked && !isBooked}
-                  className="list-none"
-                >
-                  {/* Walk buffer connector */}
-                  {walkBuffer > 0 && (
+            <Reorder.Group
+              axis="y"
+              values={itinerary}
+              onReorder={(newOrder) => {
+                if (isLocked) return;
+                // Preserve locked items in their positions
+                const lockedPositions: Record<number, ItineraryItem> = {};
+                itinerary.forEach((item, i) => {
+                  if (item.isLocked) lockedPositions[i] = item;
+                });
+                // If any items are locked, only allow reordering of unlocked items
+                if (Object.keys(lockedPositions).length > 0) {
+                  const unlockedNew = newOrder.filter(i => !i.isLocked);
+                  const result: ItineraryItem[] = [];
+                  let unlockedIdx = 0;
+                  for (let i = 0; i < itinerary.length; i++) {
+                    if (lockedPositions[i]) {
+                      result.push(lockedPositions[i]);
+                    } else if (unlockedIdx < unlockedNew.length) {
+                      result.push(unlockedNew[unlockedIdx++]);
+                    }
+                  }
+                  setItinerary(result);
+                } else {
+                  setItinerary(newOrder);
+                }
+              }}
+              className="space-y-0 relative"
+            >
+              {ribbon.map((ri, idx) => {
+                const { item, startMin, endMin, walkBuffer, checkinTime, strollerTime, totalBlockMin } = ri;
+                const isBooked = item.id.startsWith("booked-");
+                const isMeal = item.type === "meal" || item.type === "snack";
+                const isExperience = ["show", "character", "parade", "seasonal"].includes(item.type);
+                const isBreak = ["break", "pool", "hotel", "walk"].includes(item.type);
+                const isBioBreak = item.type === "bio-break";
+                const isStrollerOp = item.type === "stroller-park" || item.type === "stroller-retrieve";
+                const wait = item.waitTime || 0;
+                const isExpanded = expandedRibbonId === item.id;
+                const isItemLocked = item.isLocked || false;
+                const canDrag = !isLocked && !isBooked && !isItemLocked;
+
+                return (
+                  <Reorder.Item
+                    key={item.id}
+                    value={item}
+                    dragListener={canDrag}
+                    className="list-none relative"
+                  >
+                    {/* Walk buffer connector on the spine */}
+                    {walkBuffer > 0 && (
+                      <motion.div
+                        layout
+                        className="flex items-center gap-2 py-1.5 pl-[52px] relative"
+                      >
+                        {/* Spine dot */}
+                        <div className="absolute left-[27px] w-[10px] h-[10px] rounded-full border-2 border-[hsl(var(--gold))]/30 bg-[hsl(var(--warm))]" />
+                        <span className="text-[0.625rem] text-[hsl(var(--ink-light))] font-sans italic flex items-center gap-1" style={{ letterSpacing: "-0.02em" }}>
+                          🚶 {walkBuffer}m walk
+                          {item.zone && <span className="text-[hsl(var(--ink-light))]/50">→ {zoneLabel(item.zone)}</span>}
+                          {hasStroller && <span className="text-[hsl(var(--gold-dark))]">· 🍼 ×1.35</span>}
+                        </span>
+                      </motion.div>
+                    )}
+
+                    {/* Item card pinned to spine */}
                     <motion.div
                       layout
-                      className="flex items-center gap-2 py-1.5 pl-6 ml-4 border-l-2 border-dashed border-[hsl(var(--gold)/0.3)]"
+                      transition={{ type: "spring", damping: 25, stiffness: 300 }}
+                      className="relative flex"
                     >
-                      <span className="text-[0.625rem] text-[hsl(var(--ink-light))] font-sans flex items-center gap-1" style={{ letterSpacing: "-0.02em" }}>
-                        🚶 {walkBuffer}m walk
-                        {item.zone && <span className="text-[hsl(var(--ink-light))]/50">→ {zoneLabel(item.zone)}</span>}
-                        {hasStroller && <span className="text-[hsl(var(--gold-dark))]">· 🍼 ×1.35</span>}
-                      </span>
-                    </motion.div>
-                  )}
-
-                  {/* Item card */}
-                  <motion.div
-                    layout
-                    transition={{ type: "spring", damping: 25, stiffness: 300 }}
-                    className={`group flex border-l-[3px] border transition-all duration-200 ${
-                      isMeal
-                        ? "bg-white border-[hsl(var(--gold)/0.3)] border-l-[hsl(var(--gold))]"
-                        : isExperience
-                        ? "bg-white border-[hsl(280,30%,55%,0.2)] border-l-[hsl(280,30%,55%)]"
-                        : isBreak
-                        ? "bg-[#F9F7F2] border-dashed border-[hsl(var(--border))] border-l-[hsl(var(--ink-light))]/30"
-                        : item.isConfirmed
-                        ? "bg-white border-[hsl(var(--gold)/0.3)] border-l-[hsl(var(--gold))]"
-                        : "bg-white border-[hsl(var(--border))] border-l-[hsl(var(--ink))]/40"
-                    } ${!isLocked && !isBooked ? "hover:shadow-[0_10px_30px_rgba(26,26,27,0.08)] cursor-grab active:cursor-grabbing" : ""}`}
-                    style={{ borderRadius: 0, boxShadow: "0 10px 30px rgba(26,26,27,0.05)" }}
-                  >
-                    {/* Time column */}
-                    <div className="shrink-0 w-16 flex flex-col items-center justify-center border-r border-[hsl(var(--border))]/30 py-3 px-2">
-                      <span className="font-display text-sm text-[hsl(var(--ink))] font-bold leading-none">{formatMin(startMin)}</span>
-                      <span className="text-[0.5rem] text-[hsl(var(--ink-light))]/60 mt-0.5">→ {formatMin(endMin)}</span>
-                    </div>
-
-                    {/* Content */}
-                    <div className="flex-1 px-4 py-3">
-                    {/* Header */}
-                    <div className="flex items-center gap-2">
-                      {!isLocked && !isBooked && (
-                        <GripVertical className="w-3 h-3 text-[hsl(var(--ink-light))]/30 shrink-0 cursor-grab" />
-                      )}
-                      <span className="font-display text-base text-[hsl(var(--ink))] truncate flex-1 font-bold">{item.name}</span>
-                      <span className={`px-2 py-0.5 text-[0.5625rem] uppercase tracking-[0.1em] shrink-0 ${
-                        item.type === "ride" ? "bg-[hsl(var(--ink))] text-[#F9F7F2]" :
-                        isMeal ? "bg-[hsl(var(--gold)/0.15)] text-[hsl(var(--gold-dark))]" :
-                        isExperience ? "bg-[hsl(280,30%,55%,0.1)] text-[hsl(280,30%,45%)]" :
-                        "bg-[hsl(var(--muted))] text-[hsl(var(--ink-light))]"
-                      }`} style={{ borderRadius: 0 }}>
-                        {isMeal ? "🍽 Dining" : isExperience ? "✨ Experience" : item.type}
-                      </span>
-                      {isFixedAnchor(item) && (
-                        <span className="px-2 py-0.5 text-[0.5rem] uppercase tracking-[0.1em] bg-[hsl(var(--ink))]/8 text-[hsl(var(--ink-light))] flex items-center gap-1" style={{ borderRadius: 0 }}>
-                          <Lock className="w-2.5 h-2.5" /> Fixed
-                        </span>
-                      )}
-                      <div className="flex-1" />
-                      {wait > 0 && (
-                        <div className="shrink-0 px-4 py-2.5 bg-[hsl(var(--destructive)/0.08)] border border-[hsl(var(--destructive)/0.2)] flex items-center gap-2 ml-auto" style={{ borderRadius: 0 }}>
-                          <span className="font-display text-lg text-destructive font-bold leading-none">{wait}m</span>
-                          <span className="font-display text-sm text-destructive/80">est. wait</span>
+                      {/* Spine connector — time node */}
+                      <div className="shrink-0 w-16 flex flex-col items-center pt-4 relative z-10">
+                        <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center ${
+                          isMeal ? "border-[hsl(var(--gold))] bg-[hsl(var(--gold))]/10" :
+                          isBioBreak ? "border-[hsl(var(--lavender))] bg-[hsl(var(--lavender-light))]" :
+                          isStrollerOp ? "border-[hsl(var(--gold))]/40 bg-[hsl(var(--gold))]/5" :
+                          isExperience ? "border-[hsl(280,30%,55%)] bg-[hsl(280,30%,55%)]/10" :
+                          isBreak ? "border-[hsl(var(--ink-light))]/30 bg-[hsl(var(--muted))]" :
+                          "border-[hsl(var(--ink))]/40 bg-white"
+                        }`}>
+                          <span className="text-[8px]">{typeEmoji[item.type] || "🎢"}</span>
                         </div>
-                      )}
-                      {!isLocked && !isBooked && (
-                        <button onClick={() => removeFromItinerary(item.id)}
-                          className="opacity-0 group-hover:opacity-100 w-4 h-4 flex items-center justify-center text-[hsl(var(--ink-light))] hover:text-destructive transition-all duration-200">
-                          <X className="w-3 h-3" />
-                        </button>
-                      )}
-                    </div>
+                        <span className="font-display text-[0.6875rem] text-[hsl(var(--gold-dark))] font-bold leading-none mt-1.5">{formatMin(startMin)}</span>
+                        <span className="text-[0.5rem] text-[hsl(var(--ink-light))]/50 mt-0.5">{totalBlockMin}m</span>
+                      </div>
 
-                    {/* Computed time span */}
-                    <div className="mt-1.5 flex items-center gap-1.5 text-[0.625rem] text-[hsl(var(--ink-light))]" style={{ letterSpacing: "-0.02em" }}>
-                      <Clock className="w-2.5 h-2.5" />
-                      <span className="font-medium text-[hsl(var(--ink))]">{formatMin(startMin)}</span>
-                      <span>→</span>
-                      <span className="font-medium text-[hsl(var(--ink))]">{formatMin(endMin)}</span>
-                      <span className="text-[hsl(var(--ink))]/30 mx-0.5">·</span>
-                      <span className="font-display text-[hsl(var(--ink))]">{totalBlockMin}m block</span>
-                    </div>
+                      {/* The card itself */}
+                      <div
+                        onClick={() => setExpandedRibbonId(isExpanded ? null : item.id)}
+                        className={`flex-1 mr-2 mb-1.5 cursor-pointer transition-all duration-300 ${
+                          isBioBreak
+                            ? "bg-[hsl(var(--lavender-light))] border border-[hsl(var(--lavender))]/20"
+                            : isStrollerOp
+                            ? "bg-[hsl(var(--gold))]/[0.04] border border-dashed border-[hsl(var(--gold))]/20"
+                            : isMeal
+                            ? "bg-white border border-[hsl(var(--gold))]/30 shadow-[0_10px_30px_rgba(26,26,27,0.05)]"
+                            : isExperience
+                            ? "bg-white border border-[hsl(280,30%,55%)]/20 shadow-[0_10px_30px_rgba(26,26,27,0.05)]"
+                            : isBreak
+                            ? "bg-[hsl(var(--warm))] border border-dashed border-[hsl(var(--border))]"
+                            : "bg-white border border-[hsl(var(--border))] shadow-[0_10px_30px_rgba(26,26,27,0.05)]"
+                        } ${canDrag ? "hover:shadow-[0_10px_30px_rgba(26,26,27,0.1)] active:cursor-grabbing" : ""}
+                          ${isItemLocked ? "ring-1 ring-[hsl(var(--gold))]/20" : ""}`}
+                        style={{ borderRadius: "0.75rem" }}
+                      >
+                        {/* Card header */}
+                        <div className="px-4 py-3">
+                          <div className="flex items-center gap-2">
+                            {/* Drag handle */}
+                            {canDrag && (
+                              <GripVertical className="w-3.5 h-3.5 text-[hsl(var(--ink-light))]/25 shrink-0 cursor-grab" />
+                            )}
 
-                    {/* Time breakdown chips */}
-                    <div className="mt-2 flex items-center gap-1.5 flex-wrap">
-                      {strollerTime > 0 && (
-                        <span className="flex items-center gap-0.5 px-2 py-1 bg-[hsl(var(--gold)/0.08)] text-[0.5625rem] text-[hsl(var(--gold-dark))] font-medium" style={{ borderRadius: 0 }}>
-                          🍼 Park {strollerTime}m
-                        </span>
-                      )}
-                      {checkinTime > 0 && (
-                        <span className="flex items-center gap-0.5 px-2 py-1 bg-[hsl(280,30%,55%,0.08)] text-[0.5625rem] text-[hsl(280,30%,45%)] font-medium" style={{ borderRadius: 0 }}>
-                          📋 Check-in {checkinTime}m
-                        </span>
-                      )}
-                      <span className={`flex items-center gap-0.5 px-2 py-1 text-[0.5625rem] font-medium ${
-                        isMeal ? "bg-[hsl(var(--gold)/0.08)] text-[hsl(var(--gold-dark))]" :
-                        isExperience ? "bg-[hsl(280,30%,55%,0.08)] text-[hsl(280,30%,45%)]" :
-                        isBreak ? "bg-[hsl(var(--muted))] text-[hsl(var(--ink-light))]" :
-                        "bg-[hsl(var(--ink))]/5 text-[hsl(var(--ink))]"
-                      }`} style={{ borderRadius: 0 }}>
-                        {isBreak ? "⏸" : isMeal ? "🍽" : isExperience ? "🎭" : "🎢"} {item.duration}m ride
-                      </span>
-                      {item.llType && item.llType !== "none" && (
-                        <span className="px-2 py-1 text-[0.5rem] uppercase tracking-[0.08em] bg-[hsl(var(--accent))] text-[hsl(var(--accent-foreground))] border border-[hsl(var(--border))]" style={{ borderRadius: 0 }}>
-                          {llLabels[item.llType]}
-                        </span>
-                      )}
-                    </div>
+                            {/* Name */}
+                            <span className="font-display text-base text-[hsl(var(--ink))] truncate flex-1 font-bold leading-tight">{item.name}</span>
 
-                    {/* Separator line */}
-                    <div className="mt-2 h-px bg-[hsl(var(--border))]" />
+                            {/* Type badge */}
+                            <span className={`px-2 py-0.5 text-[0.5625rem] uppercase tracking-[0.1em] shrink-0 rounded-md ${
+                              item.type === "ride" ? "bg-[hsl(var(--ink))] text-[#F9F7F2]" :
+                              isMeal ? "bg-[hsl(var(--gold))]/15 text-[hsl(var(--gold-dark))]" :
+                              isBioBreak ? "bg-[hsl(var(--lavender))]/15 text-[hsl(var(--lavender))]" :
+                              isStrollerOp ? "bg-[hsl(var(--gold))]/10 text-[hsl(var(--gold-dark))]/70" :
+                              isExperience ? "bg-[hsl(280,30%,55%)]/10 text-[hsl(280,30%,45%)]" :
+                              "bg-[hsl(var(--muted))] text-[hsl(var(--ink-light))]"
+                            }`}>
+                              {typeEmoji[item.type] || ""} {
+                                item.type === "ride" ? "Ride" :
+                                item.type === "meal" || item.type === "dining" ? "Dining" :
+                                item.type === "show" ? "Show" :
+                                item.type === "bio-break" ? "Bio-Break" :
+                                item.type === "stroller-park" ? "Stroller" :
+                                item.type === "stroller-retrieve" ? "Stroller" :
+                                item.type === "break" ? "Rest" :
+                                item.type === "snack" ? "Snack" :
+                                item.type
+                              }
+                            </span>
 
-                    {item.notes && (
-                      <p className="font-sans text-xs text-[hsl(var(--ink-light))] mt-2 italic" style={{ letterSpacing: "-0.02em" }}>{item.notes}</p>
-                    )}
-                    </div>{/* end content */}
-                  </motion.div>
+                            {/* LL badge */}
+                            {item.llType && item.llType !== "none" && item.llType !== "standby-only" && (
+                              <span className="px-2 py-0.5 text-[0.5rem] uppercase tracking-[0.08em] bg-gradient-to-r from-[hsl(var(--gold-dark))] to-[hsl(var(--gold))] text-white font-medium rounded-md">
+                                🎟 {llLabels[item.llType]}
+                              </span>
+                            )}
 
-                  {/* Gap analysis between items */}
-                  {(() => {
-                    const nextRi = ribbon[idx + 1];
-                    if (!nextRi) return (
-                      <DropZone
-                        idx={idx + 1}
-                        isActive={dropTargetIdx === idx + 1}
-                        onDragOver={(e) => { e.preventDefault(); setDropTargetIdx(idx + 1); }}
-                        onDragLeave={() => setDropTargetIdx(null)}
-                        onDrop={(e) => handleDropOnZone(e, idx + 1)}
-                      />
-                    );
-                    
-                    const gapMin = nextRi.startMin - endMin;
-                    const nextWalk = nextRi.walkBuffer;
-                    // Free time = gap minus the walk to the next item
-                    // (walk is already shown by the next item's walk connector, so don't double-count)
-                    const actualFreeTime = Math.max(0, gapMin - nextWalk);
-                    
-                    // No meaningful gap — just show a drop zone
-                    if (actualFreeTime <= 2) {
-                      return (
+                            {/* Wait time or standby */}
+                            {wait > 0 && (
+                              <span className="px-2.5 py-1 text-[0.625rem] font-display font-bold bg-[hsl(var(--destructive))]/8 text-destructive rounded-md shrink-0">
+                                {wait}m wait
+                              </span>
+                            )}
+
+                            {/* Lock toggle */}
+                            <button
+                              onClick={(e) => { e.stopPropagation(); toggleItemLock(item.id); }}
+                              className={`w-7 h-7 rounded-lg flex items-center justify-center transition-colors shrink-0 ${
+                                isItemLocked
+                                  ? "bg-[hsl(var(--gold))]/15 text-[hsl(var(--gold-dark))]"
+                                  : "text-[hsl(var(--ink-light))]/20 hover:text-[hsl(var(--ink-light))]/50 hover:bg-[hsl(var(--muted))]"
+                              }`}
+                            >
+                              {isItemLocked ? <Lock className="w-3 h-3" /> : <Unlock className="w-3 h-3" />}
+                            </button>
+
+                            {/* Remove */}
+                            {!isLocked && !isBooked && (
+                              <button onClick={(e) => { e.stopPropagation(); removeFromItinerary(item.id); }}
+                                className="opacity-0 group-hover:opacity-100 w-7 h-7 rounded-lg flex items-center justify-center text-[hsl(var(--ink-light))]/30 hover:text-destructive hover:bg-destructive/5 transition-all duration-200 shrink-0">
+                                <X className="w-3 h-3" />
+                              </button>
+                            )}
+                          </div>
+
+                          {/* Time span + duration */}
+                          <div className="mt-1.5 flex items-center gap-2 text-[0.625rem] text-[hsl(var(--ink-light))]" style={{ letterSpacing: "-0.02em" }}>
+                            <Clock className="w-2.5 h-2.5" />
+                            <span className="font-medium text-[hsl(var(--ink))]">{formatMin(startMin)}</span>
+                            <span>→</span>
+                            <span className="font-medium text-[hsl(var(--ink))]">{formatMin(endMin)}</span>
+                            <span className="text-[hsl(var(--ink))]/30">·</span>
+                            <span className="font-display text-[hsl(var(--ink))]">{totalBlockMin}m</span>
+                            {idx > 0 && walkBuffer > 0 && (
+                              <>
+                                <span className="text-[hsl(var(--ink))]/30">·</span>
+                                <span className="italic text-[hsl(var(--ink-light))]/50">{walkBuffer}m walk from prev</span>
+                              </>
+                            )}
+                          </div>
+
+                          {/* Time breakdown chips */}
+                          <div className="mt-2 flex items-center gap-1.5 flex-wrap">
+                            {strollerTime > 0 && (
+                              <span className="flex items-center gap-0.5 px-2 py-1 bg-[hsl(var(--gold))]/8 text-[0.5625rem] text-[hsl(var(--gold-dark))] font-medium rounded-md">
+                                🍼 Park {strollerTime}m
+                              </span>
+                            )}
+                            {checkinTime > 0 && (
+                              <span className="flex items-center gap-0.5 px-2 py-1 bg-[hsl(280,30%,55%)]/8 text-[0.5625rem] text-[hsl(280,30%,45%)] font-medium rounded-md">
+                                📋 Check-in {checkinTime}m
+                              </span>
+                            )}
+                            <span className={`flex items-center gap-0.5 px-2 py-1 text-[0.5625rem] font-medium rounded-md ${
+                              isMeal ? "bg-[hsl(var(--gold))]/8 text-[hsl(var(--gold-dark))]" :
+                              isExperience ? "bg-[hsl(280,30%,55%)]/8 text-[hsl(280,30%,45%)]" :
+                              isBreak || isBioBreak ? "bg-[hsl(var(--muted))] text-[hsl(var(--ink-light))]" :
+                              "bg-[hsl(var(--ink))]/5 text-[hsl(var(--ink))]"
+                            }`}>
+                              {typeEmoji[item.type] || "🎢"} {item.duration}m {item.type === "ride" ? "ride" : ""}
+                            </span>
+                            {isFixedAnchor(item) && (
+                              <span className="px-2 py-0.5 text-[0.5rem] uppercase tracking-[0.1em] bg-[hsl(var(--ink))]/8 text-[hsl(var(--ink-light))] flex items-center gap-1 rounded-md">
+                                <Lock className="w-2.5 h-2.5" /> Fixed
+                              </span>
+                            )}
+                          </div>
+
+                          {item.notes && !isExpanded && (
+                            <p className="font-sans text-xs text-[hsl(var(--ink-light))] mt-2 italic truncate" style={{ letterSpacing: "-0.02em" }}>{item.notes}</p>
+                          )}
+                        </div>
+
+                        {/* Expanded detail */}
+                        <AnimatePresence>
+                          {isExpanded && (
+                            <motion.div
+                              initial={{ opacity: 0, height: 0 }}
+                              animate={{ opacity: 1, height: "auto" }}
+                              exit={{ opacity: 0, height: 0 }}
+                              transition={{ duration: 0.25 }}
+                              className="overflow-hidden"
+                            >
+                              <div className="px-4 pb-4 border-t border-[hsl(var(--border))]/40 pt-3 space-y-3">
+                                {/* Description */}
+                                {item.description && (
+                                  <p className="font-sans text-sm text-[hsl(var(--ink))] leading-relaxed" style={{ letterSpacing: "-0.02em" }}>
+                                    {item.description}
+                                  </p>
+                                )}
+
+                                {/* CC Score */}
+                                {item.ccScore && <CCStars score={item.ccScore} />}
+
+                                {/* Notes */}
+                                {item.notes && (
+                                  <div className="flex items-start gap-2 px-3 py-2 bg-[hsl(var(--warm))] border border-[hsl(var(--border))]/40 rounded-lg">
+                                    <Info className="w-3 h-3 text-[hsl(var(--gold-dark))] shrink-0 mt-0.5" />
+                                    <p className="font-sans text-xs text-[hsl(var(--ink))] italic">{item.notes}</p>
+                                  </div>
+                                )}
+
+                                {/* Edit time */}
+                                <div className="flex items-center gap-3">
+                                  <span className="text-[0.5625rem] uppercase tracking-[0.1em] text-[hsl(var(--ink-light))] font-medium">Adjust time:</span>
+                                  {editingTimeId === item.id ? (
+                                    <div className="flex items-center gap-2">
+                                      <input
+                                        type="text"
+                                        placeholder="e.g. 9:30 AM"
+                                        value={editTimeValue}
+                                        onChange={(e) => setEditTimeValue(e.target.value)}
+                                        className="w-28 border border-[hsl(var(--border))] bg-white px-2 py-1 font-sans text-xs text-[hsl(var(--ink))] focus:outline-none focus:border-[hsl(var(--gold))] rounded-md"
+                                        onKeyDown={(e) => {
+                                          if (e.key === "Enter") updateItemTime(item.id, editTimeValue);
+                                          if (e.key === "Escape") setEditingTimeId(null);
+                                        }}
+                                        autoFocus
+                                      />
+                                      <button
+                                        onClick={(e) => { e.stopPropagation(); updateItemTime(item.id, editTimeValue); }}
+                                        className="px-2 py-1 text-[0.5625rem] bg-[hsl(var(--ink))] text-white rounded-md"
+                                      >
+                                        Set
+                                      </button>
+                                    </div>
+                                  ) : (
+                                    <button
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        setEditTimeValue(formatMin(startMin));
+                                        setEditingTimeId(item.id);
+                                      }}
+                                      className="px-3 py-1 text-[0.625rem] border border-dashed border-[hsl(var(--border))] text-[hsl(var(--ink-light))] hover:border-[hsl(var(--gold))] hover:text-[hsl(var(--gold-dark))] transition-colors rounded-md"
+                                    >
+                                      {formatMin(startMin)} — tap to edit
+                                    </button>
+                                  )}
+                                </div>
+                              </div>
+                            </motion.div>
+                          )}
+                        </AnimatePresence>
+                      </div>
+                    </motion.div>
+
+                    {/* Gap analysis between items */}
+                    {(() => {
+                      const nextRi = ribbon[idx + 1];
+                      if (!nextRi) return (
                         <DropZone
                           idx={idx + 1}
                           isActive={dropTargetIdx === idx + 1}
@@ -1550,102 +1776,63 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
                           onDrop={(e) => handleDropOnZone(e, idx + 1)}
                         />
                       );
-                    }
-                    
-                    const currentZone = item.zone;
-                    const isShortGap = actualFreeTime < 15;
-                    const gapHeight = isShortGap 
-                      ? Math.max(48, Math.min(actualFreeTime * 2, 100))
-                      : Math.max(56, Math.min(actualFreeTime * 1.8, 200));
-                    const ridesFit = Math.floor(actualFreeTime / 25);
-                    
-                    // Party context for short-gap suggestions
-                    const hasToddlers = activeMembers.some(m => { const a = getAge(m.birthdate); return a !== undefined && a <= 4; });
-                    const hasYoungKids = activeMembers.some(m => { const a = getAge(m.birthdate); return a !== undefined && a <= 7; });
-                    const partySize = activeMembers.length;
-                    
-                    const suggestions: string[] = [];
-                    if (isShortGap) {
-                      if (hasToddlers) suggestions.push("🚻 Bathroom break (toddlers)");
-                      else if (hasYoungKids && partySize >= 3) suggestions.push("🚻 Bathroom break");
-                      else if (partySize >= 5) suggestions.push("🚻 Bathroom stop (large group)");
-                      if (actualFreeTime >= 5) suggestions.push("📸 Photo op / PhotoPass");
-                      if (actualFreeTime >= 5) suggestions.push("💧 Water / hydration refill");
-                      if (actualFreeTime >= 10 && hasYoungKids) suggestions.push("🍦 Quick snack stop");
-                      if (actualFreeTime >= 10) suggestions.push("🗺 Explore nearby area");
-                    }
-                    
-                    return (
-                      <div
-                        className={`my-2 border-2 border-dashed flex flex-col items-center justify-center transition-colors duration-200 ${
-                          dropTargetIdx === idx + 1
-                            ? "border-[hsl(var(--gold))] bg-[hsl(var(--gold)/0.15)]"
-                            : isShortGap
-                            ? "border-[hsl(var(--ink-light)/0.25)] bg-[hsl(var(--ink)/0.02)]"
-                            : "border-[hsl(var(--gold)/0.4)] bg-[hsl(var(--gold)/0.06)]"
-                        }`}
-                        style={{ borderRadius: "0.75rem", minHeight: `${gapHeight}px` }}
-                        onDragOver={(e) => { e.preventDefault(); setDropTargetIdx(idx + 1); }}
-                        onDragLeave={() => setDropTargetIdx(null)}
-                        onDrop={(e) => handleDropOnZone(e, idx + 1)}
-                      >
-                        {isShortGap ? (
-                          <>
-                            <div className="flex items-center gap-2 mb-1">
-                              <span className="text-base">⏱</span>
-                              <span className="font-display text-sm text-[hsl(var(--ink))] font-medium">
-                                {actualFreeTime}m free
-                              </span>
-                            </div>
-                            <p className="text-[0.625rem] text-[hsl(var(--ink-light))]">
-                              {formatMin(endMin + nextWalk)} → {formatMin(nextRi.startMin)}
-                            </p>
-                            {suggestions.length > 0 ? (
-                              <div className="flex flex-wrap gap-1.5 mt-2 justify-center px-3">
-                                {suggestions.slice(0, 3).map((s, si) => (
-                                  <span key={si} className="px-2 py-1 text-[0.5625rem] bg-[hsl(var(--muted))] text-[hsl(var(--ink-light))] border border-[hsl(var(--border))]/50" style={{ borderRadius: 0 }}>
-                                    {s}
-                                  </span>
-                                ))}
-                              </div>
-                            ) : (
-                              <p className="text-[0.5625rem] text-[hsl(var(--ink-light))]/60 mt-1 italic">
-                                Too short for a ride — enjoy the moment
-                              </p>
-                            )}
-                          </>
-                        ) : (
-                          <>
-                            <div className="flex items-center gap-2 mb-1.5">
-                              <span className="text-lg">⏳</span>
-                              <span className="font-display text-base text-[hsl(var(--gold-dark))] font-bold">
-                                {actualFreeTime}m open
-                              </span>
-                            </div>
-                            <p className="text-[0.6875rem] text-[hsl(var(--ink-light))] font-medium">
-                              {formatMin(endMin + nextWalk)} → {formatMin(nextRi.startMin)}
-                            </p>
-                            {ridesFit > 0 && (
-                              <p className="text-[0.625rem] text-[hsl(var(--ink-light))] mt-0.5">
-                                ~{ridesFit} ride{ridesFit > 1 ? "s" : ""} could fit
-                              </p>
-                            )}
-                            {currentZone && (
-                              <span className="mt-2 text-[0.5625rem] uppercase tracking-[0.1em] px-2.5 py-1 bg-[hsl(var(--gold)/0.12)] text-[hsl(var(--gold-dark))]" style={{ borderRadius: "0.5rem" }}>
-                                📍 Near {zoneLabel(currentZone)} · Drag here to fill
-                              </span>
-                            )}
-                          </>
-                        )}
-                      </div>
-                    );
-                  })()}
-                </Reorder.Item>
-              );
-            })}
-          </Reorder.Group>
+                      
+                      const gapMin = nextRi.startMin - endMin;
+                      const nextWalk = nextRi.walkBuffer;
+                      const actualFreeTime = Math.max(0, gapMin - nextWalk);
+                      
+                      if (actualFreeTime <= 2) {
+                        return (
+                          <DropZone
+                            idx={idx + 1}
+                            isActive={dropTargetIdx === idx + 1}
+                            onDragOver={(e) => { e.preventDefault(); setDropTargetIdx(idx + 1); }}
+                            onDragLeave={() => setDropTargetIdx(null)}
+                            onDrop={(e) => handleDropOnZone(e, idx + 1)}
+                          />
+                        );
+                      }
+                      
+                      const currentZone = item.zone;
+                      const isShortGap = actualFreeTime < 15;
+                      const ridesFit = Math.floor(actualFreeTime / 25);
+                      
+                      return (
+                        <div
+                          className={`my-1 ml-16 mr-2 border-2 border-dashed flex flex-col items-center justify-center py-3 transition-colors duration-200 ${
+                            dropTargetIdx === idx + 1
+                              ? "border-[hsl(var(--gold))] bg-[hsl(var(--gold))]/15"
+                              : isShortGap
+                              ? "border-[hsl(var(--ink-light))]/15 bg-[hsl(var(--ink))]/[0.02]"
+                              : "border-[hsl(var(--gold))]/25 bg-[hsl(var(--gold))]/[0.04]"
+                          }`}
+                          style={{ borderRadius: "0.75rem" }}
+                          onDragOver={(e) => { e.preventDefault(); setDropTargetIdx(idx + 1); }}
+                          onDragLeave={() => setDropTargetIdx(null)}
+                          onDrop={(e) => handleDropOnZone(e, idx + 1)}
+                        >
+                          <span className={`font-display text-sm font-medium ${isShortGap ? "text-[hsl(var(--ink-light))]" : "text-[hsl(var(--gold-dark))]"}`}>
+                            {isShortGap ? "⏱" : "⏳"} {actualFreeTime}m {isShortGap ? "free" : "open"}
+                          </span>
+                          <span className="text-[0.5625rem] text-[hsl(var(--ink-light))]/60 mt-0.5">
+                            {formatMin(endMin + nextWalk)} → {formatMin(nextRi.startMin)}
+                            {ridesFit > 0 ? ` · ~${ridesFit} ride${ridesFit > 1 ? "s" : ""} could fit` : ""}
+                          </span>
+                          {currentZone && !isShortGap && (
+                            <span className="mt-1.5 text-[0.5rem] uppercase tracking-[0.1em] text-[hsl(var(--gold-dark))]/60">
+                              📍 Near {zoneLabel(currentZone)}
+                            </span>
+                          )}
+                        </div>
+                      );
+                    })()}
+                  </Reorder.Item>
+                );
+              })}
+            </Reorder.Group>
+          </div>
 
-          {/* Remaining time until park close + planned departure */}
+          {/* Remaining time until park close */}
           {ribbon.length > 0 && (() => {
             const lastEnd = ribbon[ribbon.length - 1].endMin;
             const lastZone = ribbon[ribbon.length - 1].item.zone;
@@ -1800,14 +1987,27 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
               <div className="flex items-center gap-2 flex-wrap">
                 {quickAdds.map((qa, i) => (
                   <button key={`${qa.label}-${i}`} onClick={() => addQuickItem(qa.type, qa.label, qa.dur)}
-                    className="flex items-center gap-1.5 px-3 py-2 bg-white border border-dashed border-[hsl(var(--border))] text-[hsl(var(--ink-light))] hover:border-[hsl(var(--ink))]/30 hover:text-[hsl(var(--ink))] transition-all duration-300"
-                    style={{ borderRadius: 0, boxShadow: "0 10px 30px rgba(26,26,27,0.03)" }}>
+                    className="flex items-center gap-1.5 px-3 py-2 bg-white border border-dashed border-[hsl(var(--border))] text-[hsl(var(--ink-light))] hover:border-[hsl(var(--ink))]/30 hover:text-[hsl(var(--ink))] transition-all duration-300 rounded-lg"
+                    style={{ boxShadow: "0 10px 30px rgba(26,26,27,0.03)" }}>
                     <span className="text-sm">{qa.emoji}</span>
                     <span className="text-[0.625rem] uppercase tracking-[0.1em]">{qa.label}</span>
                     <span className="text-[0.5625rem] text-[hsl(var(--ink-light))]/50">{qa.dur}m</span>
                   </button>
                 ))}
               </div>
+            </div>
+          )}
+
+          {/* Floating Add Item button */}
+          {!isLocked && isParkDay && (
+            <div className="sticky bottom-4 flex justify-center mt-6 z-20">
+              <button
+                onClick={() => setAddDrawerOpen(true)}
+                className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-[hsl(var(--ink))] text-white shadow-lg hover:shadow-xl hover:scale-[1.03] transition-all duration-300"
+              >
+                <Plus className="w-4 h-4" />
+                <span className="font-display text-sm font-medium">Add Item</span>
+              </button>
             </div>
           )}
 

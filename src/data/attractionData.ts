@@ -128,14 +128,17 @@ export interface ItineraryItem {
   id: string;
   attractionId?: string;
   name: string;
-  type: "ride" | "show" | "parade" | "character" | "dining" | "seasonal" | "break" | "snack" | "pool" | "hotel" | "meal" | "rope-drop" | "walk";
+  type: "ride" | "show" | "parade" | "character" | "dining" | "seasonal" | "break" | "snack" | "pool" | "hotel" | "meal" | "rope-drop" | "walk" | "bio-break" | "stroller-park" | "stroller-retrieve";
   duration: number; // minutes
   waitTime?: number; // minutes
   zone?: ParkZone;
   llType?: LLType;
   waitCategory?: WaitCategory;
   notes?: string;
+  description?: string;
   isConfirmed?: boolean;
+  isLocked?: boolean;
+  ccScore?: number; // 1-5 CC recommendation score
   /** For scheduled shows — the target start time in minutes from midnight */
   scheduledStartMin?: number;
 }

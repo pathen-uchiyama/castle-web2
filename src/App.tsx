@@ -78,6 +78,7 @@ const App = () => (
           <Route path="/do-not-sell" element={<DoNotSell />} />
           <Route path="/dream-planner" element={<DreamPlanner />} />
           <Route path="/dream-itinerary" element={<DreamItinerary />} />
+          <Route path="/onboarding" element={<Onboarding />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>

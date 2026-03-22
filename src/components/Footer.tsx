@@ -109,6 +109,14 @@ const Footer = () => (
         </p>
       </div>
 
+      {/* AB 2426 — Digital license disclosure */}
+      <div className="mb-8">
+        <p className="font-editorial text-xs text-muted-foreground/50 leading-relaxed">
+          Castle Companion is a digital access license, not a permanent purchase.{" "}
+          <Link to="/terms#section-5-3" className="underline hover:text-muted-foreground transition-colors duration-300">Terms §5.3</Link>
+        </p>
+      </div>
+
       {/* Bottom bar */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <p className="font-editorial text-xs text-muted-foreground/40">

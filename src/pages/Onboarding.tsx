@@ -497,6 +497,10 @@ const Onboarding = () => {
               <Button disabled className="bg-[hsl(var(--ink))] text-white font-display px-8 py-5 rounded-xl opacity-40">
                 Complete Payment
               </Button>
+              <p className="mt-3 text-xs text-muted-foreground/50 text-center leading-relaxed">
+                This is a license to access digital content, not a permanent purchase.{" "}
+                <a href="/terms#section-5-3" className="underline hover:text-muted-foreground transition-colors">Terms §5.3</a>
+              </p>
             </div>
 
             <div className="mt-6 flex justify-center">

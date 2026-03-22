@@ -60,7 +60,7 @@ const Terms = () => (
           <li><strong className="text-foreground">Group Size:</strong> Each plan supports up to 12 guests. Larger parties may license additional plans.</li>
           <li><strong className="text-foreground">Non-Transferable:</strong> Plans are tied to your account and cannot be transferred or resold.</li>
         </ul>
-        <h3 className="font-display text-base text-foreground mt-6">5.3 Digital Goods Licensing (AB 2426)</h3>
+        <h3 id="section-5-3" className="font-display text-base text-foreground mt-6">5.3 Digital Goods Licensing (AB 2426)</h3>
         <p className="font-editorial text-sm text-muted-foreground leading-relaxed">
           The Intelligent Blueprint and Active Automation are provided as <strong className="text-foreground">revocable digital licenses, not permanent purchases</strong>. Access is subject to technical availability and the operational state of third-party park systems. This license may be modified or revoked if third-party systems undergo material changes that render the current content obsolete. You will be notified of any material changes to your licensed content through the Service.
         </p>

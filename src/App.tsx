@@ -22,6 +22,7 @@ import PrivacyCa from "./pages/PrivacyCa";
 import DoNotSell from "./pages/DoNotSell";
 import DreamPlanner from "./pages/DreamPlanner";
 import DreamItinerary from "./pages/DreamItinerary";
+import Onboarding from "./pages/Onboarding";
 import NotFound from "./pages/NotFound";
 import { mockData } from "./data/mockData";
 
@@ -77,6 +78,7 @@ const App = () => (
           <Route path="/do-not-sell" element={<DoNotSell />} />
           <Route path="/dream-planner" element={<DreamPlanner />} />
           <Route path="/dream-itinerary" element={<DreamItinerary />} />
+          <Route path="/onboarding" element={<Onboarding />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>

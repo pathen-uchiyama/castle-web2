@@ -1,4 +1,5 @@
 import { motion } from "framer-motion";
+import EmptyState from "@/components/EmptyState";
 import { useState, useRef, useEffect, useCallback } from "react";
 import { Volume2, Play, Pause } from "lucide-react";
 

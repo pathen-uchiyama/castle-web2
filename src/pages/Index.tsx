@@ -592,21 +592,27 @@ const Index = ({
 
       </div>{/* close z-10 scroll-over wrapper */}
 
-      {/* Dream Planner pill CTA */}
+      {/* Dream Vacation Wizard pill CTA */}
       <motion.div
         initial={{ opacity: 0, y: 40 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 1, delay: 2, ease: [0.19, 1, 0.22, 1] }}
         className="fixed bottom-8 left-1/2 -translate-x-1/2 z-50"
       >
-        <Link
-          to="/dream-planner"
+        <button
+          onClick={() => setWizardOpen(true)}
           className="inline-flex items-center gap-2.5 px-7 py-3.5 rounded-full bg-foreground text-background shadow-lg hover:shadow-xl hover:scale-[1.03] transition-all duration-300 border border-white/[0.06]"
         >
           <span className="text-base">✨</span>
           <span className="font-editorial text-sm font-medium">Plan My Dream Vacation</span>
-        </Link>
+        </button>
       </motion.div>
+
+      <AnimatePresence>
+        {wizardOpen && (
+          <DreamVacationWizard open={wizardOpen} onClose={() => setWizardOpen(false)} />
+        )}
+      </AnimatePresence>
 
       <FloatingAnchor />
     </div>

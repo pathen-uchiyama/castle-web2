@@ -213,6 +213,15 @@ const Circle = ({ partyMembers, guestName }: CircleProps) => {
           </motion.div>
 
           {/* Member cards */}
+          {members.length === 0 ? (
+            <EmptyState
+              emoji="👨‍👩‍👧‍👦"
+              headline="Your Circle is empty."
+              description="Add your first traveler. When we know your party's ages, heights, and preferences, we can plan the perfect trip."
+              ctaLabel="Add a Traveler"
+              ctaAction={() => toast.success("Add traveler flow coming soon!")}
+            />
+          ) : (
           <div className="space-y-6">
             {members.map((member, i) => {
               const isExpanded = expandedMember === member.memberId;

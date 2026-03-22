@@ -1,6 +1,7 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { useState } from "react";
 import { toast } from "sonner";
+import { usePlanningMode, type PlanningMode } from "@/contexts/PlanningModeContext";
 import Footer from "@/components/Footer";
 import SectionNav from "@/components/SectionNav";
 import SparkleField from "@/components/SparkleField";

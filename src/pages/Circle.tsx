@@ -756,6 +756,7 @@ const Circle = ({ partyMembers, guestName }: CircleProps) => {
               );
             })}
           </div>
+          )}
 
           {/* Add member CTA */}
           <motion.div {...fade(0.3)} className="mt-12">

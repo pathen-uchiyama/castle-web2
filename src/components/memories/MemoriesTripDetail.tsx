@@ -4,6 +4,7 @@ import { ArrowLeft, Award, Share2, Download, ChevronLeft, ChevronRight, ChevronD
 import SectionNav from "@/components/SectionNav";
 import AudioEcho from "./AudioEcho";
 import JoyBlueprint from "./JoyBlueprint";
+import SovereignGate from "@/components/SovereignGate";
 import type { TripMemory } from "@/data/types";
 
 import castleHero from "@/assets/castle-hero.jpg";

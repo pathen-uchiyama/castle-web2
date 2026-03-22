@@ -846,7 +846,15 @@ const MemoriesTripDetail = ({ memory, allMemories, onBack }: MemoriesTripDetailP
           {/* THE VAULT — CAROUSEL SCRAPBOOK */}
           {activeTab === "vault" && <DayCarousel memory={memory} />}
 
-          {activeTab === "echoes" && <AudioEcho />}
+          {activeTab === "echoes" && (
+            <SovereignGate
+              tier="Pixie Dust"
+              feature="Audio Echoes"
+              description="Audio Echoes preserves the sounds of your adventure — whispered reactions, delighted screams, and bedtime recaps. Upgrade to unlock the full library."
+            >
+              <AudioEcho />
+            </SovereignGate>
+          )}
           {activeTab === "joy" && <JoyBlueprint tripMemories={allMemories} />}
         </>
       )}

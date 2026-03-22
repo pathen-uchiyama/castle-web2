@@ -126,7 +126,7 @@ const Index = ({
           <motion.p initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1, delay: 0.5 }} className="label-text !text-white/60 mb-10 tracking-[0.3em]">
             Castle Companion ✨
           </motion.p>
-          <motion.h1 initial={{ opacity: 0, y: 50 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1.6, delay: 0.8, ease }} className="font-display text-white text-5xl sm:text-7xl md:text-8xl lg:text-[8rem] leading-[0.95] max-w-5xl">
+          <motion.h1 initial={{ opacity: 0, y: 50 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1.6, delay: 0.8, ease }} className="font-display text-white text-3xl sm:text-5xl md:text-7xl lg:text-8xl xl:text-[8rem] leading-[0.95] max-w-5xl">
             Welcome, <em className="italic" style={{ fontWeight: 400 }}>{guestName}</em>.
           </motion.h1>
           <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 1, delay: 1.4 }} className="font-editorial text-white/60 text-base sm:text-lg mt-10 max-w-md leading-relaxed tracking-[-0.005em]">
@@ -219,7 +219,7 @@ const Index = ({
                     whileInView={{ opacity: 1, x: 0 }}
                     viewport={{ once: true }}
                     transition={{ duration: 0.8, delay: i * 0.1, ease }}
-                    className="flex-shrink-0 w-[260px] sm:w-[300px] group cursor-pointer"
+                    className="flex-shrink-0 w-[calc(100vw-4rem)] sm:w-[300px] group cursor-pointer"
                   >
                      <div className="bg-white/10 backdrop-blur-md rounded-lg p-5 h-full hover:bg-white/15 transition-colors duration-500 overflow-hidden">
                       <p className="label-text !text-white/50 mb-3" style={{ fontSize: '0.625rem' }}>{leg.date}</p>
@@ -235,7 +235,7 @@ const Index = ({
                   whileInView={{ opacity: 1, x: 0 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.8, delay: 0.3, ease }}
-                  className="flex-shrink-0 w-[260px] sm:w-[300px] group cursor-pointer"
+                  className="flex-shrink-0 w-[calc(100vw-4rem)] sm:w-[300px] group cursor-pointer"
                 >
                   <Link to={`/trip/${bookedTrip.tripId}`}>
                     <div className="bg-white/10 backdrop-blur-md rounded-lg p-5 h-full hover:bg-white/15 transition-colors duration-500 overflow-hidden">
@@ -259,7 +259,7 @@ const Index = ({
                   whileInView={{ opacity: 1, x: 0 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.8, delay: 0.4, ease }}
-                  className="flex-shrink-0 w-[260px] sm:w-[300px]"
+                  className="flex-shrink-0 w-[calc(100vw-4rem)] sm:w-[300px]"
                 >
                   <div className="bg-[hsl(var(--gold-dark))]/10 backdrop-blur-md rounded-lg p-5 h-full border border-[hsl(var(--gold))]/10 overflow-hidden">
                     <p className="label-text !text-[hsl(var(--gold-light))]/50 mb-3" style={{ fontSize: '0.625rem' }}>Time Reclaimed</p>
@@ -327,7 +327,7 @@ const Index = ({
                 viewport={{ once: true }}
                 transition={{ duration: 1, delay: i * 0.12, ease }}
                 whileHover={{ y: -6 }}
-                className="flex-shrink-0 w-[300px] sm:w-[340px] group"
+                className="flex-shrink-0 w-[calc(100vw-3rem)] sm:w-[340px] group"
               >
                 <Link to={`/parks/${park.parkId}`}>
                   <div className="relative h-[420px] overflow-hidden rounded-2xl">
@@ -597,7 +597,7 @@ const Index = ({
         initial={{ opacity: 0, y: 40 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 1, delay: 2, ease: [0.19, 1, 0.22, 1] }}
-        className="fixed bottom-8 left-1/2 -translate-x-1/2 z-50"
+        className="fixed bottom-20 sm:bottom-8 left-1/2 -translate-x-1/2 z-50"
       >
         <button
           onClick={() => setWizardOpen(true)}

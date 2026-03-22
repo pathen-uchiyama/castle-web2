@@ -6,6 +6,8 @@ import SparkleField from "@/components/SparkleField";
 import headerGuides from "@/assets/header-guides.jpg";
 import guideWdw from "@/assets/guide-wdw.jpg";
 import guideDlr from "@/assets/guide-dlr.jpg";
+import { wdwParks } from "@/data/resortEncyclopedia";
+import { dlrParks } from "@/data/dlrEncyclopedia";
 
 const ease: [number, number, number, number] = [0.19, 1, 0.22, 1];
 const fade = (delay = 0) => ({
@@ -55,12 +57,33 @@ const GuidesLanding = () => (
     </section>
 
     {/* Resort Selection */}
-    <section className="px-8 lg:px-16 py-16 lg:py-24">
+    <section className="px-4 sm:px-8 lg:px-16 py-16 lg:py-24">
       <motion.div {...fade()}>
         <p className="label-text mb-8">Choose Your Destination</p>
       </motion.div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      {/* Mobile: flat park list — skip resort grouping */}
+      <div className="sm:hidden space-y-3 mb-8">
+        <p className="label-text mb-4 text-[0.6rem]">All Parks</p>
+        {[...wdwParks, ...dlrParks].map((park, i) => (
+          <motion.div key={park.parkId} {...fade(0.03 * i)}>
+            <Link
+              to={`/parks/${park.parkId}`}
+              className="flex items-center gap-4 p-4 rounded-lg border border-border bg-card shadow-[var(--shadow-soft)] hover:shadow-[var(--shadow-hover)] transition-all duration-300"
+            >
+              <span className="text-2xl">{park.icon}</span>
+              <div className="flex-1 min-w-0">
+                <p className="font-display text-base text-foreground truncate">{park.name}</p>
+                <p className="font-editorial text-xs text-muted-foreground">{park.resortId === "wdw" ? "Walt Disney World" : "Disneyland Resort"}</p>
+              </div>
+              <span className="font-display text-xs text-[hsl(var(--gold-dark))]">→</span>
+            </Link>
+          </motion.div>
+        ))}
+      </div>
+
+      {/* Desktop: resort cards */}
+      <div className="hidden sm:grid grid-cols-1 lg:grid-cols-2 gap-8">
         {resorts.map((resort, i) => (
           <motion.div key={resort.id} {...fade(0.05 + i * 0.08)}>
             <Link

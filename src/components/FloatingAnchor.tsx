@@ -15,7 +15,7 @@ const FloatingAnchor = ({ waiting = false }: FloatingAnchorProps) => {
         initial={{ scale: 0, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         transition={{ delay: 1, type: "spring", stiffness: 200, damping: 20 }}
-        className="fixed bottom-8 right-8 z-50 w-16 h-16 flex items-center justify-center cursor-pointer focus:outline-none group"
+        className="fixed bottom-6 right-4 sm:bottom-8 sm:right-8 z-50 w-14 h-14 sm:w-16 sm:h-16 flex items-center justify-center cursor-pointer focus:outline-none group"
         aria-label="The Golden Anchor"
         whileTap={{ scale: 0.94 }}
         onClick={() => setOverlayOpen(true)}

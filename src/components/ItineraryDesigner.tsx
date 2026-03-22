@@ -823,8 +823,24 @@ const ItineraryDesigner = ({ trip, partyMembers, diningReservations, bookedExper
     return z.split("-").map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(" ");
   };
 
+  const { mode: planningMode } = usePlanningMode();
+
+  /* ── Concierge Mode (Type B) ── */
+  if (planningMode === "concierge") {
+    return (
+      <ConciergeView
+        ribbon={ribbon}
+        tripDays={tripDays}
+        currentDayIndex={currentDayIndex}
+        setCurrentDayIndex={setCurrentDayIndex}
+        getDayParkIds={getDayParkIds}
+        dayNavRef={dayNavRef}
+      />
+    );
+  }
+
   return (
-    <section className="bg-[#F9F7F2]">
+    <section className="bg-[hsl(var(--warm))]">
 
       {/* ═══════════════════════════════════════════════════════════════
           HEADER

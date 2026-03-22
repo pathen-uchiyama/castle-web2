@@ -2,6 +2,8 @@ import { useParams, useNavigate } from "react-router-dom";
 import Footer from "@/components/Footer";
 import MemoriesHub from "@/components/memories/MemoriesHub";
 import MemoriesTripDetail from "@/components/memories/MemoriesTripDetail";
+import EmptyState from "@/components/EmptyState";
+import SparkleField from "@/components/SparkleField";
 import type { TripMemory } from "@/data/types";
 
 interface MemoriesProps {
@@ -26,6 +28,16 @@ const Memories = ({ tripMemories }: MemoriesProps) => {
           allMemories={tripMemories}
           onBack={() => navigate("/memories")}
         />
+      ) : tripMemories.length === 0 ? (
+        <div className="relative py-8">
+          <SparkleField count={8} />
+          <EmptyState
+            emoji="📸"
+            headline="Your Keepsake is empty."
+            description="Memories will appear here after your first trip. Every photo, voice memo, and ghost note — preserved in heirloom quality."
+            sparkle
+          />
+        </div>
       ) : (
         <MemoriesHub
           tripMemories={tripMemories}

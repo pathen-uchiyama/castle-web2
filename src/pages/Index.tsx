@@ -259,7 +259,7 @@ const Index = ({
                   whileInView={{ opacity: 1, x: 0 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.8, delay: 0.4, ease }}
-                  className="flex-shrink-0 w-[260px] sm:w-[300px]"
+                  className="flex-shrink-0 w-[calc(100vw-4rem)] sm:w-[300px]"
                 >
                   <div className="bg-[hsl(var(--gold-dark))]/10 backdrop-blur-md rounded-lg p-5 h-full border border-[hsl(var(--gold))]/10 overflow-hidden">
                     <p className="label-text !text-[hsl(var(--gold-light))]/50 mb-3" style={{ fontSize: '0.625rem' }}>Time Reclaimed</p>

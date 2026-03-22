@@ -77,7 +77,7 @@ const MemoriesHub = ({
                 "col-span-3 row-span-1",
                 "col-span-6 row-span-1",
               ];
-              const span = spans[i % spans.length];
+              const span = `col-span-1 sm:${spans[i % spans.length]}`;
 
               return (
                 <motion.div

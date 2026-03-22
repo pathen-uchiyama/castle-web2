@@ -34,7 +34,7 @@ const SectionNav = ({ tabs, activeTab, onTabChange, variant = "light" }: Section
           <button
             key={tab.id}
             onClick={() => onTabChange(tab.id)}
-            className="relative px-5 py-2.5 shrink-0 transition-all duration-300 focus:outline-none group"
+            className="relative px-3 sm:px-5 py-2.5 shrink-0 whitespace-nowrap transition-all duration-300 focus:outline-none group"
             style={{ borderRadius: "0.5rem" }}
           >
             {/* Active background pill */}

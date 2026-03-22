@@ -165,6 +165,13 @@ const AudioEcho = () => {
           The sounds of your adventure — whispered reactions, delighted screams, and bedtime recaps.
         </p>
 
+        {mockClips.length === 0 ? (
+          <EmptyState
+            emoji="🎤"
+            headline="No voice memos yet."
+            description="No voice memos captured on this trip. Next time, tap the Golden Anchor to record a moment."
+          />
+        ) : (
         <div className="space-y-3">
           {mockClips.map((clip, i) => {
             const bars = generateWaveform(clip.id);

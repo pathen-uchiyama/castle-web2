@@ -636,6 +636,9 @@ const Account = ({ account }: AccountProps) => {
             </div>
           </motion.div>
 
+          {/* ═══ PLANNING STYLE ═══ */}
+          <PlanningStyleToggle />
+
           {/* Display Settings */}
           <motion.div {...fade(0.15)} className="mt-16">
             <p className="label-text mb-8 tracking-[0.25em]">Display Settings</p>

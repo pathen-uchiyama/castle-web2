@@ -88,6 +88,7 @@ const App = () => (
       </BrowserRouter>
     </TooltipProvider>
     </PlanningModeProvider>
+    </PasswordGate>
   </QueryClientProvider>
 );
 

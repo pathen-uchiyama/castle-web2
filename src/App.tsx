@@ -6,6 +6,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { PlanningModeProvider } from "@/contexts/PlanningModeContext";
 import Navigation from "@/components/Navigation";
+import PasswordGate from "@/components/PasswordGate";
 import Index from "./pages/Index";
 import DayZeroIndex from "./pages/DayZeroIndex";
 import TripsHub from "./pages/TripsHub";
@@ -41,6 +42,7 @@ const queryClient = new QueryClient();
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
+    <PasswordGate>
     <PlanningModeProvider>
     <TooltipProvider>
       <Toaster />
@@ -86,6 +88,7 @@ const App = () => (
       </BrowserRouter>
     </TooltipProvider>
     </PlanningModeProvider>
+    </PasswordGate>
   </QueryClientProvider>
 );
 
